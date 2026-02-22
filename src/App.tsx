@@ -1,0 +1,1376 @@
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { 
+  CheckCircle2, 
+  Instagram, 
+  Users, 
+  Calendar, 
+  ChevronRight, 
+  Globe, 
+  ArrowLeft,
+  Upload,
+  Camera,
+  Video,
+  CreditCard,
+  Check,
+  Menu,
+  X,
+  LayoutDashboard,
+  LogOut,
+  Eye,
+  MessageSquare,
+  Send,
+  Smartphone,
+  ChevronDown,
+  ChevronUp,
+  ShieldCheck,
+  FileText,
+  Info,
+  Lock,
+  Car,
+  Zap,
+  TrendingUp
+} from 'lucide-react';
+import { translations, Language } from './translations';
+
+// --- Types ---
+interface Package {
+  id: string;
+  name: string;
+  price: string;
+  features: string[];
+  popular?: boolean;
+  premium?: boolean;
+}
+
+interface Order {
+  id: string;
+  package_name: string;
+  full_name: string;
+  phone: string;
+  car_model: string;
+  car_year: string;
+  car_mileage: string;
+  car_price: string;
+  car_registration: string;
+  car_test_until: string;
+  location: string;
+  payment_proof: string;
+  car_images: string;
+  status: string;
+  created_at: string;
+}
+
+// --- Components ---
+
+const Navbar = ({ lang, setLang, isAdmin, onLogout, siteSettings, setView }: { lang: Language, setLang: (l: Language) => void, isAdmin?: boolean, onLogout?: () => void, siteSettings: any, setView: (v: string) => void }) => {
+  const t = translations[lang];
+  return (
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-dark-bg/80 backdrop-blur-md border-bottom border-white/5">
+      <div className="max-w-7xl mx-auto px-4 h-20 flex flex-row-reverse items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <div className="text-2xl font-black tracking-tighter text-brand-red">
+              YOUGO <span className="text-white">ISRAEL</span>
+              <div className="text-[10px] text-white/40 font-bold tracking-normal mt-[-4px]">
+                {siteSettings.positioning_line_he || t.positioningLine}
+              </div>
+            </div>
+            <div className="p-2 bg-brand-red rounded-lg shadow-lg shadow-brand-red/20">
+              <Car size={24} className="text-white" />
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-8 text-sm font-black uppercase tracking-widest">
+            <a href="#how-it-works" className="hover:text-brand-red transition-colors">איך זה עובד</a>
+            <a href="#packages" className="hover:text-brand-red transition-colors">חבילות</a>
+            <button onClick={() => setView('check-status')} className="hover:text-brand-red transition-colors">בדיקת סטטוס</button>
+            <a href="#faq" className="hover:text-brand-red transition-colors">שאלות</a>
+          </div>
+          
+          <div className="h-6 w-px bg-white/10 hidden md:block" />
+
+          <button 
+            onClick={() => setLang(lang === 'he' ? 'ar' : 'he')}
+            className="flex items-center gap-2 text-xs font-black uppercase tracking-widest hover:text-brand-red transition-colors bg-white/5 px-3 py-1.5 rounded-full border border-white/10"
+          >
+            <Globe size={14} />
+            {lang === 'he' ? 'العربية' : 'עברית'}
+          </button>
+
+          {isAdmin && (
+            <button onClick={onLogout} className="text-xs font-black uppercase tracking-widest flex items-center gap-2 text-white/60 hover:text-white">
+              <LogOut size={16} />
+              יציאה
+            </button>
+          )}
+        </div>
+      </div>
+    </nav>
+  );
+};
+
+interface PackageCardProps {
+  pkg: Package;
+  lang: Language;
+  onSelect: (p: Package) => void;
+  key?: string;
+}
+
+const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose: () => void, title: string, children: React.ReactNode }) => {
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+          />
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            className="relative glass-card w-full max-w-2xl max-h-[80vh] overflow-y-auto p-8 space-y-6"
+          >
+            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+              <h3 className="text-2xl font-bold text-brand-red">{title}</h3>
+              <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full transition-colors">
+                <X size={24} />
+              </button>
+            </div>
+            <div className="text-white/80 leading-relaxed whitespace-pre-wrap text-lg">
+              {children.toString().split('\n').map((line, i) => (
+                <p key={i} className={line.match(/^\d+\./) ? "mb-4 font-bold text-white" : "mb-4"}>
+                  {line}
+                </p>
+              ))}
+            </div>
+            <div className="pt-4 flex justify-end">
+              <button onClick={onClose} className="btn-primary py-2 px-6">סגור</button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+};
+
+const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
+  const t = translations[lang];
+  
+  // Define all possible features for comparison
+  const allFeatures = [
+    t.features.imagesPremium,
+    t.features.postPremium,
+    t.features.story30,
+    t.features.priorityFull,
+    t.features.exposureMax,
+    t.features.guidance,
+    t.features.video
+  ];
+
+  const hasFeature = (feature: string) => {
+    // Check if the package has this feature OR a more specific version of it
+    if (feature === t.features.imagesPremium) {
+      return pkg.features.some(f => f === t.features.imagesPremium || f === t.features.images4 || f === t.features.images2);
+    }
+    if (feature === t.features.postPremium) {
+      return pkg.features.some(f => f === t.features.postPremium || f === t.features.postPro || f === t.features.post1);
+    }
+    if (feature === t.features.story30) {
+      return pkg.features.some(f => f === t.features.story30 || f === t.features.story14 || f === t.features.story7);
+    }
+    if (feature === t.features.priorityFull) {
+      return pkg.features.some(f => f === t.features.priorityFull || f === t.features.priorityPro);
+    }
+    if (feature === t.features.exposureMax) {
+      return pkg.features.some(f => f === t.features.exposureMax || f === t.features.exposurePro || f === t.features.exposureBasic);
+    }
+    return pkg.features.some(f => f === feature);
+  };
+
+  const getFeatureLabel = (feature: string) => {
+    // Return the specific label the package has for this category
+    if (feature === t.features.imagesPremium) {
+      return pkg.features.find(f => f === t.features.imagesPremium || f === t.features.images4 || f === t.features.images2) || feature;
+    }
+    if (feature === t.features.postPremium) {
+      return pkg.features.find(f => f === t.features.postPremium || f === t.features.postPro || f === t.features.post1) || feature;
+    }
+    if (feature === t.features.story30) {
+      return pkg.features.find(f => f === t.features.story30 || f === t.features.story14 || f === t.features.story7) || feature;
+    }
+    if (feature === t.features.priorityFull) {
+      return pkg.features.find(f => f === t.features.priorityFull || f === t.features.priorityPro) || feature;
+    }
+    if (feature === t.features.exposureMax) {
+      return pkg.features.find(f => f === t.features.exposureMax || f === t.features.exposurePro || f === t.features.exposureBasic) || feature;
+    }
+    return feature;
+  };
+
+  return (
+    <motion.div 
+      whileHover={{ y: -8, scale: 1.01 }}
+      transition={{ type: "spring", stiffness: 300 }}
+      className={`relative flex flex-col p-6 rounded-2xl transition-all duration-500 min-w-[280px] md:min-w-0 ${
+        pkg.premium 
+          ? 'bg-gradient-to-b from-brand-red/15 to-brand-red/5 border-2 border-brand-red shadow-[0_0_30px_rgba(225,29,72,0.1)]' 
+          : 'bg-white/5 border border-white/10 hover:border-white/20'
+      }`}
+    >
+      {pkg.popular && (
+        <div className="absolute -top-3 right-6 bg-brand-red text-white text-[9px] font-black py-1 px-3 rounded-full shadow-lg uppercase tracking-widest">
+          {t.mostPopular}
+        </div>
+      )}
+
+      <div className="absolute top-3 left-3 bg-green-500/20 text-green-500 text-[9px] font-black py-0.5 px-2 rounded-full border border-green-500/30">
+        15% OFF
+      </div>
+      
+      <div className="mb-6">
+        <h3 className={`text-lg font-black mb-1 tracking-tight ${pkg.premium ? 'text-brand-red' : 'text-white'}`}>
+          {pkg.name}
+        </h3>
+        <p className="text-[10px] text-white/40 mb-4 h-8 leading-tight">
+          {pkg.id === 'basic' ? t.packageSubtitles.basic : 
+           pkg.id === 'pro' ? t.packageSubtitles.pro : 
+           t.packageSubtitles.premium}
+        </p>
+        <div className="flex items-baseline gap-1">
+          <span className="text-3xl font-black">{pkg.price}</span>
+          <span className="text-white/40 text-[10px] font-bold line-through ml-2">
+            ₪{Math.round(parseInt(pkg.price.replace('₪', '')) / 0.85)}
+          </span>
+        </div>
+      </div>
+      
+      <div className="space-y-2 mb-8 flex-grow">
+        {allFeatures.map((f, i) => {
+          const included = hasFeature(f);
+          const label = getFeatureLabel(f);
+          return (
+            <div key={i} className={`flex items-start gap-2 text-xs font-medium transition-opacity ${included ? 'opacity-100' : 'opacity-20'}`}>
+              <div className={`mt-0.5 p-0.5 rounded-full ${included ? (pkg.premium ? 'bg-brand-red' : 'bg-white/40') : 'bg-white/5'}`}>
+                {included ? (
+                  <Check size={8} className="text-dark-bg" strokeWidth={5} />
+                ) : (
+                  <X size={8} className="text-white/20" strokeWidth={5} />
+                )}
+              </div>
+              <span className={`${included ? 'text-white' : 'text-white/20 line-through'}`}>{label}</span>
+            </div>
+          );
+        })}
+      </div>
+      
+      <button 
+        onClick={() => onSelect(pkg)}
+        className={`w-full py-3 rounded-xl font-black text-sm transition-all duration-300 active:scale-95 ${
+          pkg.premium 
+            ? 'bg-brand-red text-white hover:bg-red-700 shadow-lg shadow-brand-red/10' 
+            : 'bg-white text-black hover:bg-white/90'
+        }`}
+      >
+        {t.startOrder}
+      </button>
+    </motion.div>
+  );
+};
+
+export default function App() {
+  const [lang, setLang] = useState<Language>('he');
+  const [view, setView] = useState<'home' | 'booking' | 'success' | 'admin-login' | 'admin-dashboard'>('home');
+  const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [adminPassword, setAdminPassword] = useState('');
+  const [adminTab, setAdminTab] = useState<'orders' | 'settings'>('orders');
+  const [loading, setLoading] = useState(false);
+  const [orderId, setOrderId] = useState('');
+  const [activeFaq, setActiveFaq] = useState<number | null>(null);
+  const [showAllFaqs, setShowAllFaqs] = useState(false);
+  const [orderStatusId, setOrderStatusId] = useState('');
+  const [checkedOrder, setCheckedOrder] = useState<Order | null>(null);
+  const [modalContent, setModalContent] = useState<{ title: string; content: string } | null>(null);
+  const [siteSettings, setSiteSettings] = useState<any>({
+    followers_count: '50K+',
+    whatsapp_number: '972546980606',
+    hero_title_he: 'מוכרים רכב? אנחנו מוכרים אותו מהר יותר.',
+    hero_subtitle_he: 'YOUGO ISRAEL - פלטפורמת השיווק המובילה באינסטגרם למכירת רכבים.',
+    positioning_line_he: 'הפרסום שמוכר רכבים – לא רק מציג אותם.'
+  });
+
+  const t = translations[lang];
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then(res => res.json())
+      .then(data => setSiteSettings(data));
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.dir = lang === 'he' ? 'rtl' : 'rtl'; // Both are RTL
+  }, [lang]);
+
+  const packages: Package[] = [
+    {
+      id: 'basic',
+      name: t.basic,
+      price: '₪149',
+      features: [
+        t.features.images2,
+        t.features.post1,
+        t.features.story7,
+        t.features.exposureBasic
+      ]
+    },
+    {
+      id: 'pro',
+      name: t.pro,
+      price: '₪249',
+      popular: true,
+      features: [
+        t.features.images4,
+        t.features.postPro,
+        t.features.story14,
+        t.features.priorityPro,
+        t.features.exposurePro
+      ]
+    },
+    {
+      id: 'premium',
+      name: t.premium,
+      price: '₪449',
+      premium: true,
+      features: [
+        t.features.imagesPremium,
+        t.features.postPremium,
+        t.features.story30,
+        t.features.priorityFull,
+        t.features.exposureMax,
+        t.features.guidance,
+        t.features.video
+      ]
+    }
+  ];
+
+  const handleAdminLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const res = await fetch('/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: adminPassword })
+    });
+    if (res.ok) {
+      setIsAdmin(true);
+      setView('admin-dashboard');
+      fetchOrders();
+    } else {
+      alert('סיסמה שגויה');
+    }
+  };
+
+  const fetchOrders = async () => {
+    const res = await fetch('/api/admin/orders');
+    const data = await res.json();
+    setOrders(data);
+  };
+
+  const checkOrderStatus = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    const id = orderStatusId.replace('YG-', '').replace('#', '');
+    const res = await fetch(`/api/orders/${id}`);
+    if (res.ok) {
+      const data = await res.json();
+      setCheckedOrder(data);
+    } else {
+      alert('הזמנה לא נמצאה');
+      setCheckedOrder(null);
+    }
+    setLoading(false);
+  };
+
+  const updateOrderStatus = async (id: string, status: string) => {
+    await fetch(`/api/admin/orders/${id}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status })
+    });
+    fetchOrders();
+  };
+
+  const [formData, setFormData] = useState({
+    fullName: '',
+    phone: '',
+    model: '',
+    year: '',
+    mileage: '',
+    price: '',
+    registration: '',
+    testUntil: '',
+    location: '',
+    paymentProof: '',
+    carImages: [] as string[]
+  });
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: 'paymentProof' | 'carImages') => {
+    const files = e.target.files;
+    if (!files) return;
+
+    const readers = Array.from(files).map(file => {
+      return new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(file as Blob);
+      });
+    });
+
+    Promise.all(readers).then(results => {
+      if (field === 'paymentProof') {
+        setFormData(prev => ({ ...prev, paymentProof: results[0] }));
+      } else {
+        setFormData(prev => ({ ...prev, carImages: [...prev.carImages, ...results] }));
+      }
+    });
+  };
+
+  const handleSubmitOrder = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    
+    const res = await fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...formData,
+        packageName: selectedPackage?.name
+      })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      const id = data.orderId;
+      setOrderId(id);
+      setView('success');
+      
+      // WhatsApp message
+      const formattedId = `#${id}`;
+      const message = `*YOUGO ISRAEL | אישור הזמנה חדשה* 🚗💨
+---------------------------------------
+*מספר הזמנה:* ${formattedId}
+*חבילה נבחרת:* ${selectedPackage?.name}
+---------------------------------------
+
+👤 *פרטי לקוח:*
+• שם מלא: ${formData.fullName}
+• טלפון: ${formData.phone}
+
+🚘 *פרטי רכב:*
+• דגם: ${formData.model}
+• שנה: ${formData.year}
+• קילומטראז': ${formData.mileage}
+• מחיר מבוקש: ${formData.price}
+• עליה לכביש: ${formData.registration}
+• טסט עד: ${formData.testUntil}
+• מיקום: ${formData.location}
+
+---------------------------------------
+✅ *אישור תשלום הועלה בהצלחה למערכת.*
+
+📸 *נא לשלוח כאן את תמונות וסרטון הרכב כדי שנוכל להתחיל בעיצוב המודעה!*
+---------------------------------------
+_נשלח אוטומטית ממערכת YOUGO_`;
+
+      const whatsappUrl = `https://wa.me/972546980606?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, '_blank');
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div className="min-h-screen pb-20">
+      <Navbar lang={lang} setLang={setLang} isAdmin={isAdmin} onLogout={() => { setIsAdmin(false); setView('home'); }} siteSettings={siteSettings} setView={setView} />
+
+      <main className="pt-32 px-4 max-w-7xl mx-auto">
+        <AnimatePresence mode="wait">
+          {view === 'home' && (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="space-y-24"
+            >
+              {/* Hero */}
+              <section className="text-center space-y-8 py-12">
+                <motion.h1 
+                  initial={{ scale: 0.9 }}
+                  animate={{ scale: 1 }}
+                  className="text-5xl md:text-7xl font-black leading-tight"
+                >
+                  {siteSettings.hero_title_he || t.heroTitle}
+                </motion.h1>
+                <p className="text-xl text-white/60 max-w-2xl mx-auto">
+                  {siteSettings.hero_subtitle_he || t.heroSubtitle}
+                </p>
+                <div className="flex flex-wrap justify-center gap-4">
+                  <button 
+                    onClick={() => {
+                      const el = document.getElementById('packages');
+                      el?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="btn-primary"
+                  >
+                    {t.startOrder}
+                  </button>
+                  <div className="flex items-center gap-4 px-6 py-3 bg-white/5 rounded-xl border border-white/10">
+                    <Instagram className="text-brand-red" />
+                    <span className="font-bold">{siteSettings.followers_count} עוקבים</span>
+                  </div>
+                </div>
+              </section>
+
+              {/* How it Works */}
+              <section id="how-it-works" className="space-y-16">
+                <div className="text-center space-y-4">
+                  <h2 className="text-4xl font-black">איך זה עובד?</h2>
+                  <p className="text-white/60">3 שלבים פשוטים והרכב שלך באוויר</p>
+                </div>
+                <div className="grid md:grid-cols-3 gap-8">
+                  {[
+                    { step: '01', title: 'בחירת חבילה', desc: 'בוחרים את חבילת הפרסום המתאימה לכם ביותר', icon: <LayoutDashboard size={32} /> },
+                    { step: '02', title: 'הזנת פרטים', desc: 'ממלאים את פרטי הרכב ומעלים אישור תשלום', icon: <FileText size={32} /> },
+                    { step: '03', title: 'פרסום וחשיפה', desc: 'אנחנו מעצבים ומפרסמים את המודעה שלכם', icon: <Send size={32} /> },
+                  ].map((item, i) => (
+                    <motion.div 
+                      key={i}
+                      whileHover={{ y: -10, backgroundColor: 'rgba(225,29,72,0.05)' }}
+                      className="glass-card p-10 text-center space-y-6 relative group transition-all"
+                    >
+                      <div className="text-6xl font-black text-white/5 absolute top-4 right-8 group-hover:text-brand-red/10 transition-colors">
+                        {item.step}
+                      </div>
+                      <div className="w-16 h-16 bg-brand-red/10 rounded-2xl flex items-center justify-center mx-auto text-brand-red group-hover:scale-110 transition-transform">
+                        {item.icon}
+                      </div>
+                      <div className="space-y-2">
+                        <h3 className="text-xl font-black">{item.title}</h3>
+                        <p className="text-sm text-white/60 leading-relaxed">{item.desc}</p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </section>
+
+              {/* Packages */}
+              <section id="packages" className="space-y-12 overflow-hidden">
+                <div className="text-center space-y-4">
+                  <h2 className="text-4xl font-black">{t.packages}</h2>
+                  <p className="text-white/60">בחר את המסלול המתאים ביותר עבורך</p>
+                </div>
+                <div className="flex md:grid md:grid-cols-3 gap-8 overflow-x-auto pb-8 snap-x no-scrollbar">
+                  {packages.map(pkg => (
+                    <div key={pkg.id} className="snap-center">
+                      <PackageCard 
+                        pkg={pkg} 
+                        lang={lang} 
+                        onSelect={(p) => {
+                          setSelectedPackage(p);
+                          setView('booking');
+                        }} 
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Business Package */}
+                <motion.div 
+                  whileHover={{ scale: 1.01 }}
+                  className="max-w-4xl mx-auto mt-12 p-8 rounded-3xl bg-gradient-to-r from-brand-red/10 to-transparent border border-brand-red/20 flex flex-col md:flex-row items-center justify-between gap-8"
+                >
+                  <div className="space-y-4 text-center md:text-right">
+                    <div className="inline-block px-4 py-1 bg-brand-red text-white text-[10px] font-black rounded-full uppercase tracking-widest">
+                      לסוכנויות ומגרשים
+                    </div>
+                    <h3 className="text-3xl font-black">חבילת BUSINESS לעסקים</h3>
+                    <p className="text-white/60 leading-relaxed">
+                      מנהלים מגרש רכבים? יש לנו חבילה מיוחדת עבורכם. 
+                      <br />
+                      פרסום של עד 50 רכבים בחודש במחיר ללא תחרות.
+                    </p>
+                  </div>
+                  <a 
+                    href="https://wa.me/972546980606?text=שלום, אני מעוניין בחבילת עסקים לסוכנות שלי"
+                    target="_blank"
+                    className="btn-primary whitespace-nowrap flex items-center gap-3"
+                  >
+                    <MessageSquare size={20} />
+                    דברו איתנו בוואטסאפ
+                  </a>
+                </motion.div>
+
+                {/* Persuasive Text */}
+                <div className="max-w-3xl mx-auto text-center space-y-8 pt-8">
+                  <h3 className="text-2xl font-black text-brand-red">המכירה מתחילה בפרסום נכון.</h3>
+                  <div className="text-lg text-white/80 leading-relaxed font-bold">
+                    ב־YOUGO אנחנו לא רק מעלים מודעה —
+                    <br />
+                    אנחנו יוצרים חשיפה אמיתית שמביאה קונים רציניים.
+                    <br />
+                    בחר חבילה, העלה פרטים, ושלם —
+                    <br />
+                    ואנחנו נדאג שהרכב שלך יקבל את הבמה שמגיעה לו.
+                  </div>
+
+                  {/* Payment Info Box */}
+                  <div className="inline-flex flex-wrap justify-center gap-6 p-4 rounded-2xl bg-white/5 border border-white/10 text-xs font-black uppercase tracking-widest">
+                    <div className="flex items-center gap-2">
+                      <Lock size={14} className="text-brand-red" />
+                      <span>תשלום מאובטח</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Smartphone size={14} className="text-brand-red" />
+                      <span>תשלום דרך Bit / PayBox</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <MessageSquare size={14} className="text-brand-red" />
+                      <span>תמיכה דרך WhatsApp</span>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              {/* Why Us Section */}
+              <section id="why-us" className="space-y-16">
+                <div className="text-center space-y-4">
+                  <h2 className="text-4xl font-black">{t.whyUs.title}</h2>
+                </div>
+                <div className="grid md:grid-cols-3 gap-8">
+                  {[
+                    { ...t.whyUs.audience, icon: <Users size={32} /> },
+                    { ...t.whyUs.speed, icon: <Zap size={32} /> },
+                    { ...t.whyUs.results, icon: <TrendingUp size={32} /> },
+                  ].map((item, i) => (
+                    <motion.div 
+                      key={i}
+                      whileHover={{ y: -5 }}
+                      className="glass-card p-10 space-y-6 border-white/5"
+                    >
+                      <div className="w-16 h-16 bg-brand-red/10 rounded-2xl flex items-center justify-center text-brand-red">
+                        {item.icon}
+                      </div>
+                      <div className="space-y-4">
+                        <h3 className="text-xl font-black">{item.title}</h3>
+                        <p className="text-sm text-white/60 leading-relaxed">{item.desc}</p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </section>
+
+              {/* FAQ Section */}
+              <section id="faq" className="max-w-4xl mx-auto space-y-12">
+                <div className="text-center space-y-4">
+                  <h2 className="text-4xl font-black">שאלות נפוצות</h2>
+                  <p className="text-white/60">כל מה שצריך לדעת על תהליך הפרסום והמכירה</p>
+                </div>
+                <div className="grid gap-4">
+                  {t.faqs.slice(0, showAllFaqs ? t.faqs.length : 3).map((item, i) => (
+                    <motion.div 
+                      key={i}
+                      className="glass-card overflow-hidden"
+                    >
+                      <button 
+                        onClick={() => setActiveFaq(activeFaq === i ? null : i)}
+                        className="w-full p-6 flex items-center justify-between text-right hover:bg-white/5 transition-colors"
+                      >
+                        <span className="font-bold text-lg">{item.q}</span>
+                        {activeFaq === i ? <ChevronUp className="text-brand-red" /> : <ChevronDown className="text-white/40" />}
+                      </button>
+                      <AnimatePresence>
+                        {activeFaq === i && (
+                          <motion.div 
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            className="px-6 pb-6 text-white/60 leading-relaxed"
+                          >
+                            <div className="pt-2 border-t border-white/5">
+                              {item.a}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
+                  ))}
+                </div>
+                
+                {!showAllFaqs && (
+                  <div className="text-center pt-4">
+                    <button 
+                      onClick={() => setShowAllFaqs(true)}
+                      className="flex items-center gap-2 mx-auto text-brand-red font-black uppercase tracking-widest hover:scale-105 transition-transform"
+                    >
+                      הצג את כל השאלות
+                      <ChevronDown size={20} />
+                    </button>
+                  </div>
+                )}
+              </section>
+
+              {/* Footer */}
+              <footer className="border-t border-white/10 pt-20 pb-12 space-y-12">
+                <div className="flex flex-col items-center text-center space-y-8">
+                  <div className="space-y-4">
+                    <div className="text-3xl font-black tracking-tighter text-brand-red">
+                      YOUGO <span className="text-white">ISRAEL</span>
+                    </div>
+                    <p className="text-white/60 max-w-md mx-auto">
+                      הצטרפו לאלפי לקוחות מרוצים שכבר מכרו את הרכב שלהם דרך הפלטפורמה המובילה בישראל. אנחנו כאן כדי להפוך את המכירה שלכם למהירה, פשוטה ומקצועית.
+                    </p>
+                  </div>
+
+                  {/* Social Icons */}
+                  <div className="flex items-center gap-6">
+                    <a href="https://instagram.com" target="_blank" className="p-3 bg-white/5 rounded-full hover:bg-brand-red hover:scale-110 transition-all">
+                      <Instagram size={24} />
+                    </a>
+                    <a href="https://tiktok.com" target="_blank" className="p-3 bg-white/5 rounded-full hover:bg-brand-red hover:scale-110 transition-all">
+                      <Smartphone size={24} />
+                    </a>
+                    <a href="https://telegram.org" target="_blank" className="p-3 bg-white/5 rounded-full hover:bg-brand-red hover:scale-110 transition-all">
+                      <Send size={24} />
+                    </a>
+                    <a href="https://wa.me/972546980606" target="_blank" className="p-3 bg-white/5 rounded-full hover:bg-brand-red hover:scale-110 transition-all">
+                      <MessageSquare size={24} />
+                    </a>
+                  </div>
+
+                  <div className="flex flex-wrap justify-center gap-x-12 gap-y-4 text-sm font-bold">
+                    <button 
+                      onClick={() => setModalContent(t.pages.terms)}
+                      className="flex items-center gap-2 hover:text-brand-red transition-colors"
+                    >
+                      <FileText size={18} className="text-brand-red" />
+                      תקנון
+                    </button>
+                    <button 
+                      onClick={() => setModalContent(t.pages.privacy)}
+                      className="flex items-center gap-2 hover:text-brand-red transition-colors"
+                    >
+                      <Lock size={18} className="text-brand-red" />
+                      פרטיות
+                    </button>
+                    <button 
+                      onClick={() => setModalContent(t.pages.about)}
+                      className="flex items-center gap-2 hover:text-brand-red transition-colors"
+                    >
+                      <Info size={18} className="text-brand-red" />
+                      מי אנחנו
+                    </button>
+                    <button 
+                      onClick={() => setModalContent({ title: t.whyUs.title, content: `${t.whyUs.audience.title}\n${t.whyUs.audience.desc}\n\n${t.whyUs.speed.title}\n${t.whyUs.speed.desc}\n\n${t.whyUs.results.title}\n${t.whyUs.results.desc}` })}
+                      className="flex items-center gap-2 hover:text-brand-red transition-colors"
+                    >
+                      <TrendingUp size={18} className="text-brand-red" />
+                      למה אנחנו
+                    </button>
+                    <button 
+                      onClick={() => setView('admin-login')}
+                      className="flex items-center gap-2 hover:text-brand-red transition-colors"
+                    >
+                      <LayoutDashboard size={18} className="text-brand-red" />
+                      ניהול
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="pt-8 border-t border-white/5 text-center">
+                  <p className="text-xs text-white/40">© 2024 YOUGO ISRAEL. כל הזכויות שמורות. עוצב ופותح במקצועיות.</p>
+                </div>
+              </footer>
+            </motion.div>
+          )}
+
+          {view === 'booking' && (
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="max-w-2xl mx-auto space-y-8"
+            >
+              <button 
+                onClick={() => setView('home')}
+                className="flex items-center gap-2 text-white/60 hover:text-white mb-4"
+              >
+                <ArrowLeft size={20} />
+                חזרה לחבילות
+              </button>
+
+              <div className="glass-card p-8 space-y-8">
+                <div className="space-y-2">
+                  <h2 className="text-3xl font-bold">{t.checkout}</h2>
+                  <p className="text-brand-red font-bold">חבילה נבחרת: {selectedPackage?.name}</p>
+                </div>
+
+                <form onSubmit={handleSubmitOrder} className="space-y-8">
+                  {/* Car Info */}
+                  <div className="space-y-4">
+                    <h3 className="font-bold text-lg border-r-4 border-brand-red pr-3">{t.carDetails}</h3>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <input 
+                        type="text" 
+                        placeholder="דגם רכב" 
+                        required
+                        className="input-field"
+                        value={formData.model}
+                        onChange={e => setFormData({...formData, model: e.target.value})}
+                      />
+                      <input 
+                        type="text" 
+                        placeholder="שנה" 
+                        required
+                        className="input-field"
+                        value={formData.year}
+                        onChange={e => setFormData({...formData, year: e.target.value})}
+                      />
+                      <input 
+                        type="text" 
+                        placeholder="קילומטראז'" 
+                        required
+                        className="input-field"
+                        value={formData.mileage}
+                        onChange={e => setFormData({...formData, mileage: e.target.value})}
+                      />
+                      <input 
+                        type="text" 
+                        placeholder="מחיר מבוקש" 
+                        required
+                        className="input-field"
+                        value={formData.price}
+                        onChange={e => setFormData({...formData, price: e.target.value})}
+                      />
+                      <input 
+                        type="text" 
+                        placeholder="תאריך עלייה לכביש" 
+                        required
+                        className="input-field"
+                        value={formData.registration}
+                        onChange={e => setFormData({...formData, registration: e.target.value})}
+                      />
+                      <input 
+                        type="text" 
+                        placeholder="טסט עד" 
+                        required
+                        className="input-field"
+                        value={formData.testUntil}
+                        onChange={e => setFormData({...formData, testUntil: e.target.value})}
+                      />
+                      <input 
+                        type="text" 
+                        placeholder="מיקום בארץ" 
+                        required
+                        className="input-field md:col-span-2"
+                        value={formData.location}
+                        onChange={e => setFormData({...formData, location: e.target.value})}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Personal Info */}
+                  <div className="space-y-4">
+                    <h3 className="font-bold text-lg border-r-4 border-brand-red pr-3">{t.personalDetails}</h3>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <input 
+                        type="text" 
+                        placeholder="שם מלא" 
+                        required
+                        className="input-field"
+                        value={formData.fullName}
+                        onChange={e => setFormData({...formData, fullName: e.target.value})}
+                      />
+                      <input 
+                        type="tel" 
+                        placeholder="טלפון" 
+                        required
+                        className="input-field"
+                        value={formData.phone}
+                        onChange={e => setFormData({...formData, phone: e.target.value})}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Payment Method Selection */}
+                  <div className="space-y-4">
+                    <h3 className="font-bold text-lg border-r-4 border-brand-red pr-3">בחירת אמצעי תשלום</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <button 
+                        type="button"
+                        onClick={() => {}}
+                        className="p-4 rounded-xl border-2 border-brand-red bg-brand-red/5 flex flex-col items-center gap-2"
+                      >
+                        <Smartphone size={24} className="text-brand-red" />
+                        <span className="font-bold">Bit / PayBox</span>
+                      </button>
+                      <button 
+                        type="button"
+                        disabled
+                        className="p-4 rounded-xl border-2 border-white/5 bg-white/5 opacity-50 flex flex-col items-center gap-2 cursor-not-allowed"
+                      >
+                        <CreditCard size={24} className="text-white/40" />
+                        <span className="font-bold text-white/40">אשראי (בקרוב)</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Payment Info */}
+                  <div className="p-6 bg-brand-red/10 border border-brand-red/20 rounded-xl space-y-4">
+                    <div className="flex items-center gap-3 text-brand-red">
+                      <CreditCard size={24} />
+                      <h3 className="font-bold text-lg">ביצוע תשלום</h3>
+                    </div>
+                    <p className="text-sm">נא להעביר <span className="font-bold">{selectedPackage?.price}</span> ב-Bit או PayBox למספר:</p>
+                    <div className="flex items-center gap-4">
+                      <div className="flex-grow text-2xl font-black tracking-widest text-center py-2 bg-white/5 rounded-lg border border-white/10">
+                        054-6980606
+                      </div>
+                      <button 
+                        type="button"
+                        onClick={() => {
+                          navigator.clipboard.writeText('0546980606');
+                          alert('המספר הועתק!');
+                        }}
+                        className="p-3 bg-brand-red rounded-lg hover:bg-red-700 transition-colors"
+                        title="העתק מספר"
+                      >
+                        <FileText size={20} />
+                      </button>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-bold block">{t.uploadProof}</label>
+                      <div className="relative">
+                        <input 
+                          type="file" 
+                          required
+                          onChange={(e) => handleFileChange(e, 'paymentProof')}
+                          className="absolute inset-0 opacity-0 cursor-pointer"
+                        />
+                        <div className="input-field flex items-center justify-center gap-2 py-6 border-dashed border-2">
+                          {formData.paymentProof ? (
+                            <span className="text-green-500 flex items-center gap-2"><Check size={18}/> קובץ נבחר</span>
+                          ) : (
+                            <><Upload size={20}/> לחץ להעלאת צילום מסך</>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Car Images */}
+                  <div className="space-y-4">
+                    <h3 className="font-bold text-lg border-r-4 border-brand-red pr-3">תמונות הרכב</h3>
+                    <div className="relative">
+                      <input 
+                        type="file" 
+                        multiple
+                        onChange={(e) => handleFileChange(e, 'carImages')}
+                        className="absolute inset-0 opacity-0 cursor-pointer"
+                      />
+                      <div className="input-field flex flex-col items-center justify-center gap-2 py-10 border-dashed border-2">
+                        <Camera size={32} className="text-white/40" />
+                        <span className="text-sm font-bold">לחץ להעלאת תמונות הרכב</span>
+                        <span className="text-xs text-white/40">ניתן להעלות מספר תמונות</span>
+                        {formData.carImages.length > 0 && (
+                          <span className="mt-2 text-brand-red font-bold">{formData.carImages.length} תמונות נבחרו</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <button 
+                    type="submit" 
+                    disabled={loading}
+                    className="w-full btn-primary py-4 text-xl flex items-center justify-center gap-3"
+                  >
+                    {loading ? 'שולח...' : t.submitOrder}
+                    {!loading && <ChevronRight size={24} />}
+                  </button>
+                </form>
+              </div>
+            </motion.div>
+          )}
+
+          {view === 'success' && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="max-w-xl mx-auto text-center space-y-8 py-20"
+            >
+              <div className="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center mx-auto shadow-lg shadow-green-500/20">
+                <Check size={48} strokeWidth={3} />
+              </div>
+              <div className="space-y-4">
+                <h2 className="text-4xl font-black">{t.orderSuccess}</h2>
+                <p className="text-xl text-white/60">מספר הזמנה: <span className="text-brand-red font-black">#{orderId}</span></p>
+              </div>
+              <div className="glass-card p-8 space-y-4">
+                <p className="font-bold">מה קורה עכשיו?</p>
+                <ul className="text-right space-y-3 text-sm text-white/80">
+                  <li className="flex items-center gap-2"><CheckCircle2 size={16} className="text-green-500"/> הודעת וואטסאפ נשלחה למנהל</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 size={16} className="text-green-500"/> הצוות שלנו יבדוק את פרטי ההזמנה</li>
+                  <li className="flex items-center gap-2"><CheckCircle2 size={16} className="text-green-500"/> המודעה תעלה לאינסטגרם לאחר אישור</li>
+                  <li className="pt-4 text-brand-red font-black border-t border-white/5">ניתן לבדוק את מצב ההזמנה בכל עת דרך מספר ההזמנה באתר!</li>
+                </ul>
+              </div>
+              <button 
+                onClick={() => setView('home')}
+                className="text-brand-red font-bold hover:underline"
+              >
+                חזרה לדף הבית
+              </button>
+            </motion.div>
+          )}
+
+          {view === 'check-status' && (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="max-w-xl mx-auto py-12 space-y-8"
+            >
+              <button 
+                onClick={() => setView('home')}
+                className="flex items-center gap-2 text-white/60 hover:text-white mb-4"
+              >
+                <ArrowLeft size={20} />
+                חזרה לדף הבית
+              </button>
+
+              <div className="glass-card p-10 space-y-8">
+                <div className="text-center space-y-4">
+                  <div className="w-20 h-20 bg-brand-red/10 rounded-full flex items-center justify-center mx-auto text-brand-red">
+                    <Eye size={40} />
+                  </div>
+                  <h2 className="text-3xl font-black">בדיקת מצב הזמנה</h2>
+                  <p className="text-white/60">הזן את מספר ההזמנה שלך כדי לראות את הסטטוס העדכני</p>
+                </div>
+
+                <form onSubmit={checkOrderStatus} className="space-y-4">
+                  <input 
+                    type="text" 
+                    placeholder="מספר הזמנה (לדוגמה: YG-2380)" 
+                    required
+                    className="input-field text-center text-xl font-black tracking-widest"
+                    value={orderStatusId}
+                    onChange={e => setOrderStatusId(e.target.value)}
+                  />
+                  <button 
+                    type="submit" 
+                    disabled={loading}
+                    className="w-full btn-primary py-4 text-lg"
+                  >
+                    {loading ? 'בודק...' : 'בדוק סטטוס'}
+                  </button>
+                </form>
+
+                {checkedOrder && (
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="p-6 rounded-2xl bg-white/5 border border-white/10 space-y-6"
+                  >
+                    <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                      <span className="text-white/40 font-bold">סטטוס נוכחי:</span>
+                      <div className={`inline-flex items-center gap-2 font-black px-4 py-2 rounded-full border ${
+                        checkedOrder.status === 'Published' ? 'bg-green-500/10 text-green-500 border-green-500/20' :
+                        checkedOrder.status === 'Rejected' ? 'bg-red-500/10 text-red-500 border-red-500/20' :
+                        checkedOrder.status === 'Payment Verified' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' :
+                        'bg-yellow-500/10 text-yellow-500 border-yellow-500/20'
+                      }`}>
+                        {checkedOrder.status === 'Published' ? 'פורסם' :
+                         checkedOrder.status === 'Rejected' ? 'נדחה' :
+                         checkedOrder.status === 'Payment Verified' ? 'תשלום אושר' :
+                         'ממתין לבדיקה'}
+                      </div>
+                    </div>
+                    <div className="space-y-4">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-white/40">לקוח:</span>
+                        <span className="font-bold">{checkedOrder.full_name}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-white/40">רכב:</span>
+                        <span className="font-bold">{checkedOrder.car_model}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-white/40">חבילה:</span>
+                        <span className="font-bold">{checkedOrder.package_name}</span>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </div>
+            </motion.div>
+          )}
+          {view === 'admin-login' && (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="max-w-md mx-auto py-20"
+            >
+              <div className="glass-card p-8 space-y-6">
+                <h2 className="text-2xl font-bold text-center">כنيסת מנהל</h2>
+                <form onSubmit={handleAdminLogin} className="space-y-4">
+                  <input 
+                    type="password" 
+                    placeholder="סיסמה" 
+                    required
+                    className="input-field"
+                    value={adminPassword}
+                    onChange={e => setAdminPassword(e.target.value)}
+                  />
+                  <button type="submit" className="w-full btn-primary">כניסה</button>
+                </form>
+                <button onClick={() => setView('home')} className="w-full text-sm text-white/40">ביטול</button>
+              </div>
+            </motion.div>
+          )}
+
+          {view === 'admin-dashboard' && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="space-y-12"
+            >
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="space-y-2">
+                  <h2 className="text-4xl font-black flex items-center gap-4">
+                    <LayoutDashboard className="text-brand-red" size={40} />
+                    לוח בקרה
+                  </h2>
+                  <div className="flex gap-4 mt-4">
+                    <button 
+                      onClick={() => setAdminTab('orders')}
+                      className={`px-6 py-2 rounded-full font-black text-sm transition-all ${adminTab === 'orders' ? 'bg-brand-red text-white' : 'bg-white/5 text-white/60 hover:bg-white/10'}`}
+                    >
+                      הזמנות
+                    </button>
+                    <button 
+                      onClick={() => setAdminTab('settings')}
+                      className={`px-6 py-2 rounded-full font-black text-sm transition-all ${adminTab === 'settings' ? 'bg-brand-red text-white' : 'bg-white/5 text-white/60 hover:bg-white/10'}`}
+                    >
+                      הגדרות אתר
+                    </button>
+                  </div>
+                </div>
+                {adminTab === 'orders' && (
+                  <div className="flex items-center gap-4">
+                    <div className="glass-card px-6 py-3 flex items-center gap-3">
+                      <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+                      <span className="text-sm font-bold">{orders.length} הזמנות סה"כ</span>
+                    </div>
+                    <button 
+                      onClick={fetchOrders} 
+                      className="btn-primary py-3 px-6 flex items-center gap-2"
+                    >
+                      <ArrowLeft size={20} className="rotate-90" />
+                      רענן נתונים
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {adminTab === 'orders' ? (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    {[
+                      { label: 'ממתין לבדיקה', count: orders.filter(o => o.status === 'Pending Review').length, color: 'text-yellow-600', icon: <Calendar size={20} /> },
+                      { label: 'תשלום מאושר', count: orders.filter(o => o.status === 'Payment Verified').length, color: 'text-blue-600', icon: <ShieldCheck size={20} /> },
+                      { label: 'פורסם', count: orders.filter(o => o.status === 'Published').length, color: 'text-green-600', icon: <CheckCircle2 size={20} /> },
+                      { label: 'נדחה', count: orders.filter(o => o.status === 'Rejected').length, color: 'text-red-600', icon: <X size={20} /> },
+                    ].map((stat, i) => (
+                      <motion.div 
+                        key={i} 
+                        whileHover={{ y: -5 }}
+                        className="bg-white rounded-3xl p-6 shadow-xl border border-white/10 flex flex-col gap-4"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className={`p-3 rounded-2xl bg-gray-100 ${stat.color}`}>
+                            {stat.icon}
+                          </div>
+                          <div className="text-4xl font-black text-black">{stat.count}</div>
+                        </div>
+                        <div className="text-sm font-black text-gray-500 uppercase tracking-widest">{stat.label}</div>
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  <div className="glass-card overflow-hidden border-white/10">
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-right">
+                        <thead className="bg-white/5 text-sm font-bold border-b border-white/10">
+                          <tr>
+                            <th className="p-6">#ID</th>
+                            <th className="p-6">לקוח</th>
+                            <th className="p-6">חבילה</th>
+                            <th className="p-6">רכב</th>
+                            <th className="p-6">סטטוס</th>
+                            <th className="p-6 text-center">פעולות</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/5">
+                          {orders.map(order => (
+                            <tr key={order.id} className="hover:bg-white/5 transition-colors group">
+                              <td className="p-6 font-mono text-sm text-brand-red font-black">
+                                YG-{order.id.toString().padStart(4, '0')}
+                              </td>
+                              <td className="p-6">
+                                <div className="text-sm font-bold">{order.full_name}</div>
+                                <div className="text-xs text-white/40 flex items-center gap-1">
+                                  <Smartphone size={12} />
+                                  {order.phone}
+                                </div>
+                              </td>
+                              <td className="p-6">
+                                <span className="text-xs font-bold bg-white/5 px-3 py-1 rounded-full border border-white/10">
+                                  {order.package_name}
+                                </span>
+                              </td>
+                              <td className="p-6">
+                                <div className="text-sm font-bold">{order.car_model}</div>
+                                <div className="text-xs text-white/40">{order.car_year} | {order.car_mileage} ק"מ</div>
+                              </td>
+                              <td className="p-6">
+                                <div className={`inline-flex items-center gap-2 text-[10px] font-bold px-3 py-1.5 rounded-full border ${
+                                  order.status === 'Published' ? 'bg-green-500/10 text-green-500 border-green-500/20' :
+                                  order.status === 'Rejected' ? 'bg-red-500/10 text-red-500 border-red-500/20' :
+                                  order.status === 'Payment Verified' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' :
+                                  'bg-yellow-500/10 text-yellow-500 border-yellow-500/20'
+                                }`}>
+                                  <div className={`w-1.5 h-1.5 rounded-full ${
+                                    order.status === 'Published' ? 'bg-green-500' :
+                                    order.status === 'Rejected' ? 'bg-red-500' :
+                                    order.status === 'Payment Verified' ? 'bg-blue-500' :
+                                    'bg-yellow-500'
+                                  }`} />
+                                  {order.status}
+                                </div>
+                              </td>
+                              <td className="p-6">
+                                <div className="flex items-center justify-center gap-3">
+                                  <button 
+                                    onClick={() => {
+                                      alert(`פרטי הזמנה ${order.id}:\nמחיר: ${order.car_price}\nמיקום: ${order.location}\nתאריך: ${new Date(order.created_at).toLocaleDateString('he-IL')}`);
+                                    }}
+                                    className="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors text-white/60 hover:text-white"
+                                    title="צפה בפרטים"
+                                  >
+                                    <Eye size={18} />
+                                  </button>
+                                  <select 
+                                    className="bg-dark-card border border-white/10 text-xs rounded-lg p-2 focus:border-brand-red outline-none transition-colors"
+                                    value={order.status}
+                                    onChange={(e) => updateOrderStatus(order.id, e.target.value)}
+                                  >
+                                    <option value="Pending Review">ממתין</option>
+                                    <option value="Payment Verified">תשלום אושר</option>
+                                    <option value="Published">פורסם</option>
+                                    <option value="Rejected">נדחה</option>
+                                  </select>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="glass-card p-8 max-w-2xl space-y-8">
+                  <h3 className="text-2xl font-black">הגדרות אתר</h3>
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-white/40 uppercase tracking-widest">כמות עוקבים (Instagram)</label>
+                      <input 
+                        type="text" 
+                        className="input-field" 
+                        value={siteSettings.followers_count}
+                        onChange={(e) => setSiteSettings({ ...siteSettings, followers_count: e.target.value })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-white/40 uppercase tracking-widest">מספר WhatsApp</label>
+                      <input 
+                        type="text" 
+                        className="input-field" 
+                        value={siteSettings.whatsapp_number}
+                        onChange={(e) => setSiteSettings({ ...siteSettings, whatsapp_number: e.target.value })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-white/40 uppercase tracking-widest">כותרת ראשית (Hero)</label>
+                      <input 
+                        type="text" 
+                        className="input-field" 
+                        value={siteSettings.hero_title_he}
+                        onChange={(e) => setSiteSettings({ ...siteSettings, hero_title_he: e.target.value })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-white/40 uppercase tracking-widest">תת-כותרת (Hero)</label>
+                      <textarea 
+                        className="input-field h-24" 
+                        value={siteSettings.hero_subtitle_he}
+                        onChange={(e) => setSiteSettings({ ...siteSettings, hero_subtitle_he: e.target.value })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-white/40 uppercase tracking-widest">שורת מיצוב (Positioning Line)</label>
+                      <input 
+                        type="text" 
+                        className="input-field" 
+                        value={siteSettings.positioning_line_he}
+                        onChange={(e) => setSiteSettings({ ...siteSettings, positioning_line_he: e.target.value })}
+                      />
+                    </div>
+                    <button 
+                      onClick={async () => {
+                        setLoading(true);
+                        const res = await fetch('/api/admin/settings', {
+                          method: 'PATCH',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify(siteSettings)
+                        });
+                        if (res.ok) alert('ההגדרות נשמרו בהצלחה');
+                        setLoading(false);
+                      }}
+                      className="btn-primary w-full py-4"
+                      disabled={loading}
+                    >
+                      {loading ? 'שומר...' : 'שמור הגדרות'}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </main>
+
+      <Modal 
+        isOpen={!!modalContent} 
+        onClose={() => setModalContent(null)} 
+        title={modalContent?.title || ''}
+      >
+        {modalContent?.content}
+      </Modal>
+    </div>
+  );
+}
