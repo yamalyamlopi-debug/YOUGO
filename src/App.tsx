@@ -174,7 +174,7 @@ const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
     <motion.div
       whileHover={{ y: -8 }}
       transition={{ type: "spring", stiffness: 280 }}
-      className="relative w-full rounded-3xl overflow-hidden h-full flex flex-col"
+      className="relative w-[300px] md:w-full rounded-3xl overflow-hidden h-full flex flex-col snap-center shrink-0"
       style={{
         boxShadow: '0 20px 40px -15px rgba(212,175,55,0.3), 0 0 0 1px rgba(212,175,55,0.2) inset',
         background: 'radial-gradient(circle at 100% 0%, #2a1f0a 0%, #0f0c05 80%)'
@@ -273,7 +273,7 @@ const DuoDealPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pac
       viewport={{ once: true }}
       whileHover={{ y: -8 }}
       transition={{ type: 'spring', stiffness: 280 }}
-      className="relative rounded-3xl overflow-hidden h-full flex flex-col"
+      className="relative w-[300px] md:w-full rounded-3xl overflow-hidden h-full flex flex-col snap-center shrink-0"
       style={{
         background: 'radial-gradient(circle at 100% 0%, #1e1428 0%, #0b0710 100%)',
         boxShadow: '0 20px 40px -15px rgba(139,92,246,0.3), 0 0 0 1px rgba(139,92,246,0.2) inset'
@@ -370,7 +370,7 @@ const EquipmentPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: P
     <motion.div
       whileHover={{ y: -6, scale: 1.01 }}
       transition={{ type: "spring", stiffness: 300 }}
-      className="relative flex flex-col p-7 rounded-2xl border transition-all duration-500 h-full"
+      className="relative w-[300px] md:w-full rounded-2xl border transition-all duration-500 h-full flex flex-col p-7 snap-center shrink-0"
       style={{
         background: isHeavy 
           ? 'linear-gradient(135deg, rgba(234,88,12,0.08) 0%, rgba(15,12,8,1) 100%)' 
@@ -475,7 +475,7 @@ const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
     <motion.div
       whileHover={{ y: -8 }}
       transition={{ type: "spring", stiffness: 300 }}
-      className="relative flex flex-col rounded-2xl min-w-[270px] md:min-w-0 h-full"
+      className="relative w-[300px] md:w-full rounded-2xl h-full flex flex-col snap-center shrink-0"
       style={{
         background: isPremium
           ? 'linear-gradient(155deg, rgba(200,16,46,0.12) 0%, rgba(10,5,5,1) 100%)'
@@ -939,6 +939,17 @@ _נשלח אוטומטית ממערכת YOUGO_`;
         .border-2.border-brand-red { border-color: #c8102e !important; }
         .btn-primary { background-color: #c8102e !important; }
         .btn-primary:hover { background-color: #a50d25 !important; }
+        
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar {
+          -ms-overflow-style: none;  /* IE and Edge */
+          scrollbar-width: none;  /* Firefox */
+        }
       `}</style>
       <Navbar lang={lang} setLang={setLang} isAdmin={isAdmin} onLogout={() => { setIsAdmin(false); setView('home'); }} siteSettings={siteSettings} setView={setView} />
 
@@ -1078,45 +1089,85 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                   <p className="text-white/60">בחר את המסלול המתאים ביותר עבורך</p>
                 </div>
                 
-                {/* Regular packages - 3 columns */}
-                <div className="grid md:grid-cols-3 gap-8">
-                  {packages.map(pkg => (
-                    <div key={pkg.id} className="h-full">
-                      <PackageCard 
-                        pkg={pkg} 
-                        lang={lang} 
+                {/* Regular packages - Desktop: 3 columns | Mobile: Horizontal scroll */}
+                <div>
+                  {/* شرح احترافي للباقات العادية */}
+                  <div className="text-center space-y-4 mb-8">
+                    <div className="inline-flex items-center gap-3 bg-blue-500/10 border border-blue-500/25 px-5 py-2.5 rounded-full">
+                      <Car size={16} className="text-blue-400" />
+                      <span className="text-[11px] font-black uppercase tracking-[0.2em] text-blue-400">חבילות רכב פרטי</span>
+                      <Zap size={16} className="text-blue-400" />
+                    </div>
+                    <h3 className="text-3xl md:text-4xl font-black">
+                      מוכרים{' '}
+                      <span className="text-brand-red">רכב פרטי?</span>
+                    </h3>
+                    <p className="text-white/50 max-w-xl mx-auto text-sm leading-relaxed">
+                      חבילות פרסום מותאמות אישית למכירת רכב פרטי — מתחילים מחבילת בסיס ועד לחבילת פרימיום עם חשיפה מקסימלית. 
+                      כל חבילה כוללת צילומים מקצועיים, פרסום באינסטגרם, סטוריז, וליווי אישי עד למכירה.
+                    </p>
+                  </div>
+                  
+                  {/* Mobile: Horizontal scroll | Desktop: Grid */}
+                  <div className="flex md:grid md:grid-cols-3 gap-6 overflow-x-auto pb-6 md:pb-0 snap-x no-scrollbar">
+                    {packages.map(pkg => (
+                      <div key={pkg.id} className="snap-start">
+                        <PackageCard 
+                          pkg={pkg} 
+                          lang={lang} 
+                          onSelect={(p) => {
+                            setSelectedPackage(p);
+                            setView('booking');
+                          }} 
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Premium Packages Row - VIP and DUO DEAL together */}
+                <div>
+                  {/* شرح احترافي للباقات المميزة */}
+                  <div className="text-center space-y-4 mb-8">
+                    <div className="inline-flex items-center gap-3 bg-amber-500/10 border border-amber-500/25 px-5 py-2.5 rounded-full">
+                      <Crown size={16} className="text-amber-400" />
+                      <span className="text-[11px] font-black uppercase tracking-[0.2em] text-amber-400">חבילות פרימיום VIP</span>
+                      <Star size={16} className="text-amber-400" />
+                    </div>
+                    <h3 className="text-3xl md:text-4xl font-black">
+                      מחפשים{' '}
+                      <span className="text-amber-400">יחס VIP?</span>
+                    </h3>
+                    <p className="text-white/50 max-w-xl mx-auto text-sm leading-relaxed">
+                      חבילות הפרימיום שלנו מיועדות ללקוחות שמצפים ליותר. VIP LUXURY כוללת חשיפה מקסימלית, עיצוב בלעדי, 
+                      וליווי אישי 24/7. DUO DEAL מאפשרת לפרסם שני רכבים בו זמנית ולחסוך 40% — העסקה המשתלמת ביותר.
+                    </p>
+                  </div>
+                  
+                  {/* Mobile: Horizontal scroll | Desktop: Grid */}
+                  <div className="flex md:grid md:grid-cols-2 gap-6 overflow-x-auto pb-6 md:pb-0 snap-x no-scrollbar">
+                    {/* VIP Package */}
+                    <div className="snap-start">
+                      <VIPPackageCard
+                        pkg={vipPackage}
+                        lang={lang}
                         onSelect={(p) => {
                           setSelectedPackage(p);
                           setView('booking');
-                        }} 
+                        }}
                       />
                     </div>
-                  ))}
-                </div>
 
-                {/* Premium Packages Row - VIP and DUO DEAL together - 2 columns */}
-                <div className="grid md:grid-cols-2 gap-8">
-                  {/* VIP Package */}
-                  <div className="h-full">
-                    <VIPPackageCard
-                      pkg={vipPackage}
-                      lang={lang}
-                      onSelect={(p) => {
-                        setSelectedPackage(p);
-                        setView('booking');
-                      }}
-                    />
-                  </div>
-
-                  {/* DUO DEAL Package */}
-                  <div className="h-full">
-                    <DuoDealPackageCard
-                      pkg={duoPackage}
-                      onSelect={(p) => {
-                        setSelectedPackage(p);
-                        setView('booking');
-                      }}
-                    />
+                    {/* DUO DEAL Package */}
+                    <div className="snap-start">
+                      <DuoDealPackageCard
+                        pkg={duoPackage}
+                        onSelect={(p) => {
+                          setSelectedPackage(p);
+                          setView('booking');
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -1139,10 +1190,26 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                     </p>
                   </div>
 
-                  {/* Equipment Cards - 2 columns */}
-                  <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                  {/* Equipment type tags showcase */}
+                  <div className="flex flex-wrap justify-center gap-3 pb-2">
+                    {[
+                      { label: '🚜 באגר', he: 'Excavator' },
+                      { label: '⛏️ מחפרון', he: 'Mini Excavator' },
+                      { label: '🔩 מיני באגר', he: 'Compact' },
+                      { label: '🔧 פופקט', he: 'Bobcat / Skid' },
+                      { label: '🏗️ עגורן', he: 'Crane' },
+                      { label: '🚛 בולדוזר', he: 'Bulldozer' },
+                    ].map((item, i) => (
+                      <span key={i} className="text-xs font-black px-4 py-2 rounded-full border border-orange-500/20 bg-orange-500/5 text-white/70">
+                        {item.label}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Equipment Cards - Mobile: Horizontal scroll | Desktop: Grid */}
+                  <div className="flex md:grid md:grid-cols-2 gap-6 max-w-4xl mx-auto overflow-x-auto pb-6 md:pb-0 snap-x no-scrollbar">
                     {equipmentPackages.map(pkg => (
-                      <div key={pkg.id} className="h-full">
+                      <div key={pkg.id} className="snap-start">
                         <EquipmentPackageCard
                           pkg={pkg}
                           onSelect={(p) => {
