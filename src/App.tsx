@@ -768,29 +768,29 @@ export default function App() {
     e.preventDefault();
     setLoading(true);
     
-    const res = await fetch('/api/orders', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ...formData,
-        packageName: selectedPackage?.name
-      })
-    });
+    try {
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          packageName: selectedPackage?.name
+        })
+      });
 
-    if (res.ok) {
-      const data = await res.json();
-      const id = data.orderId;
-      setOrderId(id);
-      setView('success');
+      if (res.ok) {
+        const data = await res.json();
+        const id = data.orderId;
+        setOrderId(id);
 
-      // Package emoji based on tier
-      const pkgId = selectedPackage?.id || '';
-      const pkgEmoji = pkgId === 'vip' ? '👑' : pkgId === 'premium' ? '💎' : pkgId === 'pro' ? '⭐' : pkgId.includes('equipment') ? '🚜' : '✅';
+        // Package emoji based on tier
+        const pkgId = selectedPackage?.id || '';
+        const pkgEmoji = pkgId === 'vip' ? '👑' : pkgId === 'premium' ? '💎' : pkgId === 'pro' ? '⭐' : pkgId.includes('equipment') ? '🚜' : '✅';
 
-      // Formatted order ID
-      const orderNum = String(id).padStart(5, '0');
+        // Formatted order ID
+        const orderNum = String(id).padStart(5, '0');
 
-      const message = `*YOUGO ISRAEL | אישור הזמנה חדשה* 🚗💨
+        const message = `*YOUGO ISRAEL | אישור הזמנה חדשה* 🚗💨
 ---------------------------------------
 *מספר הזמנה:* #${orderNum}
 *חבילה נבחרת:* ${selectedPackage?.name} ${pkgEmoji}
@@ -816,10 +816,17 @@ export default function App() {
 ---------------------------------------
 _נשלח אוטומטית ממערכת YOUGO_`;
 
-      const whatsappUrl = `https://wa.me/972546980606?text=${encodeURIComponent(message)}`;
-      window.open(whatsappUrl, '_blank');
+        const whatsappUrl = `https://wa.me/972546980606?text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, '_blank');
+        setView('success');
+      } else {
+        alert('אירעה שגיאה. אנא נסה שנית.');
+      }
+    } catch (err) {
+      alert('אירעה שגיאה בחיבור לשרת. אנא נסה שנית.');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -1385,23 +1392,63 @@ _נשלח אוטומטית ממערכת YOUGO_`;
               </section>
 
               {/* FAQ Section */}
-              <section id="faq" className="max-w-4xl mx-auto space-y-12">
+              <section id="faq" className="max-w-4xl mx-auto space-y-10">
                 <div className="text-center space-y-4">
-                  <h2 className="text-4xl font-black">שאלות נפוצות</h2>
-                  <p className="text-white/60">כל מה שצריך לדעת על תהליך הפרסום והמכירה</p>
+                  <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 text-white/40 text-[11px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-full">
+                    <span className="w-1.5 h-1.5 rounded-full bg-white/30" />
+                    שאלות נפוצות
+                    <span className="w-1.5 h-1.5 rounded-full bg-white/30" />
+                  </div>
+                  <h2 className="text-4xl md:text-5xl font-black">שאלות נפוצות</h2>
+                  <p className="text-white/50 text-sm">כל מה שצריך לדעת על תהליך הפרסום והמכירה</p>
                 </div>
-                <div className="grid gap-4">
-                  {t.faqs.slice(0, showAllFaqs ? t.faqs.length : 3).map((item, i) => (
+                <div className="space-y-3">
+                  {t.faqs.slice(0, showAllFaqs ? t.faqs.length : 4).map((item, i) => (
                     <motion.div 
                       key={i}
-                      className="glass-card overflow-hidden"
+                      initial={{ opacity: 0, y: 10 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.05 }}
+                      className="rounded-2xl overflow-hidden transition-all duration-300"
+                      style={{
+                        border: activeFaq === i 
+                          ? '1px solid rgba(200,16,46,0.35)' 
+                          : '1px solid rgba(255,255,255,0.07)',
+                        background: activeFaq === i 
+                          ? 'linear-gradient(135deg, rgba(200,16,46,0.07) 0%, rgba(10,5,5,1) 100%)'
+                          : 'rgba(255,255,255,0.02)',
+                        boxShadow: activeFaq === i ? '0 0 20px rgba(200,16,46,0.05)' : 'none'
+                      }}
                     >
                       <button 
                         onClick={() => setActiveFaq(activeFaq === i ? null : i)}
-                        className="w-full p-6 flex items-center justify-between text-right hover:bg-white/5 transition-colors"
+                        className="w-full px-6 py-5 flex items-center justify-between text-right gap-4 transition-colors"
                       >
-                        <span className="font-bold text-lg">{item.q}</span>
-                        {activeFaq === i ? <ChevronUp className="text-brand-red" /> : <ChevronDown className="text-white/40" />}
+                        <div className="flex items-center gap-4 flex-1">
+                          {/* Number badge */}
+                          <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 text-xs font-black transition-all duration-300"
+                            style={{ 
+                              background: activeFaq === i ? '#c8102e' : 'rgba(255,255,255,0.06)',
+                              color: activeFaq === i ? '#fff' : 'rgba(255,255,255,0.35)'
+                            }}>
+                            {i + 1}
+                          </div>
+                          <span className="font-bold text-base text-right leading-snug" 
+                            style={{ color: activeFaq === i ? '#fff' : 'rgba(255,255,255,0.80)' }}>
+                            {item.q}
+                          </span>
+                        </div>
+                        <div className="shrink-0 w-7 h-7 rounded-lg flex items-center justify-center transition-all duration-300"
+                          style={{ 
+                            background: activeFaq === i ? 'rgba(200,16,46,0.20)' : 'rgba(255,255,255,0.04)',
+                            border: activeFaq === i ? '1px solid rgba(200,16,46,0.30)' : '1px solid rgba(255,255,255,0.06)'
+                          }}>
+                          {activeFaq === i 
+                            ? <ChevronUp size={15} className="text-brand-red" />
+                            : <ChevronDown size={15} className="text-white/30" />
+                          }
+                        </div>
                       </button>
                       <AnimatePresence>
                         {activeFaq === i && (
@@ -1409,10 +1456,14 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: 'auto', opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
-                            className="px-6 pb-6 text-white/60 leading-relaxed"
+                            transition={{ duration: 0.22, ease: 'easeOut' }}
+                            className="overflow-hidden"
                           >
-                            <div className="pt-2 border-t border-white/5">
-                              {item.a}
+                            <div className="px-6 pb-5 mr-12">
+                              <div className="pt-3 border-t text-sm text-white/60 leading-relaxed"
+                                style={{ borderColor: 'rgba(200,16,46,0.12)' }}>
+                                {item.a}
+                              </div>
                             </div>
                           </motion.div>
                         )}
@@ -1421,14 +1472,19 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                   ))}
                 </div>
                 
-                {!showAllFaqs && (
-                  <div className="text-center pt-4">
+                {!showAllFaqs && t.faqs.length > 4 && (
+                  <div className="text-center pt-2">
                     <button 
                       onClick={() => setShowAllFaqs(true)}
-                      className="flex items-center gap-2 mx-auto text-brand-red font-black uppercase tracking-widest hover:scale-105 transition-transform"
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-black text-sm transition-all hover:scale-105 active:scale-95"
+                      style={{ 
+                        background: 'rgba(200,16,46,0.08)',
+                        border: '1px solid rgba(200,16,46,0.25)',
+                        color: '#c8102e'
+                      }}
                     >
                       הצג את כל השאלות
-                      <ChevronDown size={20} />
+                      <ChevronDown size={18} />
                     </button>
                   </div>
                 )}
@@ -1653,38 +1709,42 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                   </div>
 
                   {/* Payment Info Box — redesigned */}
-                  <div className="rounded-2xl overflow-hidden border"
-                    style={{ borderColor: 'rgba(200,16,46,0.25)', background: 'linear-gradient(145deg, rgba(200,16,46,0.08) 0%, rgba(10,5,5,1) 100%)' }}>
+                  <div className="rounded-2xl overflow-hidden"
+                    style={{ 
+                      border: '1px solid rgba(200,16,46,0.30)',
+                      background: 'linear-gradient(145deg, rgba(200,16,46,0.06) 0%, rgba(8,4,4,1) 60%, rgba(12,6,6,1) 100%)',
+                      boxShadow: '0 0 24px rgba(200,16,46,0.06), inset 0 1px 0 rgba(255,255,255,0.04)'
+                    }}>
 
                     {/* Header */}
-                    <div className="flex items-center gap-3 px-5 py-4 border-b"
-                      style={{ borderColor: 'rgba(200,16,46,0.15)' }}>
-                      <div className="w-8 h-8 rounded-lg flex items-center justify-center"
-                        style={{ background: 'rgba(200,16,46,0.15)' }}>
-                        <CreditCard size={16} className="text-brand-red" />
+                    <div className="flex items-center gap-3 px-5 py-3.5 border-b"
+                      style={{ borderColor: 'rgba(200,16,46,0.12)', background: 'rgba(200,16,46,0.04)' }}>
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
+                        style={{ background: 'rgba(200,16,46,0.18)' }}>
+                        <CreditCard size={14} className="text-brand-red" />
                       </div>
-                      <h3 className="font-black text-base text-brand-red">ביצוע תשלום</h3>
-                      <div className="mr-auto flex items-center gap-1.5">
-                        <BitLogo size="sm" />
+                      <h3 className="font-black text-sm text-brand-red tracking-wide">ביצוע תשלום</h3>
+                      <div className="mr-auto flex items-center gap-2">
                         <PayBoxLogo size="sm" />
+                        <BitLogo size="sm" />
                       </div>
                     </div>
 
-                    <div className="p-5 space-y-5">
+                    <div className="p-5 space-y-4">
                       {/* Transfer instruction */}
-                      <p className="text-sm text-white/70 text-center">
-                        נא להעביר <span className="font-black text-white">{selectedPackage?.price}</span> ב־Bit או PayBox למספר:
-                      </p>
+                      <div className="text-center space-y-1">
+                        <p className="text-xs text-white/50 font-bold uppercase tracking-widest">נא להעביר</p>
+                        <p className="text-sm text-white/75">
+                          <span className="font-black text-white text-base">{selectedPackage?.price}</span>
+                          {' '}ב־Bit או PayBox למספר:
+                        </p>
+                      </div>
 
                       {/* Phone number + copy button */}
                       <div className="relative">
-                        <div className="flex items-center rounded-xl overflow-hidden border"
-                          style={{ borderColor: 'rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.04)' }}>
-                          {/* Number */}
-                          <div className="flex-1 text-center py-3.5 text-2xl font-black tracking-[0.12em] text-white select-all">
-                            054-6980606
-                          </div>
-                          {/* Copy button */}
+                        <div className="flex items-center rounded-xl overflow-hidden"
+                          style={{ border: '1px solid rgba(200,16,46,0.20)', background: 'rgba(200,16,46,0.04)' }}>
+                          {/* Copy button — right side (RTL) */}
                           <button
                             type="button"
                             onClick={() => {
@@ -1692,12 +1752,16 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                               const btn = document.getElementById('copy-btn-label');
                               if (btn) { btn.textContent = '✓ הועתק'; setTimeout(() => { if(btn) btn.textContent = 'העתק'; }, 2000); }
                             }}
-                            className="flex flex-col items-center justify-center gap-0.5 px-4 py-3.5 border-r transition-all active:scale-95"
-                            style={{ borderColor: 'rgba(255,255,255,0.08)', background: 'rgba(200,16,46,0.15)', minWidth: 64 }}
+                            className="flex flex-col items-center justify-center gap-0.5 px-4 py-3 border-l transition-all active:scale-95 hover:bg-brand-red/10 shrink-0"
+                            style={{ borderColor: 'rgba(200,16,46,0.15)', minWidth: 60 }}
                           >
-                            <FileText size={16} className="text-brand-red" />
+                            <FileText size={14} className="text-brand-red" />
                             <span id="copy-btn-label" className="text-[9px] font-black text-brand-red uppercase tracking-wide">העתק</span>
                           </button>
+                          {/* Number */}
+                          <div className="flex-1 text-center py-3 text-xl font-black tracking-[0.14em] text-white select-all" dir="ltr">
+                            054-6980606
+                          </div>
                         </div>
                       </div>
 
