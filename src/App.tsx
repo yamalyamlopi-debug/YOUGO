@@ -889,35 +889,94 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                 </div>
               </section>
 
-              {/* How it Works */}
+              {/* How it Works — Premium redesign */}
               <section id="how-it-works" className="space-y-16">
-                <div className="text-center space-y-4">
-                  <h2 className="text-4xl font-black">איך זה עובד?</h2>
-                  <p className="text-white/60">3 שלבים פשוטים והרכב שלך באוויר</p>
+                <div className="text-center space-y-3">
+                  <div className="inline-flex items-center gap-2 bg-brand-red/8 border border-brand-red/20 text-brand-red text-[10px] font-black uppercase tracking-[0.25em] px-4 py-1.5 rounded-full">
+                    <span className="w-1 h-1 rounded-full bg-brand-red animate-pulse" />
+                    תהליך פשוט ומהיר
+                  </div>
+                  <h2 className="text-4xl md:text-5xl font-black tracking-tight">איך זה עובד?</h2>
+                  <p className="text-white/40 text-base">3 שלבים פשוטים והרכב שלך באוויר</p>
                 </div>
-                <div className="grid md:grid-cols-3 gap-8">
-                  {[
-                    { step: '01', title: 'בחירת חבילה', desc: 'בוחרים את חבילת הפרסום המתאימה לכם ביותר', icon: <LayoutDashboard size={32} /> },
-                    { step: '02', title: 'הזנת פרטים', desc: 'ממלאים את פרטי הרכב ומעלים אישור תשלום', icon: <FileText size={32} /> },
-                    { step: '03', title: 'פרסום וחשיפה', desc: 'אנחנו מעצבים ומפרסמים את המודעה שלכם', icon: <Send size={32} /> },
-                  ].map((item, i) => (
-                    <motion.div 
-                      key={i}
-                      whileHover={{ y: -10, backgroundColor: 'rgba(225,29,72,0.05)' }}
-                      className="glass-card p-10 text-center space-y-6 relative group transition-all"
-                    >
-                      <div className="text-6xl font-black text-white/5 absolute top-4 right-8 group-hover:text-brand-red/10 transition-colors">
-                        {item.step}
-                      </div>
-                      <div className="w-16 h-16 bg-brand-red/10 rounded-2xl flex items-center justify-center mx-auto text-brand-red group-hover:scale-110 transition-transform">
-                        {item.icon}
-                      </div>
-                      <div className="space-y-2">
-                        <h3 className="text-xl font-black">{item.title}</h3>
-                        <p className="text-sm text-white/60 leading-relaxed">{item.desc}</p>
-                      </div>
-                    </motion.div>
-                  ))}
+
+                {/* Steps — connected timeline */}
+                <div className="relative">
+                  {/* Connecting line (desktop only) */}
+                  <div className="hidden md:block absolute top-[52px] left-[calc(16.66%+32px)] right-[calc(16.66%+32px)] h-[2px] z-0"
+                    style={{ background: 'linear-gradient(90deg, rgba(200,16,46,0.6) 0%, rgba(200,16,46,0.15) 50%, rgba(200,16,46,0.6) 100%)' }} />
+
+                  <div className="grid md:grid-cols-3 gap-6 relative z-10">
+                    {[
+                      {
+                        step: '01',
+                        title: 'בחירת חבילה',
+                        desc: 'בוחרים את חבילת הפרסום המתאימה — בייסיק, פרו, פרמיום, או VIP לוקשרי.',
+                        icon: <LayoutDashboard size={26} />,
+                        detail: 'מחיר קבוע, ללא הפתעות'
+                      },
+                      {
+                        step: '02',
+                        title: 'הזנת פרטים',
+                        desc: 'ממלאים פרטי הרכב, מעלים תמונות ומצרפים אישור תשלום ב-Bit או PayBox.',
+                        icon: <FileText size={26} />,
+                        detail: 'לוקח פחות מ-3 דקות'
+                      },
+                      {
+                        step: '03',
+                        title: 'פרסום וחשיפה',
+                        desc: 'הצוות שלנו מעצב מודעה מקצועית ומפרסם לקהל של 50K+ עוקבים פעילים.',
+                        icon: <Send size={26} />,
+                        detail: 'פרסום תוך 24 שעות'
+                      },
+                    ].map((item, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: i * 0.12, type: 'spring', stiffness: 200 }}
+                        whileHover={{ y: -6 }}
+                        className="group relative flex flex-col items-center text-center"
+                      >
+                        {/* Step circle */}
+                        <div className="relative mb-7">
+                          {/* Outer ring */}
+                          <div className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                            style={{ background: 'radial-gradient(circle, rgba(200,16,46,0.15) 0%, transparent 70%)', transform: 'scale(2)' }} />
+                          <div className="w-[68px] h-[68px] rounded-full border-2 border-brand-red/30 group-hover:border-brand-red transition-colors duration-300 flex items-center justify-center relative bg-[#0e0e0e] shadow-lg"
+                            style={{ boxShadow: '0 0 0 6px rgba(200,16,46,0.04)' }}>
+                            <div className="w-12 h-12 rounded-full bg-brand-red/10 group-hover:bg-brand-red/20 transition-colors duration-300 flex items-center justify-center text-brand-red">
+                              {item.icon}
+                            </div>
+                            {/* Step number badge */}
+                            <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full text-[9px] font-black flex items-center justify-center bg-brand-red text-white shadow-md">
+                              {i + 1}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Card body */}
+                        <div className="w-full rounded-2xl border border-white/6 bg-white/[0.02] group-hover:bg-white/[0.045] group-hover:border-brand-red/20 transition-all duration-300 p-6 space-y-3 flex-grow">
+                          {/* Big step number watermark */}
+                          <div className="text-[72px] font-black leading-none select-none mb-1 transition-all duration-300"
+                            style={{ color: 'rgba(200,16,46,0.04)' }}>{item.step}</div>
+                          
+                          <h3 className="text-xl font-black text-white group-hover:text-brand-red transition-colors duration-200 -mt-10">
+                            {item.title}
+                          </h3>
+                          <p className="text-sm text-white/45 leading-relaxed group-hover:text-white/65 transition-colors duration-200">
+                            {item.desc}
+                          </p>
+                          {/* Detail badge */}
+                          <div className="inline-flex items-center gap-1.5 bg-brand-red/6 border border-brand-red/15 text-brand-red text-[10px] font-black px-3 py-1 rounded-full mt-1">
+                            <Check size={9} strokeWidth={3} />
+                            {item.detail}
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
                 </div>
               </section>
 
@@ -1033,23 +1092,25 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                         ))}
                       </div>
 
-                      {/* Payment badges — with Bit & PayBox logos */}
-                      <div className="flex flex-wrap justify-center items-center gap-3 pt-2">
-                        <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 text-white/50 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full">
-                          <Lock size={12} className="text-brand-red" />
-                          תשלום מאובטח
+                      {/* Payment badges — clean 2×2 grid */}
+                      <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto pt-2">
+                        {/* תשלום מאובטח */}
+                        <div className="flex items-center justify-center gap-2 bg-white/[0.04] border border-white/8 rounded-2xl px-4 py-3 hover:bg-white/[0.07] transition-colors">
+                          <Lock size={15} className="text-brand-red shrink-0" />
+                          <span className="text-[11px] font-black text-white/60 uppercase tracking-wide">תשלום מאובטח</span>
                         </div>
-                        {/* Bit Logo Badge */}
-                        <div className="flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full">
-                          <BitLogo />
+                        {/* WhatsApp */}
+                        <div className="flex items-center justify-center gap-2 bg-white/[0.04] border border-white/8 rounded-2xl px-4 py-3 hover:bg-white/[0.07] transition-colors">
+                          <MessageSquare size={15} className="text-green-500 shrink-0" />
+                          <span className="text-[11px] font-black text-white/60 uppercase tracking-wide">תמיכה WhatsApp</span>
                         </div>
-                        {/* PayBox Logo Badge */}
-                        <div className="flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full">
-                          <PayBoxLogo />
+                        {/* Bit */}
+                        <div className="flex items-center justify-center bg-white/[0.04] border border-white/8 rounded-2xl px-4 py-3 hover:bg-white/[0.07] transition-colors">
+                          <BitLogo size="sm" />
                         </div>
-                        <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 text-white/50 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full">
-                          <MessageSquare size={12} className="text-brand-red" />
-                          תמיכה WhatsApp
+                        {/* PayBox */}
+                        <div className="flex items-center justify-center bg-white/[0.04] border border-white/8 rounded-2xl px-4 py-3 hover:bg-white/[0.07] transition-colors">
+                          <PayBoxLogo size="sm" />
                         </div>
                       </div>
                     </div>
