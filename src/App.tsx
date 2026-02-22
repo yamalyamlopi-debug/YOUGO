@@ -167,117 +167,110 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose:
   );
 };
 
-// --- VIP Package Card (Special Gold Design) ---
+// --- VIP Package Card (Special Gold Design) — fixed overflow ---
 const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
   const t = translations[lang];
   return (
     <motion.div
-      whileHover={{ y: -10, scale: 1.015 }}
+      whileHover={{ y: -6 }}
       transition={{ type: "spring", stiffness: 280 }}
-      className="relative col-span-1 md:col-span-3 w-full"
+      className="relative w-full"
+      style={{ contain: 'layout' }}
     >
-      {/* Outer glow */}
-      <div className="absolute -inset-[1px] rounded-3xl bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 opacity-60 blur-sm pointer-events-none" />
-      
-      <div className="relative rounded-3xl overflow-hidden border border-amber-400/40"
-        style={{ background: 'linear-gradient(135deg, #1a1408 0%, #0d0b06 40%, #1c1404 100%)' }}>
-        
-        {/* Shimmer top line */}
-        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-amber-300 to-transparent" />
-        
-        {/* Gold particle background */}
-        <div className="absolute inset-0 opacity-[0.04]" style={{
-          backgroundImage: `radial-gradient(circle at 20% 50%, #d4af37 1px, transparent 1px),
-                            radial-gradient(circle at 80% 20%, #d4af37 1px, transparent 1px),
-                            radial-gradient(circle at 60% 80%, #d4af37 1px, transparent 1px)`,
-          backgroundSize: '80px 80px, 60px 60px, 100px 100px'
+      {/* Outer glow — clipped so it doesn't bleed */}
+      <div className="absolute inset-0 rounded-3xl pointer-events-none"
+        style={{ boxShadow: '0 0 40px 4px rgba(212,175,55,0.18), 0 0 0 1px rgba(212,175,55,0.35)', borderRadius: 24 }} />
+
+      <div className="relative rounded-3xl overflow-hidden"
+        style={{ background: 'linear-gradient(145deg, #1c1608 0%, #0d0b06 50%, #1a1405 100%)', border: '1px solid rgba(212,175,55,0.30)' }}>
+
+        {/* Shimmer top */}
+        <div className="absolute top-0 left-0 right-0 h-[2px]"
+          style={{ background: 'linear-gradient(90deg, transparent, #d4af37, #f5d060, #d4af37, transparent)' }} />
+
+        {/* Subtle gold grid bg */}
+        <div className="absolute inset-0 opacity-[0.025]" style={{
+          backgroundImage: 'linear-gradient(rgba(212,175,55,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(212,175,55,0.8) 1px, transparent 1px)',
+          backgroundSize: '40px 40px'
         }} />
-        
-        {/* Diagonal gold gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-amber-400/5 via-transparent to-amber-600/8 pointer-events-none" />
 
-        <div className="relative z-10 p-8 md:p-10">
-          <div className="flex flex-col md:flex-row md:items-center gap-8">
-            
-            {/* Left: Branding */}
-            <div className="flex-1 space-y-5">
-              {/* Badge */}
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 bg-gradient-to-r from-amber-400/20 to-yellow-300/10 border border-amber-400/40 px-4 py-1.5 rounded-full">
-                  <Crown size={13} className="text-amber-300" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.25em] text-amber-300">VIP LUXURY</span>
-                </div>
-                <div className="bg-green-500/20 text-green-400 text-[9px] font-black py-0.5 px-2 rounded-full border border-green-500/30">
-                  15% OFF
-                </div>
-              </div>
+        <div className="relative z-10 p-6 md:p-8 space-y-6">
 
-              {/* Name & Price */}
-              <div className="space-y-2">
-                <h3 className="text-3xl md:text-4xl font-black tracking-tight"
-                  style={{ background: 'linear-gradient(90deg, #f5d060, #d4af37, #f0c040, #b8960c)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                  VIP LUXURY
-                </h3>
-                <p className="text-white/50 text-sm leading-relaxed max-w-sm">
-                  חבילת הפרסום האולטימטיבית — לרכבים שמגיעים ליחס הכי טוב. חשיפה מקסימלית, עיצוב פרמיום, ליווי אישי מלא.
-                </p>
-              </div>
-
-              {/* Price */}
-              <div className="flex items-baseline gap-3">
-                <span className="text-4xl font-black" style={{ color: '#d4af37' }}>₪749</span>
-                <span className="text-white/30 text-sm line-through">₪882</span>
-                <span className="text-amber-400/70 text-xs font-bold bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/20">חיסכון ₪133</span>
-              </div>
+          {/* Top row: badges */}
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center gap-1.5 bg-amber-400/15 border border-amber-400/35 px-3 py-1 rounded-full">
+              <Crown size={11} className="text-amber-300" />
+              <span className="text-[9px] font-black uppercase tracking-[0.2em] text-amber-300">VIP LUXURY</span>
             </div>
-
-            {/* Center: Features Grid */}
-            <div className="flex-1 grid grid-cols-2 gap-3">
-              {[
-                { icon: <Camera size={15} />, label: '15+ תמונות מקצועיות' },
-                { icon: <Video size={15} />, label: 'רילס + סטורי VIP' },
-                { icon: <Star size={15} />, label: '60 ימי פרסום פרמיום' },
-                { icon: <TrendingUp size={15} />, label: 'חשיפה מקסימלית' },
-                { icon: <ShieldCheck size={15} />, label: 'ליווי אישי 24/7' },
-                { icon: <Crown size={15} />, label: 'עיצוב VIP בלעדי' },
-                { icon: <Users size={15} />, label: 'טרגוט מתקדם' },
-                { icon: <Zap size={15} />, label: 'עדיפות ראשונה תמיד' },
-              ].map((feat, i) => (
-                <div key={i} className="flex items-center gap-2 bg-white/[0.03] border border-amber-400/10 rounded-xl px-3 py-2.5">
-                  <div className="text-amber-400 shrink-0">{feat.icon}</div>
-                  <span className="text-xs font-bold text-white/80">{feat.label}</span>
-                </div>
+            <div className="bg-green-500/20 text-green-400 text-[9px] font-black py-0.5 px-2 rounded-full border border-green-500/30">
+              15% OFF
+            </div>
+            <div className="flex items-center gap-1 mr-auto">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} size={11} className="text-amber-400 fill-amber-400" />
               ))}
             </div>
-
-            {/* Right: CTA */}
-            <div className="flex flex-col items-center gap-4 min-w-[180px]">
-              <motion.button
-                onClick={() => onSelect(pkg)}
-                whileTap={{ scale: 0.97 }}
-                className="w-full py-4 px-8 rounded-2xl font-black text-sm tracking-wide relative overflow-hidden group"
-                style={{ background: 'linear-gradient(135deg, #d4af37, #f5d060, #b8960c)' }}
-              >
-                <span className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors rounded-2xl" />
-                <span className="relative text-black flex items-center justify-center gap-2">
-                  <Crown size={16} />
-                  הזמן VIP עכשיו
-                </span>
-              </motion.button>
-              <div className="text-center space-y-1">
-                <div className="flex items-center justify-center gap-1.5">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={12} className="text-amber-400 fill-amber-400" />
-                  ))}
-                </div>
-                <p className="text-[10px] text-white/30 font-bold">דירוג לקוחות VIP</p>
-              </div>
-            </div>
           </div>
+
+          {/* Title + subtitle */}
+          <div className="space-y-1">
+            <h3 className="text-3xl md:text-4xl font-black tracking-tight"
+              style={{ background: 'linear-gradient(90deg, #f5d060, #d4af37, #f0c040)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              VIP LUXURY
+            </h3>
+            <p className="text-white/45 text-sm leading-relaxed">
+              חבילת הפרסום האולטימטיבית — לרכבים שמגיעים ליחס הכי טוב. חשיפה מקסימלית, עיצוב פרמיום, ליווי אישי מלא.
+            </p>
+          </div>
+
+          {/* Price */}
+          <div className="flex items-baseline gap-3">
+            <span className="text-4xl font-black" style={{ color: '#d4af37' }}>₪749</span>
+            <span className="text-white/30 text-sm line-through">₪882</span>
+            <span className="text-amber-400/70 text-xs font-bold bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/20">חיסכון ₪133</span>
+          </div>
+
+          {/* Divider */}
+          <div className="h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.3), transparent)' }} />
+
+          {/* Features — responsive grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+            {[
+              { icon: <Camera size={14} />, label: '15+ תמונות מקצועיות' },
+              { icon: <Video size={14} />, label: 'רילס + סטורי VIP' },
+              { icon: <Star size={14} />, label: '60 ימי פרסום' },
+              { icon: <TrendingUp size={14} />, label: 'חשיפה מקסימלית' },
+              { icon: <ShieldCheck size={14} />, label: 'ליווי אישי 24/7' },
+              { icon: <Crown size={14} />, label: 'עיצוב VIP בלעדי' },
+              { icon: <Users size={14} />, label: 'טרגוט מתקדם' },
+              { icon: <Zap size={14} />, label: 'עדיפות ראשונה' },
+            ].map((feat, i) => (
+              <div key={i} className="flex items-center gap-2 rounded-xl px-3 py-2.5"
+                style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(212,175,55,0.1)' }}>
+                <span className="text-amber-400 shrink-0">{feat.icon}</span>
+                <span className="text-xs font-bold text-white/75 leading-tight">{feat.label}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* CTA button — full width */}
+          <motion.button
+            onClick={() => onSelect(pkg)}
+            whileTap={{ scale: 0.98 }}
+            whileHover={{ scale: 1.01 }}
+            className="w-full py-4 rounded-2xl font-black text-base tracking-wide relative overflow-hidden"
+            style={{ background: 'linear-gradient(135deg, #d4af37, #f5d060, #c8a020)' }}
+          >
+            <span className="relative text-black flex items-center justify-center gap-2">
+              <Crown size={18} />
+              הזמן VIP עכשיו
+            </span>
+          </motion.button>
         </div>
 
-        {/* Bottom shimmer line */}
-        <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-amber-400/40 to-transparent" />
+        {/* Bottom shimmer */}
+        <div className="absolute bottom-0 left-0 right-0 h-[1px]"
+          style={{ background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.4), transparent)' }} />
       </div>
     </motion.div>
   );
@@ -1332,75 +1325,84 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                 )}
               </section>
 
-              {/* Footer */}
-              <footer className="border-t border-white/10 pt-20 pb-12 space-y-12">
-                <div className="flex flex-col items-center text-center space-y-8">
-                  <div className="space-y-4">
-                    <div className="text-3xl font-black tracking-tighter text-brand-red">
-                      YOUGO <span className="text-white">ISRAEL</span>
+              {/* Footer — premium card */}
+              <footer className="pb-12">
+                <div className="relative rounded-3xl overflow-hidden border border-white/8"
+                  style={{ background: 'linear-gradient(145deg, rgba(255,255,255,0.025) 0%, rgba(0,0,0,0) 100%)' }}>
+
+                  {/* Top accent line */}
+                  <div className="absolute top-0 left-0 right-0 h-[1px]"
+                    style={{ background: 'linear-gradient(90deg, transparent, rgba(200,16,46,0.5), transparent)' }} />
+
+                  {/* Subtle red glow top center */}
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-32 pointer-events-none"
+                    style={{ background: 'radial-gradient(ellipse, rgba(200,16,46,0.06) 0%, transparent 70%)' }} />
+
+                  <div className="relative z-10 px-8 pt-12 pb-8 space-y-10">
+
+                    {/* Brand + description */}
+                    <div className="text-center space-y-4">
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="p-2 bg-brand-red rounded-xl shadow-lg">
+                          <Car size={22} className="text-white" />
+                        </div>
+                        <div className="text-2xl font-black tracking-tighter text-brand-red">
+                          YOUGO <span className="text-white">ISRAEL</span>
+                        </div>
+                      </div>
+                      <p className="text-white/50 max-w-md mx-auto text-sm leading-relaxed">
+                        הצטרפו לאלפי לקוחות מרוצים שכבר מכרו את הרכב שלהם דרך הפלטפורמה המובילה בישראל. אנחנו כאן כדי להפוך את המכירה שלכם למהירה, פשוטה ומקצועית.
+                      </p>
                     </div>
-                    <p className="text-white/60 max-w-md mx-auto">
-                      הצטרפו לאלפי לקוחות מרוצים שכבר מכרו את הרכב שלהם דרך הפלטפורמה המובילה בישראל. אנחנו כאן כדי להפוך את המכירה שלכם למהירה, פשוטה ומקצועית.
-                    </p>
-                  </div>
 
-                  {/* Social Icons */}
-                  <div className="flex items-center gap-6">
-                    <a href="https://instagram.com" target="_blank" className="p-3 bg-white/5 rounded-full hover:bg-brand-red hover:scale-110 transition-all">
-                      <Instagram size={24} />
-                    </a>
-                    <a href="https://tiktok.com" target="_blank" className="p-3 bg-white/5 rounded-full hover:bg-brand-red hover:scale-110 transition-all">
-                      <Smartphone size={24} />
-                    </a>
-                    <a href="https://telegram.org" target="_blank" className="p-3 bg-white/5 rounded-full hover:bg-brand-red hover:scale-110 transition-all">
-                      <Send size={24} />
-                    </a>
-                    <a href="https://wa.me/972546980606" target="_blank" className="p-3 bg-white/5 rounded-full hover:bg-brand-red hover:scale-110 transition-all">
-                      <MessageSquare size={24} />
-                    </a>
-                  </div>
+                    {/* Social icons */}
+                    <div className="flex items-center justify-center gap-3">
+                      {[
+                        { href: 'https://instagram.com', icon: <Instagram size={20} />, label: 'Instagram' },
+                        { href: 'https://tiktok.com', icon: <Smartphone size={20} />, label: 'TikTok' },
+                        { href: 'https://telegram.org', icon: <Send size={20} />, label: 'Telegram' },
+                        { href: 'https://wa.me/972546980606', icon: <MessageSquare size={20} />, label: 'WhatsApp' },
+                      ].map((s, i) => (
+                        <a key={i} href={s.href} target="_blank"
+                          className="w-11 h-11 rounded-2xl flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
+                          style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+                          onMouseEnter={e => (e.currentTarget.style.background = '#c8102e')}
+                          onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.05)')}
+                        >
+                          {s.icon}
+                        </a>
+                      ))}
+                    </div>
 
-                  <div className="flex flex-wrap justify-center gap-x-12 gap-y-4 text-sm font-bold">
-                    <button 
-                      onClick={() => setModalContent(t.pages.terms)}
-                      className="flex items-center gap-2 hover:text-brand-red transition-colors"
-                    >
-                      <FileText size={18} className="text-brand-red" />
-                      תקנון
-                    </button>
-                    <button 
-                      onClick={() => setModalContent(t.pages.privacy)}
-                      className="flex items-center gap-2 hover:text-brand-red transition-colors"
-                    >
-                      <Lock size={18} className="text-brand-red" />
-                      פרטיות
-                    </button>
-                    <button 
-                      onClick={() => setModalContent(t.pages.about)}
-                      className="flex items-center gap-2 hover:text-brand-red transition-colors"
-                    >
-                      <Info size={18} className="text-brand-red" />
-                      מי אנחנו
-                    </button>
-                    <button 
-                      onClick={() => setModalContent({ title: t.whyUs.title, content: `${t.whyUs.audience.title}\n${t.whyUs.audience.desc}\n\n${t.whyUs.speed.title}\n${t.whyUs.speed.desc}\n\n${t.whyUs.results.title}\n${t.whyUs.results.desc}` })}
-                      className="flex items-center gap-2 hover:text-brand-red transition-colors"
-                    >
-                      <TrendingUp size={18} className="text-brand-red" />
-                      למה אנחנו
-                    </button>
-                    <button 
-                      onClick={() => setView('admin-login')}
-                      className="flex items-center gap-2 hover:text-brand-red transition-colors"
-                    >
-                      <LayoutDashboard size={18} className="text-brand-red" />
-                      ניהול
-                    </button>
+                    {/* Divider */}
+                    <div className="h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent)' }} />
+
+                    {/* Links grid — 2×2 on mobile, 5 in a row on desktop */}
+                    <div className="grid grid-cols-2 md:flex md:justify-center gap-3 md:gap-2">
+                      {[
+                        { icon: <FileText size={15} />, label: 'תקנון', onClick: () => setModalContent(t.pages.terms) },
+                        { icon: <Lock size={15} />, label: 'פרטיות', onClick: () => setModalContent(t.pages.privacy) },
+                        { icon: <Info size={15} />, label: 'מי אנחנו', onClick: () => setModalContent(t.pages.about) },
+                        { icon: <TrendingUp size={15} />, label: 'למה אנחנו', onClick: () => setModalContent({ title: t.whyUs.title, content: `${t.whyUs.audience.title}\n${t.whyUs.audience.desc}\n\n${t.whyUs.speed.title}\n${t.whyUs.speed.desc}\n\n${t.whyUs.results.title}\n${t.whyUs.results.desc}` }) },
+                        { icon: <LayoutDashboard size={15} />, label: 'ניהול', onClick: () => setView('admin-login') },
+                      ].map((link, i) => (
+                        <button key={i} onClick={link.onClick}
+                          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black text-white/50 hover:text-white transition-all duration-200 md:hover:bg-white/5"
+                          style={{ border: '1px solid rgba(255,255,255,0.06)' }}
+                        >
+                          <span className="text-brand-red">{link.icon}</span>
+                          {link.label}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Bottom copyright */}
+                    <div className="text-center pt-2">
+                      <p className="text-[11px] text-white/20 font-bold">
+                        © 2024 YOUGO ISRAEL · כל הזכויות שמורות · עוצב ופותח במקצועיות
+                      </p>
+                    </div>
                   </div>
-                </div>
-                
-                <div className="pt-8 border-t border-white/5 text-center">
-                  <p className="text-xs text-white/40">© 2024 YOUGO ISRAEL. כל הזכויות שמורות. עוצב ופותח במקצועיות.</p>
                 </div>
               </footer>
             </motion.div>
