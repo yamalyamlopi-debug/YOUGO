@@ -174,7 +174,7 @@ const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
     <motion.div
       whileHover={{ y: -8 }}
       transition={{ type: "spring", stiffness: 280 }}
-      className="relative w-full rounded-3xl overflow-hidden"
+      className="relative w-full rounded-3xl overflow-hidden h-full flex flex-col"
       style={{
         boxShadow: '0 20px 40px -15px rgba(212,175,55,0.3), 0 0 0 1px rgba(212,175,55,0.2) inset',
         background: 'radial-gradient(circle at 100% 0%, #2a1f0a 0%, #0f0c05 80%)'
@@ -189,7 +189,7 @@ const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
         backgroundSize: '50px 50px, 30px 30px'
       }} />
 
-      <div className="relative z-10 p-7 md:p-8 space-y-6">
+      <div className="relative z-10 p-7 md:p-8 space-y-6 flex-grow flex flex-col">
 
         {/* Top row: badges */}
         <div className="flex items-center flex-wrap gap-3">
@@ -230,7 +230,7 @@ const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
         <div className="h-px bg-gradient-to-r from-transparent via-amber-500/30 to-transparent" />
 
         {/* Features grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 gap-3 flex-grow">
           {[
             { icon: <Camera size={14} />, label: '15+ תמונות' },
             { icon: <Video size={14} />, label: 'רילס + סטורי VIP' },
@@ -252,13 +252,111 @@ const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
         <motion.button
           onClick={() => onSelect(pkg)}
           whileTap={{ scale: 0.98 }}
-          className="w-full py-4 rounded-2xl font-black text-base bg-gradient-to-l from-amber-500 to-amber-600 text-black shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 transition-all"
+          className="w-full py-4 rounded-2xl font-black text-base bg-gradient-to-l from-amber-500 to-amber-600 text-black shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 transition-all mt-4"
         >
           <span className="flex items-center justify-center gap-2">
             <Crown size={18} />
             הזמן VIP עכשיו
           </span>
         </motion.button>
+      </div>
+    </motion.div>
+  );
+};
+
+// --- DUO DEAL Package Card — redesigned professional ---
+const DuoDealPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Package) => void }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      whileHover={{ y: -8 }}
+      transition={{ type: 'spring', stiffness: 280 }}
+      className="relative rounded-3xl overflow-hidden h-full flex flex-col"
+      style={{
+        background: 'radial-gradient(circle at 100% 0%, #1e1428 0%, #0b0710 100%)',
+        boxShadow: '0 20px 40px -15px rgba(139,92,246,0.3), 0 0 0 1px rgba(139,92,246,0.2) inset'
+      }}
+    >
+      {/* Purple gradient top */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-purple-400 to-transparent" />
+      
+      {/* Purple sparkles overlay */}
+      <div className="absolute inset-0 opacity-10" style={{
+        backgroundImage: 'radial-gradient(circle at 30% 40%, #a78bfa 2px, transparent 2px), radial-gradient(circle at 70% 60%, #8b5cf6 1px, transparent 1px)',
+        backgroundSize: '50px 50px, 30px 30px'
+      }} />
+
+      <div className="relative z-10 p-7 md:p-8 space-y-6 flex-grow flex flex-col">
+
+        {/* Top badges */}
+        <div className="flex items-center flex-wrap gap-3">
+          <div className="flex items-center gap-1.5 bg-purple-900/40 rounded-full px-4 py-1.5 border border-purple-500/30">
+            <Car size={14} className="text-purple-400" />
+            <Car size={14} className="text-purple-400" />
+            <span className="text-[10px] font-black uppercase tracking-wider text-purple-300">DUO DEAL</span>
+          </div>
+          <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-full px-3 py-1.5">
+            <span className="text-[9px] font-black text-emerald-400">חיסכון 40%</span>
+          </div>
+        </div>
+
+        {/* Title */}
+        <div>
+          <h3 className="text-3xl md:text-4xl font-black bg-gradient-to-l from-purple-200 via-purple-400 to-purple-300 bg-clip-text text-transparent">
+            DUO DEAL
+          </h3>
+          <p className="text-purple-100/40 text-sm mt-2 leading-relaxed">
+            מוכרים 2 רכבים? קבלו חשיפה כפולה במחיר שלא תמצאו בשום מקום.
+          </p>
+        </div>
+
+        {/* Price */}
+        <div className="flex items-baseline gap-4">
+          <span className="text-5xl font-black text-purple-400">₪349</span>
+          <span className="text-lg line-through text-white/20">₪598</span>
+          <span className="text-xs font-black bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full border border-purple-500/30">
+            חיסכון ₪249
+          </span>
+        </div>
+
+        {/* Divider */}
+        <div className="h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent" />
+
+        {/* Features grid */}
+        <div className="grid grid-cols-2 gap-3 flex-grow">
+          {[
+            { icon: <Car size={14} />, label: 'פרסום 2 רכבים' },
+            { icon: <Camera size={14} />, label: '4 תמונות לרכב' },
+            { icon: <Instagram size={14} />, label: 'פוסט לכל רכב' },
+            { icon: <Calendar size={14} />, label: 'סטורי 14 יום' },
+            { icon: <Users size={14} />, label: 'חשיפה כפולה' },
+            { icon: <TrendingUp size={14} />, label: 'קהל מעוניין' },
+          ].map((feat, i) => (
+            <div key={i} className="flex items-center gap-2 bg-white/5 rounded-xl px-3 py-2 border border-white/5">
+              <span className="text-purple-400">{feat.icon}</span>
+              <span className="text-xs font-medium text-white/80">{feat.label}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <motion.button
+          onClick={() => onSelect(pkg)}
+          whileTap={{ scale: 0.98 }}
+          className="w-full py-4 rounded-2xl font-black text-base bg-gradient-to-l from-purple-500 to-purple-600 text-white shadow-lg shadow-purple-500/20 hover:shadow-purple-500/30 transition-all mt-4"
+        >
+          <span className="flex items-center justify-center gap-2">
+            <Car size={18} />
+            הזמן DUO עכשיו
+          </span>
+        </motion.button>
+
+        {/* Note */}
+        <p className="text-center text-[10px] text-purple-300/40 mt-2">
+          הכי משתלם לשני רכבים
+        </p>
       </div>
     </motion.div>
   );
@@ -272,7 +370,7 @@ const EquipmentPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: P
     <motion.div
       whileHover={{ y: -6, scale: 1.01 }}
       transition={{ type: "spring", stiffness: 300 }}
-      className="relative flex flex-col p-7 rounded-2xl border transition-all duration-500"
+      className="relative flex flex-col p-7 rounded-2xl border transition-all duration-500 h-full"
       style={{
         background: isHeavy 
           ? 'linear-gradient(135deg, rgba(234,88,12,0.08) 0%, rgba(15,12,8,1) 100%)' 
@@ -377,7 +475,7 @@ const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
     <motion.div
       whileHover={{ y: -8 }}
       transition={{ type: "spring", stiffness: 300 }}
-      className="relative flex flex-col rounded-2xl min-w-[270px] md:min-w-0"
+      className="relative flex flex-col rounded-2xl min-w-[270px] md:min-w-0 h-full"
       style={{
         background: isPremium
           ? 'linear-gradient(155deg, rgba(200,16,46,0.12) 0%, rgba(10,5,5,1) 100%)'
@@ -974,16 +1072,16 @@ _נשלח אוטומטית ממערכת YOUGO_`;
               </section>
 
               {/* Packages */}
-              <section id="packages" className="space-y-12 overflow-hidden">
+              <section id="packages" className="space-y-16">
                 <div className="text-center space-y-4">
                   <h2 className="text-4xl font-black">{t.packages}</h2>
                   <p className="text-white/60">בחר את המסלול המתאים ביותר עבורך</p>
                 </div>
                 
-                {/* Regular packages */}
-                <div className="flex md:grid md:grid-cols-3 gap-8 overflow-x-auto pb-8 snap-x no-scrollbar pt-6">
+                {/* Regular packages - 3 columns */}
+                <div className="grid md:grid-cols-3 gap-8">
                   {packages.map(pkg => (
-                    <div key={pkg.id} className="snap-center overflow-visible">
+                    <div key={pkg.id} className="h-full">
                       <PackageCard 
                         pkg={pkg} 
                         lang={lang} 
@@ -996,117 +1094,86 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                   ))}
                 </div>
 
-                {/* Premium Packages Row - VIP and DUO DEAL together */}
-                <div className="grid md:grid-cols-2 gap-8 pt-4">
+                {/* Premium Packages Row - VIP and DUO DEAL together - 2 columns */}
+                <div className="grid md:grid-cols-2 gap-8">
                   {/* VIP Package */}
-                  <VIPPackageCard
-                    pkg={vipPackage}
-                    lang={lang}
-                    onSelect={(p) => {
-                      setSelectedPackage(p);
-                      setView('booking');
-                    }}
-                  />
+                  <div className="h-full">
+                    <VIPPackageCard
+                      pkg={vipPackage}
+                      lang={lang}
+                      onSelect={(p) => {
+                        setSelectedPackage(p);
+                        setView('booking');
+                      }}
+                    />
+                  </div>
 
-                  {/* DUO DEAL Package - redesigned professional */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    whileHover={{ y: -8 }}
-                    transition={{ type: 'spring', stiffness: 280 }}
-                    className="relative rounded-3xl overflow-hidden h-full"
-                    style={{
-                      background: 'radial-gradient(circle at 100% 0%, #1e1428 0%, #0b0710 100%)',
-                      boxShadow: '0 20px 40px -15px rgba(139,92,246,0.3), 0 0 0 1px rgba(139,92,246,0.2) inset'
-                    }}
-                  >
-                    {/* Purple gradient top */}
-                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-purple-400 to-transparent" />
-                    
-                    {/* Purple sparkles overlay */}
-                    <div className="absolute inset-0 opacity-10" style={{
-                      backgroundImage: 'radial-gradient(circle at 30% 40%, #a78bfa 2px, transparent 2px), radial-gradient(circle at 70% 60%, #8b5cf6 1px, transparent 1px)',
-                      backgroundSize: '50px 50px, 30px 30px'
-                    }} />
+                  {/* DUO DEAL Package */}
+                  <div className="h-full">
+                    <DuoDealPackageCard
+                      pkg={duoPackage}
+                      onSelect={(p) => {
+                        setSelectedPackage(p);
+                        setView('booking');
+                      }}
+                    />
+                  </div>
+                </div>
 
-                    <div className="relative z-10 p-7 md:p-8 space-y-6">
-
-                      {/* Top badges */}
-                      <div className="flex items-center flex-wrap gap-3">
-                        <div className="flex items-center gap-1.5 bg-purple-900/40 rounded-full px-4 py-1.5 border border-purple-500/30">
-                          <Car size={14} className="text-purple-400" />
-                          <Car size={14} className="text-purple-400" />
-                          <span className="text-[10px] font-black uppercase tracking-wider text-purple-300">DUO DEAL</span>
-                        </div>
-                        <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-full px-3 py-1.5">
-                          <span className="text-[9px] font-black text-emerald-400">חיסכון 40%</span>
-                        </div>
-                      </div>
-
-                      {/* Title */}
-                      <div>
-                        <h3 className="text-3xl md:text-4xl font-black bg-gradient-to-l from-purple-200 via-purple-400 to-purple-300 bg-clip-text text-transparent">
-                          DUO DEAL
-                        </h3>
-                        <p className="text-purple-100/40 text-sm mt-2 leading-relaxed">
-                          מוכרים 2 רכבים? קבלו חשיפה כפולה במחיר שלא תמצאו בשום מקום.
-                        </p>
-                      </div>
-
-                      {/* Price */}
-                      <div className="flex items-baseline gap-4">
-                        <span className="text-5xl font-black text-purple-400">₪349</span>
-                        <span className="text-lg line-through text-white/20">₪598</span>
-                        <span className="text-xs font-black bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full border border-purple-500/30">
-                          חיסכון ₪249
-                        </span>
-                      </div>
-
-                      {/* Divider */}
-                      <div className="h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent" />
-
-                      {/* Features grid */}
-                      <div className="grid grid-cols-2 gap-3">
-                        {[
-                          { icon: <Car size={14} />, label: 'פרסום 2 רכבים' },
-                          { icon: <Camera size={14} />, label: '4 תמונות לרכב' },
-                          { icon: <Instagram size={14} />, label: 'פוסט לכל רכב' },
-                          { icon: <Calendar size={14} />, label: 'סטורי 14 יום' },
-                          { icon: <Users size={14} />, label: 'חשיפה כפולה' },
-                          { icon: <TrendingUp size={14} />, label: 'קהל מעוניין' },
-                        ].map((feat, i) => (
-                          <div key={i} className="flex items-center gap-2 bg-white/5 rounded-xl px-3 py-2 border border-white/5">
-                            <span className="text-purple-400">{feat.icon}</span>
-                            <span className="text-xs font-medium text-white/80">{feat.label}</span>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* CTA */}
-                      <motion.button
-                        onClick={() => { setSelectedPackage(duoPackage); setView('booking'); }}
-                        whileTap={{ scale: 0.98 }}
-                        className="w-full py-4 rounded-2xl font-black text-base bg-gradient-to-l from-purple-500 to-purple-600 text-white shadow-lg shadow-purple-500/20 hover:shadow-purple-500/30 transition-all"
-                      >
-                        <span className="flex items-center justify-center gap-2">
-                          <Car size={18} />
-                          הזמן DUO עכשיו
-                        </span>
-                      </motion.button>
-
-                      {/* Note */}
-                      <p className="text-center text-[10px] text-purple-300/40">
-                        הכי משתלם לשני רכבים
-                      </p>
+                {/* Equipment Packages Section */}
+                <div className="pt-8 space-y-8">
+                  {/* Section Header */}
+                  <div className="text-center space-y-4">
+                    <div className="inline-flex items-center gap-3 bg-orange-500/10 border border-orange-500/25 px-5 py-2.5 rounded-full">
+                      <Truck size={16} className="text-orange-400" />
+                      <span className="text-[11px] font-black uppercase tracking-[0.2em] text-orange-400">חבילות ציוד כבד ומכונות</span>
+                      <Hammer size={16} className="text-orange-400" />
                     </div>
-                  </motion.div>
+                    <h3 className="text-3xl md:text-4xl font-black">
+                      מוכרים{' '}
+                      <span className="text-orange-400">ציוד מקצועי?</span>
+                    </h3>
+                    <p className="text-white/50 max-w-xl mx-auto text-sm leading-relaxed">
+                      חבילות פרסום ייעודיות לבאגרים, מחפרונים, מיני באגרים, פופקטים וכל ציוד כבד — 
+                      חשיפה ישירה לקהל הקבלנים והמקצוענים בישראל.
+                    </p>
+                  </div>
+
+                  {/* Equipment Cards - 2 columns */}
+                  <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                    {equipmentPackages.map(pkg => (
+                      <div key={pkg.id} className="h-full">
+                        <EquipmentPackageCard
+                          pkg={pkg}
+                          onSelect={(p) => {
+                            setSelectedPackage(p);
+                            setView('booking');
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Equipment CTA note */}
+                  <div className="text-center">
+                    <p className="text-xs text-white/30 font-bold">
+                      יש לך ציוד שלא מופיע כאן?{' '}
+                      <a 
+                        href="https://wa.me/972546980606?text=שלום, אני מעוניין לפרסם ציוד מכני"
+                        target="_blank"
+                        className="text-orange-400 hover:text-orange-300 transition-colors underline underline-offset-2"
+                      >
+                        צור קשר בוואטסאפ
+                      </a>
+                      {' '}ונכין לך הצעה מותאמת אישית.
+                    </p>
+                  </div>
                 </div>
 
                 {/* Business Package */}
                 <motion.div 
                   whileHover={{ scale: 1.01 }}
-                  className="max-w-4xl mx-auto mt-12 p-8 rounded-3xl bg-gradient-to-r from-brand-red/10 to-transparent border border-brand-red/20 flex flex-col md:flex-row items-center justify-between gap-8"
+                  className="max-w-4xl mx-auto p-8 rounded-3xl bg-gradient-to-r from-brand-red/10 to-transparent border border-brand-red/20 flex flex-col md:flex-row items-center justify-between gap-8"
                 >
                   <div className="space-y-4 text-center md:text-right">
                     <div className="inline-block px-4 py-1 bg-brand-red text-white text-[10px] font-black rounded-full uppercase tracking-widest">
@@ -1203,71 +1270,6 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                         </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-
-                {/* Equipment Packages Section */}
-                <div className="pt-8 space-y-8">
-                  {/* Section Header */}
-                  <div className="text-center space-y-4">
-                    <div className="inline-flex items-center gap-3 bg-orange-500/10 border border-orange-500/25 px-5 py-2.5 rounded-full">
-                      <Truck size={16} className="text-orange-400" />
-                      <span className="text-[11px] font-black uppercase tracking-[0.2em] text-orange-400">חבילות ציוד כבד ומכונות</span>
-                      <Hammer size={16} className="text-orange-400" />
-                    </div>
-                    <h3 className="text-3xl md:text-4xl font-black">
-                      מוכרים{' '}
-                      <span className="text-orange-400">ציוד מקצועי?</span>
-                    </h3>
-                    <p className="text-white/50 max-w-xl mx-auto text-sm leading-relaxed">
-                      חבילות פרסום ייעודיות לבאגרים, מחפרונים, מיני באגרים, פופקטים וכל ציוד כבד — 
-                      חשיפה ישירה לקהל הקבלנים והמקצוענים בישראל.
-                    </p>
-                  </div>
-
-                  {/* Equipment type tags showcase */}
-                  <div className="flex flex-wrap justify-center gap-3 pb-2">
-                    {[
-                      { label: '🚜 באגר', he: 'Excavator' },
-                      { label: '⛏️ מחפרון', he: 'Mini Excavator' },
-                      { label: '🔩 מיני באגר', he: 'Compact' },
-                      { label: '🔧 פופקט', he: 'Bobcat / Skid' },
-                      { label: '🏗️ עגורן', he: 'Crane' },
-                      { label: '🚛 בולדוזר', he: 'Bulldozer' },
-                    ].map((item, i) => (
-                      <span key={i} className="text-xs font-black px-4 py-2 rounded-full border border-orange-500/20 bg-orange-500/5 text-white/70">
-                        {item.label}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Equipment Cards */}
-                  <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-                    {equipmentPackages.map(pkg => (
-                      <EquipmentPackageCard
-                        key={pkg.id}
-                        pkg={pkg}
-                        onSelect={(p) => {
-                          setSelectedPackage(p);
-                          setView('booking');
-                        }}
-                      />
-                    ))}
-                  </div>
-
-                  {/* Equipment CTA note */}
-                  <div className="text-center">
-                    <p className="text-xs text-white/30 font-bold">
-                      יש לך ציוד שלא מופיע כאן?{' '}
-                      <a 
-                        href="https://wa.me/972546980606?text=שלום, אני מעוניין לפרסם ציוד מכני"
-                        target="_blank"
-                        className="text-orange-400 hover:text-orange-300 transition-colors underline underline-offset-2"
-                      >
-                        צור קשר בוואטסאפ
-                      </a>
-                      {' '}ונכין לך הצעה מותאמת אישית.
-                    </p>
                   </div>
                 </div>
               </section>
