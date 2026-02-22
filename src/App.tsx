@@ -503,30 +503,59 @@ const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
   );
 };
 
-// --- Bit / PayBox Logo SVGs ---
-// Using foreignObject with HTML for reliable cross-browser rendering
-const BitLogo = () => (
-  <div className="flex items-center gap-1.5 h-7 px-3 rounded-md" style={{ background: '#00A86B', minWidth: 60 }}>
-    {/* Bit icon: three stacked dots */}
-    <div className="flex flex-col gap-[3px] shrink-0">
-      <div className="w-[5px] h-[5px] rounded-full bg-white" />
-      <div className="w-[5px] h-[5px] rounded-full bg-white" />
-      <div className="w-[5px] h-[5px] rounded-full bg-white" />
+// --- Bit / PayBox Logo — matching real brand colors ---
+const BitLogo = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) => {
+  const h = size === 'sm' ? 28 : size === 'lg' ? 40 : 32;
+  const fontSize = size === 'sm' ? 13 : size === 'lg' ? 19 : 15;
+  const px = size === 'sm' ? 10 : 14;
+  return (
+    <div
+      className="inline-flex items-center justify-center rounded-xl overflow-hidden shrink-0"
+      style={{ background: '#0D3D3D', height: h, paddingLeft: px, paddingRight: px, gap: 5 }}
+    >
+      {/* Bit icon: circle with small dot on top (mimics the real 'i' dot style) */}
+      <svg width={fontSize * 0.55} height={h * 0.65} viewBox="0 0 9 18" fill="none">
+        <circle cx="4.5" cy="2" r="2" fill="#00E5CC"/>
+        <rect x="2.5" y="6" width="4" height="10" rx="2" fill="#00E5CC"/>
+      </svg>
+      <span style={{
+        fontFamily: '"Nunito", "Varela Round", Arial Rounded MT Bold, Arial, sans-serif',
+        fontWeight: 800,
+        fontSize,
+        color: '#00E5CC',
+        letterSpacing: '-0.5px',
+        lineHeight: 1
+      }}>bit</span>
     </div>
-    <span style={{ fontFamily: 'Arial Black, Arial', fontWeight: 900, fontSize: 14, color: '#fff', letterSpacing: 1 }}>bit</span>
-  </div>
-);
+  );
+};
 
-const PayBoxLogo = () => (
-  <div className="flex items-center gap-1.5 h-7 px-3 rounded-md" style={{ background: '#6C3CE1', minWidth: 72 }}>
-    {/* PayBox icon: small card symbol */}
-    <div className="flex flex-col gap-[2px] shrink-0">
-      <div className="w-4 h-[6px] rounded-[2px] border border-white/70" />
-      <div className="w-3 h-[3px] rounded-sm bg-white/60" />
+const PayBoxLogo = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) => {
+  const h = size === 'sm' ? 28 : size === 'lg' ? 40 : 32;
+  const fontSize = size === 'sm' ? 11 : size === 'lg' ? 16 : 13;
+  const iconSize = size === 'sm' ? 14 : size === 'lg' ? 22 : 18;
+  const px = size === 'sm' ? 10 : 14;
+  return (
+    <div
+      className="inline-flex items-center justify-center rounded-xl overflow-hidden shrink-0"
+      style={{ background: '#29ABE2', height: h, paddingLeft: px, paddingRight: px, gap: 6 }}
+    >
+      {/* PayBox icon: person with arms up (real logo) */}
+      <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="6" r="3" stroke="white" strokeWidth="2" fill="none"/>
+        <path d="M5 10 L9 14 L9 20 L15 20 L15 14 L19 10" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+      </svg>
+      <span style={{
+        fontFamily: 'Arial, Helvetica, sans-serif',
+        fontWeight: 700,
+        fontSize,
+        color: '#ffffff',
+        letterSpacing: '0.2px',
+        lineHeight: 1
+      }}>PayBox</span>
     </div>
-    <span style={{ fontFamily: 'Arial Black, Arial', fontWeight: 900, fontSize: 11, color: '#fff', letterSpacing: 0.3 }}>PayBox</span>
-  </div>
-);
+  );
+};
 
 export default function App() {
   const [lang, setLang] = useState<Language>('he');
@@ -562,6 +591,11 @@ export default function App() {
   useEffect(() => {
     document.documentElement.dir = lang === 'he' ? 'rtl' : 'rtl'; // Both are RTL
   }, [lang]);
+
+  // Scroll to top whenever view changes — ensures booking opens from the top
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [view]);
 
   const packages: Package[] = [
     {
@@ -1088,49 +1122,102 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                 </div>
               </section>
 
-              {/* Why Us Section */}
+              {/* Why Us Section — Enhanced */}
               <section id="why-us" className="space-y-14">
                 <div className="text-center space-y-4">
                   <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 text-white/40 text-[11px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-full">
+                    <span className="w-1.5 h-1.5 rounded-full bg-white/30" />
                     היתרון שלנו
+                    <span className="w-1.5 h-1.5 rounded-full bg-white/30" />
                   </div>
                   <h2 className="text-4xl md:text-5xl font-black">{t.whyUs.title}</h2>
                   <p className="text-white/40 max-w-lg mx-auto text-sm">הסיבות שאלפי מוכרים בחרו דווקא בנו</p>
                 </div>
+
+                {/* Main 3 cards */}
                 <div className="grid md:grid-cols-3 gap-5">
                   {[
-                    { ...t.whyUs.audience, icon: <Users size={26} />, num: '01' },
-                    { ...t.whyUs.speed, icon: <Zap size={26} />, num: '02' },
-                    { ...t.whyUs.results, icon: <TrendingUp size={26} />, num: '03' },
+                    {
+                      ...t.whyUs.audience,
+                      icon: <Users size={28} />,
+                      num: '01',
+                      stat: '50K+',
+                      statLabel: 'עוקבים פעילים',
+                      accentColor: 'rgba(200,16,46,0.85)'
+                    },
+                    {
+                      ...t.whyUs.speed,
+                      icon: <Zap size={28} />,
+                      num: '02',
+                      stat: '48h',
+                      statLabel: 'זמן ממוצע למכירה',
+                      accentColor: 'rgba(200,16,46,0.85)'
+                    },
+                    {
+                      ...t.whyUs.results,
+                      icon: <TrendingUp size={28} />,
+                      num: '03',
+                      stat: '98%',
+                      statLabel: 'לקוחות מרוצים',
+                      accentColor: 'rgba(200,16,46,0.85)'
+                    },
                   ].map((item, i) => (
                     <motion.div
                       key={i}
-                      whileHover={{ y: -6 }}
-                      transition={{ type: 'spring', stiffness: 300 }}
-                      className="group relative rounded-2xl border border-white/8 bg-white/[0.02] hover:bg-white/[0.05] hover:border-brand-red/25 transition-all duration-300 overflow-hidden p-8 space-y-5"
+                      whileHover={{ y: -8, scale: 1.01 }}
+                      transition={{ type: 'spring', stiffness: 280, damping: 20 }}
+                      className="group relative rounded-2xl border border-white/8 bg-white/[0.02] hover:bg-white/[0.045] hover:border-brand-red/30 transition-all duration-300 overflow-hidden p-7 flex flex-col gap-5"
                     >
-                      {/* Number watermark */}
-                      <div className="absolute top-3 left-5 text-7xl font-black text-white/[0.025] group-hover:text-brand-red/[0.05] transition-colors select-none leading-none">
-                        {item.num}
-                      </div>
                       {/* Top accent line */}
-                      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-brand-red/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      
-                      <div className="relative z-10 space-y-4">
-                        <div className="w-13 h-13 w-12 h-12 bg-brand-red/10 group-hover:bg-brand-red/15 border border-brand-red/15 group-hover:border-brand-red/35 rounded-xl flex items-center justify-center text-brand-red transition-all duration-300">
+                      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-brand-red/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
+                      {/* Number watermark */}
+                      <div className="absolute bottom-3 left-4 text-8xl font-black select-none leading-none pointer-events-none transition-all duration-300"
+                        style={{ color: 'rgba(200,16,46,0.04)' }}>{item.num}</div>
+
+                      {/* Top row: icon + stat */}
+                      <div className="flex items-start justify-between">
+                        <div className="w-12 h-12 rounded-xl flex items-center justify-center text-brand-red border border-brand-red/20 bg-brand-red/8 group-hover:bg-brand-red/14 group-hover:border-brand-red/40 transition-all duration-300 shrink-0">
                           {item.icon}
                         </div>
-                        <div className="space-y-2">
-                          <h3 className="text-lg font-black text-white group-hover:text-brand-red transition-colors duration-200">
-                            {item.title}
-                          </h3>
-                          <p className="text-sm text-white/45 leading-relaxed group-hover:text-white/65 transition-colors duration-200">
-                            {item.desc}
-                          </p>
+                        <div className="text-right">
+                          <div className="text-3xl font-black text-brand-red leading-none">{item.stat}</div>
+                          <div className="text-[10px] text-white/30 font-bold uppercase tracking-wider mt-0.5">{item.statLabel}</div>
                         </div>
+                      </div>
+
+                      {/* Divider */}
+                      <div className="h-px bg-white/5 group-hover:bg-brand-red/15 transition-colors duration-300" />
+
+                      {/* Text */}
+                      <div className="space-y-2 relative z-10">
+                        <h3 className="text-lg font-black text-white group-hover:text-brand-red transition-colors duration-200 leading-tight">
+                          {item.title}
+                        </h3>
+                        <p className="text-sm text-white/45 leading-relaxed group-hover:text-white/65 transition-colors duration-200">
+                          {item.desc}
+                        </p>
                       </div>
                     </motion.div>
                   ))}
+                </div>
+
+                {/* Bottom trust strip */}
+                <div className="relative rounded-2xl border border-white/5 bg-white/[0.015] overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-brand-red/3 via-transparent to-brand-red/3 pointer-events-none" />
+                  <div className="relative z-10 flex flex-wrap items-center justify-center gap-0 divide-x divide-white/5 rtl:divide-x-reverse">
+                    {[
+                      { icon: <ShieldCheck size={16} />, text: 'תשלום מאובטח 100%' },
+                      { icon: <CheckCircle2 size={16} />, text: 'ללא עמלת הצלחה' },
+                      { icon: <Zap size={16} />, text: 'פרסום תוך 24 שעות' },
+                      { icon: <MessageSquare size={16} />, text: 'תמיכה אישית בוואטסאפ' },
+                      { icon: <Users size={16} />, text: '500+ מכירות בחודש' },
+                    ].map((item, i) => (
+                      <div key={i} className="flex items-center gap-2 px-5 py-4 text-[11px] font-bold text-white/40 hover:text-white/70 transition-colors">
+                        <span className="text-brand-red shrink-0">{item.icon}</span>
+                        {item.text}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </section>
 
