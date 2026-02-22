@@ -167,111 +167,112 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose:
   );
 };
 
-// --- VIP Package Card (Special Gold Design) — fixed overflow ---
+// --- VIP Package Card — no side bleed ---
 const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
   const t = translations[lang];
   return (
     <motion.div
-      whileHover={{ y: -6 }}
+      whileHover={{ y: -5 }}
       transition={{ type: "spring", stiffness: 280 }}
-      className="relative w-full"
-      style={{ contain: 'layout' }}
+      className="relative w-full rounded-3xl"
+      style={{
+        boxShadow: '0 0 35px rgba(212,175,55,0.12)',
+        border: '1px solid rgba(212,175,55,0.28)',
+        background: 'linear-gradient(145deg, #1c1608 0%, #0d0b06 55%, #171203 100%)',
+        overflow: 'hidden'
+      }}
     >
-      {/* Outer glow — clipped so it doesn't bleed */}
-      <div className="absolute inset-0 rounded-3xl pointer-events-none"
-        style={{ boxShadow: '0 0 40px 4px rgba(212,175,55,0.18), 0 0 0 1px rgba(212,175,55,0.35)', borderRadius: 24 }} />
+      {/* Shimmer top */}
+      <div className="absolute top-0 left-0 right-0 h-[2px]"
+        style={{ background: 'linear-gradient(90deg, transparent 0%, #f5d060 30%, #d4af37 50%, #f5d060 70%, transparent 100%)' }} />
 
-      <div className="relative rounded-3xl overflow-hidden"
-        style={{ background: 'linear-gradient(145deg, #1c1608 0%, #0d0b06 50%, #1a1405 100%)', border: '1px solid rgba(212,175,55,0.30)' }}>
+      {/* Gold dot pattern bg */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        backgroundImage: 'radial-gradient(circle, rgba(212,175,55,0.08) 1px, transparent 1px)',
+        backgroundSize: '28px 28px'
+      }} />
 
-        {/* Shimmer top */}
-        <div className="absolute top-0 left-0 right-0 h-[2px]"
-          style={{ background: 'linear-gradient(90deg, transparent, #d4af37, #f5d060, #d4af37, transparent)' }} />
+      <div className="relative z-10 p-5 md:p-7 space-y-5">
 
-        {/* Subtle gold grid bg */}
-        <div className="absolute inset-0 opacity-[0.025]" style={{
-          backgroundImage: 'linear-gradient(rgba(212,175,55,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(212,175,55,0.8) 1px, transparent 1px)',
-          backgroundSize: '40px 40px'
-        }} />
-
-        <div className="relative z-10 p-5 md:p-7 space-y-5">
-
-          {/* Top row: badges */}
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="flex items-center gap-1.5 bg-amber-400/15 border border-amber-400/35 px-3 py-1 rounded-full">
-              <Crown size={11} className="text-amber-300" />
-              <span className="text-[9px] font-black uppercase tracking-[0.2em] text-amber-300">VIP LUXURY</span>
-            </div>
-            <div className="bg-green-500/20 text-green-400 text-[9px] font-black py-0.5 px-2 rounded-full border border-green-500/30">
-              15% OFF
-            </div>
-            <div className="flex items-center gap-1 mr-auto">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} size={11} className="text-amber-400 fill-amber-400" />
-              ))}
-            </div>
+        {/* Top row: badges + stars */}
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1.5 rounded-full px-3 py-1"
+            style={{ background: 'rgba(212,175,55,0.12)', border: '1px solid rgba(212,175,55,0.30)' }}>
+            <Crown size={10} style={{ color: '#f5d060' }} />
+            <span className="text-[9px] font-black uppercase tracking-[0.22em]" style={{ color: '#f5d060' }}>VIP LUXURY</span>
           </div>
-
-          {/* Title + subtitle */}
-          <div className="space-y-1">
-            <h3 className="text-2xl md:text-3xl font-black tracking-tight"
-              style={{ background: 'linear-gradient(90deg, #f5d060, #d4af37, #f0c040)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              VIP LUXURY
-            </h3>
-            <p className="text-white/45 text-sm leading-relaxed">
-              חבילת הפרסום האולטימטיבית — לרכבים שמגיעים ליחס הכי טוב. חשיפה מקסימלית, עיצוב פרמיום, ליווי אישי מלא.
-            </p>
+          <div className="text-[9px] font-black py-0.5 px-2 rounded-full"
+            style={{ background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.30)', color: '#4ade80' }}>
+            15% OFF
           </div>
-
-          {/* Price */}
-          <div className="flex items-baseline gap-3">
-            <span className="text-4xl font-black" style={{ color: '#d4af37' }}>₪749</span>
-            <span className="text-white/30 text-sm line-through">₪882</span>
-            <span className="text-amber-400/70 text-xs font-bold bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/20">חיסכון ₪133</span>
-          </div>
-
-          {/* Divider */}
-          <div className="h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.3), transparent)' }} />
-
-          {/* Features — responsive grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-            {[
-              { icon: <Camera size={14} />, label: '15+ תמונות מקצועיות' },
-              { icon: <Video size={14} />, label: 'רילס + סטורי VIP' },
-              { icon: <Star size={14} />, label: '60 ימי פרסום' },
-              { icon: <TrendingUp size={14} />, label: 'חשיפה מקסימלית' },
-              { icon: <ShieldCheck size={14} />, label: 'ליווי אישי 24/7' },
-              { icon: <Crown size={14} />, label: 'עיצוב VIP בלעדי' },
-              { icon: <Users size={14} />, label: 'טרגוט מתקדם' },
-              { icon: <Zap size={14} />, label: 'עדיפות ראשונה' },
-            ].map((feat, i) => (
-              <div key={i} className="flex items-center gap-2 rounded-xl px-3 py-2.5"
-                style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(212,175,55,0.1)' }}>
-                <span className="text-amber-400 shrink-0">{feat.icon}</span>
-                <span className="text-xs font-bold text-white/75 leading-tight">{feat.label}</span>
-              </div>
+          <div className="flex items-center gap-0.5 mr-auto">
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} size={11} style={{ color: '#d4af37', fill: '#d4af37' }} />
             ))}
           </div>
-
-          {/* CTA button — full width */}
-          <motion.button
-            onClick={() => onSelect(pkg)}
-            whileTap={{ scale: 0.98 }}
-            whileHover={{ scale: 1.01 }}
-            className="w-full py-4 rounded-2xl font-black text-base tracking-wide relative overflow-hidden"
-            style={{ background: 'linear-gradient(135deg, #d4af37, #f5d060, #c8a020)' }}
-          >
-            <span className="relative text-black flex items-center justify-center gap-2">
-              <Crown size={18} />
-              הזמן VIP עכשיו
-            </span>
-          </motion.button>
         </div>
 
-        {/* Bottom shimmer */}
-        <div className="absolute bottom-0 left-0 right-0 h-[1px]"
-          style={{ background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.4), transparent)' }} />
+        {/* Title */}
+        <div className="space-y-1.5">
+          <h3 className="text-2xl md:text-3xl font-black tracking-tight"
+            style={{ background: 'linear-gradient(90deg, #f5d060, #d4af37, #f0c040)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            VIP LUXURY
+          </h3>
+          <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.42)' }}>
+            חבילת הפרסום האולטימטיבית — לרכבים שמגיעים ליחס הכי טוב. חשיפה מקסימלית, עיצוב פרמיום, ליווי אישי מלא.
+          </p>
+        </div>
+
+        {/* Price */}
+        <div className="flex items-baseline gap-3">
+          <span className="text-4xl font-black" style={{ color: '#d4af37' }}>₪749</span>
+          <span className="text-sm line-through" style={{ color: 'rgba(255,255,255,0.28)' }}>₪882</span>
+          <span className="text-xs font-bold px-2 py-0.5 rounded-full"
+            style={{ color: 'rgba(212,175,55,0.75)', background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.2)' }}>
+            חיסכון ₪133
+          </span>
+        </div>
+
+        {/* Divider */}
+        <div className="h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.25), transparent)' }} />
+
+        {/* Features 2×4 grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          {[
+            { icon: <Camera size={13} />, label: '15+ תמונות' },
+            { icon: <Video size={13} />, label: 'רילס + סטורי VIP' },
+            { icon: <Star size={13} />, label: '60 ימי פרסום' },
+            { icon: <TrendingUp size={13} />, label: 'חשיפה מקסימלית' },
+            { icon: <ShieldCheck size={13} />, label: 'ליווי אישי 24/7' },
+            { icon: <Crown size={13} />, label: 'עיצוב VIP בלעדי' },
+            { icon: <Users size={13} />, label: 'טרגוט מתקדם' },
+            { icon: <Zap size={13} />, label: 'עדיפות ראשונה' },
+          ].map((feat, i) => (
+            <div key={i} className="flex items-center gap-2 rounded-xl px-2.5 py-2"
+              style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(212,175,55,0.09)' }}>
+              <span style={{ color: '#d4af37', flexShrink: 0 }}>{feat.icon}</span>
+              <span className="text-xs font-bold leading-tight" style={{ color: 'rgba(255,255,255,0.72)' }}>{feat.label}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <motion.button
+          onClick={() => onSelect(pkg)}
+          whileTap={{ scale: 0.98 }}
+          className="w-full py-4 rounded-2xl font-black text-base"
+          style={{ background: 'linear-gradient(135deg, #c8a020, #f5d060, #d4af37)', color: '#0d0b06' }}
+        >
+          <span className="flex items-center justify-center gap-2">
+            <Crown size={17} />
+            הזמן VIP עכשיו
+          </span>
+        </motion.button>
       </div>
+
+      {/* Bottom shimmer */}
+      <div className="absolute bottom-0 left-0 right-0 h-[1px]"
+        style={{ background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.35), transparent)' }} />
     </motion.div>
   );
 };
@@ -373,125 +374,110 @@ const EquipmentPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: P
 
 const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
   const t = translations[lang];
-  
-  // Define all possible features for comparison
-  const allFeatures = [
-    t.features.imagesPremium,
-    t.features.postPremium,
-    t.features.story30,
-    t.features.priorityFull,
-    t.features.exposureMax,
-    t.features.guidance,
-    t.features.video
-  ];
 
-  const hasFeature = (feature: string) => {
-    // Check if the package has this feature OR a more specific version of it
-    if (feature === t.features.imagesPremium) {
-      return pkg.features.some(f => f === t.features.imagesPremium || f === t.features.images4 || f === t.features.images2);
-    }
-    if (feature === t.features.postPremium) {
-      return pkg.features.some(f => f === t.features.postPremium || f === t.features.postPro || f === t.features.post1);
-    }
-    if (feature === t.features.story30) {
-      return pkg.features.some(f => f === t.features.story30 || f === t.features.story14 || f === t.features.story7);
-    }
-    if (feature === t.features.priorityFull) {
-      return pkg.features.some(f => f === t.features.priorityFull || f === t.features.priorityPro);
-    }
-    if (feature === t.features.exposureMax) {
-      return pkg.features.some(f => f === t.features.exposureMax || f === t.features.exposurePro || f === t.features.exposureBasic);
-    }
-    return pkg.features.some(f => f === feature);
+  const tierConfig = {
+    basic:   { color: '#94a3b8', glow: 'rgba(148,163,184,0.08)', badge: '🚀', accentBg: 'rgba(148,163,184,0.06)', borderColor: 'rgba(148,163,184,0.15)' },
+    pro:     { color: '#c8102e', glow: 'rgba(200,16,46,0.10)',   badge: '⭐', accentBg: 'rgba(200,16,46,0.07)',   borderColor: 'rgba(200,16,46,0.35)'    },
+    premium: { color: '#c8102e', glow: 'rgba(200,16,46,0.14)',   badge: '💎', accentBg: 'rgba(200,16,46,0.10)',   borderColor: 'rgba(200,16,46,0.45)'    },
   };
+  const cfg = tierConfig[pkg.id as keyof typeof tierConfig] || tierConfig.basic;
+  const isPro = pkg.id === 'pro';
+  const isPremium = pkg.premium;
 
-  const getFeatureLabel = (feature: string) => {
-    // Return the specific label the package has for this category
-    if (feature === t.features.imagesPremium) {
-      return pkg.features.find(f => f === t.features.imagesPremium || f === t.features.images4 || f === t.features.images2) || feature;
-    }
-    if (feature === t.features.postPremium) {
-      return pkg.features.find(f => f === t.features.postPremium || f === t.features.postPro || f === t.features.post1) || feature;
-    }
-    if (feature === t.features.story30) {
-      return pkg.features.find(f => f === t.features.story30 || f === t.features.story14 || f === t.features.story7) || feature;
-    }
-    if (feature === t.features.priorityFull) {
-      return pkg.features.find(f => f === t.features.priorityFull || f === t.features.priorityPro) || feature;
-    }
-    if (feature === t.features.exposureMax) {
-      return pkg.features.find(f => f === t.features.exposureMax || f === t.features.exposurePro || f === t.features.exposureBasic) || feature;
-    }
-    return feature;
-  };
+  const featureChips = pkg.features.slice(0, 5);
 
   return (
-    <motion.div 
-      whileHover={{ y: -8, scale: 1.01 }}
+    <motion.div
+      whileHover={{ y: -8 }}
       transition={{ type: "spring", stiffness: 300 }}
-      className={`relative flex flex-col p-6 rounded-2xl transition-all duration-500 min-w-[280px] md:min-w-0 ${
-        pkg.premium 
-          ? 'bg-gradient-to-b from-brand-red/15 to-brand-red/5 border-2 border-brand-red shadow-[0_0_30px_rgba(225,29,72,0.1)]' 
-          : 'bg-white/5 border border-white/10 hover:border-white/20'
-      }`}
+      className="relative flex flex-col rounded-2xl min-w-[270px] md:min-w-0"
+      style={{
+        background: isPremium
+          ? 'linear-gradient(155deg, rgba(200,16,46,0.12) 0%, rgba(10,5,5,1) 100%)'
+          : 'linear-gradient(155deg, rgba(255,255,255,0.04) 0%, rgba(10,10,12,1) 100%)',
+        border: `1px solid ${cfg.borderColor}`,
+        boxShadow: isPremium ? `0 0 28px ${cfg.glow}` : 'none',
+        overflow: 'hidden'
+      }}
     >
-      {/* FIX 1: badge הכי נבחר — added z-10 and changed -top-3 to -top-4 */}
+      {/* Top color bar */}
+      <div className="h-[3px] w-full" style={{ background: `linear-gradient(90deg, transparent, ${cfg.color}, transparent)` }} />
+
+      {/* Popular badge */}
       {pkg.popular && (
-        <div className="absolute -top-4 right-6 z-10 bg-brand-red text-white text-[9px] font-black py-1 px-3 rounded-full shadow-lg uppercase tracking-widest">
+        <div className="absolute top-3 right-3 z-10 text-white text-[9px] font-black py-1 px-2.5 rounded-full shadow-lg uppercase tracking-widest"
+          style={{ background: cfg.color }}>
           {t.mostPopular}
         </div>
       )}
 
-      <div className="absolute top-3 left-3 bg-green-500/20 text-green-500 text-[9px] font-black py-0.5 px-2 rounded-full border border-green-500/30">
+      {/* Discount badge */}
+      <div className="absolute top-3 left-3 text-[9px] font-black py-0.5 px-2 rounded-full"
+        style={{ background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', color: '#4ade80' }}>
         15% OFF
       </div>
-      
-      <div className="mb-6">
-        <h3 className={`text-lg font-black mb-1 tracking-tight ${pkg.premium ? 'text-brand-red' : 'text-white'}`}>
-          {pkg.name}
-        </h3>
-        <p className="text-[10px] text-white/40 mb-4 h-8 leading-tight">
-          {pkg.id === 'basic' ? t.packageSubtitles.basic : 
-           pkg.id === 'pro' ? t.packageSubtitles.pro : 
-           t.packageSubtitles.premium}
-        </p>
-        <div className="flex items-baseline gap-1">
-          <span className="text-3xl font-black">{pkg.price}</span>
-          <span className="text-white/40 text-[10px] font-bold line-through ml-2">
+
+      <div className="p-6 flex flex-col flex-grow gap-4">
+
+        {/* Header: emoji + name */}
+        <div className="flex items-center gap-2.5 mt-3">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0"
+            style={{ background: cfg.accentBg, border: `1px solid ${cfg.borderColor}` }}>
+            {cfg.badge}
+          </div>
+          <div>
+            <h3 className="text-lg font-black tracking-tight" style={{ color: isPremium || isPro ? cfg.color : '#fff' }}>
+              {pkg.name}
+            </h3>
+            <p className="text-[10px] leading-tight" style={{ color: 'rgba(255,255,255,0.35)' }}>
+              {pkg.id === 'basic' ? t.packageSubtitles.basic :
+               pkg.id === 'pro' ? t.packageSubtitles.pro :
+               t.packageSubtitles.premium}
+            </p>
+          </div>
+        </div>
+
+        {/* Price */}
+        <div className="flex items-baseline gap-2">
+          <span className="text-3xl font-black text-white">{pkg.price}</span>
+          <span className="text-[11px] line-through" style={{ color: 'rgba(255,255,255,0.3)' }}>
             ₪{Math.round(parseInt(pkg.price.replace('₪', '')) / 0.85)}
           </span>
         </div>
-      </div>
-      
-      <div className="space-y-2 mb-8 flex-grow">
-        {allFeatures.map((f, i) => {
-          const included = hasFeature(f);
-          const label = getFeatureLabel(f);
-          return (
-            <div key={i} className={`flex items-start gap-2 text-xs font-medium transition-opacity ${included ? 'opacity-100' : 'opacity-20'}`}>
-              <div className={`mt-0.5 p-0.5 rounded-full ${included ? (pkg.premium ? 'bg-brand-red' : 'bg-white/40') : 'bg-white/5'}`}>
-                {included ? (
-                  <Check size={8} className="text-dark-bg" strokeWidth={5} />
-                ) : (
-                  <X size={8} className="text-white/20" strokeWidth={5} />
-                )}
+
+        {/* Divider */}
+        <div className="h-px" style={{ background: `linear-gradient(90deg, transparent, ${cfg.borderColor}, transparent)` }} />
+
+        {/* Feature chips */}
+        <div className="flex flex-col gap-2 flex-grow">
+          {featureChips.map((feat, i) => (
+            <div key={i} className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-full flex items-center justify-center shrink-0"
+                style={{ background: cfg.accentBg, border: `1px solid ${cfg.borderColor}` }}>
+                <Check size={9} strokeWidth={3} style={{ color: cfg.color }} />
               </div>
-              <span className={`${included ? 'text-white' : 'text-white/20 line-through'}`}>{label}</span>
+              <span className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.78)' }}>{feat}</span>
             </div>
-          );
-        })}
+          ))}
+          {pkg.features.length > 5 && (
+            <span className="text-[10px] font-bold mt-1" style={{ color: cfg.color }}>
+              + {pkg.features.length - 5} תכונות נוספות
+            </span>
+          )}
+        </div>
+
+        {/* CTA */}
+        <button
+          onClick={() => onSelect(pkg)}
+          className="w-full py-3 rounded-xl font-black text-sm transition-all duration-200 active:scale-95 mt-2"
+          style={{
+            background: isPremium || isPro ? cfg.color : 'rgba(255,255,255,0.9)',
+            color: isPremium || isPro ? '#fff' : '#0a0a0c'
+          }}
+        >
+          {t.startOrder}
+        </button>
       </div>
-      
-      <button 
-        onClick={() => onSelect(pkg)}
-        className={`w-full py-3 rounded-xl font-black text-sm transition-all duration-300 active:scale-95 ${
-          pkg.premium 
-            ? 'bg-brand-red text-white hover:bg-red-700 shadow-lg shadow-brand-red/10' 
-            : 'bg-white text-black hover:bg-white/90'
-        }`}
-      >
-        {t.startOrder}
-      </button>
     </motion.div>
   );
 };
@@ -647,6 +633,21 @@ export default function App() {
       'עיצוב VIP בלעדי',
       'טרגוט מתקדם',
       'עדיפות ראשונה תמיד'
+    ]
+  };
+
+  // DUO Package — 2 cars deal
+  const duoPackage: Package = {
+    id: 'duo',
+    name: 'DUO DEAL',
+    price: '₪349',
+    features: [
+      'פרסום 2 רכבים במחיר מיוחד',
+      '4 תמונות לכל רכב',
+      'פוסט נפרד לכל רכב',
+      'סטורי 14 יום לכל אחד',
+      'חשיפה כפולה לקהל מעוניין',
+      'חיסכון של 40% לעומת 2 חבילות'
     ]
   };
 
@@ -1011,6 +1012,109 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                     }}
                   />
                 </div>
+
+                {/* DUO DEAL Package — 2 cars special */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  whileHover={{ y: -5 }}
+                  transition={{ type: 'spring', stiffness: 260 }}
+                  className="relative rounded-3xl overflow-hidden"
+                  style={{
+                    background: 'linear-gradient(135deg, #0f0a1e 0%, #120d22 50%, #0a0816 100%)',
+                    border: '1px solid rgba(139,92,246,0.35)',
+                    boxShadow: '0 0 30px rgba(139,92,246,0.08)'
+                  }}
+                >
+                  {/* Top shimmer */}
+                  <div className="absolute top-0 left-0 right-0 h-[2px]"
+                    style={{ background: 'linear-gradient(90deg, transparent, #8b5cf6, #a78bfa, #8b5cf6, transparent)' }} />
+
+                  {/* BG dot grid */}
+                  <div className="absolute inset-0 pointer-events-none opacity-[0.04]"
+                    style={{ backgroundImage: 'radial-gradient(circle, #8b5cf6 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+
+                  <div className="relative z-10 p-6 md:p-8">
+                    <div className="flex flex-col md:flex-row md:items-center gap-6">
+
+                      {/* Left: branding */}
+                      <div className="flex-1 space-y-4">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full"
+                            style={{ background: 'rgba(139,92,246,0.15)', border: '1px solid rgba(139,92,246,0.35)' }}>
+                            <Car size={11} style={{ color: '#a78bfa' }} />
+                            <Car size={11} style={{ color: '#a78bfa' }} />
+                            <span className="text-[9px] font-black uppercase tracking-[0.22em]" style={{ color: '#a78bfa' }}>DUO DEAL</span>
+                          </div>
+                          <div className="text-[9px] font-black py-0.5 px-2 rounded-full"
+                            style={{ background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', color: '#4ade80' }}>
+                            חיסכון 40%
+                          </div>
+                        </div>
+
+                        <div>
+                          <h3 className="text-2xl md:text-3xl font-black"
+                            style={{ background: 'linear-gradient(90deg, #c4b5fd, #8b5cf6, #a78bfa)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                            DUO DEAL
+                          </h3>
+                          <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.45)' }}>
+                            מוכרים 2 רכבים? קבלו חשיפה כפולה במחיר שלא תמצאו בשום מקום.
+                          </p>
+                        </div>
+
+                        <div className="flex items-baseline gap-3">
+                          <span className="text-4xl font-black" style={{ color: '#a78bfa' }}>₪349</span>
+                          <span className="text-sm line-through" style={{ color: 'rgba(255,255,255,0.28)' }}>₪598</span>
+                          <span className="text-xs font-bold px-2 py-0.5 rounded-full"
+                            style={{ color: '#a78bfa', background: 'rgba(139,92,246,0.12)', border: '1px solid rgba(139,92,246,0.25)' }}>
+                            חיסכון ₪249
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Center: features */}
+                      <div className="flex-1 grid grid-cols-2 gap-2">
+                        {[
+                          { icon: <Car size={13} />, label: 'פרסום 2 רכבים' },
+                          { icon: <Camera size={13} />, label: '4 תמונות לרכב' },
+                          { icon: <Instagram size={13} />, label: 'פוסט לכל רכב' },
+                          { icon: <Calendar size={13} />, label: 'סטורי 14 יום' },
+                          { icon: <Users size={13} />, label: 'חשיפה כפולה' },
+                          { icon: <TrendingUp size={13} />, label: 'קהל מעוניין' },
+                        ].map((feat, i) => (
+                          <div key={i} className="flex items-center gap-2 rounded-xl px-2.5 py-2"
+                            style={{ background: 'rgba(139,92,246,0.05)', border: '1px solid rgba(139,92,246,0.12)' }}>
+                            <span style={{ color: '#8b5cf6', flexShrink: 0 }}>{feat.icon}</span>
+                            <span className="text-xs font-bold leading-tight" style={{ color: 'rgba(255,255,255,0.72)' }}>{feat.label}</span>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Right: CTA */}
+                      <div className="md:min-w-[160px]">
+                        <motion.button
+                          onClick={() => { setSelectedPackage(duoPackage); setView('booking'); }}
+                          whileTap={{ scale: 0.97 }}
+                          className="w-full py-4 rounded-2xl font-black text-base"
+                          style={{ background: 'linear-gradient(135deg, #7c3aed, #8b5cf6, #6d28d9)', color: '#fff' }}
+                        >
+                          <span className="flex items-center justify-center gap-2">
+                            <Car size={17} />
+                            הזמן DUO עכשיו
+                          </span>
+                        </motion.button>
+                        <p className="text-center text-[10px] mt-2" style={{ color: 'rgba(167,139,250,0.6)' }}>
+                          הכי משתלם לשני רכבים
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Bottom shimmer */}
+                  <div className="absolute bottom-0 left-0 right-0 h-[1px]"
+                    style={{ background: 'linear-gradient(90deg, transparent, rgba(139,92,246,0.4), transparent)' }} />
+                </motion.div>
 
                 {/* Business Package */}
                 <motion.div 
@@ -1523,22 +1627,27 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                     </div>
                   </div>
 
-                  {/* Payment Method Selection */}
+                  {/* Payment Method Selection — text only, clean */}
                   <div className="space-y-3">
                     <h3 className="font-bold text-lg border-r-4 border-brand-red pr-3">אמצעי תשלום</h3>
                     <div className="grid grid-cols-2 gap-3">
-                      <div className="p-4 rounded-2xl border-2 flex flex-col items-center gap-2.5"
-                        style={{ borderColor: '#c8102e', background: 'rgba(200,16,46,0.06)' }}>
-                        <div className="flex items-center gap-2">
-                          <BitLogo size="sm" />
-                          <span className="text-white/30 text-xs">/</span>
-                          <PayBoxLogo size="sm" />
+                      {/* Bit / PayBox — text only */}
+                      <div className="p-4 rounded-2xl flex flex-col items-center justify-center gap-1.5"
+                        style={{ borderWidth: 2, borderStyle: 'solid', borderColor: '#c8102e', background: 'rgba(200,16,46,0.06)' }}>
+                        <div className="flex items-center gap-1.5">
+                          <div className="w-2 h-2 rounded-full" style={{ background: '#00E5CC' }} />
+                          <span className="font-black text-sm text-white">Bit</span>
+                          <span className="text-white/25 text-xs">/</span>
+                          <div className="w-2 h-2 rounded-full" style={{ background: '#29ABE2' }} />
+                          <span className="font-black text-sm text-white">PayBox</span>
                         </div>
-                        <span className="font-black text-xs text-white/70">Bit / PayBox</span>
+                        <span className="text-[10px] font-bold" style={{ color: 'rgba(255,255,255,0.45)' }}>העברה בנקאית מהירה</span>
                       </div>
-                      <div className="p-4 rounded-2xl border border-white/5 bg-white/3 opacity-40 flex flex-col items-center gap-2 cursor-not-allowed">
-                        <CreditCard size={22} className="text-white/30" />
-                        <span className="font-bold text-xs text-white/30">אשראי (בקרוב)</span>
+                      {/* Credit card — coming soon */}
+                      <div className="p-4 rounded-2xl flex flex-col items-center justify-center gap-1.5 opacity-40 cursor-not-allowed"
+                        style={{ border: '1px solid rgba(255,255,255,0.07)', background: 'rgba(255,255,255,0.02)' }}>
+                        <CreditCard size={20} style={{ color: 'rgba(255,255,255,0.3)' }} />
+                        <span className="font-bold text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>אשראי (בקרוב)</span>
                       </div>
                     </div>
                   </div>
