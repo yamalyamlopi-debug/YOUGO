@@ -194,7 +194,7 @@ const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
           backgroundSize: '40px 40px'
         }} />
 
-        <div className="relative z-10 p-6 md:p-8 space-y-6">
+        <div className="relative z-10 p-5 md:p-7 space-y-5">
 
           {/* Top row: badges */}
           <div className="flex flex-wrap items-center gap-2">
@@ -214,7 +214,7 @@ const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
 
           {/* Title + subtitle */}
           <div className="space-y-1">
-            <h3 className="text-3xl md:text-4xl font-black tracking-tight"
+            <h3 className="text-2xl md:text-3xl font-black tracking-tight"
               style={{ background: 'linear-gradient(90deg, #f5d060, #d4af37, #f0c040)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               VIP LUXURY
             </h3>
@@ -234,7 +234,7 @@ const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
           <div className="h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.3), transparent)' }} />
 
           {/* Features — responsive grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             {[
               { icon: <Camera size={14} />, label: '15+ תמונות מקצועיות' },
               { icon: <Video size={14} />, label: 'רילס + סטורי VIP' },
@@ -781,13 +781,18 @@ export default function App() {
       const id = data.orderId;
       setOrderId(id);
       setView('success');
-      
-      // WhatsApp message
-      const formattedId = `#${id}`;
+
+      // Package emoji based on tier
+      const pkgId = selectedPackage?.id || '';
+      const pkgEmoji = pkgId === 'vip' ? '👑' : pkgId === 'premium' ? '💎' : pkgId === 'pro' ? '⭐' : pkgId.includes('equipment') ? '🚜' : '✅';
+
+      // Formatted order ID
+      const orderNum = String(id).padStart(5, '0');
+
       const message = `*YOUGO ISRAEL | אישור הזמנה חדשה* 🚗💨
 ---------------------------------------
-*מספר הזמנה:* ${formattedId}
-*חבילה נבחרת:* ${selectedPackage?.name}
+*מספר הזמנה:* #${orderNum}
+*חבילה נבחרת:* ${selectedPackage?.name} ${pkgEmoji}
 ---------------------------------------
 
 👤 *פרטי לקוח:*
@@ -1519,99 +1524,117 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                   </div>
 
                   {/* Payment Method Selection */}
-                  <div className="space-y-4">
-                    <h3 className="font-bold text-lg border-r-4 border-brand-red pr-3">בחירת אמצעי תשלום</h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      <button 
-                        type="button"
-                        onClick={() => {}}
-                        className="p-4 rounded-xl border-2 border-brand-red bg-brand-red/5 flex flex-col items-center gap-3"
-                      >
-                        {/* Bit + PayBox logos side by side */}
-                        <div className="flex items-center gap-3 flex-wrap justify-center">
-                          <BitLogo />
-                          <span className="text-white/30 text-xs font-bold">/</span>
-                          <PayBoxLogo />
+                  <div className="space-y-3">
+                    <h3 className="font-bold text-lg border-r-4 border-brand-red pr-3">אמצעי תשלום</h3>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="p-4 rounded-2xl border-2 flex flex-col items-center gap-2.5"
+                        style={{ borderColor: '#c8102e', background: 'rgba(200,16,46,0.06)' }}>
+                        <div className="flex items-center gap-2">
+                          <BitLogo size="sm" />
+                          <span className="text-white/30 text-xs">/</span>
+                          <PayBoxLogo size="sm" />
                         </div>
-                        <span className="font-black text-sm text-white">Bit / PayBox</span>
-                      </button>
-                      <button 
-                        type="button"
-                        disabled
-                        className="p-4 rounded-xl border-2 border-white/5 bg-white/5 opacity-50 flex flex-col items-center gap-2 cursor-not-allowed"
-                      >
-                        <CreditCard size={24} className="text-white/40" />
-                        <span className="font-bold text-white/40">אשראי (בקרוב)</span>
-                      </button>
+                        <span className="font-black text-xs text-white/70">Bit / PayBox</span>
+                      </div>
+                      <div className="p-4 rounded-2xl border border-white/5 bg-white/3 opacity-40 flex flex-col items-center gap-2 cursor-not-allowed">
+                        <CreditCard size={22} className="text-white/30" />
+                        <span className="font-bold text-xs text-white/30">אשראי (בקרוב)</span>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Payment Info */}
-                  <div className="p-6 bg-brand-red/10 border border-brand-red/20 rounded-xl space-y-4">
-                    <div className="flex items-center gap-3 text-brand-red">
-                      <CreditCard size={24} />
-                      <h3 className="font-bold text-lg">ביצוע תשלום</h3>
-                    </div>
-                    <p className="text-sm">נא להעביר <span className="font-bold">{selectedPackage?.price}</span> ב-Bit או PayBox למספר:</p>
-                    <div className="flex items-center gap-4">
-                      <div className="flex-grow text-2xl font-black tracking-widest text-center py-2 bg-white/5 rounded-lg border border-white/10">
-                        054-6980606
+                  {/* Payment Info Box — redesigned */}
+                  <div className="rounded-2xl overflow-hidden border"
+                    style={{ borderColor: 'rgba(200,16,46,0.25)', background: 'linear-gradient(145deg, rgba(200,16,46,0.08) 0%, rgba(10,5,5,1) 100%)' }}>
+
+                    {/* Header */}
+                    <div className="flex items-center gap-3 px-5 py-4 border-b"
+                      style={{ borderColor: 'rgba(200,16,46,0.15)' }}>
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center"
+                        style={{ background: 'rgba(200,16,46,0.15)' }}>
+                        <CreditCard size={16} className="text-brand-red" />
                       </div>
-                      <button 
-                        type="button"
-                        onClick={() => {
-                          navigator.clipboard.writeText('0546980606');
-                          alert('המספר הועתק!');
-                        }}
-                        className="p-3 bg-brand-red rounded-lg hover:bg-red-700 transition-colors"
-                        title="העתק מספר"
-                      >
-                        <FileText size={20} />
-                      </button>
+                      <h3 className="font-black text-base text-brand-red">ביצוע תשלום</h3>
+                      <div className="mr-auto flex items-center gap-1.5">
+                        <BitLogo size="sm" />
+                        <PayBoxLogo size="sm" />
+                      </div>
                     </div>
-                    {/* Bit + PayBox logos in payment box */}
-                    <div className="flex items-center justify-center gap-4 pt-2 pb-1">
-                      <BitLogo />
-                      <span className="text-white/20 text-xs">|</span>
-                      <PayBoxLogo />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-bold block">{t.uploadProof}</label>
+
+                    <div className="p-5 space-y-5">
+                      {/* Transfer instruction */}
+                      <p className="text-sm text-white/70 text-center">
+                        נא להעביר <span className="font-black text-white">{selectedPackage?.price}</span> ב־Bit או PayBox למספר:
+                      </p>
+
+                      {/* Phone number + copy button */}
                       <div className="relative">
-                        <input 
-                          type="file" 
-                          required
-                          onChange={(e) => handleFileChange(e, 'paymentProof')}
-                          className="absolute inset-0 opacity-0 cursor-pointer"
-                        />
-                        <div className="input-field flex items-center justify-center gap-2 py-6 border-dashed border-2">
-                          {formData.paymentProof ? (
-                            <span className="text-green-500 flex items-center gap-2"><Check size={18}/> קובץ נבחר</span>
-                          ) : (
-                            <><Upload size={20}/> לחץ להעלאת צילום מסך</>
-                          )}
+                        <div className="flex items-center rounded-xl overflow-hidden border"
+                          style={{ borderColor: 'rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.04)' }}>
+                          {/* Number */}
+                          <div className="flex-1 text-center py-3.5 text-2xl font-black tracking-[0.12em] text-white select-all">
+                            054-6980606
+                          </div>
+                          {/* Copy button */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              navigator.clipboard.writeText('0546980606');
+                              const btn = document.getElementById('copy-btn-label');
+                              if (btn) { btn.textContent = '✓ הועתק'; setTimeout(() => { if(btn) btn.textContent = 'העתק'; }, 2000); }
+                            }}
+                            className="flex flex-col items-center justify-center gap-0.5 px-4 py-3.5 border-r transition-all active:scale-95"
+                            style={{ borderColor: 'rgba(255,255,255,0.08)', background: 'rgba(200,16,46,0.15)', minWidth: 64 }}
+                          >
+                            <FileText size={16} className="text-brand-red" />
+                            <span id="copy-btn-label" className="text-[9px] font-black text-brand-red uppercase tracking-wide">העתק</span>
+                          </button>
                         </div>
                       </div>
-                    </div>
-                  </div>
 
-                  {/* Car Images */}
-                  <div className="space-y-4">
-                    <h3 className="font-bold text-lg border-r-4 border-brand-red pr-3">תמונות הרכב</h3>
-                    <div className="relative">
-                      <input 
-                        type="file" 
-                        multiple
-                        onChange={(e) => handleFileChange(e, 'carImages')}
-                        className="absolute inset-0 opacity-0 cursor-pointer"
-                      />
-                      <div className="input-field flex flex-col items-center justify-center gap-2 py-10 border-dashed border-2">
-                        <Camera size={32} className="text-white/40" />
-                        <span className="text-sm font-bold">לחץ להעלאת תמונות הרכב</span>
-                        <span className="text-xs text-white/40">ניתן להעלות מספר תמונות</span>
-                        {formData.carImages.length > 0 && (
-                          <span className="mt-2 text-brand-red font-bold">{formData.carImages.length} תמונות נבחרו</span>
-                        )}
+                      {/* Upload proof */}
+                      <div className="space-y-2">
+                        <label className="text-xs font-black text-white/60 uppercase tracking-widest block">
+                          {t.uploadProof}
+                        </label>
+                        <div className="relative">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            required
+                            onChange={(e) => handleFileChange(e, 'paymentProof')}
+                            className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                          />
+                          <div className="rounded-xl border-2 border-dashed py-5 flex flex-col items-center gap-2 transition-colors"
+                            style={{ borderColor: formData.paymentProof ? 'rgba(34,197,94,0.5)' : 'rgba(255,255,255,0.1)', background: formData.paymentProof ? 'rgba(34,197,94,0.06)' : 'rgba(255,255,255,0.02)' }}>
+                            {formData.paymentProof ? (
+                              <>
+                                <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
+                                  <Check size={20} className="text-green-400" />
+                                </div>
+                                <span className="text-sm font-black text-green-400">צילום מסך נבחר ✓</span>
+                              </>
+                            ) : (
+                              <>
+                                <div className="w-10 h-10 rounded-full flex items-center justify-center"
+                                  style={{ background: 'rgba(200,16,46,0.12)' }}>
+                                  <Upload size={18} className="text-brand-red" />
+                                </div>
+                                <span className="text-sm font-bold text-white/60">לחץ להעלאת צילום מסך</span>
+                                <span className="text-[10px] text-white/30">PNG / JPG / JPEG</span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Info note */}
+                      <div className="flex items-start gap-2 rounded-xl p-3"
+                        style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                        <Camera size={14} className="text-white/30 shrink-0 mt-0.5" />
+                        <p className="text-[11px] text-white/35 leading-relaxed">
+                          לאחר שליחת הטופס, תועבר לוואטסאפ לשליחת תמונות וסרטון הרכב ישירות לצוות שלנו.
+                        </p>
                       </div>
                     </div>
                   </div>
