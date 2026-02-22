@@ -504,24 +504,28 @@ const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
 };
 
 // --- Bit / PayBox Logo SVGs ---
+// Using foreignObject with HTML for reliable cross-browser rendering
 const BitLogo = () => (
-  <svg viewBox="0 0 80 28" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-7 w-auto">
-    <rect width="80" height="28" rx="6" fill="#00A86B"/>
-    <text x="8" y="20" fontFamily="Arial Black, Arial" fontWeight="900" fontSize="16" fill="white" letterSpacing="1">bit</text>
-    <circle cx="66" cy="14" r="8" fill="white" opacity="0.15"/>
-    <circle cx="66" cy="14" r="5" fill="white" opacity="0.3"/>
-    <circle cx="66" cy="14" r="2.5" fill="white"/>
-  </svg>
+  <div className="flex items-center gap-1.5 h-7 px-3 rounded-md" style={{ background: '#00A86B', minWidth: 60 }}>
+    {/* Bit icon: three stacked dots */}
+    <div className="flex flex-col gap-[3px] shrink-0">
+      <div className="w-[5px] h-[5px] rounded-full bg-white" />
+      <div className="w-[5px] h-[5px] rounded-full bg-white" />
+      <div className="w-[5px] h-[5px] rounded-full bg-white" />
+    </div>
+    <span style={{ fontFamily: 'Arial Black, Arial', fontWeight: 900, fontSize: 14, color: '#fff', letterSpacing: 1 }}>bit</span>
+  </div>
 );
 
 const PayBoxLogo = () => (
-  <svg viewBox="0 0 100 28" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-7 w-auto">
-    <rect width="100" height="28" rx="6" fill="#6C3CE1"/>
-    <text x="8" y="20" fontFamily="Arial Black, Arial" fontWeight="900" fontSize="13" fill="white" letterSpacing="0.5">PayBox</text>
-    <rect x="78" y="7" width="14" height="14" rx="3" fill="white" opacity="0.2"/>
-    <rect x="81" y="10" width="8" height="4" rx="1" fill="white" opacity="0.7"/>
-    <rect x="81" y="16" width="5" height="2" rx="0.5" fill="white" opacity="0.5"/>
-  </svg>
+  <div className="flex items-center gap-1.5 h-7 px-3 rounded-md" style={{ background: '#6C3CE1', minWidth: 72 }}>
+    {/* PayBox icon: small card symbol */}
+    <div className="flex flex-col gap-[2px] shrink-0">
+      <div className="w-4 h-[6px] rounded-[2px] border border-white/70" />
+      <div className="w-3 h-[3px] rounded-sm bg-white/60" />
+    </div>
+    <span style={{ fontFamily: 'Arial Black, Arial', fontWeight: 900, fontSize: 11, color: '#fff', letterSpacing: 0.3 }}>PayBox</span>
+  </div>
 );
 
 export default function App() {
@@ -787,6 +791,30 @@ _נשלח אוטומטית ממערכת YOUGO_`;
 
   return (
     <div className="min-h-screen pb-20">
+      {/* Override brand-red to deeper crimson matching the Instagram page */}
+      <style>{`
+        :root { --brand-red: #c8102e; }
+        .text-brand-red { color: #c8102e !important; }
+        .bg-brand-red { background-color: #c8102e !important; }
+        .border-brand-red { border-color: #c8102e !important; }
+        .hover\\:bg-brand-red:hover { background-color: #c8102e !important; }
+        .hover\\:text-brand-red:hover { color: #c8102e !important; }
+        .hover\\:border-brand-red:hover { border-color: #c8102e !important; }
+        .shadow-brand-red\\/10 { --tw-shadow-color: rgba(200,16,46,0.1) !important; }
+        .shadow-brand-red\\/20 { --tw-shadow-color: rgba(200,16,46,0.2) !important; }
+        .from-brand-red\\/10 { --tw-gradient-from: rgba(200,16,46,0.10) !important; }
+        .from-brand-red\\/15 { --tw-gradient-from: rgba(200,16,46,0.15) !important; }
+        .to-brand-red\\/5 { --tw-gradient-to: rgba(200,16,46,0.05) !important; }
+        .bg-brand-red\\/5 { background-color: rgba(200,16,46,0.05) !important; }
+        .bg-brand-red\\/8 { background-color: rgba(200,16,46,0.08) !important; }
+        .bg-brand-red\\/10 { background-color: rgba(200,16,46,0.10) !important; }
+        .bg-brand-red\\/15 { background-color: rgba(200,16,46,0.15) !important; }
+        .border-brand-red\\/20 { border-color: rgba(200,16,46,0.20) !important; }
+        .border-brand-red\\/25 { border-color: rgba(200,16,46,0.25) !important; }
+        .border-2.border-brand-red { border-color: #c8102e !important; }
+        .btn-primary { background-color: #c8102e !important; }
+        .btn-primary:hover { background-color: #a50d25 !important; }
+      `}</style>
       <Navbar lang={lang} setLang={setLang} isAdmin={isAdmin} onLogout={() => { setIsAdmin(false); setView('home'); }} siteSettings={siteSettings} setView={setView} />
 
       <main className="pt-32 px-4 max-w-7xl mx-auto">
@@ -1230,12 +1258,13 @@ _נשלח אוטומטית ממערכת YOUGO_`;
             </motion.div>
           )}
 
-          {/* FIX 2: booking animation changed from x to y (top to bottom) */}
+          {/* Booking opens from top with scroll-down entrance */}
           {view === 'booking' && (
             <motion.div 
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: -60, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -30, scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 280, damping: 28 }}
               className="max-w-2xl mx-auto space-y-8"
             >
               <button 
