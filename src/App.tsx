@@ -29,7 +29,12 @@ import {
   Lock,
   Car,
   Zap,
-  TrendingUp
+  TrendingUp,
+  Wrench,
+  Star,
+  Crown,
+  Hammer,
+  Truck
 } from 'lucide-react';
 import { translations, Language } from './translations';
 
@@ -41,6 +46,8 @@ interface Package {
   features: string[];
   popular?: boolean;
   premium?: boolean;
+  vip?: boolean;
+  equipment?: boolean;
 }
 
 interface Order {
@@ -160,6 +167,217 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose:
   );
 };
 
+// --- VIP Package Card (Special Gold Design) ---
+const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
+  const t = translations[lang];
+  return (
+    <motion.div
+      whileHover={{ y: -10, scale: 1.015 }}
+      transition={{ type: "spring", stiffness: 280 }}
+      className="relative col-span-1 md:col-span-3 w-full"
+    >
+      {/* Outer glow */}
+      <div className="absolute -inset-[1px] rounded-3xl bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 opacity-60 blur-sm pointer-events-none" />
+      
+      <div className="relative rounded-3xl overflow-hidden border border-amber-400/40"
+        style={{ background: 'linear-gradient(135deg, #1a1408 0%, #0d0b06 40%, #1c1404 100%)' }}>
+        
+        {/* Shimmer top line */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-amber-300 to-transparent" />
+        
+        {/* Gold particle background */}
+        <div className="absolute inset-0 opacity-[0.04]" style={{
+          backgroundImage: `radial-gradient(circle at 20% 50%, #d4af37 1px, transparent 1px),
+                            radial-gradient(circle at 80% 20%, #d4af37 1px, transparent 1px),
+                            radial-gradient(circle at 60% 80%, #d4af37 1px, transparent 1px)`,
+          backgroundSize: '80px 80px, 60px 60px, 100px 100px'
+        }} />
+        
+        {/* Diagonal gold gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-amber-400/5 via-transparent to-amber-600/8 pointer-events-none" />
+
+        <div className="relative z-10 p-8 md:p-10">
+          <div className="flex flex-col md:flex-row md:items-center gap-8">
+            
+            {/* Left: Branding */}
+            <div className="flex-1 space-y-5">
+              {/* Badge */}
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 bg-gradient-to-r from-amber-400/20 to-yellow-300/10 border border-amber-400/40 px-4 py-1.5 rounded-full">
+                  <Crown size={13} className="text-amber-300" />
+                  <span className="text-[10px] font-black uppercase tracking-[0.25em] text-amber-300">VIP LUXURY</span>
+                </div>
+                <div className="bg-green-500/20 text-green-400 text-[9px] font-black py-0.5 px-2 rounded-full border border-green-500/30">
+                  15% OFF
+                </div>
+              </div>
+
+              {/* Name & Price */}
+              <div className="space-y-2">
+                <h3 className="text-3xl md:text-4xl font-black tracking-tight"
+                  style={{ background: 'linear-gradient(90deg, #f5d060, #d4af37, #f0c040, #b8960c)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                  VIP LUXURY
+                </h3>
+                <p className="text-white/50 text-sm leading-relaxed max-w-sm">
+                  חבילת הפרסום האולטימטיבית — לרכבים שמגיעים ליחס הכי טוב. חשיפה מקסימלית, עיצוב פרמיום, ליווי אישי מלא.
+                </p>
+              </div>
+
+              {/* Price */}
+              <div className="flex items-baseline gap-3">
+                <span className="text-4xl font-black" style={{ color: '#d4af37' }}>₪749</span>
+                <span className="text-white/30 text-sm line-through">₪882</span>
+                <span className="text-amber-400/70 text-xs font-bold bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/20">חיסכון ₪133</span>
+              </div>
+            </div>
+
+            {/* Center: Features Grid */}
+            <div className="flex-1 grid grid-cols-2 gap-3">
+              {[
+                { icon: <Camera size={15} />, label: '15+ תמונות מקצועיות' },
+                { icon: <Video size={15} />, label: 'רילס + סטורי VIP' },
+                { icon: <Star size={15} />, label: '60 ימי פרסום פרמיום' },
+                { icon: <TrendingUp size={15} />, label: 'חשיפה מקסימלית' },
+                { icon: <ShieldCheck size={15} />, label: 'ליווי אישי 24/7' },
+                { icon: <Crown size={15} />, label: 'עיצוב VIP בלעדי' },
+                { icon: <Users size={15} />, label: 'טרגוט מתקדם' },
+                { icon: <Zap size={15} />, label: 'עדיפות ראשונה תמיד' },
+              ].map((feat, i) => (
+                <div key={i} className="flex items-center gap-2 bg-white/[0.03] border border-amber-400/10 rounded-xl px-3 py-2.5">
+                  <div className="text-amber-400 shrink-0">{feat.icon}</div>
+                  <span className="text-xs font-bold text-white/80">{feat.label}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Right: CTA */}
+            <div className="flex flex-col items-center gap-4 min-w-[180px]">
+              <motion.button
+                onClick={() => onSelect(pkg)}
+                whileTap={{ scale: 0.97 }}
+                className="w-full py-4 px-8 rounded-2xl font-black text-sm tracking-wide relative overflow-hidden group"
+                style={{ background: 'linear-gradient(135deg, #d4af37, #f5d060, #b8960c)' }}
+              >
+                <span className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors rounded-2xl" />
+                <span className="relative text-black flex items-center justify-center gap-2">
+                  <Crown size={16} />
+                  הזמן VIP עכשיו
+                </span>
+              </motion.button>
+              <div className="text-center space-y-1">
+                <div className="flex items-center justify-center gap-1.5">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} size={12} className="text-amber-400 fill-amber-400" />
+                  ))}
+                </div>
+                <p className="text-[10px] text-white/30 font-bold">דירוג לקוחות VIP</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom shimmer line */}
+        <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-amber-400/40 to-transparent" />
+      </div>
+    </motion.div>
+  );
+};
+
+// --- Equipment Package Card ---
+const EquipmentPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Package) => void }) => {
+  const isHeavy = pkg.id === 'equipment-heavy';
+  
+  return (
+    <motion.div
+      whileHover={{ y: -6, scale: 1.01 }}
+      transition={{ type: "spring", stiffness: 300 }}
+      className="relative flex flex-col p-7 rounded-2xl border transition-all duration-500"
+      style={{
+        background: isHeavy 
+          ? 'linear-gradient(135deg, rgba(234,88,12,0.08) 0%, rgba(15,12,8,1) 100%)' 
+          : 'linear-gradient(135deg, rgba(100,116,139,0.08) 0%, rgba(10,12,15,1) 100%)',
+        borderColor: isHeavy ? 'rgba(234,88,12,0.35)' : 'rgba(100,116,139,0.25)',
+        boxShadow: isHeavy ? '0 0 30px rgba(234,88,12,0.06)' : 'none'
+      }}
+    >
+      {isHeavy && (
+        <div className="absolute -top-4 right-6 z-10 bg-orange-600 text-white text-[9px] font-black py-1 px-3 rounded-full shadow-lg uppercase tracking-widest">
+          הכי מבוקש
+        </div>
+      )}
+
+      {/* Equipment icon banner */}
+      <div className="flex items-center gap-3 mb-5 pb-4 border-b"
+        style={{ borderColor: isHeavy ? 'rgba(234,88,12,0.15)' : 'rgba(100,116,139,0.1)' }}>
+        <div className="w-12 h-12 rounded-xl flex items-center justify-center"
+          style={{ background: isHeavy ? 'rgba(234,88,12,0.15)' : 'rgba(100,116,139,0.12)' }}>
+          {isHeavy 
+            ? <Truck size={24} style={{ color: '#ea580c' }} />
+            : <Wrench size={24} style={{ color: '#94a3b8' }} />
+          }
+        </div>
+        <div>
+          <div className="text-[9px] font-black uppercase tracking-[0.2em] mb-0.5"
+            style={{ color: isHeavy ? '#ea580c' : '#94a3b8' }}>
+            {isHeavy ? 'ציוד כבד' : 'ציוד קל'}
+          </div>
+          <h3 className="text-lg font-black text-white">{pkg.name}</h3>
+        </div>
+        <div className="mr-auto text-right">
+          <div className="text-2xl font-black text-white">{pkg.price}</div>
+          <div className="text-[10px] text-white/30 line-through">
+            ₪{Math.round(parseInt(pkg.price.replace('₪', '')) / 0.85)}
+          </div>
+        </div>
+      </div>
+
+      {/* Equipment types */}
+      <div className="mb-5 flex flex-wrap gap-2">
+        {(isHeavy 
+          ? ['באגר', 'מחפרון', 'מיני באגר', 'בולדוזר', 'עגורן'] 
+          : ['פופקט', 'ג\'ק', 'מלגזה', 'סקיד סטיר', 'מערבל']
+        ).map((item, i) => (
+          <span key={i} className="text-[10px] font-black px-2.5 py-1 rounded-full border"
+            style={{ 
+              color: isHeavy ? '#fb923c' : '#94a3b8',
+              borderColor: isHeavy ? 'rgba(234,88,12,0.25)' : 'rgba(100,116,139,0.2)',
+              background: isHeavy ? 'rgba(234,88,12,0.08)' : 'rgba(100,116,139,0.06)'
+            }}>
+            {item}
+          </span>
+        ))}
+      </div>
+
+      {/* Features */}
+      <div className="space-y-2.5 mb-8 flex-grow">
+        {pkg.features.map((f, i) => (
+          <div key={i} className="flex items-start gap-2 text-xs font-medium">
+            <div className="mt-0.5 p-0.5 rounded-full shrink-0"
+              style={{ background: isHeavy ? 'rgba(234,88,12,0.6)' : 'rgba(100,116,139,0.4)' }}>
+              <Check size={8} className="text-dark-bg" strokeWidth={5} />
+            </div>
+            <span className="text-white/80">{f}</span>
+          </div>
+        ))}
+      </div>
+
+      <button
+        onClick={() => onSelect(pkg)}
+        className="w-full py-3.5 rounded-xl font-black text-sm transition-all duration-300 active:scale-95"
+        style={{
+          background: isHeavy 
+            ? 'linear-gradient(135deg, #ea580c, #c2410c)' 
+            : 'rgba(100,116,139,0.2)',
+          color: isHeavy ? '#fff' : '#cbd5e1',
+          border: isHeavy ? 'none' : '1px solid rgba(100,116,139,0.3)'
+        }}
+      >
+        {isHeavy ? '🚜 הזמן עכשיו' : '🔧 הזמן עכשיו'}
+      </button>
+    </motion.div>
+  );
+};
+
 const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
   const t = translations[lang];
   
@@ -224,8 +442,9 @@ const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
           : 'bg-white/5 border border-white/10 hover:border-white/20'
       }`}
     >
+      {/* FIX 1: badge הכי נבחר — added z-10 and changed -top-3 to -top-4 */}
       {pkg.popular && (
-        <div className="absolute -top-3 right-6 bg-brand-red text-white text-[9px] font-black py-1 px-3 rounded-full shadow-lg uppercase tracking-widest">
+        <div className="absolute -top-4 right-6 z-10 bg-brand-red text-white text-[9px] font-black py-1 px-3 rounded-full shadow-lg uppercase tracking-widest">
           {t.mostPopular}
         </div>
       )}
@@ -283,6 +502,27 @@ const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
     </motion.div>
   );
 };
+
+// --- Bit / PayBox Logo SVGs ---
+const BitLogo = () => (
+  <svg viewBox="0 0 80 28" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-7 w-auto">
+    <rect width="80" height="28" rx="6" fill="#00A86B"/>
+    <text x="8" y="20" fontFamily="Arial Black, Arial" fontWeight="900" fontSize="16" fill="white" letterSpacing="1">bit</text>
+    <circle cx="66" cy="14" r="8" fill="white" opacity="0.15"/>
+    <circle cx="66" cy="14" r="5" fill="white" opacity="0.3"/>
+    <circle cx="66" cy="14" r="2.5" fill="white"/>
+  </svg>
+);
+
+const PayBoxLogo = () => (
+  <svg viewBox="0 0 100 28" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-7 w-auto">
+    <rect width="100" height="28" rx="6" fill="#6C3CE1"/>
+    <text x="8" y="20" fontFamily="Arial Black, Arial" fontWeight="900" fontSize="13" fill="white" letterSpacing="0.5">PayBox</text>
+    <rect x="78" y="7" width="14" height="14" rx="3" fill="white" opacity="0.2"/>
+    <rect x="81" y="10" width="8" height="4" rx="1" fill="white" opacity="0.7"/>
+    <rect x="81" y="16" width="5" height="2" rx="0.5" fill="white" opacity="0.5"/>
+  </svg>
+);
 
 export default function App() {
   const [lang, setLang] = useState<Language>('he');
@@ -357,6 +597,56 @@ export default function App() {
         t.features.exposureMax,
         t.features.guidance,
         t.features.video
+      ]
+    }
+  ];
+
+  // VIP Package
+  const vipPackage: Package = {
+    id: 'vip',
+    name: 'VIP LUXURY',
+    price: '₪749',
+    vip: true,
+    features: [
+      '15+ תמונות מקצועיות',
+      'רילס + סטורי VIP',
+      '60 ימי פרסום פרמיום',
+      'חשיפה מקסימלית',
+      'ליווי אישי 24/7',
+      'עיצוב VIP בלעדי',
+      'טרגוט מתקדם',
+      'עדיפות ראשונה תמיד'
+    ]
+  };
+
+  // Equipment Packages
+  const equipmentPackages: Package[] = [
+    {
+      id: 'equipment-heavy',
+      name: 'חבילת ציוד כבד',
+      price: '₪349',
+      equipment: true,
+      features: [
+        '10 תמונות מקצועיות של הציוד',
+        'פוסט ייעודי עם מפרט טכני',
+        'סטורי 21 יום',
+        'חשיפה לקהל קבלנים ומגזר הבנייה',
+        'עדיפות בתוצאות חיפוש',
+        'ייעוץ תמחור מקצועי'
+      ]
+    },
+    {
+      id: 'equipment-light',
+      name: 'חבילת ציוד קל',
+      price: '₪199',
+      equipment: true,
+      features: [
+        '6 תמונות מקצועיות',
+        'פוסט מותאם לציוד קל',
+        'סטורי 14 יום',
+        'חשיפה לקהל מקצועי רלוונטי',
+        'תיאור טכני מפורט',
+        'תמיכה ב-WhatsApp'
       ]
     }
   ];
@@ -570,14 +860,15 @@ _נשלח אוטומטית ממערכת YOUGO_`;
               </section>
 
               {/* Packages */}
+              {/* FIX 1 continued: added pt-6 and overflow-visible on wrapper div */}
               <section id="packages" className="space-y-12 overflow-hidden">
                 <div className="text-center space-y-4">
                   <h2 className="text-4xl font-black">{t.packages}</h2>
                   <p className="text-white/60">בחר את המסלול המתאים ביותר עבורך</p>
                 </div>
-                <div className="flex md:grid md:grid-cols-3 gap-8 overflow-x-auto pb-8 snap-x no-scrollbar">
+                <div className="flex md:grid md:grid-cols-3 gap-8 overflow-x-auto pb-8 snap-x no-scrollbar pt-6">
                   {packages.map(pkg => (
-                    <div key={pkg.id} className="snap-center">
+                    <div key={pkg.id} className="snap-center overflow-visible">
                       <PackageCard 
                         pkg={pkg} 
                         lang={lang} 
@@ -588,6 +879,18 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                       />
                     </div>
                   ))}
+                </div>
+
+                {/* VIP Package */}
+                <div className="pt-4 overflow-visible">
+                  <VIPPackageCard
+                    pkg={vipPackage}
+                    lang={lang}
+                    onSelect={(p) => {
+                      setSelectedPackage(p);
+                      setView('booking');
+                    }}
+                  />
                 </div>
 
                 {/* Business Package */}
@@ -616,59 +919,187 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                   </a>
                 </motion.div>
 
-                {/* Persuasive Text */}
-                <div className="max-w-3xl mx-auto text-center space-y-8 pt-8">
-                  <h3 className="text-2xl font-black text-brand-red">המכירה מתחילה בפרסום נכון.</h3>
-                  <div className="text-lg text-white/80 leading-relaxed font-bold">
-                    ב־YOUGO אנחנו לא רק מעלים מודעה —
-                    <br />
-                    אנחנו יוצרים חשיפה אמיתית שמביאה קונים רציניים.
-                    <br />
-                    בחר חבילה, העלה פרטים, ושלם —
-                    <br />
-                    ואנחנו נדאג שהרכב שלך יקבל את הבמה שמגיעה לו.
+                {/* Persuasive CTA Section — המכירה מתחילה בפרסום נכון */}
+                <div className="max-w-4xl mx-auto pt-8">
+                  <div className="relative rounded-3xl overflow-hidden border border-white/10 bg-gradient-to-br from-white/[0.03] to-transparent">
+                    
+                    {/* Grid background */}
+                    <div className="absolute inset-0 opacity-[0.035]" style={{
+                      backgroundImage: `linear-gradient(rgba(225,29,72,0.9) 1px, transparent 1px), linear-gradient(90deg, rgba(225,29,72,0.9) 1px, transparent 1px)`,
+                      backgroundSize: '44px 44px'
+                    }} />
+                    
+                    {/* Glow */}
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[180px] bg-brand-red/8 rounded-full blur-[80px] pointer-events-none" />
+                    
+                    <div className="relative z-10 p-10 md:p-14 space-y-8 text-center">
+                      {/* Badge */}
+                      <div className="inline-flex items-center gap-2 bg-brand-red/10 border border-brand-red/25 text-brand-red text-[11px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-full">
+                        <span className="w-1.5 h-1.5 bg-brand-red rounded-full animate-pulse" />
+                        הדרך הנכונה למכור רכב
+                      </div>
+
+                      {/* Headline */}
+                      <h3 className="text-4xl md:text-5xl font-black leading-tight tracking-tight">
+                        המכירה מתחילה{' '}
+                        <span className="relative inline-block">
+                          <span className="text-brand-red">בפרסום נכון.</span>
+                          <span className="absolute -bottom-1 left-0 right-0 h-[3px] bg-gradient-to-r from-brand-red to-transparent rounded-full" />
+                        </span>
+                      </h3>
+
+                      {/* Body */}
+                      <p className="text-lg md:text-xl text-white/65 leading-relaxed max-w-2xl mx-auto font-medium">
+                        ב־YOUGO אנחנו לא מעלים מודעה סתם — אנחנו{' '}
+                        <span className="text-white font-bold">יוצרים חשיפה אמיתית</span>{' '}
+                        שמביאה קונים רציניים עם כסף אמיתי. בחר חבילה, העלה פרטים, ושלם —
+                        ואנחנו נדאג שהרכב שלך{' '}
+                        <span className="text-brand-red font-bold">יקבל את הבמה שמגיעה לו.</span>
+                      </p>
+
+                      {/* Stats */}
+                      <div className="grid grid-cols-3 gap-4 pt-6 border-t border-white/5">
+                        {[
+                          { num: '48h', label: 'זמן ממוצע למכירה' },
+                          { num: '50K+', label: 'עוקבים פעילים' },
+                          { num: '98%', label: 'לקוחות מרוצים' },
+                        ].map((stat, i) => (
+                          <div key={i} className="text-center space-y-1">
+                            <div className="text-2xl md:text-3xl font-black text-brand-red">{stat.num}</div>
+                            <div className="text-[10px] text-white/35 font-bold uppercase tracking-wider">{stat.label}</div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Payment badges — with Bit & PayBox logos */}
+                      <div className="flex flex-wrap justify-center items-center gap-3 pt-2">
+                        <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 text-white/50 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full">
+                          <Lock size={12} className="text-brand-red" />
+                          תשלום מאובטח
+                        </div>
+                        {/* Bit Logo Badge */}
+                        <div className="flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full">
+                          <BitLogo />
+                        </div>
+                        {/* PayBox Logo Badge */}
+                        <div className="flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full">
+                          <PayBoxLogo />
+                        </div>
+                        <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 text-white/50 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full">
+                          <MessageSquare size={12} className="text-brand-red" />
+                          תמיכה WhatsApp
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Equipment Packages Section */}
+                <div className="pt-8 space-y-8">
+                  {/* Section Header */}
+                  <div className="text-center space-y-4">
+                    <div className="inline-flex items-center gap-3 bg-orange-500/10 border border-orange-500/25 px-5 py-2.5 rounded-full">
+                      <Truck size={16} className="text-orange-400" />
+                      <span className="text-[11px] font-black uppercase tracking-[0.2em] text-orange-400">חבילות ציוד כבד ומכונות</span>
+                      <Hammer size={16} className="text-orange-400" />
+                    </div>
+                    <h3 className="text-3xl md:text-4xl font-black">
+                      מוכרים{' '}
+                      <span className="text-orange-400">ציוד מקצועי?</span>
+                    </h3>
+                    <p className="text-white/50 max-w-xl mx-auto text-sm leading-relaxed">
+                      חבילות פרסום ייעודיות לבאגרים, מחפרונים, מיני באגרים, פופקטים וכל ציוד כבד — 
+                      חשיפה ישירה לקהל הקבלנים והמקצוענים בישראל.
+                    </p>
                   </div>
 
-                  {/* Payment Info Box */}
-                  <div className="inline-flex flex-wrap justify-center gap-6 p-4 rounded-2xl bg-white/5 border border-white/10 text-xs font-black uppercase tracking-widest">
-                    <div className="flex items-center gap-2">
-                      <Lock size={14} className="text-brand-red" />
-                      <span>תשלום מאובטח</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Smartphone size={14} className="text-brand-red" />
-                      <span>תשלום דרך Bit / PayBox</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <MessageSquare size={14} className="text-brand-red" />
-                      <span>תמיכה דרך WhatsApp</span>
-                    </div>
+                  {/* Equipment type tags showcase */}
+                  <div className="flex flex-wrap justify-center gap-3 pb-2">
+                    {[
+                      { label: '🚜 באגר', he: 'Excavator' },
+                      { label: '⛏️ מחפרון', he: 'Mini Excavator' },
+                      { label: '🔩 מיני באגר', he: 'Compact' },
+                      { label: '🔧 פופקט', he: 'Bobcat / Skid' },
+                      { label: '🏗️ עגורן', he: 'Crane' },
+                      { label: '🚛 בולדוזר', he: 'Bulldozer' },
+                    ].map((item, i) => (
+                      <span key={i} className="text-xs font-black px-4 py-2 rounded-full border border-orange-500/20 bg-orange-500/5 text-white/70">
+                        {item.label}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Equipment Cards */}
+                  <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                    {equipmentPackages.map(pkg => (
+                      <EquipmentPackageCard
+                        key={pkg.id}
+                        pkg={pkg}
+                        onSelect={(p) => {
+                          setSelectedPackage(p);
+                          setView('booking');
+                        }}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Equipment CTA note */}
+                  <div className="text-center">
+                    <p className="text-xs text-white/30 font-bold">
+                      יש לך ציוד שלא מופיע כאן?{' '}
+                      <a 
+                        href="https://wa.me/972546980606?text=שלום, אני מעוניין לפרסם ציוד מכני"
+                        target="_blank"
+                        className="text-orange-400 hover:text-orange-300 transition-colors underline underline-offset-2"
+                      >
+                        צור קשר בוואטסאפ
+                      </a>
+                      {' '}ונכין לך הצעה מותאמת אישית.
+                    </p>
                   </div>
                 </div>
               </section>
 
               {/* Why Us Section */}
-              <section id="why-us" className="space-y-16">
+              <section id="why-us" className="space-y-14">
                 <div className="text-center space-y-4">
-                  <h2 className="text-4xl font-black">{t.whyUs.title}</h2>
+                  <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 text-white/40 text-[11px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-full">
+                    היתרון שלנו
+                  </div>
+                  <h2 className="text-4xl md:text-5xl font-black">{t.whyUs.title}</h2>
+                  <p className="text-white/40 max-w-lg mx-auto text-sm">הסיבות שאלפי מוכרים בחרו דווקא בנו</p>
                 </div>
-                <div className="grid md:grid-cols-3 gap-8">
+                <div className="grid md:grid-cols-3 gap-5">
                   {[
-                    { ...t.whyUs.audience, icon: <Users size={32} /> },
-                    { ...t.whyUs.speed, icon: <Zap size={32} /> },
-                    { ...t.whyUs.results, icon: <TrendingUp size={32} /> },
+                    { ...t.whyUs.audience, icon: <Users size={26} />, num: '01' },
+                    { ...t.whyUs.speed, icon: <Zap size={26} />, num: '02' },
+                    { ...t.whyUs.results, icon: <TrendingUp size={26} />, num: '03' },
                   ].map((item, i) => (
-                    <motion.div 
+                    <motion.div
                       key={i}
-                      whileHover={{ y: -5 }}
-                      className="glass-card p-10 space-y-6 border-white/5"
+                      whileHover={{ y: -6 }}
+                      transition={{ type: 'spring', stiffness: 300 }}
+                      className="group relative rounded-2xl border border-white/8 bg-white/[0.02] hover:bg-white/[0.05] hover:border-brand-red/25 transition-all duration-300 overflow-hidden p-8 space-y-5"
                     >
-                      <div className="w-16 h-16 bg-brand-red/10 rounded-2xl flex items-center justify-center text-brand-red">
-                        {item.icon}
+                      {/* Number watermark */}
+                      <div className="absolute top-3 left-5 text-7xl font-black text-white/[0.025] group-hover:text-brand-red/[0.05] transition-colors select-none leading-none">
+                        {item.num}
                       </div>
-                      <div className="space-y-4">
-                        <h3 className="text-xl font-black">{item.title}</h3>
-                        <p className="text-sm text-white/60 leading-relaxed">{item.desc}</p>
+                      {/* Top accent line */}
+                      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-brand-red/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      
+                      <div className="relative z-10 space-y-4">
+                        <div className="w-13 h-13 w-12 h-12 bg-brand-red/10 group-hover:bg-brand-red/15 border border-brand-red/15 group-hover:border-brand-red/35 rounded-xl flex items-center justify-center text-brand-red transition-all duration-300">
+                          {item.icon}
+                        </div>
+                        <div className="space-y-2">
+                          <h3 className="text-lg font-black text-white group-hover:text-brand-red transition-colors duration-200">
+                            {item.title}
+                          </h3>
+                          <p className="text-sm text-white/45 leading-relaxed group-hover:text-white/65 transition-colors duration-200">
+                            {item.desc}
+                          </p>
+                        </div>
                       </div>
                     </motion.div>
                   ))}
@@ -793,17 +1224,18 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                 </div>
                 
                 <div className="pt-8 border-t border-white/5 text-center">
-                  <p className="text-xs text-white/40">© 2024 YOUGO ISRAEL. כל הזכויות שמורות. עוצב ופותح במקצועיות.</p>
+                  <p className="text-xs text-white/40">© 2024 YOUGO ISRAEL. כל הזכויות שמורות. עוצב ופותח במקצועיות.</p>
                 </div>
               </footer>
             </motion.div>
           )}
 
+          {/* FIX 2: booking animation changed from x to y (top to bottom) */}
           {view === 'booking' && (
             <motion.div 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
               className="max-w-2xl mx-auto space-y-8"
             >
               <button 
@@ -914,10 +1346,15 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                       <button 
                         type="button"
                         onClick={() => {}}
-                        className="p-4 rounded-xl border-2 border-brand-red bg-brand-red/5 flex flex-col items-center gap-2"
+                        className="p-4 rounded-xl border-2 border-brand-red bg-brand-red/5 flex flex-col items-center gap-3"
                       >
-                        <Smartphone size={24} className="text-brand-red" />
-                        <span className="font-bold">Bit / PayBox</span>
+                        {/* Bit + PayBox logos side by side */}
+                        <div className="flex items-center gap-3 flex-wrap justify-center">
+                          <BitLogo />
+                          <span className="text-white/30 text-xs font-bold">/</span>
+                          <PayBoxLogo />
+                        </div>
+                        <span className="font-black text-sm text-white">Bit / PayBox</span>
                       </button>
                       <button 
                         type="button"
@@ -952,6 +1389,12 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                       >
                         <FileText size={20} />
                       </button>
+                    </div>
+                    {/* Bit + PayBox logos in payment box */}
+                    <div className="flex items-center justify-center gap-4 pt-2 pb-1">
+                      <BitLogo />
+                      <span className="text-white/20 text-xs">|</span>
+                      <PayBoxLogo />
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-bold block">{t.uploadProof}</label>
@@ -1118,6 +1561,7 @@ _נשלח אוטומטית ממערכת YOUGO_`;
               </div>
             </motion.div>
           )}
+
           {view === 'admin-login' && (
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
@@ -1125,7 +1569,7 @@ _נשלח אוטומטית ממערכת YOUGO_`;
               className="max-w-md mx-auto py-20"
             >
               <div className="glass-card p-8 space-y-6">
-                <h2 className="text-2xl font-bold text-center">כنيסת מנהל</h2>
+                <h2 className="text-2xl font-bold text-center">כניסת מנהל</h2>
                 <form onSubmit={handleAdminLogin} className="space-y-4">
                   <input 
                     type="password" 
