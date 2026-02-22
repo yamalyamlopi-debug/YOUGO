@@ -167,91 +167,83 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose:
   );
 };
 
-// --- VIP Package Card — no side bleed ---
+// --- VIP Package Card — redesigned more professional ---
 const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
   const t = translations[lang];
   return (
     <motion.div
-      whileHover={{ y: -5 }}
+      whileHover={{ y: -8 }}
       transition={{ type: "spring", stiffness: 280 }}
-      className="relative w-full rounded-3xl"
+      className="relative w-full rounded-3xl overflow-hidden"
       style={{
-        boxShadow: '0 0 35px rgba(212,175,55,0.12)',
-        border: '1px solid rgba(212,175,55,0.28)',
-        background: 'linear-gradient(145deg, #1c1608 0%, #0d0b06 55%, #171203 100%)',
-        overflow: 'hidden'
+        boxShadow: '0 20px 40px -15px rgba(212,175,55,0.3), 0 0 0 1px rgba(212,175,55,0.2) inset',
+        background: 'radial-gradient(circle at 100% 0%, #2a1f0a 0%, #0f0c05 80%)'
       }}
     >
-      {/* Shimmer top */}
-      <div className="absolute top-0 left-0 right-0 h-[2px]"
-        style={{ background: 'linear-gradient(90deg, transparent 0%, #f5d060 30%, #d4af37 50%, #f5d060 70%, transparent 100%)' }} />
-
-      {/* Gold dot pattern bg */}
-      <div className="absolute inset-0 pointer-events-none" style={{
-        backgroundImage: 'radial-gradient(circle, rgba(212,175,55,0.08) 1px, transparent 1px)',
-        backgroundSize: '28px 28px'
+      {/* Gold gradient top */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-amber-300 to-transparent" />
+      
+      {/* Gold sparkles overlay */}
+      <div className="absolute inset-0 opacity-10" style={{
+        backgroundImage: 'radial-gradient(circle at 20% 30%, #d4af37 2px, transparent 2px), radial-gradient(circle at 80% 70%, #d4af37 1px, transparent 1px)',
+        backgroundSize: '50px 50px, 30px 30px'
       }} />
 
-      <div className="relative z-10 p-5 md:p-7 space-y-5">
+      <div className="relative z-10 p-7 md:p-8 space-y-6">
 
-        {/* Top row: badges + stars */}
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="flex items-center gap-1.5 rounded-full px-3 py-1"
-            style={{ background: 'rgba(212,175,55,0.12)', border: '1px solid rgba(212,175,55,0.30)' }}>
-            <Crown size={10} style={{ color: '#f5d060' }} />
-            <span className="text-[9px] font-black uppercase tracking-[0.22em]" style={{ color: '#f5d060' }}>VIP LUXURY</span>
+        {/* Top row: badges */}
+        <div className="flex items-center flex-wrap gap-3">
+          <div className="flex items-center gap-1.5 bg-gradient-to-r from-amber-900/40 to-amber-800/20 rounded-full px-4 py-1.5 border border-amber-500/30">
+            <Crown size={14} className="text-amber-400" />
+            <span className="text-[10px] font-black uppercase tracking-wider text-amber-300">VIP LUXURY</span>
           </div>
-          <div className="text-[9px] font-black py-0.5 px-2 rounded-full"
-            style={{ background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.30)', color: '#4ade80' }}>
-            15% OFF
+          <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-full px-3 py-1.5">
+            <span className="text-[9px] font-black text-emerald-400">15% הנחה</span>
           </div>
-          <div className="flex items-center gap-0.5 mr-auto">
+          <div className="flex mr-auto">
             {[...Array(5)].map((_, i) => (
-              <Star key={i} size={11} style={{ color: '#d4af37', fill: '#d4af37' }} />
+              <Star key={i} size={14} className="text-amber-400 fill-amber-400" />
             ))}
           </div>
         </div>
 
         {/* Title */}
-        <div className="space-y-1.5">
-          <h3 className="text-2xl md:text-3xl font-black tracking-tight"
-            style={{ background: 'linear-gradient(90deg, #f5d060, #d4af37, #f0c040)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+        <div>
+          <h3 className="text-3xl md:text-4xl font-black bg-gradient-to-l from-amber-200 via-amber-400 to-amber-300 bg-clip-text text-transparent">
             VIP LUXURY
           </h3>
-          <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.42)' }}>
+          <p className="text-amber-100/40 text-sm mt-2 leading-relaxed">
             חבילת הפרסום האולטימטיבית — לרכבים שמגיעים ליחס הכי טוב. חשיפה מקסימלית, עיצוב פרמיום, ליווי אישי מלא.
           </p>
         </div>
 
         {/* Price */}
-        <div className="flex items-baseline gap-3">
-          <span className="text-4xl font-black" style={{ color: '#d4af37' }}>₪749</span>
-          <span className="text-sm line-through" style={{ color: 'rgba(255,255,255,0.28)' }}>₪882</span>
-          <span className="text-xs font-bold px-2 py-0.5 rounded-full"
-            style={{ color: 'rgba(212,175,55,0.75)', background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.2)' }}>
+        <div className="flex items-baseline gap-4">
+          <span className="text-5xl font-black text-amber-400">₪749</span>
+          <span className="text-lg line-through text-white/20">₪882</span>
+          <span className="text-xs font-black bg-amber-500/20 text-amber-300 px-3 py-1 rounded-full border border-amber-500/30">
             חיסכון ₪133
           </span>
         </div>
 
         {/* Divider */}
-        <div className="h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.25), transparent)' }} />
+        <div className="h-px bg-gradient-to-r from-transparent via-amber-500/30 to-transparent" />
 
-        {/* Features 2×4 grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+        {/* Features grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
-            { icon: <Camera size={13} />, label: '15+ תמונות' },
-            { icon: <Video size={13} />, label: 'רילס + סטורי VIP' },
-            { icon: <Star size={13} />, label: '60 ימי פרסום' },
-            { icon: <TrendingUp size={13} />, label: 'חשיפה מקסימלית' },
-            { icon: <ShieldCheck size={13} />, label: 'ליווי אישי 24/7' },
-            { icon: <Crown size={13} />, label: 'עיצוב VIP בלעדי' },
-            { icon: <Users size={13} />, label: 'טרגוט מתקדם' },
-            { icon: <Zap size={13} />, label: 'עדיפות ראשונה' },
+            { icon: <Camera size={14} />, label: '15+ תמונות' },
+            { icon: <Video size={14} />, label: 'רילס + סטורי VIP' },
+            { icon: <Calendar size={14} />, label: '60 ימי פרסום' },
+            { icon: <TrendingUp size={14} />, label: 'חשיפה מקסימלית' },
+            { icon: <ShieldCheck size={14} />, label: 'ליווי אישי 24/7' },
+            { icon: <Crown size={14} />, label: 'עיצוב VIP בלעדי' },
+            { icon: <Users size={14} />, label: 'טרגוט מתקדם' },
+            { icon: <Zap size={14} />, label: 'עדיפות ראשונה' },
           ].map((feat, i) => (
-            <div key={i} className="flex items-center gap-2 rounded-xl px-2.5 py-2"
-              style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(212,175,55,0.09)' }}>
-              <span style={{ color: '#d4af37', flexShrink: 0 }}>{feat.icon}</span>
-              <span className="text-xs font-bold leading-tight" style={{ color: 'rgba(255,255,255,0.72)' }}>{feat.label}</span>
+            <div key={i} className="flex items-center gap-2 bg-white/5 rounded-xl px-3 py-2 border border-white/5">
+              <span className="text-amber-400">{feat.icon}</span>
+              <span className="text-xs font-medium text-white/80">{feat.label}</span>
             </div>
           ))}
         </div>
@@ -260,19 +252,14 @@ const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
         <motion.button
           onClick={() => onSelect(pkg)}
           whileTap={{ scale: 0.98 }}
-          className="w-full py-4 rounded-2xl font-black text-base"
-          style={{ background: 'linear-gradient(135deg, #c8a020, #f5d060, #d4af37)', color: '#0d0b06' }}
+          className="w-full py-4 rounded-2xl font-black text-base bg-gradient-to-l from-amber-500 to-amber-600 text-black shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 transition-all"
         >
           <span className="flex items-center justify-center gap-2">
-            <Crown size={17} />
+            <Crown size={18} />
             הזמן VIP עכשיו
           </span>
         </motion.button>
       </div>
-
-      {/* Bottom shimmer */}
-      <div className="absolute bottom-0 left-0 right-0 h-[1px]"
-        style={{ background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.35), transparent)' }} />
     </motion.div>
   );
 };
@@ -636,7 +623,7 @@ export default function App() {
     ]
   };
 
-  // DUO Package — 2 cars deal
+  // DUO Package — redesigned more professional
   const duoPackage: Package = {
     id: 'duo',
     name: 'DUO DEAL',
@@ -816,7 +803,7 @@ export default function App() {
 ---------------------------------------
 _נשלח אוטומטית ממערכת YOUGO_`;
 
-        const whatsappUrl = `https://wa.me/972546980606?text=${encodeURIComponent(message)}`;
+        const whatsappUrl = `https://wa.me/${siteSettings.whatsapp_number}?text=${encodeURIComponent(message)}`;
         window.open(whatsappUrl, '_blank');
         setView('success');
       } else {
@@ -987,12 +974,13 @@ _נשלח אוטומטית ממערכת YOUGO_`;
               </section>
 
               {/* Packages */}
-              {/* FIX 1 continued: added pt-6 and overflow-visible on wrapper div */}
               <section id="packages" className="space-y-12 overflow-hidden">
                 <div className="text-center space-y-4">
                   <h2 className="text-4xl font-black">{t.packages}</h2>
                   <p className="text-white/60">בחר את המסלול המתאים ביותר עבורך</p>
                 </div>
+                
+                {/* Regular packages */}
                 <div className="flex md:grid md:grid-cols-3 gap-8 overflow-x-auto pb-8 snap-x no-scrollbar pt-6">
                   {packages.map(pkg => (
                     <div key={pkg.id} className="snap-center overflow-visible">
@@ -1008,8 +996,9 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                   ))}
                 </div>
 
-                {/* VIP Package */}
-                <div className="pt-4 overflow-visible">
+                {/* Premium Packages Row - VIP and DUO DEAL together */}
+                <div className="grid md:grid-cols-2 gap-8 pt-4">
+                  {/* VIP Package */}
                   <VIPPackageCard
                     pkg={vipPackage}
                     lang={lang}
@@ -1018,110 +1007,101 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                       setView('booking');
                     }}
                   />
-                </div>
 
-                {/* DUO DEAL Package — 2 cars special */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  whileHover={{ y: -5 }}
-                  transition={{ type: 'spring', stiffness: 260 }}
-                  className="relative rounded-3xl overflow-hidden"
-                  style={{
-                    background: 'linear-gradient(135deg, #0f0a1e 0%, #120d22 50%, #0a0816 100%)',
-                    border: '1px solid rgba(139,92,246,0.35)',
-                    boxShadow: '0 0 30px rgba(139,92,246,0.08)'
-                  }}
-                >
-                  {/* Top shimmer */}
-                  <div className="absolute top-0 left-0 right-0 h-[2px]"
-                    style={{ background: 'linear-gradient(90deg, transparent, #8b5cf6, #a78bfa, #8b5cf6, transparent)' }} />
+                  {/* DUO DEAL Package - redesigned professional */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    whileHover={{ y: -8 }}
+                    transition={{ type: 'spring', stiffness: 280 }}
+                    className="relative rounded-3xl overflow-hidden h-full"
+                    style={{
+                      background: 'radial-gradient(circle at 100% 0%, #1e1428 0%, #0b0710 100%)',
+                      boxShadow: '0 20px 40px -15px rgba(139,92,246,0.3), 0 0 0 1px rgba(139,92,246,0.2) inset'
+                    }}
+                  >
+                    {/* Purple gradient top */}
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-purple-400 to-transparent" />
+                    
+                    {/* Purple sparkles overlay */}
+                    <div className="absolute inset-0 opacity-10" style={{
+                      backgroundImage: 'radial-gradient(circle at 30% 40%, #a78bfa 2px, transparent 2px), radial-gradient(circle at 70% 60%, #8b5cf6 1px, transparent 1px)',
+                      backgroundSize: '50px 50px, 30px 30px'
+                    }} />
 
-                  {/* BG dot grid */}
-                  <div className="absolute inset-0 pointer-events-none opacity-[0.04]"
-                    style={{ backgroundImage: 'radial-gradient(circle, #8b5cf6 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+                    <div className="relative z-10 p-7 md:p-8 space-y-6">
 
-                  <div className="relative z-10 p-6 md:p-8">
-                    <div className="flex flex-col md:flex-row md:items-center gap-6">
-
-                      {/* Left: branding */}
-                      <div className="flex-1 space-y-4">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full"
-                            style={{ background: 'rgba(139,92,246,0.15)', border: '1px solid rgba(139,92,246,0.35)' }}>
-                            <Car size={11} style={{ color: '#a78bfa' }} />
-                            <Car size={11} style={{ color: '#a78bfa' }} />
-                            <span className="text-[9px] font-black uppercase tracking-[0.22em]" style={{ color: '#a78bfa' }}>DUO DEAL</span>
-                          </div>
-                          <div className="text-[9px] font-black py-0.5 px-2 rounded-full"
-                            style={{ background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', color: '#4ade80' }}>
-                            חיסכון 40%
-                          </div>
+                      {/* Top badges */}
+                      <div className="flex items-center flex-wrap gap-3">
+                        <div className="flex items-center gap-1.5 bg-purple-900/40 rounded-full px-4 py-1.5 border border-purple-500/30">
+                          <Car size={14} className="text-purple-400" />
+                          <Car size={14} className="text-purple-400" />
+                          <span className="text-[10px] font-black uppercase tracking-wider text-purple-300">DUO DEAL</span>
                         </div>
-
-                        <div>
-                          <h3 className="text-2xl md:text-3xl font-black"
-                            style={{ background: 'linear-gradient(90deg, #c4b5fd, #8b5cf6, #a78bfa)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                            DUO DEAL
-                          </h3>
-                          <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.45)' }}>
-                            מוכרים 2 רכבים? קבלו חשיפה כפולה במחיר שלא תמצאו בשום מקום.
-                          </p>
-                        </div>
-
-                        <div className="flex items-baseline gap-3">
-                          <span className="text-4xl font-black" style={{ color: '#a78bfa' }}>₪349</span>
-                          <span className="text-sm line-through" style={{ color: 'rgba(255,255,255,0.28)' }}>₪598</span>
-                          <span className="text-xs font-bold px-2 py-0.5 rounded-full"
-                            style={{ color: '#a78bfa', background: 'rgba(139,92,246,0.12)', border: '1px solid rgba(139,92,246,0.25)' }}>
-                            חיסכון ₪249
-                          </span>
+                        <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-full px-3 py-1.5">
+                          <span className="text-[9px] font-black text-emerald-400">חיסכון 40%</span>
                         </div>
                       </div>
 
-                      {/* Center: features */}
-                      <div className="flex-1 grid grid-cols-2 gap-2">
+                      {/* Title */}
+                      <div>
+                        <h3 className="text-3xl md:text-4xl font-black bg-gradient-to-l from-purple-200 via-purple-400 to-purple-300 bg-clip-text text-transparent">
+                          DUO DEAL
+                        </h3>
+                        <p className="text-purple-100/40 text-sm mt-2 leading-relaxed">
+                          מוכרים 2 רכבים? קבלו חשיפה כפולה במחיר שלא תמצאו בשום מקום.
+                        </p>
+                      </div>
+
+                      {/* Price */}
+                      <div className="flex items-baseline gap-4">
+                        <span className="text-5xl font-black text-purple-400">₪349</span>
+                        <span className="text-lg line-through text-white/20">₪598</span>
+                        <span className="text-xs font-black bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full border border-purple-500/30">
+                          חיסכון ₪249
+                        </span>
+                      </div>
+
+                      {/* Divider */}
+                      <div className="h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent" />
+
+                      {/* Features grid */}
+                      <div className="grid grid-cols-2 gap-3">
                         {[
-                          { icon: <Car size={13} />, label: 'פרסום 2 רכבים' },
-                          { icon: <Camera size={13} />, label: '4 תמונות לרכב' },
-                          { icon: <Instagram size={13} />, label: 'פוסט לכל רכב' },
-                          { icon: <Calendar size={13} />, label: 'סטורי 14 יום' },
-                          { icon: <Users size={13} />, label: 'חשיפה כפולה' },
-                          { icon: <TrendingUp size={13} />, label: 'קהל מעוניין' },
+                          { icon: <Car size={14} />, label: 'פרסום 2 רכבים' },
+                          { icon: <Camera size={14} />, label: '4 תמונות לרכב' },
+                          { icon: <Instagram size={14} />, label: 'פוסט לכל רכב' },
+                          { icon: <Calendar size={14} />, label: 'סטורי 14 יום' },
+                          { icon: <Users size={14} />, label: 'חשיפה כפולה' },
+                          { icon: <TrendingUp size={14} />, label: 'קהל מעוניין' },
                         ].map((feat, i) => (
-                          <div key={i} className="flex items-center gap-2 rounded-xl px-2.5 py-2"
-                            style={{ background: 'rgba(139,92,246,0.05)', border: '1px solid rgba(139,92,246,0.12)' }}>
-                            <span style={{ color: '#8b5cf6', flexShrink: 0 }}>{feat.icon}</span>
-                            <span className="text-xs font-bold leading-tight" style={{ color: 'rgba(255,255,255,0.72)' }}>{feat.label}</span>
+                          <div key={i} className="flex items-center gap-2 bg-white/5 rounded-xl px-3 py-2 border border-white/5">
+                            <span className="text-purple-400">{feat.icon}</span>
+                            <span className="text-xs font-medium text-white/80">{feat.label}</span>
                           </div>
                         ))}
                       </div>
 
-                      {/* Right: CTA */}
-                      <div className="md:min-w-[160px]">
-                        <motion.button
-                          onClick={() => { setSelectedPackage(duoPackage); setView('booking'); }}
-                          whileTap={{ scale: 0.97 }}
-                          className="w-full py-4 rounded-2xl font-black text-base"
-                          style={{ background: 'linear-gradient(135deg, #7c3aed, #8b5cf6, #6d28d9)', color: '#fff' }}
-                        >
-                          <span className="flex items-center justify-center gap-2">
-                            <Car size={17} />
-                            הזמן DUO עכשיו
-                          </span>
-                        </motion.button>
-                        <p className="text-center text-[10px] mt-2" style={{ color: 'rgba(167,139,250,0.6)' }}>
-                          הכי משתלם לשני רכבים
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                      {/* CTA */}
+                      <motion.button
+                        onClick={() => { setSelectedPackage(duoPackage); setView('booking'); }}
+                        whileTap={{ scale: 0.98 }}
+                        className="w-full py-4 rounded-2xl font-black text-base bg-gradient-to-l from-purple-500 to-purple-600 text-white shadow-lg shadow-purple-500/20 hover:shadow-purple-500/30 transition-all"
+                      >
+                        <span className="flex items-center justify-center gap-2">
+                          <Car size={18} />
+                          הזמן DUO עכשיו
+                        </span>
+                      </motion.button>
 
-                  {/* Bottom shimmer */}
-                  <div className="absolute bottom-0 left-0 right-0 h-[1px]"
-                    style={{ background: 'linear-gradient(90deg, transparent, rgba(139,92,246,0.4), transparent)' }} />
-                </motion.div>
+                      {/* Note */}
+                      <p className="text-center text-[10px] text-purple-300/40">
+                        הכי משתלם לשני רכבים
+                      </p>
+                    </div>
+                  </motion.div>
+                </div>
 
                 {/* Business Package */}
                 <motion.div 
