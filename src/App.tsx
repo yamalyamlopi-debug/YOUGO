@@ -181,6 +181,7 @@ interface PackageCardProps {
 }
 
 const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose: () => void, title: string, children: React.ReactNode }) => {
+  const content = typeof children === 'string' ? children : '';
   return (
     <AnimatePresence>
       {isOpen && (
@@ -196,23 +197,39 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose:
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="relative glass-card w-full max-w-2xl max-h-[80vh] overflow-y-auto p-8 space-y-6"
+            className="relative w-full max-w-2xl max-h-[80vh] overflow-y-auto p-8 space-y-6"
+            style={{
+              background: 'linear-gradient(145deg, #0f0f14 0%, #0a0a0e 100%)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: '20px',
+              boxShadow: '0 40px 80px -20px rgba(0,0,0,0.8)'
+            }}
           >
             <div className="flex items-center justify-between border-b border-white/10 pb-4">
-              <h3 className="text-2xl font-bold text-brand-red">{title}</h3>
-              <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full transition-colors">
-                <X size={24} />
+              <h3 className="text-xl font-black text-brand-red">{title}</h3>
+              <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-lg transition-colors">
+                <X size={20} className="text-white/60" />
               </button>
             </div>
-            <div className="text-white/80 leading-relaxed whitespace-pre-wrap text-lg">
-              {children.toString().split('\n').map((line, i) => (
-                <p key={i} className={line.match(/^\d+\./) ? "mb-4 font-bold text-white" : "mb-4"}>
-                  {line}
-                </p>
-              ))}
+            <div className="text-white/75 leading-relaxed space-y-3 text-sm">
+              {content.split('\n').map((line, i) => {
+                if (!line.trim()) return <div key={i} className="h-1" />;
+                if (/^\d+\./.test(line)) return (
+                  <h4 key={i} className="text-white font-black text-base mt-4 mb-1 first:mt-0">{line}</h4>
+                );
+                return <p key={i} className="text-white/70 leading-relaxed">{line}</p>;
+              })}
             </div>
-            <div className="pt-4 flex justify-end">
-              <button onClick={onClose} className="btn-primary py-2 px-6">סגור</button>
+            <div className="pt-4 flex justify-end border-t border-white/8">
+              <motion.button 
+                whileTap={{ scale: 0.97 }}
+                onClick={onClose} 
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-sm"
+                style={{ background: 'linear-gradient(135deg, #c8102e, #a50d25)' }}
+              >
+                <X size={14} />
+                סגור
+              </motion.button>
             </div>
           </motion.div>
         </div>
@@ -226,9 +243,9 @@ const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
   const t = translations[lang];
   return (
     <motion.div
-      whileHover={{ y: -8 }}
-      transition={{ type: "spring", stiffness: 280 }}
-      className="relative w-[260px] md:w-full rounded-3xl overflow-hidden h-full flex flex-col snap-center shrink-0 group"
+      whileHover={{ y: -10, scale: 1.01 }}
+      transition={{ type: "spring", stiffness: 260, damping: 18 }}
+      className="relative w-[260px] md:w-full rounded-3xl overflow-hidden h-full flex flex-col snap-center shrink-0 group cursor-pointer"
       style={{
         boxShadow: '0 20px 40px -15px rgba(212,175,55,0.3), 0 0 0 1px rgba(212,175,55,0.2) inset',
         background: 'radial-gradient(circle at 100% 0%, #2a1f0a 0%, #0f0c05 80%)'
@@ -401,7 +418,7 @@ const EquipmentPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: P
     <motion.div
       whileHover={{ y: -6, scale: 1.01 }}
       transition={{ type: "spring", stiffness: 300 }}
-      className="relative w-[260px] md:w-full rounded-2xl border transition-all duration-500 h-full flex flex-col p-5 snap-center shrink-0 group"
+      className="relative w-[260px] md:w-full rounded-2xl border transition-all duration-500 h-full flex flex-col p-5 snap-center shrink-0 group mt-3"
       style={{
         background: isHeavy 
           ? 'linear-gradient(135deg, rgba(234,88,12,0.08) 0%, rgba(15,12,8,1) 100%)' 
@@ -411,7 +428,8 @@ const EquipmentPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: P
       }}
     >
       {isHeavy && (
-        <div className="absolute -top-3 right-4 z-10 bg-orange-600 text-white text-[8px] font-black py-1 px-2 rounded-full shadow-lg uppercase tracking-widest">
+        <div className="absolute -top-3 right-4 z-20 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-[8px] font-black py-1 px-3 rounded-full shadow-lg shadow-orange-500/40 uppercase tracking-widest border border-orange-400/30 flex items-center gap-1">
+          <span className="w-1 h-1 rounded-full bg-white animate-pulse" />
           הכי מבוקש
         </div>
       )}
@@ -634,15 +652,17 @@ const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
 
   return (
     <motion.div
-      whileHover={{ y: -6 }}
-      transition={{ type: "spring", stiffness: 300 }}
-      className="relative w-[250px] md:w-full rounded-2xl h-full flex flex-col snap-center shrink-0 group"
+      whileHover={{ y: -8, scale: 1.01 }}
+      transition={{ type: "spring", stiffness: 280, damping: 18 }}
+      className="relative w-[250px] md:w-full rounded-2xl h-full flex flex-col snap-center shrink-0 group cursor-pointer"
       style={{
         background: isPremium
-          ? 'linear-gradient(155deg, rgba(200,16,46,0.12) 0%, rgba(10,5,5,1) 100%)'
-          : 'linear-gradient(155deg, rgba(255,255,255,0.04) 0%, rgba(10,10,12,1) 100%)',
+          ? 'linear-gradient(155deg, rgba(200,16,46,0.15) 0%, rgba(10,5,5,1) 100%)'
+          : 'linear-gradient(155deg, rgba(255,255,255,0.05) 0%, rgba(10,10,12,1) 100%)',
         border: `1px solid ${cfg.borderColor}`,
-        boxShadow: isPremium ? `0 0 28px ${cfg.glow}` : 'none',
+        boxShadow: isPremium 
+          ? `0 0 40px ${cfg.glow}, 0 20px 60px -20px ${cfg.glow}` 
+          : '0 4px 20px rgba(0,0,0,0.4)',
         overflow: 'hidden'
       }}
     >
@@ -893,12 +913,14 @@ const OrderStatusCheck = ({ onClose }: { onClose: () => void }) => {
         )}
       </div>
 
-      <button
+      <motion.button
+        whileTap={{ scale: 0.96 }}
         onClick={onClose}
-        className="w-full text-xs text-white/40 hover:text-white/60 transition-colors"
+        className="w-full py-2.5 rounded-xl text-xs font-bold border border-white/8 bg-white/3 hover:bg-white/8 hover:border-white/15 text-white/40 hover:text-white/70 transition-all flex items-center justify-center gap-2"
       >
+        <ArrowLeft size={12} />
         חזור לדף הבית
-      </button>
+      </motion.button>
     </motion.div>
   );
 };
@@ -1456,14 +1478,16 @@ const PaymentForm = ({
   selectedPackage, 
   onSubmit, 
   loading,
-  onBack 
+  onBack,
+  onChangePackage
 }: { 
   formData: any, 
   setFormData: (data: any) => void, 
   selectedPackage: Package | null, 
   onSubmit: () => void, 
   loading: boolean,
-  onBack: () => void 
+  onBack: () => void,
+  onChangePackage: () => void
 }) => {
   const [paymentMethod, setPaymentMethod] = useState<'bit' | 'paybox' | null>(null);
 
@@ -1492,13 +1516,25 @@ const PaymentForm = ({
       </div>
 
       <div className={`p-3 rounded-xl bg-gradient-to-r ${accentBg} to-transparent border ${accentBorder}`}>
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-white/60">חבילה נבחרת:</span>
-          <span className="font-black" style={{ color: accentColor }}>{selectedPackage?.name}</span>
-        </div>
-        <div className="flex items-center justify-between mt-1">
-          <span className="text-white/60">מחיר:</span>
-          <span className="font-black text-white text-base">{selectedPackage?.price}</span>
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-white/60">חבילה נבחרת:</span>
+              <span className="font-black mr-2" style={{ color: accentColor }}>{selectedPackage?.name}</span>
+            </div>
+            <div className="flex items-center justify-between mt-1">
+              <span className="text-white/60">מחיר:</span>
+              <span className="font-black text-white text-base mr-2">{selectedPackage?.price}</span>
+            </div>
+          </div>
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={onChangePackage}
+            className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all shrink-0 mr-1"
+          >
+            <RefreshCw size={12} style={{ color: accentColor }} />
+            <span className="text-[8px] font-black text-white/50">החלף</span>
+          </motion.button>
         </div>
         {isDuo && (
           <div className="mt-2 pt-2 border-t border-purple-500/20">
@@ -1628,12 +1664,14 @@ const PaymentForm = ({
       )}
 
       <div className="flex gap-2">
-        <button
+        <motion.button
+          whileTap={{ scale: 0.96 }}
           onClick={onBack}
-          className="flex-1 py-2.5 bg-white/5 rounded-xl font-black text-sm border border-white/10 hover:bg-white/10 transition-all"
+          className="flex-1 py-2.5 rounded-xl font-black text-sm border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all flex items-center justify-center gap-2"
         >
+          <ArrowLeft size={14} className="text-white/50" />
           חזור
-        </button>
+        </motion.button>
         <button
           onClick={onSubmit}
           disabled={!paymentMethod || !formData.paymentProof || loading}
@@ -2588,19 +2626,108 @@ _נשלח אוטומטית ממערכת YOUGO_`;
 
                     <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
-                    <div className="flex flex-wrap justify-center gap-3">
+                    <div className="flex flex-wrap justify-center gap-2">
                       {[
-                        { icon: <FileText size={12} />, label: 'תקנון', onClick: () => setModalContent(t.pages.terms) },
-                        { icon: <Lock size={12} />, label: 'פרטיות', onClick: () => setModalContent(t.pages.privacy) },
-                        { icon: <Info size={12} />, label: 'מי אנחנו', onClick: () => setModalContent(t.pages.about) },
-                        { icon: <LayoutDashboard size={12} />, label: 'ניהול', onClick: () => setView('admin-login') },
+                        { 
+                          icon: <FileText size={13} />, 
+                          label: 'תקנון', 
+                          onClick: () => setModalContent({
+                            title: 'תקנון שימוש – YOUGO ISRAEL',
+                            content: `1. כללי
+YOUGO ISRAEL הינה פלטפורמת שיווק דיגיטלי המתמחה בפרסום רכבים, ציוד כבד ושירותים עסקיים ברשתות חברתיות. השימוש בשירות מהווה הסכמה מלאה לתנאים אלו.
+
+2. השירות
+החברה מספקת שירותי פרסום ברשתות חברתיות (Instagram, TikTok ועוד). החברה אינה צד לעסקת המכירה בין הלקוח לקונה הסופי ואינה אחראית לתוצאות מכירה.
+
+3. תשלום
+התשלום מבוצע מראש בהעברה בנקאית, Bit או PayBox. לאחר אישור התשלום יחל תהליך הפרסום תוך 24-48 שעות עסקיות. לא יינתן החזר כספי לאחר שהמודעה פורסמה.
+
+4. אחריות הלקוח
+הלקוח מצהיר כי כל המידע שמסר הוא נכון ומדויק. הלקוח אחראי לחוקיות הרכב / הציוד המפורסם. פרסום רכב גנוב, שעבודים לא מדווחים או מידע כוזב יגרור הסרת המודעה ללא החזר.
+
+5. קניין רוחני
+כל התוכן שיוצר על ידי YOUGO ISRAEL (עיצובים, טקסטים, תמונות ערוכות) שייך לחברה. הלקוח רשאי לעשות שימוש בתוכן לצרכי המכירה בלבד.
+
+6. סיום שירות
+החברה שומרת לעצמה את הזכות להפסיק מתן שירות ללקוח שהפר את התנאים, ללא הודעה מוקדמת.
+
+7. שינויים בתנאים
+YOUGO ISRAEL רשאית לעדכן תנאים אלו בכל עת. המשך שימוש בשירות מהווה הסכמה לתנאים המעודכנים.
+
+8. יצירת קשר
+לכל שאלה בנוגע לתנאי השימוש: wa.me/972546980606`
+                          })
+                        },
+                        { 
+                          icon: <Lock size={13} />, 
+                          label: 'פרטיות', 
+                          onClick: () => setModalContent({
+                            title: 'מדיניות פרטיות – YOUGO ISRAEL',
+                            content: `1. איסוף מידע
+YOUGO ISRAEL אוספת מידע אישי הכולל: שם, טלפון, מיקום ופרטי הרכב / הציוד, אך ורק לצורך מתן השירות המבוקש.
+
+2. שימוש במידע
+המידע משמש אך ורק לצורך: יצירת המודעה הפרסומית, תיאום ביצוע השירות, ושליחת עדכונים הקשורים להזמנה.
+
+3. אחסון מידע
+המידע מאוחסן בצורה מאובטחת ואינו מועבר לצדדים שלישיים ללא הסכמת הלקוח, למעט גורמים הנדרשים לביצוע השירות (כגון: צלמים, מעצבים).
+
+4. אבטחת מידע
+החברה נוקטת בצעדי אבטחה מתקדמים להגנה על המידע. עם זאת, אין ביכולתנו להבטיח אבטחה מוחלטת בסביבה דיגיטלית.
+
+5. זכויות המשתמש
+לכל לקוח זכות לעיין במידע השמור עליו, לבקש תיקונו או מחיקתו. לפניות בנושא: wa.me/972546980606
+
+6. עוגיות (Cookies)
+האתר עשוי לעשות שימוש בעוגיות לשיפור חוויית המשתמש וניתוח תנועה. ניתן לבטל עוגיות דרך הגדרות הדפדפן.
+
+7. שינויים במדיניות
+YOUGO ISRAEL רשאית לעדכן מדיניות זו בכל עת. עדכונים יפורסמו בערוצי החברה.`
+                          })
+                        },
+                        { 
+                          icon: <Info size={13} />, 
+                          label: 'מי אנחנו', 
+                          onClick: () => setModalContent({
+                            title: 'אודות YOUGO ISRAEL',
+                            content: `YOUGO ISRAEL – פלטפורמת השיווק הדיגיטלי המובילה בישראל למכירת רכבים.
+
+הסיפור שלנו
+YOUGO ISRAEL נוסדה מתוך חזון אחד פשוט: לשנות את הדרך שבה ישראלים מוכרים רכבים. במקום מודעות יבשות בפורומים ישנים, אנחנו יוצרים תוכן ויזואלי מרהיב שמוכר.
+
+מה שמבדיל אותנו
+• 50,000+ עוקבים פעילים ומעורבים
+• צוות מקצועי של צלמים, מעצבים ואנשי שיווק
+• ניסיון של שנים בשוק הרכב הישראלי
+• 98% שביעות רצון לקוחות
+• פרסום תוך 24 שעות מקבלת ההזמנה
+
+השירותים שלנו
+אנחנו מספקים פתרונות פרסום מקיפים: רכבים פרטיים, ציוד כבד ומכונות, חבילות עסקיות לסוכנויות, ופתרונות VIP מותאמים אישית.
+
+הנוכחות הדיגיטלית שלנו
+YOUGO ISRAEL פעילה ב-Instagram, TikTok, Telegram ו-WhatsApp – בכל מקום שבו נמצאים הקונים הפוטנציאליים שלך.
+
+הערך שאנחנו מביאים
+כל מודעה שאנחנו יוצרים נבנית עם הבנה עמוקה של שוק הרכב, פסיכולוגיית הקונה, ואסתטיקה דיגיטלית מודרנית. התוצאה: מכירות מהירות יותר, במחיר טוב יותר.
+
+צור קשר
+WhatsApp: wa.me/972546980606
+Instagram: @yougo.israel`
+                          })
+                        },
+                        { icon: <LayoutDashboard size={13} />, label: 'ניהול', onClick: () => setView('admin-login') },
                       ].map((link, i) => (
-                        <button key={i} onClick={link.onClick}
-                          className="flex items-center gap-1 px-3 py-1 rounded-lg text-xs text-white/50 hover:text-white hover:bg-white/5 transition-all"
+                        <motion.button 
+                          key={i} 
+                          whileHover={{ y: -2 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={link.onClick}
+                          className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold border border-white/8 bg-white/3 hover:bg-white/8 hover:border-white/15 text-white/50 hover:text-white/80 transition-all"
                         >
-                          {link.icon}
+                          <span className="text-white/30">{link.icon}</span>
                           {link.label}
-                        </button>
+                        </motion.button>
                       ))}
                     </div>
 
@@ -2621,13 +2748,21 @@ _נשלח אוטומטית ממערכת YOUGO_`;
               exit={{ opacity: 0, y: -30 }}
               className="max-w-2xl mx-auto space-y-6"
             >
-              <button 
-                onClick={() => setView('home')}
-                className="flex items-center gap-2 text-white/60 hover:text-white text-sm mb-2"
-              >
-                <ArrowLeft size={16} />
-                חזרה לחבילות
-              </button>
+              <div className="flex items-center gap-3">
+                <motion.button 
+                  whileHover={{ x: -3 }}
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => setView('home')}
+                  className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-black border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all"
+                >
+                  <ArrowLeft size={15} className="text-white/60" />
+                  <span className="text-white/70">חזרה לחבילות</span>
+                </motion.button>
+                <div className="h-4 w-px bg-white/10" />
+                <span className="text-[10px] text-white/30 font-bold">
+                  {selectedPackage?.name || 'הזמנה חדשה'}
+                </span>
+              </div>
 
               {/* Progress Steps */}
               <div className="flex items-center justify-center gap-2 mb-4">
@@ -2669,6 +2804,7 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                       onSubmit={handleSubmitOrder}
                       loading={loading}
                       onBack={() => setBookingStep(1)}
+                      onChangePackage={() => setShowChangePackage(true)}
                     />
                   )}
                 </AnimatePresence>
@@ -2730,18 +2866,23 @@ _נשלח אוטומטית ממערכת YOUGO_`;
               </div>
 
               <div className="flex gap-2">
-                <button 
+                <motion.button 
+                  whileTap={{ scale: 0.96 }}
                   onClick={() => setView('home')}
-                  className="flex-1 py-2.5 bg-white/5 rounded-xl font-black text-xs border border-white/10 hover:bg-white/10 transition-all"
+                  className="flex-1 py-2.5 rounded-xl font-black text-xs border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all flex items-center justify-center gap-2"
                 >
+                  <ArrowLeft size={13} className="text-white/50" />
                   חזרה לדף הבית
-                </button>
-                <button 
+                </motion.button>
+                <motion.button 
+                  whileTap={{ scale: 0.96 }}
                   onClick={() => setView('check-status')}
-                  className="flex-1 py-2.5 bg-gradient-to-r from-brand-red to-red-600 rounded-xl font-black text-xs shadow-lg"
+                  className="flex-1 py-2.5 rounded-xl font-black text-xs shadow-lg flex items-center justify-center gap-2"
+                  style={{ background: 'linear-gradient(135deg, #c8102e, #a50d25)', boxShadow: '0 8px 25px -8px rgba(200,16,46,0.5)' }}
                 >
+                  <Search size={13} />
                   בדוק סטטוס
-                </button>
+                </motion.button>
               </div>
             </motion.div>
           )}
@@ -2786,9 +2927,14 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                   </button>
                 </form>
                 
-                <button onClick={() => setView('home')} className="w-full text-xs text-white/40 hover:text-white/60 transition-colors">
+                <motion.button 
+                  whileTap={{ scale: 0.96 }}
+                  onClick={() => setView('home')} 
+                  className="w-full py-2 rounded-xl text-xs font-bold border border-white/8 bg-white/3 hover:bg-white/8 hover:border-white/15 text-white/40 hover:text-white/70 transition-all flex items-center justify-center gap-2"
+                >
+                  <ArrowLeft size={12} />
                   ביטול
-                </button>
+                </motion.button>
               </div>
             </motion.div>
           )}
