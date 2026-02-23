@@ -53,7 +53,20 @@ import {
   RefreshCw,
   Youtube,
   Twitter,
-  Linkedin
+  Linkedin,
+  Sparkle,
+  Gauge,
+  Timer,
+  Flame,
+  Gem,
+  Diamond,
+  Medal,
+  Trophy,
+  Award as AwardIcon,
+  BadgeCheck,
+  Verified,
+  Zap as ZapIcon,
+  Rocket as RocketIcon
 } from 'lucide-react';
 import { translations, Language } from './translations';
 
@@ -106,59 +119,144 @@ const Navbar = ({ lang, setLang, isAdmin, onLogout, siteSettings, setView }: { l
   }, []);
   
   return (
-    <nav 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+    <motion.nav 
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.5, type: 'spring', stiffness: 100 }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled 
-          ? 'bg-dark-bg/95 backdrop-blur-md border-b border-white/10 py-2' 
+          ? 'bg-dark-bg/95 backdrop-blur-xl border-b border-white/10 py-2' 
           : 'bg-transparent py-4'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
-          {/* Logo */}
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-gradient-to-br from-brand-red to-red-700 rounded-xl shadow-lg shadow-brand-red/20">
+          {/* Logo with animation */}
+          <motion.div 
+            className="flex items-center gap-3"
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: 'spring', stiffness: 400 }}
+          >
+            <motion.div 
+              animate={{ 
+                rotate: [0, 10, -10, 0],
+                scale: [1, 1.1, 1.1, 1]
+              }}
+              transition={{ 
+                duration: 5, 
+                repeat: Infinity,
+                repeatType: 'loop'
+              }}
+              className="p-2.5 bg-gradient-to-br from-brand-red to-red-700 rounded-xl shadow-lg shadow-brand-red/20"
+            >
               <Car size={26} className="text-white" />
-            </div>
+            </motion.div>
             <div>
-              <div className="text-2xl font-black tracking-tighter">
+              <motion.div 
+                className="text-2xl font-black tracking-tighter"
+                animate={{ textShadow: ['0 0 0px rgba(200,16,46,0)', '0 0 10px rgba(200,16,46,0.5)', '0 0 0px rgba(200,16,46,0)'] }}
+                transition={{ duration: 3, repeat: Infinity }}
+              >
                 <span className="text-brand-red">YOUGO</span> <span className="text-white">ISRAEL</span>
-              </div>
+              </motion.div>
               <div className="text-[9px] text-white/40 font-bold tracking-wider">
                 {siteSettings.positioning_line_he || t.positioningLine}
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-8">
-            <a href="#how-it-works" className="text-sm font-bold text-white/70 hover:text-brand-red transition-colors">איך זה עובד</a>
-            <a href="#packages" className="text-sm font-bold text-white/70 hover:text-brand-red transition-colors">חבילות</a>
-            <button onClick={() => setView('check-status')} className="text-sm font-bold text-white/70 hover:text-brand-red transition-colors">בדיקת סטטוס</button>
-            <a href="#faq" className="text-sm font-bold text-white/70 hover:text-brand-red transition-colors">שאלות</a>
+            {['how-it-works', 'packages', 'faq'].map((item, i) => (
+              <motion.a
+                key={item}
+                href={`#${item}`}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                whileHover={{ y: -2 }}
+                className="text-sm font-bold text-white/70 hover:text-brand-red transition-colors relative group"
+              >
+                {item === 'how-it-works' ? 'איך זה עובד' : 
+                 item === 'packages' ? 'חבילות' : 'שאלות'}
+                <motion.span 
+                  className="absolute -bottom-1 left-0 right-0 h-0.5 bg-brand-red rounded-full"
+                  initial={{ scaleX: 0 }}
+                  whileHover={{ scaleX: 1 }}
+                  transition={{ duration: 0.2 }}
+                />
+              </motion.a>
+            ))}
             
-            <button 
-              onClick={() => setLang(lang === 'he' ? 'ar' : 'he')}
-              className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-xl border border-white/10 text-sm font-bold hover:bg-white/10 transition-colors"
+            <motion.button 
+              onClick={() => setView('check-status')}
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+              className="text-sm font-bold text-white/70 hover:text-brand-red transition-colors"
             >
-              <Globe size={16} />
+              בדיקת סטטוס
+            </motion.button>
+            
+            <motion.button 
+              onClick={() => setLang(lang === 'he' ? 'ar' : 'he')}
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.15)' }}
+              whileTap={{ scale: 0.95 }}
+              className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-xl border border-white/10 text-sm font-bold transition-all"
+            >
+              <Globe size={16} className="animate-pulse" />
               {lang === 'he' ? 'العربية' : 'עברית'}
-            </button>
+            </motion.button>
 
             {isAdmin && (
-              <button onClick={onLogout} className="text-sm font-bold text-white/40 hover:text-white transition-colors">
+              <motion.button 
+                onClick={onLogout} 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                className="text-sm font-bold text-white/40 hover:text-white transition-colors"
+              >
                 <LogOut size={18} />
-              </button>
+              </motion.button>
             )}
           </div>
 
           {/* Mobile Menu Button */}
-          <button 
+          <motion.button 
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            whileTap={{ scale: 0.9 }}
             className="md:hidden p-2 rounded-lg bg-white/5 border border-white/10"
           >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+            <AnimatePresence mode="wait">
+              {mobileMenuOpen ? (
+                <motion.div
+                  key="close"
+                  initial={{ rotate: -90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: 90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <X size={24} />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="menu"
+                  initial={{ rotate: 90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: -90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Menu size={24} />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.button>
         </div>
 
         {/* Mobile Menu */}
@@ -168,26 +266,52 @@ const Navbar = ({ lang, setLang, isAdmin, onLogout, siteSettings, setView }: { l
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2 }}
-              className="md:hidden py-4 space-y-2 border-t border-white/5"
+              transition={{ duration: 0.3 }}
+              className="md:hidden py-4 space-y-2 border-t border-white/5 mt-4"
             >
-              <a href="#how-it-works" className="block py-3 px-4 text-white/70 hover:bg-white/5 rounded-lg transition-colors">איך זה עובד</a>
-              <a href="#packages" className="block py-3 px-4 text-white/70 hover:bg-white/5 rounded-lg transition-colors">חבילות</a>
-              <button onClick={() => { setView('check-status'); setMobileMenuOpen(false); }} className="block w-full text-right py-3 px-4 text-white/70 hover:bg-white/5 rounded-lg transition-colors">בדיקת סטטוס</button>
-              <a href="#faq" className="block py-3 px-4 text-white/70 hover:bg-white/5 rounded-lg transition-colors">שאלות</a>
+              {[
+                { href: '#how-it-works', label: 'איך זה עובד' },
+                { href: '#packages', label: 'חבילות' },
+                { href: '#faq', label: 'שאלות' }
+              ].map((item, i) => (
+                <motion.a
+                  key={item.href}
+                  href={item.href}
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: i * 0.05 }}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block py-3 px-4 text-white/70 hover:bg-white/5 rounded-lg transition-colors"
+                >
+                  {item.label}
+                </motion.a>
+              ))}
               
-              <button 
+              <motion.button 
+                onClick={() => { setView('check-status'); setMobileMenuOpen(false); }}
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.15 }}
+                className="block w-full text-right py-3 px-4 text-white/70 hover:bg-white/5 rounded-lg transition-colors"
+              >
+                בדיקת סטטוס
+              </motion.button>
+              
+              <motion.button 
                 onClick={() => setLang(lang === 'he' ? 'ar' : 'he')}
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.2 }}
                 className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-white/5 rounded-lg border border-white/10"
               >
                 <Globe size={16} />
                 {lang === 'he' ? 'العربية' : 'עברית'}
-              </button>
+              </motion.button>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
-    </nav>
+    </motion.nav>
   );
 };
 
@@ -215,7 +339,7 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose:
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ duration: 0.2 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
             className="relative w-full max-w-2xl max-h-[80vh] overflow-y-auto p-8 space-y-6"
             style={{
               background: 'linear-gradient(145deg, #0f0f14 0%, #0a0a0e 100%)',
@@ -225,27 +349,63 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose:
             }}
           >
             <div className="flex items-center justify-between border-b border-white/10 pb-4">
-              <h3 className="text-xl font-black text-brand-red">{title}</h3>
-              <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-lg transition-colors">
+              <motion.h3 
+                initial={{ x: -20 }}
+                animate={{ x: 0 }}
+                className="text-xl font-black text-brand-red"
+              >
+                {title}
+              </motion.h3>
+              <motion.button 
+                whileHover={{ rotate: 90, scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={onClose} 
+                className="p-2 hover:bg-white/5 rounded-lg transition-colors"
+              >
                 <X size={20} className="text-white/60" />
-              </button>
+              </motion.button>
             </div>
             <div className="text-white/75 leading-relaxed space-y-3 text-sm">
               {content.split('\n').map((line, i) => {
                 if (!line.trim()) return <div key={i} className="h-1" />;
                 if (/^\d+\./.test(line)) return (
-                  <h4 key={i} className="text-white font-black text-base mt-4 mb-1 first:mt-0">{line}</h4>
+                  <motion.h4 
+                    key={i}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.02 }}
+                    className="text-white font-black text-base mt-4 mb-1 first:mt-0"
+                  >
+                    {line}
+                  </motion.h4>
                 );
-                return <p key={i} className="text-white/70 leading-relaxed">{line}</p>;
+                return (
+                  <motion.p 
+                    key={i}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: i * 0.01 }}
+                    className="text-white/70 leading-relaxed"
+                  >
+                    {line}
+                  </motion.p>
+                );
               })}
             </div>
             <div className="pt-4 flex justify-end border-t border-white/8">
-              <button 
+              <motion.button 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.97 }}
                 onClick={onClose} 
-                className="px-5 py-2.5 rounded-xl font-black text-sm bg-gradient-to-r from-brand-red to-red-600 hover:from-red-700 hover:to-red-800 transition-all"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-sm relative overflow-hidden group"
+                style={{ background: 'linear-gradient(135deg, #c8102e, #a50d25)' }}
               >
-                סגור
-              </button>
+                <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                <span className="relative flex items-center gap-2">
+                  <X size={14} />
+                  סגור
+                </span>
+              </motion.button>
             </div>
           </motion.div>
         </div>
@@ -255,7 +415,7 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose:
 };
 
 // ============================================================
-// FLIP CARD COMPONENT - بطاقة قابلة للقلب (سريعة)
+// FLIP CARD COMPONENT - بطاقة قابلة للقلب بشكل احترافي
 // ============================================================
 const FlipCard = ({ 
   front, 
@@ -269,59 +429,78 @@ const FlipCard = ({
   onFlip: () => void;
 }) => {
   return (
-    <div 
-      className="relative w-full h-full cursor-pointer"
+    <motion.div 
+      className="relative w-full h-full cursor-pointer group perspective-1000"
       onClick={onFlip}
+      whileHover={{ scale: 1.02 }}
+      transition={{ type: 'spring', stiffness: 400 }}
       style={{ minHeight: '480px' }}
     >
       <motion.div
-        className="relative w-full h-full"
+        className="relative w-full h-full preserve-3d"
         animate={{ rotateY: isFlipped ? 180 : 0 }}
-        transition={{ duration: 0.4, type: 'tween' }}
+        transition={{ duration: 0.6, type: 'spring', stiffness: 100, damping: 15 }}
         style={{ transformStyle: 'preserve-3d' }}
       >
         {/* Front Face */}
-        <div 
-          className="absolute w-full h-full"
+        <motion.div 
+          className="absolute w-full h-full backface-hidden"
           style={{ backfaceVisibility: 'hidden' }}
+          whileHover={{ boxShadow: '0 30px 60px -20px rgba(200,16,46,0.5)' }}
         >
           {front}
-        </div>
+        </motion.div>
 
         {/* Back Face */}
-        <div 
-          className="absolute w-full h-full"
+        <motion.div 
+          className="absolute w-full h-full backface-hidden"
           style={{ 
             backfaceVisibility: 'hidden',
             transform: 'rotateY(180deg)'
           }}
         >
           {back}
-        </div>
+        </motion.div>
       </motion.div>
       
-      {/* Flip indicator - ثابت */}
-      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-[8px] text-white/40 flex items-center gap-1">
+      {/* Flip indicator */}
+      <motion.div 
+        className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-[8px] text-white/30 flex items-center gap-1"
+        animate={{ y: [0, -3, 0] }}
+        transition={{ duration: 2, repeat: Infinity }}
+      >
         <RefreshCw size={10} />
         <span>לחץ להפוך</span>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 
 // ============================================================
-// PACKAGE DETAILS - شرح احترافي ثابت (شغل شركات)
+// PACKAGE DETAILS - شرح مفصل لكل باقة (فخم جداً)
 // ============================================================
 const packageDetails: Record<string, { title: string; content: string }> = {
   basic: {
-    title: 'חבילת BASIC',
-    content: `מתאים למוכרים פרטיים שמעוניינים להתחיל עם פרסום מקצועי במחיר נמוך.
+    title: 'חבילת BASIC – פרסום בסיסי',
+    content: `✨✨✨ **מה כוללת החבילה?** ✨✨✨
 
-📌 **החבילה כוללת:**
-• 2 תמונות מקצועיות באיכות גבוהה
-• פוסט ממוקד באינסטגרם
-• סטורי למשך 7 ימים
-• חשיפה לקהל קונים רלוונטי
+┌─────────────────────────┐
+│ 📸 **2 תמונות מקצועיות**   │
+│    צילום סטילש איכותי      │
+├─────────────────────────┤
+│ 📝 **פוסט ממוקד**          │
+│    כתיבה שיווקית מקצועית    │
+├─────────────────────────┤
+│ 📱 **סטורי 7 ימים**        │
+│    חשיפה יומית לעוקבים      │
+├─────────────────────────┤
+│ 🎯 **חשיפה ממוקדת**        │
+│    קהל קונים פוטנציאלי      │
+└─────────────────────────┘
+
+🌟 **למי זה מתאים?**
+   למוכרים פרטיים שרוצים להתחיל
+   עם השקעה מינימלית ותוצאות מוכחות
 
 ⏱️ **משך הפרסום:** 7 ימים
 ✅ **אחריות:** 3 ימי חשיפה מובטחת
@@ -329,19 +508,37 @@ const packageDetails: Record<string, { title: string; content: string }> = {
 💰 **מחיר:** 149 ₪ (במקום 175 ₪)
 🎁 **חיסכון:** 26 ₪ (15% הנחה)
 
-━━━━━━━━━━━━━━━━━━
-מתאים לרכבים עד 50,000 ₪`
+━━━━━━━━━━━━━━━━━━━
+⚡ **מתאים במיוחד ל:**
+   • רכבים במחיר נמוך מ-50,000 ₪
+   • מכירה מהירה תוך שבוע
+   • בדיקת שוק ראשונית`
   },
   pro: {
-    title: 'חבילת PRO',
-    content: `החבילה הפופולרית ביותר - איזון מושלם בין תמורה למחיר.
+    title: 'חבילת PRO – החבילה הפופולרית',
+    content: `🔥🔥🔥 **מה כוללת החבילה?** 🔥🔥🔥
 
-📌 **החבילה כוללת:**
-• 4 תמונות מקצועיות באיכות גבוהה
-• פוסט + פוסט שמור (עריכה מקצועית)
-• סטורי למשך 14 ימים
-• עדיפות בפרסום (קדימות)
-• חשיפה מורחבת לקהלים ממוקדים
+┌─────────────────────────┐
+│ 📸 **4 תמונות מקצועיות**   │
+│    צילום סטילש + עריכה      │
+├─────────────────────────┤
+│ 📝 **פוסט + פוסט שמור**    │
+│    תוכן ממוקד ומתוזמן       │
+├─────────────────────────┤
+│ 📱 **סטורי 14 ימים**       │
+│    חשיפה מתמדת לאורך זמן    │
+├─────────────────────────┤
+│ ⚡ **עדיפות בפרסום**        │
+│    קדימות בתור הפרסומים      │
+├─────────────────────────┤
+│ 🎯 **חשיפה מורחבת**        │
+│    טרגוט מתקדם לקהלים       │
+└─────────────────────────┘
+
+💎 **למה בוחרים בה?**
+   ✓ יחס עלות-תועלת מנצח
+   ✓ תוצאות מוכחות מעל 1,000 מכירות
+   ✓ זמן פרסום אופטימלי למכירה
 
 ⏱️ **משך הפרסום:** 14 ימים
 ✅ **אחריות:** 7 ימי חשיפה מובטחת
@@ -349,22 +546,47 @@ const packageDetails: Record<string, { title: string; content: string }> = {
 💰 **מחיר:** 249 ₪ (במקום 293 ₪)
 🎁 **חיסכון:** 44 ₪ (15% הנחה)
 
-━━━━━━━━━━━━━━━━━━
-מתאים לרכבים 50,000-150,000 ₪`
+━━━━━━━━━━━━━━━━━━━
+⚡ **מתאים במיוחד ל:**
+   • רכבים בטווח 50,000-150,000 ₪
+   • מוכרים פרטיים שמעוניינים בתוצאות
+   • רכבים עם ביקוש גבוה בשוק`
   },
   premium: {
-    title: 'חבילת PREMIUM',
-    content: `החבילה המלאה למי שרוצה למכור מהר ובמחיר מקסימלי.
+    title: 'חבילת PREMIUM – החבילה המושלמת',
+    content: `👑👑👑 **מה כוללת החבילה?** 👑👑👑
 
-📌 **החבילה כוללת:**
-• 8+ תמונות מקצועיות
-• סרטון רכב מקצועי + רילס
-• פוסט מותאם אישית
-• סטורי למשך 30 ימים
-• עדיפות מלאה תמיד
-• חשיפה מקסימלית
-• ליווי צמוד של מעצב וקופירייטר
-• עיצוב VIP בלעדי
+┌─────────────────────────┐
+│ 📸 **8+ תמונות מקצועיות**  │
+│    צילום סטילש + תנועה     │
+├─────────────────────────┤
+│ 🎥 **רילס + סרטון**       │
+│    תוכן וידאו איכותי       │
+├─────────────────────────┤
+│ 📝 **פוסט מותאם אישית**    │
+│    אסטרטגיית תוכן ייחודית  │
+├─────────────────────────┤
+│ 📱 **סטורי 30 ימים**      │
+│    חשיפה מקסימלית לאורך זמן│
+├─────────────────────────┤
+│ ⚡ **עדיפות מלאה**         │
+│    תמיד בראש התור          │
+├─────────────────────────┤
+│ 🎯 **חשיפה מקסימלית**      │
+│    כל הקהלים, כל הפלטפורמות│
+├─────────────────────────┤
+│ 👨‍💼 **ליווי צמוד**         │
+│    מעצב + קופירייטר אישי   │
+├─────────────────────────┤
+│ 🏷️ **עיצוב VIP**          │
+│    מיתוג ייחודי למודעה     │
+└─────────────────────────┘
+
+💫 **מה מקבלים?**
+   • תוכן ויזואלי מרהיב שמוכר תוך ימים
+   • חשיפה מתמדת לאורך חודש שלם
+   • ליווי אישי של צוות המקצוענים
+   • עיצוב ייחודי שבולט מעל כולם
 
 ⏱️ **משך הפרסום:** 30 ימים
 ✅ **אחריות:** 14 ימי חשיפה מובטחת
@@ -372,266 +594,563 @@ const packageDetails: Record<string, { title: string; content: string }> = {
 💰 **מחיר:** 449 ₪ (במקום 528 ₪)
 🎁 **חיסכון:** 79 ₪ (15% הנחה)
 
-━━━━━━━━━━━━━━━━━━
-מתאים לרכבי יוקרה ומעל 150,000 ₪`
+━━━━━━━━━━━━━━━━━━━
+⚡ **מתאים במיוחד ל:**
+   • רכבי יוקרה ופרימיום
+   • רכבים מעל 150,000 ₪
+   • מוכרים שדורשים את הטוב ביותר
+   • מכירה מהירה במחיר מקסימלי`
   },
   vip: {
-    title: 'VIP LUXURY',
-    content: `חבילת הפרימיום האולטימטיבית לרכבי יוקרה ואספנות.
+    title: 'חבילת VIP LUXURY – האולטימטיבית',
+    content: `💎💎💎 **VIP LUXURY – ULTIMATE** 💎💎💎
 
-📌 **החבילה כוללת:**
-• 15+ תמונות מקצועיות בצילום סטילש
-• רילס וידאו + סטורי VIP
-• 60 ימי פרסום פרמיום
-• חשיפה מקסימלית לכלל הקהלים
-• ליווי אישי צמוד 24/7
-• עיצוב VIP בלעדי
-• טרגוט מתקדם לפי פרמטרים מדויקים
-• עדיפות ראשונה תמיד בכל הפרסומים
+┌─────────────────────────────────┐
+│ 📸 **15+ תמונות סטילש מקצועיות**  │
+│    צילום באיכות עיתונות/רכב      │
+├─────────────────────────────────┤
+│ 🎥 **רילס וידאו + סטורי VIP**     │
+│    תוכן וידאו ברמה קולנועית       │
+├─────────────────────────────────┤
+│ 📱 **60 ימי פרסום פרמיום**        │
+│    חשיפה כפולה ומכופלת           │
+├─────────────────────────────────┤
+│ 🎯 **חשיפה מקסימלית**             │
+│    כל הפלטפורמות, כל הקהלים       │
+├─────────────────────────────────┤
+│ 👨‍💼 **ליווי אישי 24/7**           │
+│    מנהל לקוח VIP אישי            │
+├─────────────────────────────────┤
+│ 💎 **עיצוב VIP בלעדי**            │
+│    מיתוג ייחודי למודעה            │
+├─────────────────────────────────┤
+│ 📊 **טרגוט מתקדם**                │
+│    לפי פרמטרים מדויקים            │
+├─────────────────────────────────┤
+│ ⚡ **עדיפות ראשונה תמיד**          │
+│    בכל הפרסומים, בכל הזמנים       │
+└─────────────────────────────────┘
+
+🏎️ **למי זה מיועד?**
+   • רכבי יוקרה (פורשה, מרצדס, ב.מ.וו, אאודי)
+   • רכבי אספנות נדירים
+   • מי שדורש שירות ברמה הכי גבוהה שיש
+
+💫 **מה מקבלים?**
+   • צוות VIP שמטפל בך אישית 24/7
+   • תוכן שיווקי ברמה הכי גבוהה
+   • 60 ימי חשיפה – פי 2 מכל חבילה אחרת
+   • קידום ממומן בערוצים נוספים
 
 ⏱️ **משך הפרסום:** 60 ימים
 ✅ **אחריות:** 30 ימי חשיפה מובטחת + אפשרות להארכה
 
-💰 **מחיר:** 749 ₪ (במחיר השקה)
+💰 **מחיר:** 749 ₪ (במקום 882 ₪)
 🎁 **חיסכון:** 133 ₪ (15% הנחה)
 
-━━━━━━━━━━━━━━━━━━
-מתאים לרכבי יוקרה, אספנות ומיוחדים`
+━━━━━━━━━━━━━━━━━━━━━━━
+⚡ **בונוסים מיוחדים:**
+   • תמונות גם למסירה לקונה
+   • תיעוד תהליך המכירה
+   • המלצות ממומנים בינלאומיים`
   },
   duo: {
-    title: 'DUO DEAL',
-    content: `פרסום שני רכבים במחיר אחד - חיסכון של 40%!
+    title: 'חבילת DUO DEAL – פרסום 2 רכבים',
+    content: `🚗🚗 **DUO DEAL – 2 CARS FOR 1 PRICE** 🚗🚗
 
-📌 **החבילה כוללת:**
-• פרסום 2 רכבים במחיר מיוחד
-• 4 תמונות מקצועיות לכל רכב (8 סה"כ)
-• פוסט נפרד לכל רכב
-• סטורי 14 יום לכל רכב
-• חשיפה כפולה לקהל מעוניין
+┌─────────────────────────┐
+│ 🚗🚗 **2 רכבים במחיר 1**   │
+│    חיסכון של 40%         │
+├─────────────────────────┤
+│ 📸 **4 תמונות לכל רכב**    │
+│    8 תמונות מקצועיות סה"כ │
+├─────────────────────────┤
+│ 📝 **פוסט נפרד לכל רכב**   │
+│    תוכן מותאם אישית       │
+├─────────────────────────┤
+│ 📱 **סטורי 14 יום לכל אחד**│
+│    חשיפה כפולה            │
+├─────────────────────────┤
+│ 🎯 **חשיפה כפולה לקהל**    │
+│    טרגוט רחב יותר         │
+└─────────────────────────┘
 
-💰 **השוואת מחירים:**
-• 2 חבילות BASIC: 298 ₪
-• 2 חבילות PRO: 498 ₪
-• DUO DEAL: 349 ₪ (הכי משתלם!)
+💰 **למה זה משתלם?**
+   • במקום לשלם 598 ₪ לשני רכבים – משלמים רק 349 ₪!
+   • חיסכון של 249 ₪ (40% הנחה!)
+   • מקבלים יחס אישי ופרסום מקצועי לשני הרכבים
+
+📊 **השוואת מחירים:**
+   • 2 חבילות BASIC: 298 ₪ (פחות תמונות)
+   • 2 חבילות PRO: 498 ₪ (יותר יקר)
+   • DUO DEAL: 349 ₪ (הכי משתלם!)
 
 ⏱️ **משך הפרסום:** 14 ימים לכל רכב
 ✅ **אחריות:** חשיפה מובטחת כפולה
 
-━━━━━━━━━━━━━━━━━━
-מתאים למשפחות, סוחרים פרטיים ושותפים`
+━━━━━━━━━━━━━━━━━━━
+⚡ **מתאים במיוחד ל:**
+   • משפחות עם 2 רכבים למכירה
+   • סוחרי רכב פרטיים
+   • החלפת צי רכב
+   • אחים/שותפים שמוכרים יחד`
   },
   business: {
-    title: 'BUSINESS',
-    content: `פתרון מקיף לסוכנויות רכב ומגרשי רכב.
+    title: 'חבילת BUSINESS – לסוכנויות רכב',
+    content: `🏢🏢🏢 **BUSINESS PACKAGE** 🏢🏢🏢
 
-📌 **החבילה כוללת:**
-• עד 50 רכבים בחודש
-• צילומים מקצועיים לכל רכב
-• דפי נחיתה מותאמים אישית
-• מנהל לקוח ייעודי
-• דוחות ביצועים חודשיים
-• קידום ממומן
-• חשיפה ממוקדת לפי אזור
+┌─────────────────────────┐
+│ 🏢 **עד 50 רכבים בחודש**  │
+│    כמות בלתי מוגבלת כמעט  │
+├─────────────────────────┤
+│ 📸 **צילומים מקצועיים**    │
+│    לכל רכב בנפרד          │
+├─────────────────────────┤
+│ 📝 **דפי נחיתה מותאמים**   │
+│    אתר אישי לסוכנות       │
+├─────────────────────────┤
+│ 👨‍💼 **מנהל לקוח ייעודי**   │
+│    איש קשר אחד לכל דבר    │
+├─────────────────────────┤
+│ 📊 **דוחות ביצועים**      │
+│    סטטיסטיקות והמלצות     │
+├─────────────────────────┤
+│ 💰 **קידום ממומן**        │
+│    תקציב חודשי כלול       │
+├─────────────────────────┤
+│ 🎯 **חשיפה ממוקדת**       │
+│    טרגוט לפי אזור ותחום   │
+└─────────────────────────┘
 
-💼 **יתרונות:**
-• תוכנית שיווקית סדורה
-• בניית אסטרטגיה מותאמת
-• חיסכון בעלויות לטווח ארוך
-• מיתוג העסק ברשתות החברתיות
+💼 **יתרונות לעסקים:**
+   • תוכנית שיווקית סדורה לכל השנה
+   • תיאום ציפיות ובניית אסטרטגיה
+   • חיסכון בעלויות פרסום לטווח ארוך
+   • מיתוג העסק בערוצים החברתיים
+   • ליווי מקצועי צמוד
+
+📈 **מה מקבלים?**
+   • חשיפה קבועה לאורך כל החודש
+   • תוכן שיווקי מקצועי לכל רכב
+   • דוחות חודשיים עם המלצות לשיפור
+   • קידום ממומן בערוצים נוספים
 
 ⏱️ **משך החבילה:** חודשי (ניתן להארכה)
 💰 **מחיר:** 1,499 ₪ לחודש (במקום 2,499 ₪)
+🎁 **חיסכון:** 1,000 ₪ (40% הנחה)
 
-━━━━━━━━━━━━━━━━━━
-מתאים לסוכנויות, יבואנים וליסינג`
+━━━━━━━━━━━━━━━━━━━━━━━
+⚡ **מתאים במיוחד ל:**
+   • סוכנויות רכב ומגרשי רכב
+   • יבואנים וחברות ליסינג
+   • עסקים בתחום הרכב
+   • משווקי רכב מקצועיים`
   },
   'equipment-heavy': {
-    title: 'ציוד כבד',
-    content: `פרסום מקצועי לבאגרים, מחפרונים וציוד כבד.
+    title: 'חבילת ציוד כבד – באגרים, מחפרונים ועוד',
+    content: `🚜🚜🚜 **HEAVY EQUIPMENT PACKAGE** 🚜🚜🚜
 
-📌 **החבילה כוללת:**
-• 10 תמונות מקצועיות של הציוד
-• פוסט עם מפרט טכני מלא
-• סטורי 21 יום
-• חשיפה לקהל קבלנים ומגזר הבנייה
-• עדיפות בתוצאות חיפוש
-• ייעוץ תמחור מקצועי
+┌─────────────────────────┐
+│ 📸 **10 תמונות מקצועיות**  │
+│    צילום בשטח/עבודה       │
+├─────────────────────────┤
+│ 📝 **פוסט עם מפרט טכני**   │
+│    כולל יכולות ונתונים    │
+├─────────────────────────┤
+│ 📱 **סטורי 21 יום**       │
+│    חשיפה ממושכת           │
+├─────────────────────────┤
+│ 🎯 **חשיפה לקהל קבלנים**   │
+│    טרגוט מדויק למגזר       │
+├─────────────────────────┤
+│ ⚡ **עדיפות בתוצאות**      │
+│    קידום בחיפושים         │
+├─────────────────────────┤
+│ 👨‍💼 **ייעוץ תמחור**        │
+│    מחירון עדכני            │
+└─────────────────────────┘
 
-🏗️ **סוגי ציוד:**
-• באגרים ומיני באגרים
-• מחפרונים
-• בולדוזרים
-• שופלים
-• עגורנים
+🔨 **למה זה חשוב?**
+   • קהל הקבלנים ומנהלי העבודה נמצא כל היום ברשתות החברתיות
+   • 80% מהפניות מגיעות דרך מודעות מקצועיות
+   • אנחנו מחברים בינך לבין הלקוחות הנכונים
+
+🏗️ **התמחות:**
+   ✓ באגרים ומיני באגרים
+   ✓ מחפרונים
+   ✓ בולדוזרים
+   ✓ שופלים
+   ✓ עגורנים
+   ✓ ציוד סלילה
 
 ⏱️ **משך הפרסום:** 21 יום
-💰 **מחיר:** 349 ₪`
+💰 **מחיר:** 349 ₪
+
+━━━━━━━━━━━━━━━━━━━━━━━
+⚡ **מתאים במיוחד ל:**
+   • קבלני עפר ובניין
+   • חברות השכרת ציוד
+   • בעלי ציוד מכני הנדסי
+   • מגזר הבנייה והתשתיות`
   },
   'equipment-light': {
-    title: 'ציוד קל',
-    content: `פרסום מקצועי למלגזות, פופקטים וציוד קל.
+    title: 'חבילת ציוד קל – מלגזות, פופקטים ועוד',
+    content: `🔧🔧🔧 **LIGHT EQUIPMENT PACKAGE** 🔧🔧🔧
 
-📌 **החבילה כוללת:**
-• 6 תמונות מקצועיות
-• פוסט מותאם לציוד קל
-• סטורי 14 יום
-• חשיפה לקהל מקצועי רלוונטי
-• תיאור טכני מפורט
-• תמיכה בוואטסאפ
+┌─────────────────────────┐
+│ 📸 **6 תמונות מקצועיות**   │
+│    צילום פרטני של הציוד   │
+├─────────────────────────┤
+│ 📝 **פוסט מותאם**         │
+│    תיאור טכני מפורט       │
+├─────────────────────────┤
+│ 📱 **סטורי 14 יום**       │
+│    חשיפה לקהל רלוונטי     │
+├─────────────────────────┤
+│ 🎯 **חשיפה ממוקדת**       │
+│    טרגוט למקצוענים        │
+├─────────────────────────┤
+│ 📋 **תיאור טכני**         │
+│    מפרט מלא וברור         │
+├─────────────────────────┤
+│ 📞 **תמיכה בוואטסאפ**     │
+│    מענה מהיר לכל שאלה     │
+└─────────────────────────┘
 
-🛠️ **סוגי ציוד:**
-• מלגזות
-• פופקטים
-• ג'קים וציוד הרמה
-• סקיד סטיר
-• מערבלי בטון
+🛠️ **למי זה מתאים?**
+   • בעלי מלגזות
+   • פופקטים וג'קים
+   • ציוד הרמה
+   • סקיד סטיר
+   • מערבלי בטון
+   • ציוד מכני קל
+
+📊 **הצלחות מוכחות:**
+   • 85% מהציוד נמכר תוך 14 יום
+   • מעל 500 ציודים פורסמו ונמכרו
+   • קהל מקצועי ואיכותי
 
 ⏱️ **משך הפרסום:** 14 יום
-💰 **מחיר:** 199 ₪`
+💰 **מחיר:** 199 ₪
+
+━━━━━━━━━━━━━━━━━━━━━━━
+⚡ **מתאים במיוחד ל:**
+   • מפעלים ומחסנים
+   • חברות לוגיסטיקה
+   • קבלני שיפוצים
+   • בעלי מלאכה ועצמאיים`
   }
 };
 
 // ============================================================
-// PACKAGE CARD - تصميم احترافي للشركات
+// PACKAGE CARD - Basic, Pro, Premium مع خاصية القلب (فخم جداً)
 // ============================================================
 const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
   const t = translations[lang];
   const [isFlipped, setIsFlipped] = useState(false);
 
   const tierConfig = {
-    basic:   { color: '#64748b', badge: '🚀', borderColor: 'rgba(100,116,139,0.3)', gradient: 'linear-gradient(145deg, #1e1e2a, #14141e)' },
-    pro:     { color: '#c8102e', badge: '⭐', borderColor: 'rgba(200,16,46,0.4)', gradient: 'linear-gradient(145deg, #2a1a1a, #1a0a0a)' },
-    premium: { color: '#c8102e', badge: '💎', borderColor: 'rgba(200,16,46,0.5)', gradient: 'linear-gradient(145deg, #2a1a1a, #1a0a0a)' },
+    basic:   { color: '#94a3b8', glow: 'rgba(148,163,184,0.3)', badge: '🚀', accentBg: 'rgba(148,163,184,0.15)', borderColor: 'rgba(148,163,184,0.4)', gradient: 'linear-gradient(135deg, #2a2a30, #1a1a20)' },
+    pro:     { color: '#c8102e', glow: 'rgba(200,16,46,0.4)',   badge: '⭐', accentBg: 'rgba(200,16,46,0.2)',   borderColor: 'rgba(200,16,46,0.5)',    gradient: 'linear-gradient(135deg, #2a1a1a, #1a0a0a)' },
+    premium: { color: '#c8102e', glow: 'rgba(200,16,46,0.5)',   badge: '💎', accentBg: 'rgba(200,16,46,0.25)',   borderColor: 'rgba(200,16,46,0.6)',    gradient: 'linear-gradient(135deg, #2a1a1a, #1a0a0a)' },
   };
   const cfg = tierConfig[pkg.id as keyof typeof tierConfig] || tierConfig.basic;
+  const isPro = pkg.id === 'pro';
+  const isPremium = pkg.premium;
+
+  const featureChips = pkg.features.slice(0, 4);
 
   // Front face content
   const frontContent = (
-    <div
-      className="relative w-full h-full rounded-2xl flex flex-col overflow-hidden"
+    <motion.div
+      className="relative w-full h-full rounded-2xl flex flex-col group overflow-hidden"
       style={{
         background: cfg.gradient,
         border: `1px solid ${cfg.borderColor}`,
-        boxShadow: `0 10px 30px -10px ${cfg.color}30`,
+        boxShadow: `0 20px 40px -15px ${cfg.color}40, 0 0 0 1px ${cfg.borderColor} inset`,
       }}
+      whileHover={{ scale: 1.02 }}
+      transition={{ type: 'spring', stiffness: 400 }}
     >
-      {/* Top line */}
-      <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: `linear-gradient(90deg, transparent, ${cfg.color}, transparent)` }} />
-
-      {pkg.popular && (
-        <div className="absolute top-3 right-3 z-10 bg-gradient-to-r from-amber-500 to-amber-600 text-white text-[8px] font-black py-1 px-3 rounded-full shadow-lg uppercase tracking-widest flex items-center gap-1">
-          <Award size={10} />
-          {t.mostPopular}
-        </div>
-      )}
-
-      <div className="absolute top-3 left-3 text-[8px] font-black py-1 px-3 rounded-full bg-green-500/20 border border-green-500/30 text-green-400">
-        15% OFF
+      {/* Animated background particles */}
+      <div className="absolute inset-0 overflow-hidden">
+        {[...Array(5)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 rounded-full"
+            style={{ background: cfg.color, left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }}
+            animate={{
+              y: [0, -30, 0],
+              opacity: [0, 1, 0],
+              scale: [0, 1.5, 0]
+            }}
+            transition={{
+              duration: 3 + i,
+              repeat: Infinity,
+              delay: i * 0.5
+            }}
+          />
+        ))}
       </div>
 
-      <div className="relative z-10 p-5 flex flex-col flex-grow gap-4 h-full">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl" style={{ background: `${cfg.color}20`, border: `1px solid ${cfg.color}40` }}>
+      {/* Top glow line */}
+      <motion.div 
+        className="absolute top-0 left-0 right-0 h-[3px]"
+        style={{ background: `linear-gradient(90deg, transparent, ${cfg.color}, ${cfg.color}, transparent)` }}
+        animate={{ opacity: [0.5, 1, 0.5] }}
+        transition={{ duration: 2, repeat: Infinity }}
+      />
+
+      {pkg.popular && (
+        <motion.div 
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          whileHover={{ scale: 1.1, rotate: 5 }}
+          className="absolute top-2 right-2 z-10 text-white text-[8px] font-black py-1 px-3 rounded-full shadow-lg uppercase tracking-widest flex items-center gap-1"
+          style={{ background: `linear-gradient(135deg, ${cfg.color}, #a00d23)` }}
+        >
+          <Trophy size={10} />
+          {t.mostPopular}
+        </motion.div>
+      )}
+
+      <motion.div 
+        className="absolute top-2 left-2 text-[8px] font-black py-1 px-3 rounded-full flex items-center gap-1"
+        style={{ background: 'rgba(34,197,94,0.2)', border: '1px solid rgba(34,197,94,0.4)', color: '#4ade80' }}
+        animate={{ scale: [1, 1.05, 1] }}
+        transition={{ duration: 2, repeat: Infinity }}
+      >
+        <Zap size={8} />
+        15% OFF
+      </motion.div>
+
+      <div className="relative z-10 p-5 flex flex-col flex-grow gap-3 h-full">
+        <div className="flex items-center gap-2 mt-2">
+          <motion.div 
+            className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0"
+            style={{ background: cfg.accentBg, border: `1px solid ${cfg.borderColor}` }}
+            whileHover={{ rotate: 10, scale: 1.1 }}
+            animate={{ 
+              boxShadow: [`0 0 0px ${cfg.color}`, `0 0 15px ${cfg.color}`, `0 0 0px ${cfg.color}`]
+            }}
+            transition={{ duration: 3, repeat: Infinity }}
+          >
             {cfg.badge}
-          </div>
+          </motion.div>
           <div>
-            <h3 className="text-lg font-black" style={{ color: cfg.color }}>{pkg.name}</h3>
-            <p className="text-[9px] text-white/40">
-              {pkg.id === 'basic' ? 'התחלה מקצועית' :
-               pkg.id === 'pro' ? 'פרסום חזק יותר' :
-               'מכירה מהירה'}
+            <h3 className="text-lg font-black tracking-tight" style={{ color: isPremium || isPro ? cfg.color : '#fff' }}>
+              {pkg.name}
+            </h3>
+            <p className="text-[9px] leading-tight" style={{ color: 'rgba(255,255,255,0.45)' }}>
+              {pkg.id === 'basic' ? 'התחלה מקצועית לפרסום הרכב שלך' :
+               pkg.id === 'pro' ? 'פרסום חזק יותר למכירה מהירה יותר' :
+               'חבילת הפרסום המלאה למי שרוצה למכור מהר'}
             </p>
           </div>
         </div>
 
         <div className="flex items-baseline gap-1">
           <span className="text-2xl font-black text-white">{pkg.price}</span>
-          <span className="text-[9px] line-through text-white/30">
+          <span className="text-[10px] line-through" style={{ color: 'rgba(255,255,255,0.3)' }}>
             ₪{Math.round(parseInt(pkg.price.replace('₪', '')) / 0.85)}
           </span>
         </div>
 
-        <div className="h-px w-full" style={{ background: `linear-gradient(90deg, transparent, ${cfg.borderColor}, transparent)` }} />
+        <motion.div 
+          className="h-px w-full"
+          style={{ background: `linear-gradient(90deg, transparent, ${cfg.borderColor}, transparent)` }}
+          animate={{ scaleX: [0.8, 1, 0.8] }}
+          transition={{ duration: 3, repeat: Infinity }}
+        />
 
         <div className="flex flex-col gap-2 flex-grow">
-          {pkg.features.slice(0, 4).map((feat, i) => (
-            <div key={i} className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded-full flex items-center justify-center shrink-0" style={{ background: `${cfg.color}20` }}>
+          {featureChips.map((feat, i) => (
+            <motion.div 
+              key={i} 
+              className="flex items-center gap-1.5 group/feature"
+              initial={{ x: -10, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: i * 0.1 }}
+              whileHover={{ x: 5 }}
+            >
+              <div className="w-4 h-4 rounded-full flex items-center justify-center shrink-0"
+                style={{ background: cfg.accentBg, border: `1px solid ${cfg.borderColor}` }}>
                 <Check size={8} strokeWidth={3} style={{ color: cfg.color }} />
               </div>
-              <span className="text-[10px] text-white/80">{feat}</span>
-            </div>
+              <span className="text-[10px] font-medium" style={{ color: 'rgba(255,255,255,0.85)' }}>{feat}</span>
+            </motion.div>
           ))}
+          {pkg.features.length > 4 && (
+            <motion.span 
+              className="text-[9px] font-bold mt-1"
+              style={{ color: cfg.color }}
+              animate={{ opacity: [0.7, 1, 0.7] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              + {pkg.features.length - 4} תכונות נוספות
+            </motion.span>
+          )}
         </div>
 
-        <button
+        <motion.button
           onClick={(e) => { e.stopPropagation(); onSelect(pkg); }}
-          className="w-full py-3 rounded-xl font-black text-xs transition-all hover:opacity-90"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="w-full py-3 rounded-xl font-black text-xs transition-all duration-200 relative overflow-hidden group/btn"
           style={{
-            background: `linear-gradient(135deg, ${cfg.color}, ${cfg.color}dd)`,
+            background: isPremium || isPro ? cfg.color : 'rgba(255,255,255,0.1)',
+            color: '#fff',
+            border: isPremium || isPro ? 'none' : '1px solid rgba(255,255,255,0.2)'
           }}
         >
-          התחל הזמנה
-        </button>
+          <span className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300" />
+          <span className="relative flex items-center justify-center gap-2">
+            <RocketIcon size={12} />
+            {t.startOrder}
+          </span>
+        </motion.button>
       </div>
-    </div>
+    </motion.div>
   );
 
-  // Back face content - احترافي ثابت
+  // Back face content (detailed description) - فخم جداً
   const backContent = (
-    <div
-      className="relative w-full h-full rounded-2xl p-5 overflow-y-auto"
+    <motion.div
+      className="relative w-full h-full rounded-2xl p-5 overflow-y-auto custom-scrollbar"
       style={{
-        background: 'linear-gradient(145deg, #0f0f14, #0a0a0e)',
+        background: `linear-gradient(145deg, ${cfg.color}15, #0a0a0e)`,
         border: `2px solid ${cfg.borderColor}`,
-        boxShadow: `0 10px 30px -10px ${cfg.color}30`,
+        boxShadow: `0 0 40px ${cfg.glow}, 0 0 0 1px ${cfg.borderColor} inset`,
       }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
     >
-      <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: `linear-gradient(90deg, transparent, ${cfg.color}, transparent)` }} />
+      {/* Decorative elements */}
+      <div className="absolute top-0 left-0 right-0 h-1" style={{ background: `linear-gradient(90deg, transparent, ${cfg.color}, transparent)` }} />
+      <div className="absolute bottom-0 left-0 right-0 h-1" style={{ background: `linear-gradient(90deg, transparent, ${cfg.color}, transparent)` }} />
       
-      <div className="flex items-center gap-2 mb-4">
-        <span className="text-2xl">{cfg.badge}</span>
-        <h3 className="text-lg font-black" style={{ color: cfg.color }}>{packageDetails[pkg.id]?.title || pkg.name}</h3>
-      </div>
-      
-      <div className="text-white/80 text-xs leading-relaxed space-y-3 h-[320px] overflow-y-auto pr-2">
-        {packageDetails[pkg.id]?.content.split('\n').map((line, i) => {
-          if (line.includes('**')) {
-            return <p key={i} className="font-black text-white text-sm mt-3 first:mt-0">{line.replace(/\*\*/g, '')}</p>;
-          }
-          if (line.includes('📌')) {
-            return <p key={i} className="font-black text-white text-sm mt-3">{line}</p>;
-          }
-          if (line.trim().startsWith('•')) {
-            return (
-              <div key={i} className="flex items-start gap-2">
-                <span style={{ color: cfg.color }} className="text-lg leading-none">•</span>
-                <span className="text-white/80">{line.replace('•', '')}</span>
-              </div>
-            );
-          }
-          if (line.includes('━━━━')) {
-            return <div key={i} className="h-px w-full my-2" style={{ background: `linear-gradient(90deg, transparent, ${cfg.color}, transparent)` }} />;
-          }
-          if (line.trim() === '') return <div key={i} className="h-2" />;
-          return <p key={i} className="text-white/70">{line}</p>;
-        })}
+      {/* Animated particles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(3)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-0.5 h-0.5 rounded-full"
+            style={{ background: cfg.color, left: `${10 + i * 30}%`, top: '10%' }}
+            animate={{
+              y: [0, 100, 0],
+              opacity: [0, 1, 0]
+            }}
+            transition={{
+              duration: 4 + i,
+              repeat: Infinity,
+              delay: i
+            }}
+          />
+        ))}
       </div>
 
-      <div className="flex justify-center mt-3">
-        <button
-          onClick={(e) => { e.stopPropagation(); setIsFlipped(false); }}
-          className="px-4 py-2 rounded-full text-[9px] font-black transition-all"
-          style={{
-            background: `${cfg.color}20`,
-            border: `1px solid ${cfg.borderColor}`,
-            color: cfg.color
-          }}
-        >
-          חזור לתפריט
-        </button>
+      <div className="relative z-10">
+        <div className="flex items-center gap-2 mb-4">
+          <motion.div 
+            className="text-3xl"
+            animate={{ rotate: [0, 10, -10, 0] }}
+            transition={{ duration: 5, repeat: Infinity }}
+          >
+            {cfg.badge}
+          </motion.div>
+          <h3 className="text-xl font-black" style={{ color: cfg.color }}>{pkg.name}</h3>
+        </div>
+        
+        <div className="text-white/90 text-xs leading-relaxed space-y-3 h-[320px] overflow-y-auto pr-2 custom-scrollbar">
+          {packageDetails[pkg.id]?.content.split('\n').map((line, i) => {
+            if (line.includes('**')) {
+              return (
+                <motion.p 
+                  key={i} 
+                  className="font-black text-white text-sm mt-3 first:mt-0"
+                  initial={{ x: -10, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: i * 0.02 }}
+                  style={{ textShadow: `0 0 10px ${cfg.color}` }}
+                >
+                  {line.replace(/\*\*/g, '')}
+                </motion.p>
+              );
+            }
+            if (line.includes('┌') || line.includes('├') || line.includes('└') || line.includes('─') || line.includes('│')) {
+              return (
+                <motion.div 
+                  key={i} 
+                  className="font-mono text-[10px]"
+                  style={{ color: line.includes('┌') || line.includes('└') ? cfg.color : '#aaa' }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: i * 0.01 }}
+                >
+                  {line}
+                </motion.div>
+              );
+            }
+            if (line.trim().startsWith('•') || line.trim().startsWith('✓')) {
+              return (
+                <motion.p 
+                  key={i} 
+                  className="flex items-start gap-1.5 text-white/80"
+                  initial={{ x: -5, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: i * 0.01 }}
+                >
+                  <span style={{ color: cfg.color }} className="text-lg leading-none">•</span>
+                  <span>{line.replace('•', '').replace('✓', '')}</span>
+                </motion.p>
+              );
+            }
+            if (line.includes('━━━━')) {
+              return (
+                <motion.div 
+                  key={i} 
+                  className="h-px w-full my-2"
+                  style={{ background: `linear-gradient(90deg, transparent, ${cfg.color}, transparent)` }}
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ delay: i * 0.01 }}
+                />
+              );
+            }
+            if (line.trim() === '') return <div key={i} className="h-2" />;
+            return (
+              <motion.p 
+                key={i} 
+                className="text-white/80"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: i * 0.01 }}
+              >
+                {line}
+              </motion.p>
+            );
+          })}
+        </div>
+
+        <div className="flex justify-center mt-4">
+          <motion.button
+            onClick={(e) => { e.stopPropagation(); setIsFlipped(false); }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="px-4 py-2 rounded-full text-[10px] font-black transition-all flex items-center gap-2"
+            style={{
+              background: `linear-gradient(135deg, ${cfg.color}30, transparent)`,
+              border: `1px solid ${cfg.borderColor}`,
+              color: cfg.color
+            }}
+          >
+            <RefreshCw size={10} />
+            חזור לתפריט
+          </motion.button>
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 
   return (
@@ -645,46 +1164,113 @@ const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
 };
 
 // ============================================================
-// VIP PACKAGE CARD - تصميم احترافي
+// VIP PACKAGE CARD - مع خاصية القلب (فخم جداً)
 // ============================================================
 const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
+  const t = translations[lang];
   const [isFlipped, setIsFlipped] = useState(false);
 
   const frontContent = (
-    <div
-      className="relative w-full h-full rounded-3xl overflow-hidden flex flex-col"
+    <motion.div
+      className="relative w-full h-full rounded-3xl overflow-hidden flex flex-col group"
       style={{
-        boxShadow: '0 10px 30px -10px rgba(212,175,55,0.3), 0 0 0 1px rgba(212,175,55,0.2) inset',
-        background: 'linear-gradient(145deg, #2a1f0a, #0f0c05)'
+        boxShadow: '0 20px 40px -15px rgba(212,175,55,0.4), 0 0 0 2px rgba(212,175,55,0.3) inset',
+        background: 'radial-gradient(circle at 100% 0%, #3a2f1a 0%, #0f0c05 80%)'
       }}
+      whileHover={{ scale: 1.02 }}
+      transition={{ type: 'spring', stiffness: 400 }}
     >
-      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-amber-400 to-transparent" />
+      {/* Animated gold particles */}
+      <div className="absolute inset-0 overflow-hidden">
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-0.5 h-0.5 rounded-full bg-amber-400"
+            style={{ left: `${Math.random() * 100}%`, top: `${Math.random() * 100}%` }}
+            animate={{
+              scale: [0, 2, 0],
+              opacity: [0, 1, 0]
+            }}
+            transition={{
+              duration: 2 + i,
+              repeat: Infinity,
+              delay: i * 0.3
+            }}
+          />
+        ))}
+      </div>
+
+      <motion.div 
+        className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-amber-400 to-transparent"
+        animate={{ opacity: [0.3, 1, 0.3] }}
+        transition={{ duration: 2, repeat: Infinity }}
+      />
+      
+      <div className="absolute inset-0 opacity-20 group-hover:opacity-30 transition-opacity duration-500" style={{
+        backgroundImage: 'radial-gradient(circle at 20% 30%, #d4af37 2px, transparent 2px), radial-gradient(circle at 80% 70%, #d4af37 1px, transparent 1px)',
+        backgroundSize: '50px 50px, 30px 30px'
+      }} />
 
       <div className="relative z-10 p-5 space-y-4 flex-grow flex flex-col">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 bg-amber-900/40 rounded-full px-3 py-1 border border-amber-500/30">
+        <div className="flex items-center flex-wrap gap-2">
+          <motion.div 
+            className="flex items-center gap-1.5 bg-gradient-to-r from-amber-900/60 to-amber-800/30 rounded-full px-3 py-1 border border-amber-500/40"
+            animate={{ borderColor: ['rgba(212,175,55,0.4)', 'rgba(212,175,55,0.8)', 'rgba(212,175,55,0.4)'] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
             <Crown size={12} className="text-amber-400" />
-            <span className="text-[9px] font-black uppercase tracking-wider text-amber-300">VIP</span>
-          </div>
-          <div className="bg-emerald-500/20 border border-emerald-500/30 rounded-full px-2 py-1">
+            <span className="text-[9px] font-black uppercase tracking-wider text-amber-300">VIP LUXURY</span>
+          </motion.div>
+          <motion.div 
+            className="bg-emerald-500/20 border border-emerald-500/40 rounded-full px-2 py-1"
+            animate={{ scale: [1, 1.1, 1] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
             <span className="text-[8px] font-black text-emerald-400">15%</span>
+          </motion.div>
+          <div className="flex mr-auto">
+            {[...Array(5)].map((_, i) => (
+              <motion.div
+                key={i}
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Infinity, delay: i * 0.2 }}
+              >
+                <Star size={10} className="text-amber-400 fill-amber-400" />
+              </motion.div>
+            ))}
           </div>
         </div>
 
         <div>
-          <h3 className="text-xl md:text-2xl font-black text-amber-400">VIP LUXURY</h3>
-          <p className="text-amber-100/40 text-[11px] mt-1">חבילת הפרסום האולטימטיבית</p>
+          <motion.h3 
+            className="text-xl md:text-2xl font-black bg-gradient-to-l from-amber-200 via-amber-400 to-amber-300 bg-clip-text text-transparent"
+            animate={{ textShadow: ['0 0 0px #d4af37', '0 0 20px #d4af37', '0 0 0px #d4af37'] }}
+            transition={{ duration: 3, repeat: Infinity }}
+          >
+            VIP LUXURY
+          </motion.h3>
+          <p className="text-amber-100/40 text-[11px] mt-1 leading-relaxed">
+            חבילת הפרסום האולטימטיבית
+          </p>
         </div>
 
         <div className="flex items-baseline gap-2">
           <span className="text-2xl font-black text-amber-400">₪749</span>
           <span className="text-xs line-through text-white/20">₪882</span>
-          <span className="text-[9px] font-black bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/30">
+          <motion.span 
+            className="text-[9px] font-black bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/30"
+            animate={{ scale: [1, 1.1, 1] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
             חיסכון ₪133
-          </span>
+          </motion.span>
         </div>
 
-        <div className="h-px bg-gradient-to-r from-transparent via-amber-500/30 to-transparent" />
+        <motion.div 
+          className="h-px bg-gradient-to-r from-transparent via-amber-500/30 to-transparent"
+          animate={{ scaleX: [0.8, 1, 0.8] }}
+          transition={{ duration: 3, repeat: Infinity }}
+        />
 
         <div className="grid grid-cols-2 gap-2 flex-grow">
           {[
@@ -693,80 +1279,166 @@ const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
             { icon: <Calendar size={12} />, label: '60 ימים' },
             { icon: <TrendingUp size={12} />, label: 'חשיפה מקס' },
           ].map((feat, i) => (
-            <div key={i} className="flex items-center gap-1.5 bg-white/10 rounded-lg px-2 py-1.5 border border-white/10">
+            <motion.div 
+              key={i} 
+              className="flex items-center gap-1.5 bg-white/10 rounded-lg px-2 py-1.5 border border-white/10"
+              whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.15)' }}
+            >
               <span className="text-amber-400">{feat.icon}</span>
               <span className="text-[9px] font-medium text-white/80">{feat.label}</span>
-            </div>
+            </motion.div>
           ))}
         </div>
 
-        <button
+        <motion.button
           onClick={(e) => { e.stopPropagation(); onSelect(pkg); }}
-          className="w-full py-3 rounded-xl font-black text-sm bg-gradient-to-r from-amber-500 to-amber-600 text-black hover:from-amber-600 hover:to-amber-700 transition-all"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.98 }}
+          className="w-full py-3 rounded-xl font-black text-sm bg-gradient-to-l from-amber-500 to-amber-600 text-black shadow-lg shadow-amber-500/30 hover:shadow-amber-500/40 transition-all relative overflow-hidden group"
         >
-          <span className="flex items-center justify-center gap-2">
+          <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+          <span className="relative flex items-center justify-center gap-2">
             <Crown size={16} />
             הזמן VIP
           </span>
-        </button>
+        </motion.button>
       </div>
-    </div>
+    </motion.div>
   );
 
   const backContent = (
-    <div
-      className="relative w-full h-full rounded-3xl p-5 overflow-y-auto"
+    <motion.div
+      className="relative w-full h-full rounded-3xl p-5 overflow-y-auto custom-scrollbar"
       style={{
-        background: 'linear-gradient(145deg, #2a1f0a, #0f0c05)',
-        border: '2px solid rgba(212,175,55,0.3)',
-        boxShadow: '0 10px 30px -10px rgba(212,175,55,0.3)',
+        background: 'linear-gradient(145deg, #3a2f1a, #0f0c05)',
+        border: '2px solid rgba(212,175,55,0.5)',
+        boxShadow: '0 0 50px rgba(212,175,55,0.3), 0 0 0 1px rgba(212,175,55,0.3) inset',
       }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
     >
-      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-amber-400 to-transparent" />
-      
-      <div className="flex items-center gap-2 mb-4">
-        <Crown size={20} className="text-amber-400" />
-        <h3 className="text-lg font-black text-amber-400">VIP LUXURY</h3>
-      </div>
-      
-      <div className="text-white/80 text-xs leading-relaxed space-y-3 h-[320px] overflow-y-auto pr-2">
-        {packageDetails.vip?.content.split('\n').map((line, i) => {
-          if (line.includes('**')) {
-            return <p key={i} className="font-black text-white text-sm mt-3">{line.replace(/\*\*/g, '')}</p>;
-          }
-          if (line.includes('📌')) {
-            return <p key={i} className="font-black text-white text-sm mt-3">{line}</p>;
-          }
-          if (line.trim().startsWith('•')) {
-            return (
-              <div key={i} className="flex items-start gap-2">
-                <span className="text-amber-400 text-lg leading-none">•</span>
-                <span className="text-white/80">{line.replace('•', '')}</span>
-              </div>
-            );
-          }
-          if (line.includes('━━━━')) {
-            return <div key={i} className="h-px w-full my-2" style={{ background: 'linear-gradient(90deg, transparent, #d4af37, transparent)' }} />;
-          }
-          if (line.trim() === '') return <div key={i} className="h-2" />;
-          return <p key={i} className="text-white/70">{line}</p>;
-        })}
+      {/* Gold sparkles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(5)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 rounded-full bg-amber-400"
+            style={{ left: `${10 + i * 20}%`, top: '10%' }}
+            animate={{
+              y: [0, 200, 0],
+              opacity: [0, 1, 0],
+              scale: [0, 2, 0]
+            }}
+            transition={{
+              duration: 5 + i,
+              repeat: Infinity,
+              delay: i
+            }}
+          />
+        ))}
       </div>
 
-      <div className="flex justify-center mt-3">
-        <button
-          onClick={(e) => { e.stopPropagation(); setIsFlipped(false); }}
-          className="px-4 py-2 rounded-full text-[9px] font-black transition-all"
-          style={{
-            background: 'rgba(212,175,55,0.2)',
-            border: '1px solid rgba(212,175,55,0.3)',
-            color: '#d4af37'
-          }}
-        >
-          חזור לתפריט
-        </button>
+      <div className="relative z-10">
+        <div className="flex items-center gap-2 mb-4">
+          <motion.div 
+            className="text-3xl"
+            animate={{ rotate: [0, 15, -15, 0], scale: [1, 1.2, 1] }}
+            transition={{ duration: 5, repeat: Infinity }}
+          >
+            👑
+          </motion.div>
+          <h3 className="text-xl font-black text-amber-400">VIP LUXURY</h3>
+        </div>
+        
+        <div className="text-white/90 text-xs leading-relaxed space-y-3 h-[320px] overflow-y-auto pr-2 custom-scrollbar">
+          {packageDetails.vip?.content.split('\n').map((line, i) => {
+            if (line.includes('**')) {
+              return (
+                <motion.p 
+                  key={i} 
+                  className="font-black text-white text-sm mt-3 first:mt-0"
+                  initial={{ x: -10, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: i * 0.02 }}
+                  style={{ textShadow: '0 0 10px #d4af37' }}
+                >
+                  {line.replace(/\*\*/g, '')}
+                </motion.p>
+              );
+            }
+            if (line.includes('┌') || line.includes('├') || line.includes('└') || line.includes('─') || line.includes('│')) {
+              return (
+                <motion.div 
+                  key={i} 
+                  className="font-mono text-[10px]"
+                  style={{ color: line.includes('┌') || line.includes('└') ? '#d4af37' : '#aaa' }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: i * 0.01 }}
+                >
+                  {line}
+                </motion.div>
+              );
+            }
+            if (line.trim().startsWith('•')) {
+              return (
+                <motion.p 
+                  key={i} 
+                  className="flex items-start gap-1.5 text-white/80"
+                  initial={{ x: -5, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: i * 0.01 }}
+                >
+                  <span className="text-amber-400 text-lg leading-none">•</span>
+                  <span>{line.replace('•', '')}</span>
+                </motion.p>
+              );
+            }
+            if (line.includes('━━━━')) {
+              return (
+                <motion.div 
+                  key={i} 
+                  className="h-px w-full my-2"
+                  style={{ background: 'linear-gradient(90deg, transparent, #d4af37, transparent)' }}
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ delay: i * 0.01 }}
+                />
+              );
+            }
+            if (line.trim() === '') return <div key={i} className="h-2" />;
+            return (
+              <motion.p 
+                key={i} 
+                className="text-white/80"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: i * 0.01 }}
+              >
+                {line}
+              </motion.p>
+            );
+          })}
+        </div>
+
+        <div className="flex justify-center mt-4">
+          <motion.button
+            onClick={(e) => { e.stopPropagation(); setIsFlipped(false); }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="px-4 py-2 rounded-full text-[10px] font-black transition-all flex items-center gap-2"
+            style={{
+              background: 'linear-gradient(135deg, rgba(212,175,55,0.3), transparent)',
+              border: '1px solid rgba(212,175,55,0.5)',
+              color: '#d4af37'
+            }}
+          >
+            <RefreshCw size={10} />
+            חזור לתפריט
+          </motion.button>
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 
   return (
@@ -780,47 +1452,79 @@ const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
 };
 
 // ============================================================
-// DUO DEAL PACKAGE CARD - تصميم احترافي
+// DUO DEAL PACKAGE CARD - مع خاصية القلب (فخم جداً)
 // ============================================================
 const DuoDealPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Package) => void }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   const frontContent = (
-    <div
-      className="relative w-full h-full rounded-3xl overflow-hidden flex flex-col"
+    <motion.div
+      className="relative w-full h-full rounded-3xl overflow-hidden flex flex-col group"
       style={{
-        background: 'linear-gradient(145deg, #1e1428, #0b0710)',
-        boxShadow: '0 10px 30px -10px rgba(139,92,246,0.3), 0 0 0 1px rgba(139,92,246,0.2) inset'
+        background: 'radial-gradient(circle at 100% 0%, #2e1a3a 0%, #0b0710 100%)',
+        boxShadow: '0 20px 40px -15px rgba(139,92,246,0.4), 0 0 0 2px rgba(139,92,246,0.3) inset'
       }}
+      whileHover={{ scale: 1.02 }}
     >
-      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-purple-400 to-transparent" />
+      <motion.div 
+        className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-purple-400 to-transparent"
+        animate={{ opacity: [0.3, 1, 0.3] }}
+        transition={{ duration: 2, repeat: Infinity }}
+      />
+      
+      <div className="absolute inset-0 opacity-20 group-hover:opacity-30 transition-opacity duration-500" style={{
+        backgroundImage: 'radial-gradient(circle at 30% 40%, #a78bfa 2px, transparent 2px), radial-gradient(circle at 70% 60%, #8b5cf6 1px, transparent 1px)',
+        backgroundSize: '50px 50px, 30px 30px'
+      }} />
 
       <div className="relative z-10 p-5 space-y-4 flex-grow flex flex-col">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 bg-purple-900/40 rounded-full px-3 py-1 border border-purple-500/30">
+        <div className="flex items-center flex-wrap gap-2">
+          <motion.div 
+            className="flex items-center gap-1.5 bg-purple-900/60 rounded-full px-3 py-1 border border-purple-500/40"
+            animate={{ borderColor: ['rgba(139,92,246,0.4)', 'rgba(139,92,246,0.8)', 'rgba(139,92,246,0.4)'] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
             <Car size={12} className="text-purple-400" />
             <Car size={12} className="text-purple-400" />
-            <span className="text-[9px] font-black uppercase tracking-wider text-purple-300">DUO</span>
-          </div>
-          <div className="bg-emerald-500/20 border border-emerald-500/30 rounded-full px-2 py-1">
+            <span className="text-[9px] font-black uppercase tracking-wider text-purple-300">DUO DEAL</span>
+          </motion.div>
+          <motion.div 
+            className="bg-emerald-500/20 border border-emerald-500/40 rounded-full px-2 py-1"
+            animate={{ scale: [1, 1.1, 1] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
             <span className="text-[8px] font-black text-emerald-400">40%</span>
-          </div>
+          </motion.div>
         </div>
 
         <div>
-          <h3 className="text-xl md:text-2xl font-black text-purple-400">DUO DEAL</h3>
+          <motion.h3 
+            className="text-xl md:text-2xl font-black bg-gradient-to-l from-purple-200 via-purple-400 to-purple-300 bg-clip-text text-transparent"
+            animate={{ textShadow: ['0 0 0px #8b5cf6', '0 0 20px #8b5cf6', '0 0 0px #8b5cf6'] }}
+            transition={{ duration: 3, repeat: Infinity }}
+          >
+            DUO DEAL
+          </motion.h3>
           <p className="text-purple-100/40 text-[11px] mt-1">פרסום 2 רכבים</p>
         </div>
 
         <div className="flex items-baseline gap-2">
           <span className="text-2xl font-black text-purple-400">₪349</span>
           <span className="text-xs line-through text-white/20">₪598</span>
-          <span className="text-[9px] font-black bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded-full border border-purple-500/30">
+          <motion.span 
+            className="text-[9px] font-black bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded-full border border-purple-500/30"
+            animate={{ scale: [1, 1.1, 1] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
             חיסכון ₪249
-          </span>
+          </motion.span>
         </div>
 
-        <div className="h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent" />
+        <motion.div 
+          className="h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent"
+          animate={{ scaleX: [0.8, 1, 0.8] }}
+          transition={{ duration: 3, repeat: Infinity }}
+        />
 
         <div className="grid grid-cols-2 gap-2 flex-grow">
           {[
@@ -829,81 +1533,167 @@ const DuoDealPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pac
             { icon: <Instagram size={12} />, label: 'פוסטים' },
             { icon: <Calendar size={12} />, label: '14 ימים' },
           ].map((feat, i) => (
-            <div key={i} className="flex items-center gap-1.5 bg-white/10 rounded-lg px-2 py-1.5 border border-white/10">
+            <motion.div 
+              key={i} 
+              className="flex items-center gap-1.5 bg-white/10 rounded-lg px-2 py-1.5 border border-white/10"
+              whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.15)' }}
+            >
               <span className="text-purple-400">{feat.icon}</span>
               <span className="text-[9px] font-medium text-white/80">{feat.label}</span>
-            </div>
+            </motion.div>
           ))}
         </div>
 
-        <button
+        <motion.button
           onClick={(e) => { e.stopPropagation(); onSelect(pkg); }}
-          className="w-full py-3 rounded-xl font-black text-sm bg-gradient-to-r from-purple-500 to-purple-600 text-white hover:from-purple-600 hover:to-purple-700 transition-all"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.98 }}
+          className="w-full py-3 rounded-xl font-black text-sm bg-gradient-to-l from-purple-500 to-purple-600 text-white shadow-lg shadow-purple-500/30 hover:shadow-purple-500/40 transition-all relative overflow-hidden group"
         >
-          <span className="flex items-center justify-center gap-2">
+          <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+          <span className="relative flex items-center justify-center gap-2">
             <Car size={16} />
             הזמן DUO
           </span>
-        </button>
+        </motion.button>
+
+        <p className="text-center text-[9px] text-purple-300/40 mt-1">
+          הכי משתלם לשני רכבים
+        </p>
       </div>
-    </div>
+    </motion.div>
   );
 
   const backContent = (
-    <div
-      className="relative w-full h-full rounded-3xl p-5 overflow-y-auto"
+    <motion.div
+      className="relative w-full h-full rounded-3xl p-5 overflow-y-auto custom-scrollbar"
       style={{
-        background: 'linear-gradient(145deg, #1e1428, #0b0710)',
-        border: '2px solid rgba(139,92,246,0.3)',
-        boxShadow: '0 10px 30px -10px rgba(139,92,246,0.3)',
+        background: 'linear-gradient(145deg, #2e1a3a, #0b0710)',
+        border: '2px solid rgba(139,92,246,0.5)',
+        boxShadow: '0 0 50px rgba(139,92,246,0.3), 0 0 0 1px rgba(139,92,246,0.3) inset',
       }}
     >
-      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-purple-400 to-transparent" />
-      
-      <div className="flex items-center gap-2 mb-4">
-        <Car size={18} className="text-purple-400" />
-        <Car size={18} className="text-purple-400" />
-        <h3 className="text-lg font-black text-purple-400">DUO DEAL</h3>
-      </div>
-      
-      <div className="text-white/80 text-xs leading-relaxed space-y-3 h-[320px] overflow-y-auto pr-2">
-        {packageDetails.duo?.content.split('\n').map((line, i) => {
-          if (line.includes('**')) {
-            return <p key={i} className="font-black text-white text-sm mt-3">{line.replace(/\*\*/g, '')}</p>;
-          }
-          if (line.includes('📌')) {
-            return <p key={i} className="font-black text-white text-sm mt-3">{line}</p>;
-          }
-          if (line.trim().startsWith('•')) {
-            return (
-              <div key={i} className="flex items-start gap-2">
-                <span className="text-purple-400 text-lg leading-none">•</span>
-                <span className="text-white/80">{line.replace('•', '')}</span>
-              </div>
-            );
-          }
-          if (line.includes('━━━━')) {
-            return <div key={i} className="h-px w-full my-2" style={{ background: 'linear-gradient(90deg, transparent, #8b5cf6, transparent)' }} />;
-          }
-          if (line.trim() === '') return <div key={i} className="h-2" />;
-          return <p key={i} className="text-white/70">{line}</p>;
-        })}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(5)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 rounded-full bg-purple-400"
+            style={{ left: `${10 + i * 20}%`, top: '10%' }}
+            animate={{
+              y: [0, 200, 0],
+              opacity: [0, 1, 0],
+              scale: [0, 2, 0]
+            }}
+            transition={{
+              duration: 5 + i,
+              repeat: Infinity,
+              delay: i
+            }}
+          />
+        ))}
       </div>
 
-      <div className="flex justify-center mt-3">
-        <button
-          onClick={(e) => { e.stopPropagation(); setIsFlipped(false); }}
-          className="px-4 py-2 rounded-full text-[9px] font-black transition-all"
-          style={{
-            background: 'rgba(139,92,246,0.2)',
-            border: '1px solid rgba(139,92,246,0.3)',
-            color: '#8b5cf6'
-          }}
-        >
-          חזור לתפריט
-        </button>
+      <div className="relative z-10">
+        <div className="flex items-center gap-2 mb-4">
+          <motion.div 
+            className="text-3xl"
+            animate={{ rotate: [0, 15, -15, 0], scale: [1, 1.2, 1] }}
+            transition={{ duration: 5, repeat: Infinity }}
+          >
+            🚗🚗
+          </motion.div>
+          <h3 className="text-xl font-black text-purple-400">DUO DEAL</h3>
+        </div>
+        
+        <div className="text-white/90 text-xs leading-relaxed space-y-3 h-[320px] overflow-y-auto pr-2 custom-scrollbar">
+          {packageDetails.duo?.content.split('\n').map((line, i) => {
+            if (line.includes('**')) {
+              return (
+                <motion.p 
+                  key={i} 
+                  className="font-black text-white text-sm mt-3 first:mt-0"
+                  initial={{ x: -10, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: i * 0.02 }}
+                  style={{ textShadow: '0 0 10px #8b5cf6' }}
+                >
+                  {line.replace(/\*\*/g, '')}
+                </motion.p>
+              );
+            }
+            if (line.includes('┌') || line.includes('├') || line.includes('└') || line.includes('─') || line.includes('│')) {
+              return (
+                <motion.div 
+                  key={i} 
+                  className="font-mono text-[10px]"
+                  style={{ color: line.includes('┌') || line.includes('└') ? '#8b5cf6' : '#aaa' }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: i * 0.01 }}
+                >
+                  {line}
+                </motion.div>
+              );
+            }
+            if (line.trim().startsWith('•')) {
+              return (
+                <motion.p 
+                  key={i} 
+                  className="flex items-start gap-1.5 text-white/80"
+                  initial={{ x: -5, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: i * 0.01 }}
+                >
+                  <span className="text-purple-400 text-lg leading-none">•</span>
+                  <span>{line.replace('•', '')}</span>
+                </motion.p>
+              );
+            }
+            if (line.includes('━━━━')) {
+              return (
+                <motion.div 
+                  key={i} 
+                  className="h-px w-full my-2"
+                  style={{ background: 'linear-gradient(90deg, transparent, #8b5cf6, transparent)' }}
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ delay: i * 0.01 }}
+                />
+              );
+            }
+            if (line.trim() === '') return <div key={i} className="h-2" />;
+            return (
+              <motion.p 
+                key={i} 
+                className="text-white/80"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: i * 0.01 }}
+              >
+                {line}
+              </motion.p>
+            );
+          })}
+        </div>
+
+        <div className="flex justify-center mt-4">
+          <motion.button
+            onClick={(e) => { e.stopPropagation(); setIsFlipped(false); }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="px-4 py-2 rounded-full text-[10px] font-black transition-all flex items-center gap-2"
+            style={{
+              background: 'linear-gradient(135deg, rgba(139,92,246,0.3), transparent)',
+              border: '1px solid rgba(139,92,246,0.5)',
+              color: '#8b5cf6'
+            }}
+          >
+            <RefreshCw size={10} />
+            חזור לתפריט
+          </motion.button>
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 
   return (
@@ -917,136 +1707,265 @@ const DuoDealPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pac
 };
 
 // ============================================================
-// EQUIPMENT PACKAGE CARD - تصميم احترافي
+// EQUIPMENT PACKAGE CARD - مع خاصية القلب (فخم جداً)
 // ============================================================
 const EquipmentPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Package) => void }) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const isHeavy = pkg.id === 'equipment-heavy';
   
-  const color = isHeavy ? '#ea580c' : '#64748b';
-  const borderColor = isHeavy ? 'rgba(234,88,12,0.3)' : 'rgba(100,116,139,0.3)';
+  const color = isHeavy ? '#ea580c' : '#94a3b8';
+  const borderColor = isHeavy ? 'rgba(234,88,12,0.5)' : 'rgba(148,163,184,0.4)';
+  const glow = isHeavy ? 'rgba(234,88,12,0.3)' : 'rgba(148,163,184,0.2)';
   
   const frontContent = (
-    <div
-      className="relative w-full h-full rounded-2xl border transition-all flex flex-col p-5"
+    <motion.div
+      className="relative w-full h-full rounded-2xl border transition-all duration-500 flex flex-col p-5 group"
       style={{
         background: isHeavy 
-          ? 'linear-gradient(145deg, #2a1a0a, #0f0c05)' 
-          : 'linear-gradient(145deg, #1a1a2a, #0a0a1a)',
+          ? 'linear-gradient(135deg, rgba(234,88,12,0.15) 0%, rgba(15,12,8,1) 100%)' 
+          : 'linear-gradient(135deg, rgba(148,163,184,0.1) 0%, rgba(10,12,15,1) 100%)',
         borderColor: borderColor,
-        boxShadow: `0 10px 30px -10px ${color}30`,
+        boxShadow: `0 0 40px ${glow}, 0 0 0 1px ${borderColor} inset`,
       }}
+      whileHover={{ scale: 1.02 }}
     >
       {isHeavy && (
-        <div className="absolute -top-3 right-4 z-20 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-[8px] font-black py-1 px-3 rounded-full shadow-lg">
-          <span className="w-1 h-1 rounded-full bg-white animate-pulse mr-1" />
+        <motion.div 
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          whileHover={{ scale: 1.1, rotate: 5 }}
+          className="absolute -top-3 right-4 z-20 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-[8px] font-black py-1 px-3 rounded-full shadow-lg shadow-orange-500/40 uppercase tracking-widest border border-orange-400/30 flex items-center gap-1"
+        >
+          <span className="w-1 h-1 rounded-full bg-white animate-pulse" />
           הכי מבוקש
-        </div>
+        </motion.div>
       )}
 
-      <div className="flex items-center gap-2 mb-3 pb-2 border-b" style={{ borderColor: borderColor }}>
-        <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${color}20`, border: `1px solid ${borderColor}` }}>
-          {isHeavy ? <Truck size={20} style={{ color }} /> : <Wrench size={20} style={{ color }} />}
-        </div>
+      <motion.div 
+        className="absolute top-0 left-0 right-0 h-1"
+        style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }}
+        animate={{ opacity: [0.3, 1, 0.3] }}
+        transition={{ duration: 2, repeat: Infinity }}
+      />
+
+      <div className="flex items-center gap-2 mb-3 pb-2 border-b"
+        style={{ borderColor: isHeavy ? 'rgba(234,88,12,0.2)' : 'rgba(148,163,184,0.15)' }}>
+        <motion.div 
+          className="w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
+          style={{ background: isHeavy ? 'rgba(234,88,12,0.2)' : 'rgba(148,163,184,0.15)', border: `1px solid ${borderColor}` }}
+          whileHover={{ rotate: 10 }}
+        >
+          {isHeavy 
+            ? <Truck size={20} style={{ color }} />
+            : <Wrench size={20} style={{ color }} />
+          }
+        </motion.div>
         <div>
-          <div className="text-[9px] font-black uppercase tracking-[0.2em]" style={{ color }}>{isHeavy ? 'ציוד כבד' : 'ציוד קל'}</div>
+          <div className="text-[9px] font-black uppercase tracking-[0.2em] mb-0.5" style={{ color }}>
+            {isHeavy ? 'ציוד כבד' : 'ציוד קל'}
+          </div>
           <h3 className="text-base font-black text-white">{pkg.name}</h3>
         </div>
         <div className="mr-auto text-right">
           <div className="text-xl font-black text-white">{pkg.price}</div>
-          <div className="text-[8px] text-white/30 line-through">₪{Math.round(parseInt(pkg.price.replace('₪', '')) / 0.85)}</div>
+          <div className="text-[9px] text-white/30 line-through">
+            ₪{Math.round(parseInt(pkg.price.replace('₪', '')) / 0.85)}
+          </div>
         </div>
       </div>
 
       <div className="mb-3 flex flex-wrap gap-1">
-        {(isHeavy ? ['באגר', 'מחפרון', 'מיני באגר'] : ['פופקט', 'ג\'ק', 'מלגזה']).map((item, i) => (
-          <span key={i} className="text-[9px] font-black px-2 py-1 rounded-full border" style={{ color, borderColor, background: `${color}10` }}>
+        {(isHeavy 
+          ? ['באגר', 'מחפרון', 'מיני באגר'] 
+          : ['פופקט', 'ג\'ק', 'מלגזה']
+        ).map((item, i) => (
+          <motion.span 
+            key={i} 
+            className="text-[9px] font-black px-2 py-1 rounded-full border"
+            style={{ 
+              color: isHeavy ? '#fb923c' : '#94a3b8',
+              borderColor: borderColor,
+              background: isHeavy ? 'rgba(234,88,12,0.1)' : 'rgba(148,163,184,0.08)'
+            }}
+            whileHover={{ scale: 1.1, backgroundColor: isHeavy ? 'rgba(234,88,12,0.2)' : 'rgba(148,163,184,0.15)' }}
+          >
             {item}
-          </span>
+          </motion.span>
         ))}
       </div>
 
       <div className="space-y-2 mb-4 flex-grow">
         {pkg.features.slice(0, 3).map((f, i) => (
-          <div key={i} className="flex items-start gap-2 text-[10px]">
-            <div className="mt-0.5 p-0.5 rounded-full shrink-0" style={{ background: color }}>
+          <motion.div 
+            key={i} 
+            className="flex items-start gap-1.5 text-[10px] font-medium group/feature"
+            initial={{ x: -5, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: i * 0.1 }}
+          >
+            <div className="mt-0.5 p-0.5 rounded-full shrink-0"
+              style={{ background: isHeavy ? 'rgba(234,88,12,0.7)' : 'rgba(148,163,184,0.5)' }}>
               <Check size={6} className="text-dark-bg" strokeWidth={5} />
             </div>
             <span className="text-white/80">{f}</span>
-          </div>
+          </motion.div>
         ))}
       </div>
 
-      <button
+      <motion.button
         onClick={(e) => { e.stopPropagation(); onSelect(pkg); }}
-        className="w-full py-3 rounded-xl font-black text-xs transition-all hover:opacity-90"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        className="w-full py-3 rounded-xl font-black text-xs transition-all duration-300 relative overflow-hidden group/btn"
         style={{
-          background: `linear-gradient(135deg, ${color}, ${color}dd)`,
-          color: '#fff'
+          background: isHeavy 
+            ? 'linear-gradient(135deg, #ea580c, #c2410c)' 
+            : 'rgba(148,163,184,0.2)',
+          color: '#fff',
+          border: isHeavy ? 'none' : '1px solid rgba(148,163,184,0.3)'
         }}
       >
-        <span className="flex items-center justify-center gap-2">
+        <span className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300" />
+        <span className="relative flex items-center justify-center gap-2">
           {isHeavy ? <Truck size={12} /> : <Wrench size={12} />}
           {isHeavy ? '🚜 הזמן עכשיו' : '🔧 הזמן עכשיו'}
         </span>
-      </button>
-    </div>
+      </motion.button>
+    </motion.div>
   );
 
   const backContent = (
-    <div
-      className="relative w-full h-full rounded-2xl p-5 overflow-y-auto"
+    <motion.div
+      className="relative w-full h-full rounded-2xl p-5 overflow-y-auto custom-scrollbar"
       style={{
-        background: 'linear-gradient(145deg, #0f0f14, #0a0a0e)',
+        background: isHeavy 
+          ? 'linear-gradient(145deg, #3a2a1a, #0f0c05)'
+          : 'linear-gradient(145deg, #1a1a2a, #0a0a1a)',
         border: `2px solid ${borderColor}`,
-        boxShadow: `0 10px 30px -10px ${color}30`,
+        boxShadow: `0 0 50px ${glow}, 0 0 0 1px ${borderColor} inset`,
       }}
     >
-      <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} />
-      
-      <div className="flex items-center gap-2 mb-4">
-        <span className="text-2xl">{isHeavy ? '🚜' : '🔧'}</span>
-        <h3 className="text-lg font-black" style={{ color }}>{packageDetails[pkg.id]?.title || pkg.name}</h3>
-      </div>
-      
-      <div className="text-white/80 text-xs leading-relaxed space-y-3 h-[320px] overflow-y-auto pr-2">
-        {packageDetails[pkg.id]?.content.split('\n').map((line, i) => {
-          if (line.includes('**')) {
-            return <p key={i} className="font-black text-white text-sm mt-3">{line.replace(/\*\*/g, '')}</p>;
-          }
-          if (line.includes('📌')) {
-            return <p key={i} className="font-black text-white text-sm mt-3">{line}</p>;
-          }
-          if (line.trim().startsWith('•')) {
-            return (
-              <div key={i} className="flex items-start gap-2">
-                <span style={{ color }} className="text-lg leading-none">•</span>
-                <span className="text-white/80">{line.replace('•', '')}</span>
-              </div>
-            );
-          }
-          if (line.includes('━━━━')) {
-            return <div key={i} className="h-px w-full my-2" style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} />;
-          }
-          if (line.trim() === '') return <div key={i} className="h-2" />;
-          return <p key={i} className="text-white/70">{line}</p>;
-        })}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(5)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 rounded-full"
+            style={{ background: color, left: `${10 + i * 20}%`, top: '10%' }}
+            animate={{
+              y: [0, 200, 0],
+              opacity: [0, 1, 0],
+              scale: [0, 2, 0]
+            }}
+            transition={{
+              duration: 5 + i,
+              repeat: Infinity,
+              delay: i
+            }}
+          />
+        ))}
       </div>
 
-      <div className="flex justify-center mt-3">
-        <button
-          onClick={(e) => { e.stopPropagation(); setIsFlipped(false); }}
-          className="px-4 py-2 rounded-full text-[9px] font-black transition-all"
-          style={{
-            background: `${color}20`,
-            border: `1px solid ${borderColor}`,
-            color
-          }}
-        >
-          חזור לתפריט
-        </button>
+      <div className="relative z-10">
+        <div className="flex items-center gap-2 mb-4">
+          <motion.div 
+            className="text-3xl"
+            animate={{ rotate: [0, 15, -15, 0], scale: [1, 1.2, 1] }}
+            transition={{ duration: 5, repeat: Infinity }}
+          >
+            {isHeavy ? '🚜' : '🔧'}
+          </motion.div>
+          <h3 className="text-xl font-black" style={{ color }}>{pkg.name}</h3>
+        </div>
+        
+        <div className="text-white/90 text-xs leading-relaxed space-y-3 h-[320px] overflow-y-auto pr-2 custom-scrollbar">
+          {packageDetails[pkg.id]?.content.split('\n').map((line, i) => {
+            if (line.includes('**')) {
+              return (
+                <motion.p 
+                  key={i} 
+                  className="font-black text-white text-sm mt-3 first:mt-0"
+                  initial={{ x: -10, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: i * 0.02 }}
+                  style={{ textShadow: `0 0 10px ${color}` }}
+                >
+                  {line.replace(/\*\*/g, '')}
+                </motion.p>
+              );
+            }
+            if (line.includes('┌') || line.includes('├') || line.includes('└') || line.includes('─') || line.includes('│')) {
+              return (
+                <motion.div 
+                  key={i} 
+                  className="font-mono text-[10px]"
+                  style={{ color: line.includes('┌') || line.includes('└') ? color : '#aaa' }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: i * 0.01 }}
+                >
+                  {line}
+                </motion.div>
+              );
+            }
+            if (line.trim().startsWith('•')) {
+              return (
+                <motion.p 
+                  key={i} 
+                  className="flex items-start gap-1.5 text-white/80"
+                  initial={{ x: -5, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: i * 0.01 }}
+                >
+                  <span style={{ color }} className="text-lg leading-none">•</span>
+                  <span>{line.replace('•', '')}</span>
+                </motion.p>
+              );
+            }
+            if (line.includes('━━━━')) {
+              return (
+                <motion.div 
+                  key={i} 
+                  className="h-px w-full my-2"
+                  style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }}
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ delay: i * 0.01 }}
+                />
+              );
+            }
+            if (line.trim() === '') return <div key={i} className="h-2" />;
+            return (
+              <motion.p 
+                key={i} 
+                className="text-white/80"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: i * 0.01 }}
+              >
+                {line}
+              </motion.p>
+            );
+          })}
+        </div>
+
+        <div className="flex justify-center mt-4">
+          <motion.button
+            onClick={(e) => { e.stopPropagation(); setIsFlipped(false); }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="px-4 py-2 rounded-full text-[10px] font-black transition-all flex items-center gap-2"
+            style={{
+              background: `linear-gradient(135deg, ${color}30, transparent)`,
+              border: `1px solid ${borderColor}`,
+              color
+            }}
+          >
+            <RefreshCw size={10} />
+            חזור לתפריט
+          </motion.button>
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 
   return (
@@ -1060,39 +1979,60 @@ const EquipmentPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: P
 };
 
 // ============================================================
-// BUSINESS PACKAGE CARD - تصميم احترافي
+// BUSINESS PACKAGE CARD - مع خاصية القلب (فخم جداً)
 // ============================================================
 const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Package) => void }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
   const frontContent = (
-    <div
-      className="relative w-full h-full rounded-2xl overflow-hidden"
+    <motion.div
+      className="relative w-full h-full rounded-2xl overflow-hidden group"
       style={{
-        background: 'linear-gradient(145deg, #0a1929, #0a0a1a)',
-        boxShadow: '0 10px 30px -10px rgba(0,150,255,0.3), 0 0 0 1px rgba(0,150,255,0.2) inset'
+        background: 'linear-gradient(135deg, #0a1a2a 0%, #0f2a3a 50%, #1a3a4a 100%)',
+        boxShadow: '0 20px 40px -15px rgba(0,150,255,0.4), 0 0 0 2px rgba(0,150,255,0.3) inset'
       }}
+      whileHover={{ scale: 1.02 }}
     >
-      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-blue-400 to-transparent" />
+      <motion.div 
+        className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-transparent to-purple-600/10"
+        animate={{ opacity: [0.3, 0.6, 0.3] }}
+        transition={{ duration: 3, repeat: Infinity }}
+      />
       
+      <div className="absolute inset-0 opacity-10" style={{
+        backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
+        backgroundSize: '30px 30px'
+      }} />
+
       <div className="relative z-10 p-5 h-full flex flex-col">
         <div className="flex items-center justify-between gap-2 mb-4">
           <div className="flex items-center gap-2">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-xl">
+            <motion.div 
+              animate={{ 
+                rotate: [0, 10, -10, 0],
+                scale: [1, 1.1, 1.1, 1]
+              }}
+              transition={{ duration: 5, repeat: Infinity }}
+              className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-xl shadow-blue-500/30"
+            >
               <Building2 size={24} className="text-white" />
-            </div>
+            </motion.div>
             <div>
               <div className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em]">לסוכנויות</div>
               <h3 className="text-xl font-black text-white">BUSINESS</h3>
             </div>
           </div>
-          <div className="flex items-center gap-1 bg-blue-500/20 px-2 py-1 rounded-full border border-blue-500/30">
+          <motion.div 
+            className="flex items-center gap-1 bg-blue-500/20 px-2 py-1 rounded-full border border-blue-500/30"
+            animate={{ scale: [1, 1.1, 1] }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
             <Award size={12} className="text-blue-400" />
             <span className="text-[8px] font-black text-blue-400">מומלץ</span>
-          </div>
+          </motion.div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 mb-4 flex-grow">
+        <div className="grid md:grid-cols-2 gap-4 mb-4 flex-grow">
           <div className="space-y-3">
             <div className="flex items-baseline gap-2">
               <div>
@@ -1100,103 +2040,201 @@ const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pa
                 <span className="text-white/40 text-xs mr-1">/חודש</span>
               </div>
               <span className="text-xs line-through text-white/30">₪2,499</span>
-              <span className="text-[8px] font-black bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded-full border border-green-500/30">
-                40%
-              </span>
+              <motion.span 
+                className="text-[8px] font-black bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded-full border border-green-500/30"
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                חיסכון 40%
+              </motion.span>
             </div>
 
             <div className="space-y-2">
-              {['עד 50 רכבים בחודש', 'צילומים מקצועיים', 'דפי נחיתה מותאמים', 'מנהל לקוח ייעודי'].map((text, i) => (
-                <div key={i} className="flex items-center gap-2 text-white/80 text-[10px]">
+              {[
+                'עד 50 רכבים בחודש',
+                'צילומים מקצועיים',
+                'דפי נחיתה מותאמים',
+                'מנהל לקוח ייעודי',
+              ].map((text, i) => (
+                <motion.div 
+                  key={i} 
+                  className="flex items-center gap-2 text-white/80 text-[10px]"
+                  initial={{ x: -5, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: i * 0.1 }}
+                >
                   <div className="w-4 h-4 rounded-full bg-blue-500/20 flex items-center justify-center">
                     <Check size={8} className="text-blue-400" />
                   </div>
                   <span>{text}</span>
-                </div>
+                </motion.div>
               ))}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             {[
               { icon: <Target size={16} />, title: 'חשיפה ממוקדת' },
               { icon: <BarChart3 size={16} />, title: 'דוחות חודשיים' },
             ].map((item, i) => (
-              <div key={i} className="p-2 rounded-xl bg-white/10 border border-white/20">
+              <motion.div 
+                key={i} 
+                className="p-2 rounded-xl bg-white/10 border border-white/20"
+                whileHover={{ scale: 1.05, backgroundColor: 'rgba(255,255,255,0.15)' }}
+              >
                 <div className="text-blue-400 mb-1">{item.icon}</div>
                 <div className="text-[9px] font-black">{item.title}</div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
 
-        <button
+        <motion.button
           onClick={(e) => { e.stopPropagation(); onSelect(pkg); }}
-          className="w-full py-3 rounded-xl font-black text-xs bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 transition-all"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="w-full py-3 rounded-xl font-black text-xs bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-xl shadow-blue-500/30 hover:shadow-blue-500/40 transition-all relative overflow-hidden group/btn"
         >
-          <span className="flex items-center justify-center gap-2">
+          <span className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300" />
+          <span className="relative flex items-center justify-center gap-2">
             <Briefcase size={14} />
             התחל חבילה
           </span>
-        </button>
+        </motion.button>
       </div>
-    </div>
+    </motion.div>
   );
 
   const backContent = (
-    <div
-      className="relative w-full h-full rounded-2xl p-5 overflow-y-auto"
+    <motion.div
+      className="relative w-full h-full rounded-2xl p-5 overflow-y-auto custom-scrollbar"
       style={{
-        background: 'linear-gradient(145deg, #0a1929, #0a0a1a)',
-        border: '2px solid rgba(59,130,246,0.3)',
-        boxShadow: '0 10px 30px -10px rgba(59,130,246,0.3)',
+        background: 'linear-gradient(145deg, #0a1a2a, #0a0a1a)',
+        border: '2px solid rgba(59,130,246,0.5)',
+        boxShadow: '0 0 50px rgba(59,130,246,0.3), 0 0 0 1px rgba(59,130,246,0.3) inset',
       }}
     >
-      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-blue-400 to-transparent" />
-      
-      <div className="flex items-center gap-2 mb-4">
-        <Building2 size={20} className="text-blue-400" />
-        <h3 className="text-lg font-black text-blue-400">BUSINESS</h3>
-      </div>
-      
-      <div className="text-white/80 text-xs leading-relaxed space-y-3 h-[320px] overflow-y-auto pr-2">
-        {packageDetails.business?.content.split('\n').map((line, i) => {
-          if (line.includes('**')) {
-            return <p key={i} className="font-black text-white text-sm mt-3">{line.replace(/\*\*/g, '')}</p>;
-          }
-          if (line.includes('📌')) {
-            return <p key={i} className="font-black text-white text-sm mt-3">{line}</p>;
-          }
-          if (line.trim().startsWith('•')) {
-            return (
-              <div key={i} className="flex items-start gap-2">
-                <span className="text-blue-400 text-lg leading-none">•</span>
-                <span className="text-white/80">{line.replace('•', '')}</span>
-              </div>
-            );
-          }
-          if (line.includes('━━━━')) {
-            return <div key={i} className="h-px w-full my-2" style={{ background: 'linear-gradient(90deg, transparent, #3b82f6, transparent)' }} />;
-          }
-          if (line.trim() === '') return <div key={i} className="h-2" />;
-          return <p key={i} className="text-white/70">{line}</p>;
-        })}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(5)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 rounded-full bg-blue-400"
+            style={{ left: `${10 + i * 20}%`, top: '10%' }}
+            animate={{
+              y: [0, 200, 0],
+              opacity: [0, 1, 0],
+              scale: [0, 2, 0]
+            }}
+            transition={{
+              duration: 5 + i,
+              repeat: Infinity,
+              delay: i
+            }}
+          />
+        ))}
       </div>
 
-      <div className="flex justify-center mt-3">
-        <button
-          onClick={(e) => { e.stopPropagation(); setIsFlipped(false); }}
-          className="px-4 py-2 rounded-full text-[9px] font-black transition-all"
-          style={{
-            background: 'rgba(59,130,246,0.2)',
-            border: '1px solid rgba(59,130,246,0.3)',
-            color: '#3b82f6'
-          }}
-        >
-          חזור לתפריט
-        </button>
+      <div className="relative z-10">
+        <div className="flex items-center gap-2 mb-4">
+          <motion.div 
+            className="text-3xl"
+            animate={{ rotate: [0, 15, -15, 0], scale: [1, 1.2, 1] }}
+            transition={{ duration: 5, repeat: Infinity }}
+          >
+            🏢
+          </motion.div>
+          <h3 className="text-xl font-black text-blue-400">BUSINESS</h3>
+        </div>
+        
+        <div className="text-white/90 text-xs leading-relaxed space-y-3 h-[320px] overflow-y-auto pr-2 custom-scrollbar">
+          {packageDetails.business?.content.split('\n').map((line, i) => {
+            if (line.includes('**')) {
+              return (
+                <motion.p 
+                  key={i} 
+                  className="font-black text-white text-sm mt-3 first:mt-0"
+                  initial={{ x: -10, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: i * 0.02 }}
+                  style={{ textShadow: '0 0 10px #3b82f6' }}
+                >
+                  {line.replace(/\*\*/g, '')}
+                </motion.p>
+              );
+            }
+            if (line.includes('┌') || line.includes('├') || line.includes('└') || line.includes('─') || line.includes('│')) {
+              return (
+                <motion.div 
+                  key={i} 
+                  className="font-mono text-[10px]"
+                  style={{ color: line.includes('┌') || line.includes('└') ? '#3b82f6' : '#aaa' }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: i * 0.01 }}
+                >
+                  {line}
+                </motion.div>
+              );
+            }
+            if (line.trim().startsWith('•')) {
+              return (
+                <motion.p 
+                  key={i} 
+                  className="flex items-start gap-1.5 text-white/80"
+                  initial={{ x: -5, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: i * 0.01 }}
+                >
+                  <span className="text-blue-400 text-lg leading-none">•</span>
+                  <span>{line.replace('•', '')}</span>
+                </motion.p>
+              );
+            }
+            if (line.includes('━━━━')) {
+              return (
+                <motion.div 
+                  key={i} 
+                  className="h-px w-full my-2"
+                  style={{ background: 'linear-gradient(90deg, transparent, #3b82f6, transparent)' }}
+                  initial={{ scaleX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ delay: i * 0.01 }}
+                />
+              );
+            }
+            if (line.trim() === '') return <div key={i} className="h-2" />;
+            return (
+              <motion.p 
+                key={i} 
+                className="text-white/80"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: i * 0.01 }}
+              >
+                {line}
+              </motion.p>
+            );
+          })}
+        </div>
+
+        <div className="flex justify-center mt-4">
+          <motion.button
+            onClick={(e) => { e.stopPropagation(); setIsFlipped(false); }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="px-4 py-2 rounded-full text-[10px] font-black transition-all flex items-center gap-2"
+            style={{
+              background: 'linear-gradient(135deg, rgba(59,130,246,0.3), transparent)',
+              border: '1px solid rgba(59,130,246,0.5)',
+              color: '#3b82f6'
+            }}
+          >
+            <RefreshCw size={10} />
+            חזור לתפריט
+          </motion.button>
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 
   return (
@@ -1215,9 +2253,10 @@ const BitLogo = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) => {
   const fontSize = size === 'sm' ? 11 : size === 'lg' ? 16 : 13;
   const px = size === 'sm' ? 8 : 12;
   return (
-    <div
+    <motion.div
       className="inline-flex items-center justify-center rounded-lg overflow-hidden shrink-0"
       style={{ background: '#0D3D3D', height: h, paddingLeft: px, paddingRight: px, gap: 4 }}
+      whileHover={{ scale: 1.05, boxShadow: '0 0 20px #00E5CC' }}
     >
       <svg width={fontSize * 0.5} height={h * 0.6} viewBox="0 0 9 18" fill="none">
         <circle cx="4.5" cy="2" r="2" fill="#00E5CC"/>
@@ -1231,7 +2270,7 @@ const BitLogo = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) => {
         letterSpacing: '-0.5px',
         lineHeight: 1
       }}>bit</span>
-    </div>
+    </motion.div>
   );
 };
 
@@ -1241,9 +2280,10 @@ const PayBoxLogo = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) => {
   const iconSize = size === 'sm' ? 12 : size === 'lg' ? 18 : 14;
   const px = size === 'sm' ? 8 : 12;
   return (
-    <div
+    <motion.div
       className="inline-flex items-center justify-center rounded-lg overflow-hidden shrink-0"
       style={{ background: '#29ABE2', height: h, paddingLeft: px, paddingRight: px, gap: 4 }}
+      whileHover={{ scale: 1.05, boxShadow: '0 0 20px #29ABE2' }}
     >
       <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none">
         <circle cx="12" cy="6" r="3" stroke="white" strokeWidth="2" fill="none"/>
@@ -1257,7 +2297,7 @@ const PayBoxLogo = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) => {
         letterSpacing: '0.2px',
         lineHeight: 1
       }}>PayBox</span>
-    </div>
+    </motion.div>
   );
 };
 
@@ -1289,11 +2329,20 @@ const OrderStatusCheck = ({ onClose }: { onClose: () => void }) => {
   };
 
   return (
-    <div className="glass-card p-6 space-y-5">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: 'spring', stiffness: 300 }}
+      className="glass-card p-6 space-y-5"
+    >
       <div className="text-center space-y-2">
-        <div className="w-16 h-16 bg-gradient-to-br from-brand-red to-red-600 rounded-xl flex items-center justify-center mx-auto shadow-xl shadow-brand-red/30">
+        <motion.div 
+          className="w-16 h-16 bg-gradient-to-br from-brand-red to-red-600 rounded-xl flex items-center justify-center mx-auto shadow-xl shadow-brand-red/30"
+          animate={{ scale: [1, 1.1, 1] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
           <Search size={28} className="text-white" />
-        </div>
+        </motion.div>
         <h3 className="text-xl font-black">בדיקת סטטוס הזמנה</h3>
         <p className="text-white/50 text-xs">הכנס את מספר ההזמנה שקיבלת בוואטסאפ</p>
       </div>
@@ -1308,36 +2357,43 @@ const OrderStatusCheck = ({ onClose }: { onClose: () => void }) => {
             className="w-full px-4 py-3 bg-white/5 border-2 border-white/10 rounded-xl text-center text-base font-black tracking-widest focus:border-brand-red focus:outline-none transition-all"
           />
           {orderNumber && (
-            <button
+            <motion.button
               onClick={() => setOrderNumber('')}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60"
             >
               <X size={14} />
-            </button>
+            </motion.button>
           )}
         </div>
 
-        <button
+        <motion.button
           onClick={checkOrder}
           disabled={status === 'loading'}
-          className="w-full py-3 bg-gradient-to-r from-brand-red to-red-600 rounded-xl font-black text-sm shadow-xl shadow-brand-red/30 hover:shadow-brand-red/40 transition-all disabled:opacity-50"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="w-full py-3 bg-gradient-to-r from-brand-red to-red-600 rounded-xl font-black text-sm shadow-xl shadow-brand-red/30 hover:shadow-brand-red/40 transition-all disabled:opacity-50 relative overflow-hidden group"
         >
-          {status === 'loading' ? (
-            <span className="flex items-center justify-center gap-2">
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              בודק...
-            </span>
-          ) : (
-            'בדוק סטטוס'
-          )}
-        </button>
+          <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+          <span className="relative">
+            {status === 'loading' ? (
+              <span className="flex items-center justify-center gap-2">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                בודק...
+              </span>
+            ) : (
+              'בדוק סטטוס'
+            )}
+          </span>
+        </motion.button>
 
         <AnimatePresence>
           {status === 'found' && orderDetails && (
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
+              initial={{ opacity: 0, scale: 0.95, y: -10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
               className="p-4 rounded-xl bg-gradient-to-br from-green-500/10 to-emerald-500/5 border border-green-500/20 space-y-3"
             >
               <div className="flex items-center justify-between">
@@ -1369,9 +2425,9 @@ const OrderStatusCheck = ({ onClose }: { onClose: () => void }) => {
 
           {status === 'notfound' && (
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
+              initial={{ opacity: 0, scale: 0.95, y: -10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
               className="p-4 rounded-xl bg-gradient-to-br from-red-500/10 to-orange-500/5 border border-red-500/20 text-center"
             >
               <X size={24} className="text-red-400 mx-auto mb-1" />
@@ -1382,19 +2438,21 @@ const OrderStatusCheck = ({ onClose }: { onClose: () => void }) => {
         </AnimatePresence>
       </div>
 
-      <button
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.96 }}
         onClick={onClose}
         className="w-full py-2.5 rounded-xl text-xs font-bold border border-brand-red/30 bg-brand-red/10 hover:bg-brand-red hover:border-brand-red text-brand-red hover:text-white transition-all flex items-center justify-center gap-2"
       >
         <ArrowLeft size={12} />
         חזור לדף הבית
-      </button>
-    </div>
+      </motion.button>
+    </motion.div>
   );
 };
 
 // ============================================================
-// CHANGE PACKAGE MODAL
+// CHANGE PACKAGE MODAL - تغيير الباقة بشكل احترافي
 // ============================================================
 const ChangePackageModal = ({
   isOpen,
@@ -1447,7 +2505,7 @@ const ChangePackageModal = ({
             initial={{ opacity: 0, scale: 0.92, y: 30 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.92, y: 30 }}
-            transition={{ duration: 0.2 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 20 }}
             className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl"
             style={{
               background: 'linear-gradient(145deg, #0f0f14 0%, #0a0a0e 100%)',
@@ -1455,7 +2513,9 @@ const ChangePackageModal = ({
               boxShadow: '0 40px 80px -20px rgba(0,0,0,0.8)'
             }}
           >
-            <div className="sticky top-0 z-10 px-5 py-4 border-b border-white/8 flex items-center justify-between bg-dark-bg/95 backdrop-blur-md">
+            {/* Header */}
+            <div className="sticky top-0 z-10 px-5 py-4 border-b border-white/8 flex items-center justify-between"
+              style={{ background: 'rgba(15,15,20,0.95)', backdropFilter: 'blur(10px)' }}>
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-lg bg-brand-red/10 border border-brand-red/20 flex items-center justify-center">
                   <RefreshCw size={14} className="text-brand-red" />
@@ -1465,23 +2525,31 @@ const ChangePackageModal = ({
                   <p className="text-[9px] text-white/40">בחר חבילה אחרת להזמנה</p>
                 </div>
               </div>
-              <button onClick={onClose} className="p-1.5 hover:bg-white/5 rounded-lg transition-colors">
+              <motion.button 
+                whileHover={{ rotate: 90, scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={onClose} 
+                className="p-1.5 hover:bg-white/5 rounded-lg transition-colors"
+              >
                 <X size={18} className="text-white/50" />
-              </button>
+              </motion.button>
             </div>
 
+            {/* Packages Grid */}
             <div className="p-5 space-y-2">
               {allPackages.map((pkg) => {
                 const style = getPackageStyle(pkg);
                 const isActive = pkg.id === currentPackageId;
                 return (
-                  <button
+                  <motion.button
                     key={pkg.id}
+                    whileHover={{ x: -4, scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     onClick={() => { onSelect(pkg); onClose(); }}
-                    className={`w-full flex items-center gap-4 p-4 rounded-xl border-2 transition-all text-right hover:bg-white/5 ${
+                    className={`w-full flex items-center gap-4 p-4 rounded-xl border-2 transition-all text-right ${
                       isActive
                         ? `${style.activeBorder} ${style.bg}`
-                        : `${style.border} bg-white/3`
+                        : `${style.border} bg-white/3 hover:bg-white/5`
                     }`}
                   >
                     <div className={`w-10 h-10 rounded-xl ${style.bg} border ${style.border} flex items-center justify-center text-lg shrink-0`}>
@@ -1508,7 +2576,7 @@ const ChangePackageModal = ({
                         <div className={`w-2 h-2 rounded-full ${style.color.replace('text-', 'bg-')}`} />
                       </div>
                     )}
-                  </button>
+                  </motion.button>
                 );
               })}
             </div>
@@ -1537,37 +2605,56 @@ const CarDetailsForm = ({
   const isBusiness = selectedPackage?.id === 'business';
 
   return (
-    <div className="space-y-5">
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 20 }}
+      transition={{ type: 'spring', stiffness: 300 }}
+      className="space-y-5"
+    >
       {/* Package Badge + Change Option */}
-      <div className="flex items-center justify-between p-3 rounded-xl border border-white/8 bg-white/3">
+      <motion.div 
+        className="flex items-center justify-between p-3 rounded-xl border border-white/8 bg-white/3"
+        whileHover={{ scale: 1.02 }}
+      >
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-brand-red/10 flex items-center justify-center">
+          <motion.div 
+            className="w-8 h-8 rounded-lg bg-brand-red/10 flex items-center justify-center"
+            animate={{ rotate: [0, 10, -10, 0] }}
+            transition={{ duration: 5, repeat: Infinity }}
+          >
             {selectedPackage?.id === 'vip' ? <Crown size={14} className="text-amber-400" /> :
              selectedPackage?.id === 'duo' ? <Car size={14} className="text-purple-400" /> :
              selectedPackage?.id === 'business' ? <Building2 size={14} className="text-blue-400" /> :
              <Car size={14} className="text-brand-red" />}
-          </div>
+          </motion.div>
           <div>
             <div className="text-[9px] text-white/40">חבילה נבחרת</div>
             <div className="text-xs font-black text-white">{selectedPackage?.name}</div>
           </div>
         </div>
-        <button
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={onChangePackage}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black border border-white/10 text-white/50 hover:text-white hover:border-white/25 hover:bg-white/5 transition-all"
         >
           <RefreshCw size={10} />
           החלף חבילה
-        </button>
-      </div>
+        </motion.button>
+      </motion.div>
 
       {/* Business-specific form */}
       {isBusiness ? (
         <>
           <div className="text-center space-y-2">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto shadow-xl shadow-blue-500/30">
+            <motion.div 
+              className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto shadow-xl shadow-blue-500/30"
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
               <Building2 size={28} className="text-white" />
-            </div>
+            </motion.div>
             <h3 className="text-xl font-black">פרטי הסוכנות</h3>
             <p className="text-white/50 text-xs">הכנס את פרטי הסוכנות שלך</p>
           </div>
@@ -1640,23 +2727,33 @@ const CarDetailsForm = ({
             </div>
           </div>
 
-          <div className="p-3 rounded-xl bg-blue-500/5 border border-blue-500/20 flex items-start gap-2">
+          {/* Business info banner */}
+          <motion.div 
+            className="p-3 rounded-xl bg-blue-500/5 border border-blue-500/20 flex items-start gap-2"
+            whileHover={{ scale: 1.02 }}
+          >
             <Building2 size={14} className="text-blue-400 mt-0.5 shrink-0" />
             <p className="text-[9px] text-blue-300/70 leading-relaxed">
               לאחר השליחה, נציג מטעמנו יצור איתך קשר תוך 2 שעות לתיאום פרטים ומענה על שאלות.
             </p>
-          </div>
+          </motion.div>
         </>
       ) : isDuo ? (
+        /* DUO form - two cars */
         <>
           <div className="text-center space-y-2">
-            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl flex items-center justify-center mx-auto shadow-xl shadow-purple-500/30">
+            <motion.div 
+              className="w-16 h-16 bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl flex items-center justify-center mx-auto shadow-xl shadow-purple-500/30"
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
               <Car size={28} className="text-white" />
-            </div>
+            </motion.div>
             <h3 className="text-xl font-black">פרטי שני הרכבים</h3>
             <p className="text-white/50 text-xs">מלא פרטים עבור כל אחד מהרכבים</p>
           </div>
 
+          {/* Personal details */}
           <div className="grid md:grid-cols-2 gap-3">
             <div className="space-y-1">
               <label className="text-xs font-black text-white/60">שם מלא *</label>
@@ -1694,7 +2791,10 @@ const CarDetailsForm = ({
           </div>
 
           {/* Car 1 */}
-          <div className="rounded-xl border border-purple-500/25 overflow-hidden">
+          <motion.div 
+            className="rounded-xl border border-purple-500/25 overflow-hidden"
+            whileHover={{ scale: 1.02 }}
+          >
             <div className="px-4 py-2.5 bg-purple-500/10 border-b border-purple-500/20 flex items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center">
                 <span className="text-[10px] font-black text-purple-400">1</span>
@@ -1733,10 +2833,13 @@ const CarDetailsForm = ({
                   className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm focus:border-purple-400 focus:outline-none transition-all" />
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Car 2 */}
-          <div className="rounded-xl border border-purple-500/25 overflow-hidden">
+          <motion.div 
+            className="rounded-xl border border-purple-500/25 overflow-hidden"
+            whileHover={{ scale: 1.02 }}
+          >
             <div className="px-4 py-2.5 bg-purple-500/10 border-b border-purple-500/20 flex items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center">
                 <span className="text-[10px] font-black text-purple-400">2</span>
@@ -1775,21 +2878,30 @@ const CarDetailsForm = ({
                   className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm focus:border-purple-400 focus:outline-none transition-all" />
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="p-3 rounded-xl bg-purple-500/5 border border-purple-500/20 flex items-start gap-2">
+          {/* DUO note */}
+          <motion.div 
+            className="p-3 rounded-xl bg-purple-500/5 border border-purple-500/20 flex items-start gap-2"
+            whileHover={{ scale: 1.02 }}
+          >
             <Car size={14} className="text-purple-400 mt-0.5 shrink-0" />
             <p className="text-[9px] text-purple-300/70 leading-relaxed">
               לאחר ביצוע ההזמנה, שלח בוואטסאפ תמונות עבור <strong className="text-purple-300">כל אחד</strong> מהרכבים בנפרד – 4 תמונות לכל רכב.
             </p>
-          </div>
+          </motion.div>
         </>
       ) : (
+        /* Regular car form */
         <>
           <div className="text-center space-y-2">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mx-auto shadow-xl shadow-blue-500/30">
+            <motion.div 
+              className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mx-auto shadow-xl shadow-blue-500/30"
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
               <Car size={28} className="text-white" />
-            </div>
+            </motion.div>
             <h3 className="text-xl font-black">פרטי הרכב</h3>
             <p className="text-white/50 text-xs">הכנס את פרטי הרכב שברצונך לפרסם</p>
           </div>
@@ -1901,13 +3013,28 @@ const CarDetailsForm = ({
         </>
       )}
 
-      <button
+      <motion.button
         onClick={onNext}
-        className="w-full py-3 rounded-xl font-black text-sm shadow-xl transition-all mt-2 bg-gradient-to-r from-brand-red to-red-600 hover:from-red-700 hover:to-red-800"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        className="w-full py-3 rounded-xl font-black text-sm shadow-xl transition-all mt-2 relative overflow-hidden group"
+        style={{
+          background: selectedPackage?.id === 'business'
+            ? 'linear-gradient(135deg, #3b82f6, #7c3aed)'
+            : selectedPackage?.id === 'duo'
+            ? 'linear-gradient(135deg, #8b5cf6, #6d28d9)'
+            : 'linear-gradient(135deg, #c8102e, #9b0d24)',
+          boxShadow: selectedPackage?.id === 'business'
+            ? '0 10px 30px -10px rgba(59,130,246,0.4)'
+            : selectedPackage?.id === 'duo'
+            ? '0 10px 30px -10px rgba(139,92,246,0.4)'
+            : '0 10px 30px -10px rgba(200,16,46,0.4)'
+        }}
       >
-        להמשך לתשלום
-      </button>
-    </div>
+        <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+        <span className="relative">להמשך לתשלום</span>
+      </motion.button>
+    </motion.div>
   );
 };
 
@@ -1936,19 +3063,34 @@ const PaymentForm = ({
 
   // Color scheme per package type
   const accentColor = isBusiness ? '#3b82f6' : isDuo ? '#8b5cf6' : '#c8102e';
+  const accentBorder = isBusiness ? 'border-blue-500/30' : isDuo ? 'border-purple-500/30' : 'border-brand-red/20';
+  const accentBg = isBusiness ? 'from-blue-500/10' : isDuo ? 'from-purple-500/10' : 'from-brand-red/10';
 
   return (
-    <div className="space-y-5">
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      transition={{ type: 'spring', stiffness: 300 }}
+      className="space-y-5"
+    >
       <div className="text-center space-y-2">
-        <div className="w-16 h-16 rounded-xl flex items-center justify-center mx-auto shadow-xl"
-          style={{ background: `linear-gradient(135deg, ${accentColor}, ${accentColor}aa)`, boxShadow: `0 20px 40px -15px ${accentColor}50` }}>
+        <motion.div 
+          className="w-16 h-16 rounded-xl flex items-center justify-center mx-auto shadow-xl"
+          style={{ background: `linear-gradient(135deg, ${accentColor}, ${accentColor}aa)`, boxShadow: `0 20px 40px -15px ${accentColor}50` }}
+          animate={{ scale: [1, 1.1, 1] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
           <CreditCard size={28} className="text-white" />
-        </div>
+        </motion.div>
         <h3 className="text-xl font-black">תשלום והעלאת אישור</h3>
         <p className="text-white/50 text-xs">בחר אמצעי תשלום והעלה צילום מסך</p>
       </div>
 
-      <div className="p-3 rounded-xl bg-gradient-to-r from-white/5 to-transparent border border-white/10">
+      <motion.div 
+        className={`p-3 rounded-xl bg-gradient-to-r ${accentBg} to-transparent border ${accentBorder}`}
+        whileHover={{ scale: 1.02 }}
+      >
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center justify-between text-sm">
@@ -1960,13 +3102,15 @@ const PaymentForm = ({
               <span className="font-black text-white text-base mr-2">{selectedPackage?.price}</span>
             </div>
           </div>
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={onChangePackage}
             className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all shrink-0 mr-1"
           >
             <RefreshCw size={12} style={{ color: accentColor }} />
             <span className="text-[8px] font-black text-white/50">החלף</span>
-          </button>
+          </motion.button>
         </div>
         {isDuo && (
           <div className="mt-2 pt-2 border-t border-purple-500/20">
@@ -1984,14 +3128,16 @@ const PaymentForm = ({
             </p>
           </div>
         )}
-      </div>
+      </motion.div>
 
       <div className="space-y-2">
         <label className="text-xs font-black text-white/60">אמצעי תשלום *</label>
         <div className="grid grid-cols-2 gap-2">
-          <button
+          <motion.button
             type="button"
             onClick={() => setPaymentMethod('bit')}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             className={`p-3 rounded-xl border-2 transition-all ${
               paymentMethod === 'bit' 
                 ? 'border-[#00E5CC] bg-[#00E5CC]/10' 
@@ -1999,10 +3145,12 @@ const PaymentForm = ({
             }`}
           >
             <BitLogo size="md" />
-          </button>
-          <button
+          </motion.button>
+          <motion.button
             type="button"
             onClick={() => setPaymentMethod('paybox')}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             className={`p-3 rounded-xl border-2 transition-all ${
               paymentMethod === 'paybox' 
                 ? 'border-[#29ABE2] bg-[#29ABE2]/10' 
@@ -2010,7 +3158,7 @@ const PaymentForm = ({
             }`}
           >
             <PayBoxLogo size="md" />
-          </button>
+          </motion.button>
         </div>
       </div>
 
@@ -2019,7 +3167,7 @@ const PaymentForm = ({
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
+            exit={{ opacity: 0, y: -10 }}
             className="p-4 rounded-xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 space-y-3"
           >
             <div className="text-center">
@@ -2027,13 +3175,15 @@ const PaymentForm = ({
               <p className="text-xl font-black tracking-wider text-white">054-6980606</p>
             </div>
 
-            <button
+            <motion.button
               onClick={() => navigator.clipboard.writeText('0546980606')}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               className="w-full py-2 bg-white/5 rounded-lg border border-white/10 text-xs font-black hover:bg-white/10 transition-all flex items-center justify-center gap-2"
             >
               <FileText size={12} />
               העתק מספר
-            </button>
+            </motion.button>
 
             <div className="space-y-1">
               <label className="text-xs font-black text-white/60">העלה צילום מסך של ההעברה *</label>
@@ -2054,9 +3204,12 @@ const PaymentForm = ({
                   }}
                   className="absolute inset-0 opacity-0 cursor-pointer z-10"
                 />
-                <div className={`rounded-lg border-2 border-dashed py-3 px-3 flex flex-col items-center gap-1 transition-colors ${
-                  formData.paymentProof ? 'border-green-500/50 bg-green-500/5' : 'border-white/10 bg-white/5'
-                }`}>
+                <motion.div 
+                  className={`rounded-lg border-2 border-dashed py-3 px-3 flex flex-col items-center gap-1 transition-colors ${
+                    formData.paymentProof ? 'border-green-500/50 bg-green-500/5' : 'border-white/10 bg-white/5'
+                  }`}
+                  whileHover={{ scale: 1.02 }}
+                >
                   {formData.paymentProof ? (
                     <>
                       <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
@@ -2071,59 +3224,77 @@ const PaymentForm = ({
                       <span className="text-[9px] text-white/30">PNG, JPG או JPEG</span>
                     </>
                   )}
-                </div>
+                </motion.div>
               </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
+      {/* DUO: reminder to send both cars' photos */}
       {isDuo && (
-        <div className="p-3 rounded-xl bg-purple-500/5 border border-purple-500/20 flex items-start gap-2">
+        <motion.div 
+          className="p-3 rounded-xl bg-purple-500/5 border border-purple-500/20 flex items-start gap-2"
+          whileHover={{ scale: 1.02 }}
+        >
           <Camera size={14} className="text-purple-400 mt-0.5 shrink-0" />
           <p className="text-[9px] text-purple-300/70 leading-relaxed">
             לאחר אישור ההזמנה, שלח בוואטסאפ תמונות נפרדות לכל רכב: <strong className="text-purple-300">4 תמונות לרכב הראשון + 4 תמונות לרכב השני</strong>.
           </p>
-        </div>
+        </motion.div>
       )}
 
+      {/* Business: reminder */}
       {isBusiness && (
-        <div className="p-3 rounded-xl bg-blue-500/5 border border-blue-500/20 flex items-start gap-2">
+        <motion.div 
+          className="p-3 rounded-xl bg-blue-500/5 border border-blue-500/20 flex items-start gap-2"
+          whileHover={{ scale: 1.02 }}
+        >
           <Building2 size={14} className="text-blue-400 mt-0.5 shrink-0" />
           <p className="text-[9px] text-blue-300/70 leading-relaxed">
             לאחר קבלת ההזמנה, נציגנו יפנה אליך לתיאום ותחילת השיתוף פעולה.
           </p>
-        </div>
+        </motion.div>
       )}
 
       <div className="flex gap-2">
-        <button
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.96 }}
           onClick={onBack}
-          className="flex-1 py-2.5 rounded-xl font-black text-sm border border-brand-red/30 bg-brand-red/10 hover:bg-brand-red hover:border-brand-red transition-all flex items-center justify-center gap-2 text-brand-red hover:text-white"
+          className="flex-1 py-2.5 rounded-xl font-black text-sm border border-brand-red/30 bg-brand-red/10 hover:bg-brand-red hover:border-brand-red transition-all flex items-center justify-center gap-2 text-brand-red hover:text-white relative overflow-hidden group"
         >
-          <ArrowLeft size={14} />
-          חזור
-        </button>
-        <button
+          <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+          <span className="relative flex items-center gap-2">
+            <ArrowLeft size={14} />
+            חזור
+          </span>
+        </motion.button>
+        <motion.button
           onClick={onSubmit}
           disabled={!paymentMethod || !formData.paymentProof || loading}
-          className="flex-1 py-2.5 rounded-xl font-black text-sm shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          whileHover={{ scale: loading ? 1 : 1.05 }}
+          whileTap={{ scale: loading ? 1 : 0.95 }}
+          className="flex-1 py-2.5 rounded-xl font-black text-sm shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
           style={{
             background: `linear-gradient(135deg, ${accentColor}, ${accentColor}bb)`,
             boxShadow: `0 10px 30px -10px ${accentColor}50`
           }}
         >
-          {loading ? (
-            <span className="flex items-center justify-center gap-2">
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              שולח...
-            </span>
-          ) : (
-            'שלח הזמנה'
-          )}
-        </button>
+          <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+          <span className="relative">
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                שולח...
+              </span>
+            ) : (
+              'שלח הזמנה'
+            )}
+          </span>
+        </motion.button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -2452,6 +3623,10 @@ _נשלח אוטומטית ממערכת YOUGO_`;
         .text-brand-red { color: #c8102e !important; }
         .bg-brand-red { background-color: #c8102e !important; }
         .border-brand-red { border-color: #c8102e !important; }
+        .btn-primary { background: linear-gradient(135deg, #c8102e, #a50d25) !important; }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
         .glass-card {
           background: rgba(255, 255, 255, 0.03);
@@ -2476,13 +3651,84 @@ _נשלח אוטומטית ממערכת YOUGO_`;
           background: rgba(200, 16, 46, 0.08);
         }
 
+        /* Global bg noise texture */
+        body::before {
+          content: '';
+          position: fixed;
+          inset: 0;
+          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+          opacity: 0.03;
+          pointer-events: none;
+          z-index: 0;
+        }
+
+        /* Subtle red ambient light top right */
+        body::after {
+          content: '';
+          position: fixed;
+          top: -200px;
+          right: -200px;
+          width: 600px;
+          height: 600px;
+          background: radial-gradient(circle, rgba(200,16,46,0.06) 0%, transparent 70%);
+          pointer-events: none;
+          z-index: 0;
+        }
+
+        /* Hero animated background */
+        @keyframes heroFloat1 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(30px, -20px) scale(1.05); }
+          66% { transform: translate(-20px, 15px) scale(0.97); }
+        }
+        @keyframes heroFloat2 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(-25px, 20px) scale(1.03); }
+          66% { transform: translate(20px, -15px) scale(0.98); }
+        }
+        @keyframes heroFloat3 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(15px, 25px) scale(1.04); }
+        }
+        @keyframes gridMove {
+          0% { transform: translateY(0); }
+          100% { transform: translateY(60px); }
+        }
+        @keyframes scanLine {
+          0% { transform: translateY(-100%); opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { transform: translateY(600%); opacity: 0; }
+        }
+        @keyframes particleFloat {
+          0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+          20% { opacity: 1; }
+          80% { opacity: 1; }
+          100% { transform: translateY(-120px) translateX(30px); opacity: 0; }
+        }
+        @keyframes socialPulse {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(200,16,46,0); }
+          50% { box-shadow: 0 0 0 6px rgba(200,16,46,0.1); }
+        }
+        .hero-orb-1 { animation: heroFloat1 12s ease-in-out infinite; }
+        .hero-orb-2 { animation: heroFloat2 15s ease-in-out infinite; }
+        .hero-orb-3 { animation: heroFloat3 10s ease-in-out infinite; }
+        .scan-line { animation: scanLine 4s linear infinite; }
+        .grid-move { animation: gridMove 8s linear infinite; }
+        .social-pulse { animation: socialPulse 3s ease-in-out infinite; }
+
         /* Flip card styles */
+        .perspective-1000 {
+          perspective: 1000px;
+        }
         .preserve-3d {
           transform-style: preserve-3d;
         }
-        
+        .backface-hidden {
+          backface-visibility: hidden;
+        }
         .custom-scrollbar::-webkit-scrollbar {
-          width: 3px;
+          width: 4px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
           background: rgba(255,255,255,0.05);
@@ -2492,8 +3738,11 @@ _נשלח אוטומטית ממערכת YOUGO_`;
           background: var(--brand-red);
           border-radius: 10px;
         }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #a50d25;
+        }
 
-        /* Package card height */
+        /* Package card min-height */
         .pkg-card-min { min-height: 480px; }
       `}</style>
 
@@ -2506,173 +3755,342 @@ _נשלח אוטומטית ממערכת YOUGO_`;
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.5 }}
               className="space-y-20"
             >
               {/* ============================================================
-                  HERO SECTION
+                  HERO SECTION - فخم جداً مع حركات متقدمة
                   ============================================================ */}
               <section className="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
                 
-                {/* Animated Background */}
+                {/* === Animated Background فخم === */}
                 <div className="absolute inset-0">
+                  {/* Base dark gradient */}
                   <div className="absolute inset-0 bg-[#060608]" />
 
-                  {/* Animated orbs */}
-                  <div className="absolute top-[-10%] right-[-5%] w-[55%] h-[55%] rounded-full opacity-20"
-                    style={{ background: 'radial-gradient(circle, #c8102e 0%, transparent 70%)' }} />
-                  <div className="absolute bottom-[-15%] left-[-10%] w-[60%] h-[60%] rounded-full opacity-15"
-                    style={{ background: 'radial-gradient(circle, #c8102e 0%, transparent 70%)' }} />
-                  <div className="absolute top-[30%] left-[30%] w-[40%] h-[40%] rounded-full opacity-10"
-                    style={{ background: 'radial-gradient(circle, #ff4560 0%, transparent 70%)' }} />
+                  {/* Animated mesh orbs - فخمة جداً */}
+                  <motion.div 
+                    className="hero-orb-1 absolute top-[-10%] right-[-5%] w-[55%] h-[55%] rounded-full"
+                    style={{ background: 'radial-gradient(circle, #c8102e 0%, transparent 70%)' }}
+                    animate={{ 
+                      scale: [1, 1.2, 1],
+                      opacity: [0.2, 0.3, 0.2]
+                    }}
+                    transition={{ duration: 8, repeat: Infinity }}
+                  />
+                  <motion.div 
+                    className="hero-orb-2 absolute bottom-[-15%] left-[-10%] w-[60%] h-[60%] rounded-full"
+                    style={{ background: 'radial-gradient(circle, #c8102e 0%, transparent 70%)' }}
+                    animate={{ 
+                      scale: [1, 1.3, 1],
+                      opacity: [0.15, 0.25, 0.15]
+                    }}
+                    transition={{ duration: 10, repeat: Infinity }}
+                  />
+                  <motion.div 
+                    className="hero-orb-3 absolute top-[30%] left-[30%] w-[40%] h-[40%] rounded-full"
+                    style={{ background: 'radial-gradient(circle, #ff4560 0%, transparent 70%)' }}
+                    animate={{ 
+                      scale: [1, 1.4, 1],
+                      opacity: [0.1, 0.2, 0.1]
+                    }}
+                    transition={{ duration: 12, repeat: Infinity }}
+                  />
 
-                  {/* Grid overlay */}
-                  <div className="absolute inset-0 opacity-[0.03]" style={{
-                    backgroundImage: 'linear-gradient(rgba(200,16,46,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(200,16,46,0.6) 1px, transparent 1px)',
-                    backgroundSize: '60px 60px'
-                  }} />
+                  {/* Moving grid - فخمة */}
+                  <div className="absolute inset-0 overflow-hidden opacity-[0.05]">
+                    <motion.div 
+                      className="grid-move absolute inset-0" 
+                      style={{
+                        backgroundImage: 'linear-gradient(rgba(200,16,46,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(200,16,46,0.6) 1px, transparent 1px)',
+                        backgroundSize: '60px 60px',
+                        height: '200%'
+                      }}
+                      animate={{ y: [0, -60, 0] }}
+                      transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
+                    />
+                  </div>
 
-                  {/* Vignette */}
-                  <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, transparent 30%, #060608 100%)' }} />
+                  {/* Scan line effect - متحرك */}
+                  <motion.div 
+                    className="scan-line absolute left-0 right-0 h-[2px] pointer-events-none"
+                    style={{ background: 'linear-gradient(90deg, transparent, rgba(200,16,46,0.6), transparent)' }}
+                    animate={{ top: ['-10%', '110%'] }}
+                    transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
+                  />
+
+                  {/* Floating particles - متحركة */}
+                  {[...Array(12)].map((_, i) => (
+                    <motion.div
+                      key={i}
+                      className="absolute w-1.5 h-1.5 rounded-full"
+                      style={{ background: `rgba(200,16,46,${0.3 + Math.random() * 0.4})`, left: `${Math.random() * 100}%` }}
+                      animate={{
+                        y: [0, -200, 0],
+                        x: [0, (Math.random() - 0.5) * 100, 0],
+                        opacity: [0, 1, 0],
+                        scale: [0, 1.5, 0]
+                      }}
+                      transition={{
+                        duration: 5 + Math.random() * 5,
+                        repeat: Infinity,
+                        delay: i * 0.3
+                      }}
+                    />
+                  ))}
+
+                  {/* Corner accent lines - فخمة */}
+                  <motion.div 
+                    className="absolute top-12 right-12 w-20 h-20"
+                    style={{ borderTop: '2px solid #c8102e', borderRight: '2px solid #c8102e' }}
+                    animate={{ opacity: [0.2, 0.5, 0.2] }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                  />
+                  <motion.div 
+                    className="absolute bottom-12 left-12 w-20 h-20"
+                    style={{ borderBottom: '2px solid #c8102e', borderLeft: '2px solid #c8102e' }}
+                    animate={{ opacity: [0.2, 0.5, 0.2] }}
+                    transition={{ duration: 3, repeat: Infinity, delay: 1 }}
+                  />
+
+                  {/* Radial vignette overlay */}
+                  <div className="absolute inset-0"
+                    style={{ background: 'radial-gradient(ellipse at center, transparent 30%, #060608 100%)' }} />
                 </div>
 
-                {/* Content */}
-                <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
-                  <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-brand-red/30 rounded-full px-6 py-3 mb-8">
-                    <span className="w-2 h-2 rounded-full bg-brand-red animate-pulse" />
+                {/* Content - فخم جداً */}
+                <motion.div
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.2 }}
+                  className="relative z-10 text-center px-4 max-w-5xl mx-auto"
+                >
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.4, type: 'spring' }}
+                    className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-brand-red/30 rounded-full px-6 py-3 mb-8"
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    <motion.span 
+                      className="w-2 h-2 rounded-full bg-brand-red"
+                      animate={{ scale: [1, 1.5, 1], opacity: [1, 0.5, 1] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    />
                     <span className="text-sm font-black tracking-wider text-white/90">הדרך המהירה ביותר למכור רכב</span>
-                  </div>
+                  </motion.div>
                   
-                  <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-tight text-white mb-6">
+                  <motion.h1
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
+                    className="text-5xl md:text-7xl lg:text-8xl font-black leading-tight text-white mb-6"
+                  >
                     מוכרים רכב? <br />
-                    <span className="text-brand-red">אנחנו מוכרים אותו מהר יותר.</span>
-                  </h1>
+                    <motion.span 
+                      className="text-brand-red inline-block"
+                      style={{ textShadow: '0 0 40px rgba(200,16,46,0.6)' }}
+                      animate={{ 
+                        textShadow: ['0 0 40px rgba(200,16,46,0.6)', '0 0 60px rgba(200,16,46,0.9)', '0 0 40px rgba(200,16,46,0.6)']
+                      }}
+                      transition={{ duration: 3, repeat: Infinity }}
+                    >
+                      אנחנו מוכרים אותו מהר יותר.
+                    </motion.span>
+                  </motion.h1>
                   
-                  <p className="text-xl md:text-2xl text-white/70 max-w-3xl mx-auto mb-10">
+                  <motion.p
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 }}
+                    className="text-xl md:text-2xl text-white/70 max-w-3xl mx-auto mb-10"
+                  >
                     YOUGO ISRAEL - פלטפורמת השיווק המובילה באינסטגרם למכירת רכבים.
-                  </p>
+                  </motion.p>
                   
-                  <div className="flex flex-wrap justify-center gap-5 mb-10">
-                    <button
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.7 }}
+                    className="flex flex-wrap justify-center gap-5 mb-10"
+                  >
+                    <motion.button 
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                      animate={{ boxShadow: ['0 15px 40px -10px rgba(200,16,46,0.5)', '0 20px 50px -10px rgba(200,16,46,0.8)', '0 15px 40px -10px rgba(200,16,46,0.5)'] }}
+                      transition={{ duration: 2, repeat: Infinity }}
                       onClick={() => {
                         const el = document.getElementById('packages');
                         el?.scrollIntoView({ behavior: 'smooth' });
                       }}
-                      className="px-10 py-5 rounded-xl font-black text-xl transition-all bg-gradient-to-r from-brand-red to-red-600 hover:from-red-700 hover:to-red-800 shadow-xl shadow-brand-red/30"
+                      className="px-10 py-5 rounded-xl font-black text-xl transition-all relative overflow-hidden group"
+                      style={{
+                        background: 'linear-gradient(135deg, #c8102e, #a50d25)',
+                      }}
                     >
-                      <span className="flex items-center gap-3">
+                      <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                      <span className="relative flex items-center gap-3">
                         <Sparkles size={24} />
                         התחל הזמנה
                       </span>
-                    </button>
+                    </motion.button>
                     
-                    <button
+                    <motion.button 
                       onClick={() => setView('check-status')}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
                       className="px-10 py-5 bg-white/10 backdrop-blur-md rounded-xl font-black text-xl border border-white/20 hover:bg-white/15 hover:border-white/30 transition-all flex items-center gap-3"
                     >
                       <Search size={24} />
                       בדוק סטטוס
-                    </button>
-                  </div>
+                    </motion.button>
+                  </motion.div>
 
-                  <div className="flex items-center justify-center gap-8 flex-wrap">
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.9 }}
+                    className="flex items-center justify-center gap-8 flex-wrap"
+                  >
                     {[
                       { icon: <ShieldCheck size={20} />, label: 'תשלום מאובטח' },
                       { icon: <Clock size={20} />, label: 'פרסום תוך 24 שעות' },
                       { icon: <Users size={20} />, label: '50K+ עוקבים' },
                     ].map((item, i) => (
-                      <div key={i} className="flex items-center gap-3 text-white/60">
+                      <motion.div 
+                        key={i} 
+                        className="flex items-center gap-3 text-white/60"
+                        whileHover={{ scale: 1.1, color: '#fff' }}
+                      >
                         <span className="text-brand-red">{item.icon}</span>
                         <span className="text-base">{item.label}</span>
-                      </div>
+                      </motion.div>
                     ))}
-                  </div>
-                </div>
+                  </motion.div>
+                </motion.div>
 
-                {/* Scroll Down Indicator */}
-                <button
+                {/* Scroll Down Indicator - متحرك */}
+                <motion.div 
+                  animate={{ y: [0, 15, 0] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white/40 cursor-pointer"
                   onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}
-                  className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white/40 hover:text-white/60 transition-colors"
                 >
                   <ChevronDown size={32} />
-                </button>
+                </motion.div>
               </section>
 
-              {/* How it Works - محسّن وجذاب */}
+              {/* How it Works - متحرك */}
               <section id="how-it-works" className="space-y-12">
-                <div className="text-center space-y-3">
-                  <div className="inline-flex items-center gap-2 bg-brand-red/20 border border-brand-red/30 rounded-full px-5 py-2">
-                    <span className="w-2 h-2 bg-brand-red rounded-full animate-pulse" />
+                <motion.div 
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
+                  className="text-center space-y-3"
+                >
+                  <motion.div 
+                    className="inline-flex items-center gap-2 bg-brand-red/20 border border-brand-red/30 rounded-full px-5 py-2"
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    <motion.span 
+                      className="w-2 h-2 bg-brand-red rounded-full"
+                      animate={{ scale: [1, 1.5, 1] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    />
                     <span className="text-sm font-black tracking-wider text-brand-red">תהליך פשוט ומהיר</span>
-                  </div>
+                  </motion.div>
                   <h2 className="text-4xl md:text-5xl font-black">איך זה עובד?</h2>
                   <p className="text-white/50 text-base max-w-2xl mx-auto">3 שלבים פשוטים והרכב שלך באוויר</p>
-                </div>
+                </motion.div>
 
-                <div className="grid md:grid-cols-3 gap-8">
+                <div className="grid md:grid-cols-3 gap-6">
                   {[
                     {
                       step: '01',
                       title: 'בחירת חבילה',
                       desc: 'בוחרים את חבילת הפרסום המתאימה',
-                      icon: <LayoutDashboard size={40} />,
+                      icon: <LayoutDashboard size={32} />,
                       color: 'from-blue-500 to-cyan-500'
                     },
                     {
                       step: '02',
                       title: 'הזנת פרטים',
                       desc: 'ממלאים פרטי הרכב ומעלים אישור תשלום',
-                      icon: <FileText size={40} />,
+                      icon: <FileText size={32} />,
                       color: 'from-brand-red to-red-600'
                     },
                     {
                       step: '03',
                       title: 'פרסום וחשיפה',
                       desc: 'הצוות שלנו מעצב ומפרסם מודעה מקצועית',
-                      icon: <Send size={40} />,
+                      icon: <Send size={32} />,
                       color: 'from-green-500 to-emerald-500'
                     },
                   ].map((item, i) => (
-                    <div
+                    <motion.div
                       key={i}
+                      initial={{ opacity: 0, y: 50 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.2, type: 'spring', stiffness: 200 }}
+                      whileHover={{ y: -10, scale: 1.05 }}
                       className="relative group"
                     >
-                      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-2xl group-hover:scale-105 transition-transform duration-300" />
+                      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-2xl group-hover:scale-105 transition-transform duration-300" />
                       <div className="relative p-8 text-center">
-                        <div className={`w-24 h-24 mx-auto mb-5 rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center shadow-xl`}>
+                        <motion.div 
+                          className={`w-20 h-20 mx-auto mb-5 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center shadow-xl`}
+                          whileHover={{ rotate: 360 }}
+                          transition={{ duration: 0.8 }}
+                        >
                           {item.icon}
-                        </div>
+                        </motion.div>
                         <div className="text-5xl font-black text-white/10 absolute top-4 left-4">{item.step}</div>
                         <h3 className="text-xl font-black mb-3">{item.title}</h3>
                         <p className="text-white/50 text-sm">{item.desc}</p>
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               </section>
 
-              {/* Packages Section */}
+              {/* Packages Section - فخم جداً مع بطاقات قابلة للقلب */}
               <section id="packages" className="space-y-16">
-                <div className="text-center space-y-3">
+                <motion.div 
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="text-center space-y-3"
+                >
                   <h2 className="text-4xl md:text-5xl font-black">{t.packages}</h2>
                   <p className="text-white/50 text-base max-w-2xl mx-auto">בחר את המסלול המתאים ביותר עבורך</p>
-                </div>
+                </motion.div>
                 
-                {/* Regular packages - 3 في صف */}
+                {/* Regular packages - في صف واحد */}
                 <div>
-                  <div className="text-center space-y-3 mb-8">
-                    <div className="inline-flex items-center gap-2 bg-blue-500/20 border border-blue-500/30 px-4 py-2 rounded-full">
+                  <motion.div 
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="text-center space-y-3 mb-8"
+                  >
+                    <motion.div 
+                      className="inline-flex items-center gap-2 bg-blue-500/20 border border-blue-500/30 px-4 py-2 rounded-full"
+                      whileHover={{ scale: 1.05 }}
+                    >
                       <Car size={14} className="text-blue-400" />
                       <span className="text-xs font-black tracking-wider text-blue-400">חבילות רכב פרטי</span>
-                    </div>
+                    </motion.div>
                     <h3 className="text-2xl md:text-3xl font-black">
                       מוכרים <span className="text-brand-red">רכב פרטי?</span>
                     </h3>
                     <p className="text-white/50 text-sm max-w-lg mx-auto">
                       חבילות פרסום מותאמות אישית למכירת רכב פרטי
                     </p>
-                  </div>
+                  </motion.div>
                   
+                  {/* 3 بطاقات في صف واحد */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {packages.map(pkg => (
                       <div key={pkg.id} className="h-[480px]">
@@ -2692,18 +4110,26 @@ _נשלח אוטומטית ממערכת YOUGO_`;
 
                 {/* Premium Packages */}
                 <div>
-                  <div className="text-center space-y-3 mb-8">
-                    <div className="inline-flex items-center gap-2 bg-amber-500/20 border border-amber-500/30 px-4 py-2 rounded-full">
+                  <motion.div 
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="text-center space-y-3 mb-8"
+                  >
+                    <motion.div 
+                      className="inline-flex items-center gap-2 bg-amber-500/20 border border-amber-500/30 px-4 py-2 rounded-full"
+                      whileHover={{ scale: 1.05 }}
+                    >
                       <Crown size={14} className="text-amber-400" />
                       <span className="text-xs font-black tracking-wider text-amber-400">חבילות פרימיום VIP</span>
-                    </div>
+                    </motion.div>
                     <h3 className="text-2xl md:text-3xl font-black">
                       מחפשים <span className="text-amber-400">יחס VIP?</span>
                     </h3>
                     <p className="text-white/50 text-sm max-w-lg mx-auto">
                       חבילות פרימיום עם חשיפה מקסימלית
                     </p>
-                  </div>
+                  </motion.div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="h-[500px]">
@@ -2744,18 +4170,26 @@ _נשלח אוטומטית ממערכת YOUGO_`;
 
                 {/* Equipment Packages */}
                 <div>
-                  <div className="text-center space-y-3 mb-8">
-                    <div className="inline-flex items-center gap-2 bg-orange-500/20 border border-orange-500/30 px-4 py-2 rounded-full">
+                  <motion.div 
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="text-center space-y-3 mb-8"
+                  >
+                    <motion.div 
+                      className="inline-flex items-center gap-2 bg-orange-500/20 border border-orange-500/30 px-4 py-2 rounded-full"
+                      whileHover={{ scale: 1.05 }}
+                    >
                       <Truck size={14} className="text-orange-400" />
                       <span className="text-xs font-black tracking-wider text-orange-400">חבילות ציוד כבד</span>
-                    </div>
+                    </motion.div>
                     <h3 className="text-2xl md:text-3xl font-black">
                       מוכרים <span className="text-orange-400">ציוד מקצועי?</span>
                     </h3>
                     <p className="text-white/50 text-sm max-w-lg mx-auto">
                       פרסום לבאגרים, מחפרונים וכל ציוד כבד
                     </p>
-                  </div>
+                  </motion.div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
                     {equipmentPackages.map(pkg => (
@@ -2774,94 +4208,131 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                 </div>
               </section>
 
-              {/* Why Us Section - 3 في صف */}
+              {/* Why Us Section - في صف واحد */}
               <section id="why-us" className="space-y-12">
-                <div className="text-center space-y-3">
-                  <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 px-4 py-2 rounded-full">
+                <motion.div 
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="text-center space-y-3"
+                >
+                  <motion.div 
+                    className="inline-flex items-center gap-2 bg-white/10 border border-white/20 px-4 py-2 rounded-full"
+                    whileHover={{ scale: 1.05 }}
+                  >
                     <span className="w-2 h-2 bg-brand-red rounded-full" />
                     <span className="text-sm font-black tracking-wider text-white/80">היתרון שלנו</span>
-                  </div>
+                  </motion.div>
                   <h2 className="text-4xl md:text-5xl font-black">{t.whyUs.title}</h2>
                   <p className="text-white/50 text-base max-w-2xl mx-auto">הסיבות שאלפי מוכרים בחרו דווקא בנו</p>
-                </div>
+                </motion.div>
 
+                {/* 3 بطاقات في صف واحد */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {[
                     {
-                      icon: <Users size={40} />,
+                      icon: <Users size={32} />,
                       title: 'קהל איכותי',
                       desc: '50,000+ עוקבים פעילים',
                       stat: '50K+',
                       color: 'from-blue-500 to-cyan-500'
                     },
                     {
-                      icon: <Zap size={40} />,
+                      icon: <Zap size={32} />,
                       title: 'מהירות מכירה',
                       desc: 'זמן ממוצע של 48 שעות',
                       stat: '48h',
                       color: 'from-brand-red to-red-600'
                     },
                     {
-                      icon: <TrendingUp size={40} />,
+                      icon: <TrendingUp size={32} />,
                       title: 'אחוזי הצלחה',
                       desc: '98% מהלקוחות מרוצים',
                       stat: '98%',
                       color: 'from-green-500 to-emerald-500'
                     },
                   ].map((item, i) => (
-                    <div
+                    <motion.div
                       key={i}
-                      className="relative p-8 rounded-2xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 group hover:scale-105 transition-transform duration-300"
+                      initial={{ opacity: 0, y: 50 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.2 }}
+                      whileHover={{ y: -10, scale: 1.05 }}
+                      className="relative p-8 rounded-2xl bg-gradient-to-br from-white/10 to-transparent border border-white/20 group"
                     >
-                      <div className={`w-20 h-20 mb-4 rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center shadow-xl`}>
+                      <motion.div 
+                        className={`w-16 h-16 mb-4 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-300`}
+                        whileHover={{ rotate: 10 }}
+                      >
                         {item.icon}
-                      </div>
-                      <div className="text-4xl font-black text-white/20 absolute top-4 right-4">
+                      </motion.div>
+                      <motion.div 
+                        className="text-4xl font-black text-white/20 absolute top-4 right-4"
+                        animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }}
+                        transition={{ duration: 3, repeat: Infinity, delay: i * 0.5 }}
+                      >
                         {item.stat}
-                      </div>
+                      </motion.div>
                       <h3 className="text-xl font-black mb-2">{item.title}</h3>
                       <p className="text-white/60 text-sm">{item.desc}</p>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               </section>
 
               {/* FAQ Section */}
               <section id="faq" className="max-w-4xl mx-auto space-y-10">
-                <div className="text-center space-y-3">
-                  <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 px-4 py-2 rounded-full">
+                <motion.div 
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="text-center space-y-3"
+                >
+                  <motion.div 
+                    className="inline-flex items-center gap-2 bg-white/10 border border-white/20 px-4 py-2 rounded-full"
+                    whileHover={{ scale: 1.05 }}
+                  >
                     <span className="w-2 h-2 bg-brand-red rounded-full" />
                     <span className="text-sm font-black tracking-wider text-white/80">שאלות נפוצות</span>
-                  </div>
+                  </motion.div>
                   <h2 className="text-4xl md:text-5xl font-black">שאלות נפוצות</h2>
                   <p className="text-white/50 text-base">כל מה שצריך לדעת על תהליך הפרסום והמכירה</p>
-                </div>
+                </motion.div>
 
                 <div className="space-y-3">
                   {t.faqs.slice(0, showAllFaqs ? t.faqs.length : 3).map((item, i) => (
-                    <div 
+                    <motion.div 
                       key={i}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.1 }}
                       className="rounded-xl overflow-hidden border border-white/10 bg-white/5"
                     >
-                      <button 
+                      <motion.button 
                         onClick={() => setActiveFaq(activeFaq === i ? null : i)}
                         className="w-full px-5 py-4 flex items-center justify-between text-right gap-3 hover:bg-white/10 transition-colors"
+                        whileHover={{ x: -5 }}
                       >
                         <div className="flex items-center gap-3 flex-1">
-                          <div className="w-8 h-8 rounded-lg bg-brand-red/20 flex items-center justify-center text-brand-red font-black text-sm">
+                          <motion.div 
+                            className="w-8 h-8 rounded-lg bg-brand-red/20 flex items-center justify-center text-brand-red font-black text-sm"
+                            animate={activeFaq === i ? { rotate: 90 } : { rotate: 0 }}
+                          >
                             {i + 1}
-                          </div>
+                          </motion.div>
                           <span className="font-bold text-base">{item.q}</span>
                         </div>
                         {activeFaq === i ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-                      </button>
+                      </motion.button>
                       <AnimatePresence>
                         {activeFaq === i && (
                           <motion.div 
                             initial={{ height: 0 }}
                             animate={{ height: 'auto' }}
                             exit={{ height: 0 }}
-                            transition={{ duration: 0.2 }}
+                            transition={{ duration: 0.3 }}
                             className="overflow-hidden"
                           >
                             <div className="px-5 pb-4 pr-16 text-white/60 text-sm leading-relaxed">
@@ -2870,40 +4341,60 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                           </motion.div>
                         )}
                       </AnimatePresence>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
                 
                 {!showAllFaqs && t.faqs.length > 3 && (
                   <div className="text-center">
-                    <button
+                    <motion.button 
                       onClick={() => setShowAllFaqs(true)}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                       className="px-6 py-3 bg-white/10 rounded-xl font-black text-sm border border-white/20 hover:bg-white/15 transition-all"
                     >
                       הצג את כל השאלות
-                    </button>
+                    </motion.button>
                   </div>
                 )}
               </section>
 
-              {/* Footer */}
+              {/* Footer - مع إضافة YouTube و X */}
               <footer className="pb-10">
-                <div className="relative rounded-2xl overflow-hidden border border-white/10"
-                  style={{ background: 'linear-gradient(145deg, rgba(200,16,46,0.1) 0%, rgba(10,10,14,0.98) 60%, rgba(5,5,8,1) 100%)' }}>
+                <motion.div 
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="relative rounded-2xl overflow-hidden border border-white/10"
+                  style={{ background: 'linear-gradient(145deg, rgba(200,16,46,0.1) 0%, rgba(10,10,14,0.98) 60%, rgba(5,5,8,1) 100%)' }}
+                >
                   
-                  <div className="h-px w-full bg-gradient-to-r from-transparent via-brand-red/60 to-transparent" />
+                  {/* Top accent line */}
+                  <motion.div 
+                    className="h-px w-full bg-gradient-to-r from-transparent via-brand-red/60 to-transparent"
+                    animate={{ opacity: [0.3, 0.8, 0.3] }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                  />
 
                   <div className="relative z-10 p-10 space-y-10">
                     
+                    {/* Logo + tagline */}
                     <div className="text-center space-y-4">
                       <div className="flex items-center justify-center gap-4">
-                        <div className="p-3 bg-gradient-to-br from-brand-red to-red-700 rounded-xl shadow-xl shadow-brand-red/30">
+                        <motion.div 
+                          className="p-3 bg-gradient-to-br from-brand-red to-red-700 rounded-xl shadow-xl shadow-brand-red/30"
+                          whileHover={{ rotate: 10, scale: 1.1 }}
+                        >
                           <Car size={24} className="text-white" />
-                        </div>
+                        </motion.div>
                         <div>
-                          <div className="text-3xl font-black tracking-tighter">
+                          <motion.div 
+                            className="text-3xl font-black tracking-tighter"
+                            animate={{ textShadow: ['0 0 0px #c8102e', '0 0 10px #c8102e', '0 0 0px #c8102e'] }}
+                            transition={{ duration: 3, repeat: Infinity }}
+                          >
                             <span className="text-brand-red">YOUGO</span> <span className="text-white">ISRAEL</span>
-                          </div>
+                          </motion.div>
                           <div className="text-[10px] text-white/30 tracking-[0.2em] uppercase font-bold">Digital Car Marketing</div>
                         </div>
                       </div>
@@ -2912,6 +4403,7 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                       </p>
                     </div>
 
+                    {/* Social Icons - مع إضافة YouTube و X */}
                     <div>
                       <p className="text-center text-[10px] text-white/30 font-black uppercase tracking-[0.25em] mb-6">עקבו אחרינו</p>
                       <div className="flex items-center justify-center gap-4 flex-wrap">
@@ -2920,6 +4412,7 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                             href: 'https://instagram.com/yougo.israel',
                             label: 'Instagram',
                             color: 'from-purple-600 via-pink-500 to-orange-400',
+                            border: 'rgba(236,72,153,0.4)',
                             icon: (
                               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                                 <rect x="2" y="2" width="20" height="20" rx="5" stroke="white" strokeWidth="2"/>
@@ -2932,6 +4425,7 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                             href: 'https://facebook.com',
                             label: 'Facebook',
                             color: 'from-blue-600 to-blue-700',
+                            border: 'rgba(59,130,246,0.4)',
                             icon: (
                               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                                 <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -2942,6 +4436,7 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                             href: 'https://wa.me/972546980606',
                             label: 'WhatsApp',
                             color: 'from-green-500 to-emerald-600',
+                            border: 'rgba(34,197,94,0.4)',
                             icon: (
                               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                                 <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -2952,6 +4447,7 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                             href: 'https://t.me/yougoisrael',
                             label: 'Telegram',
                             color: 'from-sky-500 to-blue-500',
+                            border: 'rgba(14,165,233,0.4)',
                             icon: (
                               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                                 <path d="M22 2L11 13" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -2963,16 +4459,19 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                             href: 'https://tiktok.com/@yougoisrael',
                             label: 'TikTok',
                             color: 'from-gray-800 to-black',
+                            border: 'rgba(255,255,255,0.3)',
                             icon: (
                               <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
                                 <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V8.87a8.16 8.16 0 004.77 1.53V7.02a4.85 4.85 0 01-1.01-.33z"/>
                               </svg>
                             )
                           },
+                          // YouTube جديد
                           {
                             href: 'https://youtube.com/@yougoisrael',
                             label: 'YouTube',
                             color: 'from-red-600 to-red-700',
+                            border: 'rgba(220,38,38,0.4)',
                             icon: (
                               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                                 <path d="M22.54 6.42a2.78 2.78 0 00-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 00-1.94 2A29 29 0 001 11.75a29 29 0 00.46 5.33 2.78 2.78 0 001.94 2c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 001.94-2c.31-1.75.46-3.55.46-5.33s-.15-3.58-.46-5.33z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -2980,10 +4479,12 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                               </svg>
                             )
                           },
+                          // X (Twitter) جديد
                           {
                             href: 'https://x.com/yougoisrael',
                             label: 'X',
                             color: 'from-gray-600 to-gray-800',
+                            border: 'rgba(255,255,255,0.3)',
                             icon: (
                               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                                 <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" stroke="white" strokeWidth="2" fill="white"/>
@@ -2994,6 +4495,7 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                             href: 'mailto:contact@yougoisrael.com',
                             label: 'Email',
                             color: 'from-red-600 to-rose-700',
+                            border: 'rgba(220,38,38,0.4)',
                             icon: (
                               <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -3002,16 +4504,20 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                             )
                           },
                         ].map((s, i) => (
-                          <a
+                          <motion.a
                             key={i}
                             href={s.href}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex flex-col items-center gap-2 group hover:scale-110 transition-transform duration-300"
+                            whileHover={{ y: -6, scale: 1.15 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="flex flex-col items-center gap-2 group"
                           >
-                            <div
-                              className="w-14 h-14 rounded-2xl flex items-center justify-center bg-gradient-to-br shadow-lg group-hover:shadow-xl"
+                            <motion.div
+                              className="w-14 h-14 rounded-2xl flex items-center justify-center bg-gradient-to-br transition-all duration-300 shadow-lg group-hover:shadow-xl"
                               style={{
+                                background: `linear-gradient(135deg, ${s.color.includes('from-') ? '' : ''})`,
+                                border: `1px solid ${s.border}`,
                                 backgroundImage: `linear-gradient(135deg, ${s.color.replace('from-','').replace('via-','').replace('to-','').split(' ').map(c => {
                                   const map: any = {
                                     'purple-600':'#9333ea','pink-500':'#ec4899','orange-400':'#fb923c',
@@ -3025,17 +4531,25 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                                   return map[c] || c;
                                 }).join(',')})`
                               }}
+                              animate={{ rotate: [0, 5, -5, 0] }}
+                              transition={{ duration: 5, repeat: Infinity, delay: i * 0.2 }}
                             >
                               {s.icon}
-                            </div>
+                            </motion.div>
                             <span className="text-[9px] font-black text-white/40 group-hover:text-white/70 transition-colors">{s.label}</span>
-                          </a>
+                          </motion.a>
                         ))}
                       </div>
                     </div>
 
-                    <div className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                    {/* Divider */}
+                    <motion.div 
+                      className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                      animate={{ scaleX: [0.8, 1, 0.8] }}
+                      transition={{ duration: 3, repeat: Infinity }}
+                    />
 
+                    {/* Footer Links */}
                     <div className="flex flex-wrap justify-center gap-3">
                       {[
                         { 
@@ -3043,7 +4557,29 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                           label: 'תקנון',
                           onClick: () => setModalContent({
                             title: 'תקנון שימוש – YOUGO ISRAEL',
-                            content: `1. כללי\nYOUGO ISRAEL הינה פלטפורמת שיווק דיגיטלי המתמחה בפרסום רכבים, ציוד כבד ושירותים עסקיים ברשתות חברתיות. השימוש בשירות מהווה הסכמה מלאה לתנאים אלו.\n\n2. השירות\nהחברה מספקת שירותי פרסום ברשתות חברתיות (Instagram, TikTok ועוד). החברה אינה צד לעסקת המכירה בין הלקוח לקונה הסופי ואינה אחראית לתוצאות מכירה.\n\n3. תשלום\nהתשלום מבוצע מראש בהעברה בנקאית, Bit או PayBox. לאחר אישור התשלום יחל תהליך הפרסום תוך 24-48 שעות עסקיות. לא יינתן החזר כספי לאחר שהמודעה פורסמה.\n\n4. אחריות הלקוח\nהלקוח מצהיר כי כל המידע שמסר הוא נכון ומדויק. הלקוח אחראי לחוקיות הרכב / הציוד המפורסם. פרסום רכב גנוב, שעבודים לא מדווחים או מידע כוזב יגרור הסרת המודעה ללא החזר.\n\n5. קניין רוחני\nכל התוכן שיוצר על ידי YOUGO ISRAEL (עיצובים, טקסטים, תמונות ערוכות) שייך לחברה. הלקוח רשאי לעשות שימוש בתוכן לצרכי המכירה בלבד.\n\n6. סיום שירות\nהחברה שומרת לעצמה את הזכות להפסיק מתן שירות ללקוח שהפר את התנאים, ללא הודעה מוקדמת.\n\n7. שינויים בתנאים\nYOUGO ISRAEL רשאית לעדכן תנאים אלו בכל עת. המשך שימוש בשירות מהווה הסכמה לתנאים המעודכנים.\n\n8. יצירת קשר\nלכל שאלה בנוגע לתנאי השימוש: wa.me/972546980606`
+                            content: `1. כללי
+YOUGO ISRAEL הינה פלטפורמת שיווק דיגיטלי המתמחה בפרסום רכבים, ציוד כבד ושירותים עסקיים ברשתות חברתיות. השימוש בשירות מהווה הסכמה מלאה לתנאים אלו.
+
+2. השירות
+החברה מספקת שירותי פרסום ברשתות חברתיות (Instagram, TikTok ועוד). החברה אינה צד לעסקת המכירה בין הלקוח לקונה הסופי ואינה אחראית לתוצאות מכירה.
+
+3. תשלום
+התשלום מבוצע מראש בהעברה בנקאית, Bit או PayBox. לאחר אישור התשלום יחל תהליך הפרסום תוך 24-48 שעות עסקיות. לא יינתן החזר כספי לאחר שהמודעה פורסמה.
+
+4. אחריות הלקוח
+הלקוח מצהיר כי כל המידע שמסר הוא נכון ומדויק. הלקוח אחראי לחוקיות הרכב / הציוד המפורסם. פרסום רכב גנוב, שעבודים לא מדווחים או מידע כוזב יגרור הסרת המודעה ללא החזר.
+
+5. קניין רוחני
+כל התוכן שיוצר על ידי YOUGO ISRAEL (עיצובים, טקסטים, תמונות ערוכות) שייך לחברה. הלקוח רשאי לעשות שימוש בתוכן לצרכי המכירה בלבד.
+
+6. סיום שירות
+החברה שומרת לעצמה את הזכות להפסיק מתן שירות ללקוח שהפר את התנאים, ללא הודעה מוקדמת.
+
+7. שינויים בתנאים
+YOUGO ISRAEL רשאית לעדכן תנאים אלו בכל עת. המשך שימוש בשירות מהווה הסכמה לתנאים המעודכנים.
+
+8. יצירת קשר
+לכל שאלה בנוגע לתנאי השימוש: wa.me/972546980606`
                           })
                         },
                         { 
@@ -3051,7 +4587,26 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                           label: 'פרטיות',
                           onClick: () => setModalContent({
                             title: 'מדיניות פרטיות – YOUGO ISRAEL',
-                            content: `1. איסוף מידע\nYOUGO ISRAEL אוספת מידע אישי הכולל: שם, טלפון, מיקום ופרטי הרכב / הציוד, אך ורק לצורך מתן השירות המבוקש.\n\n2. שימוש במידע\nהמידע משמש אך ורק לצורך: יצירת המודעה הפרסומית, תיאום ביצוע השירות, ושליחת עדכונים הקשורים להזמנה.\n\n3. אחסון מידע\nהמידע מאוחסן בצורה מאובטחת ואינו מועבר לצדדים שלישיים ללא הסכמת הלקוח, למעט גורמים הנדרשים לביצוע השירות (כגון: צלמים, מעצבים).\n\n4. אבטחת מידע\nהחברה נוקטת בצעדי אבטחה מתקדמים להגנה על המידע. עם זאת, אין ביכולתנו להבטיח אבטחה מוחלטת בסביבה דיגיטלית.\n\n5. זכויות המשתמש\nלכל לקוח זכות לעיין במידע השמור עליו, לבקש תיקונו או מחיקתו. לפניות בנושא: wa.me/972546980606\n\n6. עוגיות (Cookies)\nהאתר עשוי לעשות שימוש בעוגיות לשיפור חוויית המשתמש וניתוח תנועה. ניתן לבטל עוגיות דרך הגדרות הדפדפן.\n\n7. שינויים במדיניות\nYOUGO ISRAEL רשאית לעדכן מדיניות זו בכל עת. עדכונים יפורסמו בערוצי החברה.`
+                            content: `1. איסוף מידע
+YOUGO ISRAEL אוספת מידע אישי הכולל: שם, טלפון, מיקום ופרטי הרכב / הציוד, אך ורק לצורך מתן השירות המבוקש.
+
+2. שימוש במידע
+המידע משמש אך ורק לצורך: יצירת המודעה הפרסומית, תיאום ביצוע השירות, ושליחת עדכונים הקשורים להזמנה.
+
+3. אחסון מידע
+המידע מאוחסן בצורה מאובטחת ואינו מועבר לצדדים שלישיים ללא הסכמת הלקוח, למעט גורמים הנדרשים לביצוע השירות (כגון: צלמים, מעצבים).
+
+4. אבטחת מידע
+החברה נוקטת בצעדי אבטחה מתקדמים להגנה על המידע. עם זאת, אין ביכולתנו להבטיח אבטחה מוחלטת בסביבה דיגיטלית.
+
+5. זכויות המשתמש
+לכל לקוח זכות לעיין במידע השמור עליו, לבקש תיקונו או מחיקתו. לפניות בנושא: wa.me/972546980606
+
+6. עוגיות (Cookies)
+האתר עשוי לעשות שימוש בעוגיות לשיפור חוויית המשתמש וניתוח תנועה. ניתן לבטל עוגיות דרך הגדרות הדפדפן.
+
+7. שינויים במדיניות
+YOUGO ISRAEL רשאית לעדכן מדיניות זו בכל עת. עדכונים יפורסמו בערוצי החברה.`
                           })
                         },
                         { 
@@ -3059,7 +4614,32 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                           label: 'מי אנחנו',
                           onClick: () => setModalContent({
                             title: 'אודות YOUGO ISRAEL',
-                            content: `YOUGO ISRAEL – פלטפורמת השיווק הדיגיטלי המובילה בישראל למכירת רכבים.\n\nהסיפור שלנו\nYOUGO ISRAEL נוסדה מתוך חזון אחד פשוט: לשנות את הדרך שבה ישראלים מוכרים רכבים. במקום מודעות יבשות בפורומים ישנים, אנחנו יוצרים תוכן ויזואלי מרהיב שמוכר.\n\nמה שמבדיל אותנו\n• 50,000+ עוקבים פעילים ומעורבים\n• צוות מקצועי של צלמים, מעצבים ואנשי שיווק\n• ניסיון של שנים בשוק הרכב הישראלי\n• 98% שביעות רצון לקוחות\n• פרסום תוך 24 שעות מקבלת ההזמנה\n\nהשירותים שלנו\nאנחנו מספקים פתרונות פרסום מקיפים: רכבים פרטיים, ציוד כבד ומכונות, חבילות עסקיות לסוכנויות, ופתרונות VIP מותאמים אישית.\n\nהנוכחות הדיגיטלית שלנו\nYOUGO ISRAEL פעילה ב-Instagram, TikTok, Telegram, YouTube, X ו-WhatsApp – בכל מקום שבו נמצאים הקונים הפוטנציאליים שלך.\n\nהערך שאנחנו מביאים\nכל מודעה שאנחנו יוצרים נבנית עם הבנה עמוקה של שוק הרכב, פסיכולוגיית הקונה, ואסתטיקה דיגיטלית מודרנית. התוצאה: מכירות מהירות יותר, במחיר טוב יותר.\n\nצור קשר\nWhatsApp: wa.me/972546980606\nInstagram: @yougo.israel\nYouTube: @yougoisrael\nX: @yougoisrael`
+                            content: `YOUGO ISRAEL – פלטפורמת השיווק הדיגיטלי המובילה בישראל למכירת רכבים.
+
+הסיפור שלנו
+YOUGO ISRAEL נוסדה מתוך חזון אחד פשוט: לשנות את הדרך שבה ישראלים מוכרים רכבים. במקום מודעות יבשות בפורומים ישנים, אנחנו יוצרים תוכן ויזואלי מרהיב שמוכר.
+
+מה שמבדיל אותנו
+• 50,000+ עוקבים פעילים ומעורבים
+• צוות מקצועי של צלמים, מעצבים ואנשי שיווק
+• ניסיון של שנים בשוק הרכב הישראלי
+• 98% שביעות רצון לקוחות
+• פרסום תוך 24 שעות מקבלת ההזמנה
+
+השירותים שלנו
+אנחנו מספקים פתרונות פרסום מקיפים: רכבים פרטיים, ציוד כבד ומכונות, חבילות עסקיות לסוכנויות, ופתרונות VIP מותאמים אישית.
+
+הנוכחות הדיגיטלית שלנו
+YOUGO ISRAEL פעילה ב-Instagram, TikTok, Telegram, YouTube, X ו-WhatsApp – בכל מקום שבו נמצאים הקונים הפוטנציאליים שלך.
+
+הערך שאנחנו מביאים
+כל מודעה שאנחנו יוצרים נבנית עם הבנה עמוקה של שוק הרכב, פסיכולוגיית הקונה, ואסתטיקה דיגיטלית מודרנית. התוצאה: מכירות מהירות יותר, במחיר טוב יותר.
+
+צור קשר
+WhatsApp: wa.me/972546980606
+Instagram: @yougo.israel
+YouTube: @yougoisrael
+X: @yougoisrael`
                           })
                         },
                         {
@@ -3067,7 +4647,35 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                           label: 'שיווק שותפים',
                           onClick: () => setModalContent({
                             title: 'תוכנית שיווק שותפים – YOUGO ISRAEL',
-                            content: `ברוכים הבאים לתוכנית השותפים של YOUGO ISRAEL!\n\nמה זה שיווק שותפים?\nתוכנית השותפים של YOUGO ISRAEL מאפשרת לכל אחד להרוויח כסף על ידי הפצת השירות שלנו. כל לקוח שמגיע דרכך ומבצע הזמנה – אתה מקבל עמלה!\n\nכמה מרוויחים?\n• 10% עמלה על כל מכירה שהפנית\n• אין הגבלה על כמות ההפניות\n• תשלום מיידי בסיום כל הזמנה\n• דוחות מעקב בזמן אמת\n\nאיך מצטרפים?\n1. שלח לנו הודעה בוואטסאפ: wa.me/972546980606\n2. קבל קוד שותף אישי ייחודי\n3. שתף את הקוד עם חברים, משפחה ורשת הקשרים שלך\n4. עקוב אחרי ההרוויחות שלך בלוח הבקרה האישי\n\nמי מתאים לתוכנית?\n• בעלי עמודי רשתות חברתיות\n• מתווכי רכב ואנשי מכירות\n• מוסכניקים ואנשי תחום הרכב\n• כל אחד עם רשת קשרים\n\nתנאי התוכנית\nהעמלות משולמות בתחילת כל חודש בגין מכירות החודש הקודם. נדרש מינימום ₪200 לביצוע תשלום. YOUGO ISRAEL שומרת לעצמה את הזכות לשנות את תנאי התוכנית בהודעה מוקדמת של 30 יום.\n\nהצטרף עכשיו\nWhatsApp: wa.me/972546980606\nנשמח לענות על כל שאלה!`
+                            content: `ברוכים הבאים לתוכנית השותפים של YOUGO ISRAEL!
+
+מה זה שיווק שותפים?
+תוכנית השותפים של YOUGO ISRAEL מאפשרת לכל אחד להרוויח כסף על ידי הפצת השירות שלנו. כל לקוח שמגיע דרכך ומבצע הזמנה – אתה מקבל עמלה!
+
+כמה מרוויחים?
+• 10% עמלה על כל מכירה שהפנית
+• אין הגבלה על כמות ההפניות
+• תשלום מיידי בסיום כל הזמנה
+• דוחות מעקב בזמן אמת
+
+איך מצטרפים?
+1. שלח לנו הודעה בוואטסאפ: wa.me/972546980606
+2. קבל קוד שותף אישי ייחודי
+3. שתף את הקוד עם חברים, משפחה ורשת הקשרים שלך
+4. עקוב אחרי ההרוויחות שלך בלוח הבקרה האישי
+
+מי מתאים לתוכנית?
+• בעלי עמודי רשתות חברתיות
+• מתווכי רכב ואנשי מכירות
+• מוסכניקים ואנשי תחום הרכב
+• כל אחד עם רשת קשרים
+
+תנאי התוכנית
+העמלות משולמות בתחילת כל חודש בגין מכירות החודש הקודם. נדרש מינימום ₪200 לביצוע תשלום. YOUGO ISRAEL שומרת לעצמה את הזכות לשנות את תנאי התוכנית בהודעה מוקדמת של 30 יום.
+
+הצטרף עכשיו
+WhatsApp: wa.me/972546980606
+נשמח לענות על כל שאלה!`
                           })
                         },
                         {
@@ -3075,22 +4683,54 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                           label: 'איך הצלחנו',
                           onClick: () => setModalContent({
                             title: 'הסיפור מאחורי ההצלחה – YOUGO ISRAEL',
-                            content: `מהיכן התחלנו?\n\nYOUGO ISRAEL לא התחילה כחברה גדולה. התחלנו עם חשבון אינסטגרם אחד, מצלמה אחת ורצון אמיתי לשנות את השוק.\n\nהזיהוי: שוק שבור\nלפני YOUGO ISRAEL, מוכרי רכבים נאלצו להסתמך על מודעות טקסט יבשות ותמונות איכות נמוכה. שוק הרכב הישראלי צמא לפתרון חדש.\n\nהשלב הראשון: 0 ל-10,000 עוקבים\nהשקענו 100% בתוכן. כל רכב שפרסמנו קיבל צילומים מקצועיים, עריכה קפדנית וטקסט שיווקי חד. התגובות לא איחרו לבוא.\n\nשנה ראשונה: 200+ מכירות מוצלחות\nהלקוחות התחילו לדבר. הוואטסאפ שלנו הפך לפעיל 24/7. כל רכב שפרסמנו נמכר בממוצע תוך 3.5 ימים.\n\nהמספרים שמדברים\n• 50,000+ עוקבים פעילים\n• 2,000+ רכבים פורסמו\n• 98% שביעות רצון לקוחות\n• ממוצע 48 שעות למכירה\n\nהמפנה: חבילות עסקיות\nכשסוכנויות גדולות פנו אלינו, הבנו שיש כאן פוטנציאל עסקי ענק. הקמנו מחלקה ייעודית לעסקים שמנהלת היום 50+ חשבונות סוכנויות.\n\nהצוות שמאחורינו\nצלמים מקצועיים, מעצבים גרפיים, אנשי שיווק דיגיטלי ומומחי רשתות חברתיות – כולם עובדים יחד כדי שהרכב שלך יימכר.\n\nהחזון לעתיד\nאנחנו רק בהתחלה. המטרה? להפוך ל-Marketplace מספר 1 לרכבים בישראל, עם פרסום חי, מכירות מהירות ושירות שלא מתפשר.\n\nתודה שאתם חלק מהמסע.\n– צוות YOUGO ISRAEL`
+                            content: `מהיכן התחלנו?
+
+YOUGO ISRAEL לא התחילה כחברה גדולה. התחלנו עם חשבון אינסטגרם אחד, מצלמה אחת ורצון אמיתי לשנות את השוק.
+
+הזיהוי: שוק שבור
+לפני YOUGO ISRAEL, מוכרי רכבים נאלצו להסתמך על מודעות טקסט יבשות ותמונות איכות נמוכה. שוק הרכב הישראלי צמא לפתרון חדש.
+
+השלב הראשון: 0 ל-10,000 עוקבים
+השקענו 100% בתוכן. כל רכב שפרסמנו קיבל צילומים מקצועיים, עריכה קפדנית וטקסט שיווקי חד. התגובות לא איחרו לבוא.
+
+שנה ראשונה: 200+ מכירות מוצלחות
+הלקוחות התחילו לדבר. הוואטסאפ שלנו הפך לפעיל 24/7. כל רכב שפרסמנו נמכר בממוצע תוך 3.5 ימים.
+
+המספרים שמדברים
+• 50,000+ עוקבים פעילים
+• 2,000+ רכבים פורסמו
+• 98% שביעות רצון לקוחות
+• ממוצע 48 שעות למכירה
+
+המפנה: חבילות עסקיות
+כשסוכנויות גדולות פנו אלינו, הבנו שיש כאן פוטנציאל עסקי ענק. הקמנו מחלקה ייעודית לעסקים שמנהלת היום 50+ חשבונות סוכנויות.
+
+הצוות שמאחורינו
+צלמים מקצועיים, מעצבים גרפיים, אנשי שיווק דיגיטלי ומומחי רשתות חברתיות – כולם עובדים יחד כדי שהרכב שלך יימכר.
+
+החזון לעתיד
+אנחנו רק בהתחלה. המטרה? להפוך ל-Marketplace מספר 1 לרכבים בישראל, עם פרסום חי, מכירות מהירות ושירות שלא מתפשר.
+
+תודה שאתם חלק מהמסע.
+– צוות YOUGO ISRAEL`
                           })
                         },
                         { icon: <LayoutDashboard size={14} />, label: 'ניהול', onClick: () => setView('admin-login') },
                       ].map((link, i) => (
-                        <button
-                          key={i}
+                        <motion.button 
+                          key={i} 
+                          whileHover={{ y: -4, scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
                           onClick={link.onClick}
                           className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold border border-white/10 bg-white/5 hover:bg-brand-red/20 hover:border-brand-red/40 text-white/50 hover:text-white/90 transition-all"
                         >
-                          <span className="text-white/40">{link.icon}</span>
+                          <span className="text-white/40 group-hover:text-brand-red">{link.icon}</span>
                           {link.label}
-                        </button>
+                        </motion.button>
                       ))}
                     </div>
 
+                    {/* Bottom copyright */}
                     <div className="text-center space-y-2 pt-4 border-t border-white/10">
                       <div className="text-white/20 text-[10px] font-bold tracking-wider">
                         © {new Date().getFullYear()} YOUGO ISRAEL LTD · כל הזכויות שמורות
@@ -3100,7 +4740,7 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                       </div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               </footer>
             </motion.div>
           )}
@@ -3111,17 +4751,19 @@ _נשלח אוטומטית ממערכת YOUGO_`;
               initial={{ opacity: 0, y: -60 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -30 }}
-              transition={{ duration: 0.2 }}
+              transition={{ type: 'spring', stiffness: 200 }}
               className="max-w-2xl mx-auto space-y-6"
             >
               <div className="flex items-center gap-3">
-                <button
+                <motion.button 
+                  whileHover={{ x: -5, scale: 1.05 }}
+                  whileTap={{ scale: 0.96 }}
                   onClick={() => setView('home')}
                   className="flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-black border border-brand-red/30 bg-brand-red/10 hover:bg-brand-red hover:border-brand-red transition-all text-brand-red hover:text-white"
                 >
                   <ArrowLeft size={16} />
                   <span>חזרה לחבילות</span>
-                </button>
+                </motion.button>
                 <div className="h-5 w-px bg-white/20" />
                 <span className="text-xs text-white/40 font-bold">
                   {selectedPackage?.name || 'הזמנה חדשה'}
@@ -3130,23 +4772,35 @@ _נשלח אוטומטית ממערכת YOUGO_`;
 
               {/* Progress Steps */}
               <div className="flex items-center justify-center gap-3 mb-4">
-                <div className={`flex items-center gap-2 ${bookingStep >= 1 ? 'text-brand-red' : 'text-white/30'}`}>
+                <motion.div 
+                  className={`flex items-center gap-2 ${bookingStep >= 1 ? 'text-brand-red' : 'text-white/30'}`}
+                  animate={bookingStep >= 1 ? { scale: [1, 1.1, 1] } : {}}
+                  transition={{ duration: 0.5 }}
+                >
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm border-2 ${
                     bookingStep >= 1 ? 'border-brand-red bg-brand-red/20' : 'border-white/20'
                   }`}>
                     1
                   </div>
                   <span className="text-sm font-black">פרטי רכב</span>
-                </div>
-                <div className={`w-16 h-px ${bookingStep >= 2 ? 'bg-brand-red' : 'bg-white/20'}`} />
-                <div className={`flex items-center gap-2 ${bookingStep >= 2 ? 'text-brand-red' : 'text-white/30'}`}>
+                </motion.div>
+                <motion.div 
+                  className={`w-16 h-px ${bookingStep >= 2 ? 'bg-brand-red' : 'bg-white/20'}`}
+                  animate={bookingStep >= 2 ? { scaleX: [1, 1.2, 1] } : {}}
+                  transition={{ duration: 0.5 }}
+                />
+                <motion.div 
+                  className={`flex items-center gap-2 ${bookingStep >= 2 ? 'text-brand-red' : 'text-white/30'}`}
+                  animate={bookingStep >= 2 ? { scale: [1, 1.1, 1] } : {}}
+                  transition={{ duration: 0.5 }}
+                >
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm border-2 ${
                     bookingStep >= 2 ? 'border-brand-red bg-brand-red/20' : 'border-white/20'
                   }`}>
                     2
                   </div>
                   <span className="text-sm font-black">תשלום</span>
-                </div>
+                </motion.div>
               </div>
 
               <div className="glass-card p-6">
@@ -3181,12 +4835,17 @@ _נשלח אוטומטית ממערכת YOUGO_`;
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.2 }}
+              transition={{ type: 'spring', stiffness: 200 }}
               className="max-w-md mx-auto text-center space-y-6 py-12"
             >
-              <div className="w-24 h-24 mx-auto bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center shadow-2xl shadow-green-500/30">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
+                className="w-24 h-24 mx-auto bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center shadow-2xl shadow-green-500/30"
+              >
                 <Check size={40} strokeWidth={3} className="text-white" />
-              </div>
+              </motion.div>
               
               <div className="space-y-2">
                 <h2 className="text-3xl font-black">ההזמנה התקבלה!</h2>
@@ -3203,12 +4862,18 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                     'הצוות שלנו יבדוק את פרטי ההזמנה תוך שעה',
                     'נחזור אליך עם אישור סופי'
                   ].map((text, i) => (
-                    <div key={i} className="flex items-center gap-2 text-sm">
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.3 + i * 0.1 }}
+                      className="flex items-center gap-2 text-sm"
+                    >
                       <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center">
                         <Check size={12} className="text-green-400" />
                       </div>
                       <span className="text-white/80">{text}</span>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
 
@@ -3220,20 +4885,25 @@ _נשלח אוטומטית ממערכת YOUGO_`;
               </div>
 
               <div className="flex gap-3">
-                <button
+                <motion.button 
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.96 }}
                   onClick={() => setView('home')}
                   className="flex-1 py-3 rounded-xl font-black text-sm border border-brand-red/30 bg-brand-red/10 hover:bg-brand-red hover:border-brand-red transition-all flex items-center justify-center gap-2 text-brand-red hover:text-white"
                 >
                   <ArrowLeft size={14} />
                   חזרה לדף הבית
-                </button>
-                <button
+                </motion.button>
+                <motion.button 
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.96 }}
                   onClick={() => setView('check-status')}
-                  className="flex-1 py-3 rounded-xl font-black text-sm shadow-lg flex items-center justify-center gap-2 bg-gradient-to-r from-brand-red to-red-600 hover:from-red-700 hover:to-red-800"
+                  className="flex-1 py-3 rounded-xl font-black text-sm shadow-lg flex items-center justify-center gap-2"
+                  style={{ background: 'linear-gradient(135deg, #c8102e, #a50d25)', boxShadow: '0 8px 25px -8px rgba(200,16,46,0.5)' }}
                 >
                   <Search size={14} />
                   בדוק סטטוס
-                </button>
+                </motion.button>
               </div>
             </motion.div>
           )}
@@ -3258,9 +4928,13 @@ _נשלח אוטומטית ממערכת YOUGO_`;
             >
               <div className="glass-card p-6 space-y-5">
                 <div className="text-center">
-                  <div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-brand-red to-red-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <motion.div 
+                    className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-brand-red to-red-600 rounded-xl flex items-center justify-center shadow-lg"
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
                     <Lock size={24} className="text-white" />
-                  </div>
+                  </motion.div>
                   <h2 className="text-xl font-black">כניסת מנהל</h2>
                 </div>
                 
@@ -3273,18 +4947,25 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                     value={adminPassword}
                     onChange={e => setAdminPassword(e.target.value)}
                   />
-                  <button type="submit" className="w-full py-2.5 bg-gradient-to-r from-brand-red to-red-600 rounded-lg font-black text-sm">
+                  <motion.button 
+                    type="submit" 
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="w-full py-2.5 bg-gradient-to-r from-brand-red to-red-600 rounded-lg font-black text-sm"
+                  >
                     כניסה
-                  </button>
+                  </motion.button>
                 </form>
                 
-                <button
+                <motion.button 
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.96 }}
                   onClick={() => setView('home')} 
                   className="w-full py-2 rounded-xl text-xs font-bold border border-brand-red/30 bg-brand-red/10 hover:bg-brand-red hover:border-brand-red text-brand-red hover:text-white transition-all flex items-center justify-center gap-2"
                 >
                   <ArrowLeft size={12} />
                   ביטול
-                </button>
+                </motion.button>
               </div>
             </motion.div>
           )}
@@ -3303,18 +4984,22 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                     לוח בקרה
                   </h2>
                   <div className="flex gap-4 mt-4">
-                    <button
+                    <motion.button 
                       onClick={() => setAdminTab('orders')}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                       className={`px-6 py-2 rounded-full font-black text-sm transition-all ${adminTab === 'orders' ? 'bg-brand-red text-white' : 'bg-white/5 text-white/60 hover:bg-white/10'}`}
                     >
                       הזמנות
-                    </button>
-                    <button
+                    </motion.button>
+                    <motion.button 
                       onClick={() => setAdminTab('settings')}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                       className={`px-6 py-2 rounded-full font-black text-sm transition-all ${adminTab === 'settings' ? 'bg-brand-red text-white' : 'bg-white/5 text-white/60 hover:bg-white/10'}`}
                     >
                       הגדרות אתר
-                    </button>
+                    </motion.button>
                   </div>
                 </div>
                 {adminTab === 'orders' && (
@@ -3323,13 +5008,15 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                       <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
                       <span className="text-sm font-bold">{orders.length} הזמנות סה"כ</span>
                     </div>
-                    <button
-                      onClick={fetchOrders}
-                      className="btn-primary py-3 px-6 flex items-center gap-2 bg-gradient-to-r from-brand-red to-red-600 rounded-lg font-black text-sm"
+                    <motion.button 
+                      onClick={fetchOrders} 
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="btn-primary py-3 px-6 flex items-center gap-2"
                     >
                       <ArrowLeft size={20} className="rotate-90" />
                       רענן נתונים
-                    </button>
+                    </motion.button>
                   </div>
                 )}
               </div>
@@ -3343,9 +5030,10 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                       { label: 'פורסם', count: orders.filter(o => o.status === 'Published').length, color: 'text-green-600', icon: <CheckCircle2 size={20} /> },
                       { label: 'נדחה', count: orders.filter(o => o.status === 'Rejected').length, color: 'text-red-600', icon: <X size={20} /> },
                     ].map((stat, i) => (
-                      <div 
+                      <motion.div 
                         key={i} 
-                        className="bg-white rounded-3xl p-6 shadow-xl border border-white/10 flex flex-col gap-4 hover:scale-105 transition-transform duration-300"
+                        whileHover={{ y: -5, scale: 1.02 }}
+                        className="bg-white rounded-3xl p-6 shadow-xl border border-white/10 flex flex-col gap-4"
                       >
                         <div className="flex items-center justify-between">
                           <div className={`p-3 rounded-2xl bg-gray-100 ${stat.color}`}>
@@ -3354,7 +5042,7 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                           <div className="text-4xl font-black text-black">{stat.count}</div>
                         </div>
                         <div className="text-sm font-black text-gray-500 uppercase tracking-widest">{stat.label}</div>
-                      </div>
+                      </motion.div>
                     ))}
                   </div>
 
@@ -3411,7 +5099,9 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                               </td>
                               <td className="p-6">
                                 <div className="flex items-center justify-center gap-3">
-                                  <button
+                                  <motion.button 
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.95 }}
                                     onClick={() => {
                                       alert(`פרטי הזמנה ${order.id}:\nמחיר: ${order.car_price}\nמיקום: ${order.location}\nתאריך: ${new Date(order.created_at).toLocaleDateString('he-IL')}`);
                                     }}
@@ -3419,8 +5109,8 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                                     title="צפה בפרטים"
                                   >
                                     <Eye size={18} />
-                                  </button>
-                                  <select
+                                  </motion.button>
+                                  <select 
                                     className="bg-dark-card border border-white/10 text-xs rounded-lg p-2 focus:border-brand-red outline-none transition-colors"
                                     value={order.status}
                                     onChange={(e) => updateOrderStatus(order.id, e.target.value)}
@@ -3445,49 +5135,49 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                   <div className="space-y-6">
                     <div className="space-y-2">
                       <label className="text-xs font-bold text-white/40 uppercase tracking-widest">כמות עוקבים (Instagram)</label>
-                      <input
-                        type="text"
-                        className="input-field"
+                      <input 
+                        type="text" 
+                        className="input-field" 
                         value={siteSettings.followers_count}
                         onChange={(e) => setSiteSettings({ ...siteSettings, followers_count: e.target.value })}
                       />
                     </div>
                     <div className="space-y-2">
                       <label className="text-xs font-bold text-white/40 uppercase tracking-widest">מספר WhatsApp</label>
-                      <input
-                        type="text"
-                        className="input-field"
+                      <input 
+                        type="text" 
+                        className="input-field" 
                         value={siteSettings.whatsapp_number}
                         onChange={(e) => setSiteSettings({ ...siteSettings, whatsapp_number: e.target.value })}
                       />
                     </div>
                     <div className="space-y-2">
                       <label className="text-xs font-bold text-white/40 uppercase tracking-widest">כותרת ראשית (Hero)</label>
-                      <input
-                        type="text"
-                        className="input-field"
+                      <input 
+                        type="text" 
+                        className="input-field" 
                         value={siteSettings.hero_title_he}
                         onChange={(e) => setSiteSettings({ ...siteSettings, hero_title_he: e.target.value })}
                       />
                     </div>
                     <div className="space-y-2">
                       <label className="text-xs font-bold text-white/40 uppercase tracking-widest">תת-כותרת (Hero)</label>
-                      <textarea
-                        className="input-field h-24"
+                      <textarea 
+                        className="input-field h-24" 
                         value={siteSettings.hero_subtitle_he}
                         onChange={(e) => setSiteSettings({ ...siteSettings, hero_subtitle_he: e.target.value })}
                       />
                     </div>
                     <div className="space-y-2">
                       <label className="text-xs font-bold text-white/40 uppercase tracking-widest">שורת מיצוב (Positioning Line)</label>
-                      <input
-                        type="text"
-                        className="input-field"
+                      <input 
+                        type="text" 
+                        className="input-field" 
                         value={siteSettings.positioning_line_he}
                         onChange={(e) => setSiteSettings({ ...siteSettings, positioning_line_he: e.target.value })}
                       />
                     </div>
-                    <button
+                    <motion.button 
                       onClick={async () => {
                         setLoading(true);
                         const res = await fetch('/api/admin/settings', {
@@ -3498,11 +5188,13 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                         if (res.ok) alert('ההגדרות נשמרו בהצלחה');
                         setLoading(false);
                       }}
-                      className="btn-primary w-full py-4 bg-gradient-to-r from-brand-red to-red-600 rounded-lg font-black text-sm"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="btn-primary w-full py-4"
                       disabled={loading}
                     >
                       {loading ? 'שומר...' : 'שמור הגדרות'}
-                    </button>
+                    </motion.button>
                   </div>
                 </div>
               )}
@@ -3511,9 +5203,9 @@ _נשלח אוטומטית ממערכת YOUGO_`;
         </AnimatePresence>
       </main>
 
-      <Modal
-        isOpen={!!modalContent}
-        onClose={() => setModalContent(null)}
+      <Modal 
+        isOpen={!!modalContent} 
+        onClose={() => setModalContent(null)} 
         title={modalContent?.title || ''}
       >
         {modalContent?.content}
