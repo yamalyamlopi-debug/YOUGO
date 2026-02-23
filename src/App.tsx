@@ -433,98 +433,112 @@ const PackageDetailPanel = ({
   onBack: () => void;
   lang: Language;
 }) => {
-  const t = translations[lang];
-
-  // Parse content into structured sections
+  // Parse content into structured sections - clean & professional
   const lines = details.content.split('\n').filter(l => l.trim());
+  const sections: { heading: string; icon: string; items: string[] }[] = [];
+  let current: { heading: string; icon: string; items: string[] } = { heading: '', icon: '', items: [] };
 
-  const sections: { heading?: string; items: string[] }[] = [];
-  let current: { heading?: string; items: string[] } = { items: [] };
+  const SECTION_ICONS: Record<string, string> = {
+    'מה כוללת': '📦',
+    'מה מקבלים': '📦',
+    'למה בוחרים': '⭐',
+    'למה זה': '⭐',
+    'למי זה': '🎯',
+    'מתאים במיוחד': '🎯',
+    'יתרונות': '💼',
+    'הצלחות': '📊',
+    'התמחות': '🔍',
+    'פרטים טכניים': '⚙️',
+    'מה אנחנו': '🔍',
+  };
 
   lines.forEach(line => {
     const clean = line.replace(/\*\*/g, '').trim();
-    if (clean.includes('✨') || clean.includes('🔥') || clean.includes('👑') || clean.includes('💎') ||
-        clean.includes('🚗🚗') || clean.includes('🏢') || clean.includes('🚜') || clean.includes('🔧') ||
-        clean.includes('🚌') || clean.includes('מה כוללת') || clean.includes('מה מקבלים') ||
-        clean.includes('למי זה') || clean.includes('מתאים במיוחד') || clean.includes('יתרונות') ||
-        clean.includes('הצלחות') || clean.includes('התמחות') || clean.includes('למה')) {
-      if (current.items.length > 0 || current.heading) {
-        sections.push(current);
-      }
-      current = { heading: clean.replace(/[✨🔥👑💎🚗🏢🚜🔧🚌]/g, '').trim(), items: [] };
+    // Detect section headers (lines with emoji at start)
+    const isHeader = /^[✨🔥👑💎🚗🏢🚜🔧🚌📦⭐🎯💼📊🔍⚙️🏗️]/.test(clean) ||
+      Object.keys(SECTION_ICONS).some(k => clean.includes(k));
+
+    if (isHeader) {
+      if (current.heading || current.items.length > 0) sections.push(current);
+      const heading = clean.replace(/^[✨🔥👑💎🚗🏢🚜🔧🚌📦⭐🎯💼📊🔍⚙️🏗️]/g, '').trim();
+      const matchedKey = Object.keys(SECTION_ICONS).find(k => heading.includes(k));
+      current = { heading, icon: matchedKey ? SECTION_ICONS[matchedKey] : '•', items: [] };
     } else if (
       clean.startsWith('•') || clean.startsWith('✓') || clean.startsWith('✅') ||
-      clean.startsWith('│') || /^[📸📝📱🎯⚡👨🏷️🎥📊💰📞🏗️🛠️📋⏱️💫🌟⭐]/.test(clean)
+      /^[📸📝📱🎯⚡👨🏷️🎥📊💰📞🏗️🛠️📋⏱️💫🌟]/.test(clean)
     ) {
-      const stripped = clean.replace(/^[•✓✅│📸📝📱🎯⚡👨🏷️🎥📊💰📞🏗️🛠️📋⏱️💫🌟⭐]/g, '').replace(/\*\*/g, '').trim();
-      if (stripped && !stripped.includes('─') && !stripped.includes('┌') && !stripped.includes('└') && !stripped.includes('├')) {
-        current.items.push(stripped);
-      }
-    } else if (!clean.includes('━━━') && !clean.includes('┌') && !clean.includes('└') && !clean.includes('─') && !clean.includes('│') && clean.length > 3) {
-      current.items.push(clean);
+      const stripped = clean.replace(/^[•✓✅📸📝📱🎯⚡👨🏷️🎥📊💰📞🏗️🛠️📋⏱️💫🌟]/g, '').replace(/\*\*/g, '').trim();
+      if (stripped && stripped.length > 2) current.items.push(stripped);
+    } else if (clean.length > 3 && !clean.includes('━━━') && !clean.includes('┌') && !clean.includes('└') && !clean.includes('─')) {
+      current.items.push(clean.replace(/\*\*/g, '').trim());
     }
   });
-  if (current.items.length > 0 || current.heading) sections.push(current);
+  if (current.heading || current.items.length > 0) sections.push(current);
 
   return (
     <div
       className="w-full h-full rounded-2xl flex flex-col overflow-hidden"
       style={{
-        background: `linear-gradient(160deg, ${accentColor}12 0%, #0a0a10 60%, #080810 100%)`,
+        background: `linear-gradient(160deg, ${accentColor}0e 0%, #09090f 50%, #07070c 100%)`,
         border: `1px solid ${borderColor}`,
-        boxShadow: `0 0 50px ${accentColor}18`
+        boxShadow: `0 4px 30px ${accentColor}14`
       }}
     >
-      {/* Header */}
+      {/* ── Header Bar ── */}
       <div
-        className="px-5 py-4 flex items-center justify-between shrink-0"
-        style={{ borderBottom: `1px solid ${borderColor}`, background: `${accentColor}10` }}
+        className="px-5 py-3.5 flex items-center justify-between shrink-0"
+        style={{ borderBottom: `1px solid ${borderColor}`, background: `${accentColor}09` }}
       >
         <div className="flex items-center gap-3">
           <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-lg font-bold"
-            style={{ background: `${accentColor}20`, border: `1px solid ${borderColor}` }}
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-base"
+            style={{ background: `${accentColor}18`, border: `1px solid ${borderColor}` }}
           >
             {badge}
           </div>
           <div>
-            <p className="text-[9px] font-black uppercase tracking-[0.2em]" style={{ color: accentColor }}>פרטי החבילה</p>
-            <h3 className="text-sm font-black text-white">{pkg.name}</h3>
+            <p className="text-[8px] font-black uppercase tracking-[0.25em] opacity-70" style={{ color: accentColor }}>
+              מה כלול בחבילה
+            </p>
+            <h3 className="text-sm font-black text-white leading-none mt-0.5">{pkg.name}</h3>
           </div>
         </div>
         <button
           onClick={onBack}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black transition-all"
-          style={{ border: `1px solid ${borderColor}`, color: accentColor, background: `${accentColor}10` }}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black transition-colors hover:bg-white/5"
+          style={{ border: `1px solid ${borderColor}`, color: accentColor }}
         >
-          <ArrowLeft size={10} />
+          <ArrowLeft size={9} />
           חזרה
         </button>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 overflow-y-auto p-5 space-y-5 custom-scrollbar">
-        {sections.map((section, si) => (
-          <div key={si}>
+      {/* ── Sections ── */}
+      <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4">
+        {sections.filter(s => s.items.length > 0).map((section, si) => (
+          <div key={si} className="rounded-xl overflow-hidden"
+            style={{ border: `1px solid ${accentColor}1a`, background: `${accentColor}07` }}>
+            {/* Section header */}
             {section.heading && (
-              <div className="flex items-center gap-2 mb-3">
-                <div className="h-px flex-1" style={{ background: `linear-gradient(90deg, ${accentColor}60, transparent)` }} />
-                <span className="text-[10px] font-black uppercase tracking-wider px-2" style={{ color: accentColor }}>
+              <div className="px-4 py-2.5 flex items-center gap-2"
+                style={{ borderBottom: `1px solid ${accentColor}18`, background: `${accentColor}10` }}>
+                <span className="text-sm">{section.icon}</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.18em]" style={{ color: accentColor }}>
                   {section.heading}
                 </span>
-                <div className="h-px flex-1" style={{ background: `linear-gradient(270deg, ${accentColor}60, transparent)` }} />
               </div>
             )}
-            <div className="space-y-2">
+            {/* Items */}
+            <div className="p-4 space-y-2.5">
               {section.items.map((item, ii) => (
-                <div key={ii} className="flex items-start gap-2.5">
+                <div key={ii} className="flex items-start gap-3">
                   <div
-                    className="mt-1 w-4 h-4 rounded-full flex items-center justify-center shrink-0"
-                    style={{ background: `${accentColor}20`, border: `1px solid ${borderColor}` }}
+                    className="mt-0.5 w-4 h-4 rounded flex items-center justify-center shrink-0"
+                    style={{ background: `${accentColor}20`, border: `1px solid ${accentColor}35` }}
                   >
-                    <Check size={8} strokeWidth={3} style={{ color: accentColor }} />
+                    <Check size={8} strokeWidth={3.5} style={{ color: accentColor }} />
                   </div>
-                  <span className="text-[11px] text-white/80 leading-relaxed">{item}</span>
+                  <span className="text-[11px] text-white/80 leading-relaxed font-medium">{item}</span>
                 </div>
               ))}
             </div>
@@ -532,17 +546,27 @@ const PackageDetailPanel = ({
         ))}
       </div>
 
-      {/* CTA */}
-      <div className="px-5 py-4 shrink-0" style={{ borderTop: `1px solid ${borderColor}` }}>
+      {/* ── Price + CTA ── */}
+      <div className="px-4 py-4 shrink-0 space-y-3"
+        style={{ borderTop: `1px solid ${borderColor}` }}>
+        <div className="flex items-center justify-between px-1">
+          <span className="text-[10px] text-white/35 font-bold">מחיר החבילה</span>
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-xl font-black text-white">{pkg.price}</span>
+            <span className="text-[10px] line-through text-white/20">
+              ₪{Math.round(parseInt(pkg.price.replace('₪','').replace(',','')) / 0.85)}
+            </span>
+          </div>
+        </div>
         <button
           onClick={() => onSelect(pkg)}
           className="w-full py-3 rounded-xl font-black text-sm text-white transition-all relative overflow-hidden group"
           style={{ background: `linear-gradient(135deg, ${accentColor}, ${accentColor}cc)` }}
         >
-          <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+          <span className="absolute inset-0 bg-white/15 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
           <span className="relative flex items-center justify-center gap-2">
             <RocketIcon size={14} />
-            הזמן עכשיו – {pkg.price}
+            הזמן עכשיו
           </span>
         </button>
       </div>
@@ -2690,7 +2714,7 @@ export default function App() {
               {/* ============================================================
                   HOW IT WORKS – تصميم شركات احترافي جداً، ثابت وواضح
                   ============================================================ */}
-              <section id="how-it-works" className="space-y-16">
+              <section id="how-it-works" className="space-y-14">
                 <motion.div 
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -2706,98 +2730,100 @@ export default function App() {
                   <p className="text-white/45 text-base">3 שלבים פשוטים והרכב שלך באוויר</p>
                 </motion.div>
 
-                {/* Steps – Professional Corporate Layout */}
+                {/* Steps – Premium Corporate Grid */}
                 <div className="relative max-w-5xl mx-auto">
                   
-                  {/* Connecting line between steps – desktop */}
-                  <div className="hidden md:block absolute top-[52px] left-[16.66%] right-[16.66%] h-px"
-                    style={{ background: 'linear-gradient(90deg, transparent, rgba(200,16,46,0.4) 20%, rgba(200,16,46,0.4) 80%, transparent)' }} />
+                  {/* Connecting dashed line – desktop only */}
+                  <div className="hidden md:block absolute top-[52px] left-[calc(16.66%+40px)] right-[calc(16.66%+40px)] h-px z-0"
+                    style={{ 
+                      backgroundImage: `repeating-linear-gradient(90deg, rgba(200,16,46,0.35) 0px, rgba(200,16,46,0.35) 8px, transparent 8px, transparent 18px)`
+                    }} />
 
-                  <div className="grid md:grid-cols-3 gap-8">
+                  <div className="grid md:grid-cols-3 gap-6 relative z-10">
                     {[
                       {
                         step: '01',
                         title: 'בחירת חבילה',
-                        desc: 'עיינו בחבילות הפרסום שלנו ובחרו את המסלול המתאים לצרכים שלכם. כל חבילה כוללת פירוט מלא של השירותים הכלולים.',
-                        icon: <LayoutDashboard size={26} />,
+                        desc: 'עיינו בחבילות הפרסום ובחרו את המסלול המתאים לצרכים שלכם. כל חבילה כוללת פירוט מלא של השירותים.',
+                        icon: <LayoutDashboard size={24} />,
                         color: '#c8102e',
-                        bg: 'rgba(200,16,46,0.12)',
-                        border: 'rgba(200,16,46,0.3)'
+                        bg: 'rgba(200,16,46,0.1)',
+                        border: 'rgba(200,16,46,0.25)',
+                        tag: 'בחר ושלם',
+                        tagIcon: <Check size={9} strokeWidth={3} />
                       },
                       {
                         step: '02',
                         title: 'הזנת פרטים',
-                        desc: 'מלאו את פרטי הרכב בטופס המאובטח, העלו אישור תשלום ושלחו את הבקשה. התהליך לוקח פחות מ-3 דקות.',
-                        icon: <FileText size={26} />,
+                        desc: 'מלאו פרטי הרכב בטופס המאובטח, העלו אישור תשלום ושלחו את הבקשה. התהליך לוקח פחות מ-3 דקות.',
+                        icon: <FileText size={24} />,
                         color: '#3b82f6',
-                        bg: 'rgba(59,130,246,0.12)',
-                        border: 'rgba(59,130,246,0.3)'
+                        bg: 'rgba(59,130,246,0.1)',
+                        border: 'rgba(59,130,246,0.25)',
+                        tag: 'פחות מ-3 דקות',
+                        tagIcon: <Clock size={9} />
                       },
                       {
                         step: '03',
                         title: 'פרסום וחשיפה',
-                        desc: 'הצוות המקצועי שלנו מעצב ומפרסם מודעה ברמה הגבוהה ביותר. תוך 24 שעות הרכב שלכם נחשף לאלפי קונים פוטנציאליים.',
-                        icon: <Send size={26} />,
+                        desc: 'הצוות המקצועי שלנו מעצב ומפרסם מודעה ברמה הגבוהה ביותר. תוך 24 שעות הרכב שלכם נחשף לאלפי קונים.',
+                        icon: <Send size={24} />,
                         color: '#22c55e',
-                        bg: 'rgba(34,197,94,0.12)',
-                        border: 'rgba(34,197,94,0.3)'
+                        bg: 'rgba(34,197,94,0.1)',
+                        border: 'rgba(34,197,94,0.25)',
+                        tag: 'תוך 24 שעות',
+                        tagIcon: <Zap size={9} />
                       },
                     ].map((item, i) => (
                       <motion.div
                         key={i}
-                        initial={{ opacity: 0, y: 40 }}
+                        initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        transition={{ delay: i * 0.15, duration: 0.5 }}
+                        transition={{ delay: i * 0.12, duration: 0.5 }}
                         className="flex flex-col items-center text-center gap-5"
                       >
-                        {/* Step indicator + icon */}
+                        {/* Icon block */}
                         <div className="relative">
-                          {/* Step number circle */}
                           <div
-                            className="w-[104px] h-[104px] rounded-2xl flex flex-col items-center justify-center gap-1 relative"
+                            className="w-[104px] h-[104px] rounded-2xl flex flex-col items-center justify-center gap-2"
                             style={{
                               background: item.bg,
-                              border: `1.5px solid ${item.border}`,
-                              boxShadow: `0 8px 30px -8px ${item.color}30`
+                              border: `1px solid ${item.border}`,
+                              boxShadow: `0 6px 24px -8px ${item.color}28`
                             }}
                           >
                             <div style={{ color: item.color }}>{item.icon}</div>
-                            <span className="text-[10px] font-black tracking-[0.15em] uppercase" style={{ color: `${item.color}99` }}>
+                            <span className="text-[9px] font-black tracking-[0.15em] uppercase" style={{ color: `${item.color}80` }}>
                               שלב {item.step}
                             </span>
                           </div>
-                          {/* Dot on the connecting line – only on desktop */}
-                          <div className="hidden md:block absolute top-[50%] -translate-y-1/2 -right-4 w-3 h-3 rounded-full border-2"
-                            style={{ borderColor: item.color, background: '#06060a' }} />
+                          {/* Connection dot on line - desktop */}
+                          {i < 2 && (
+                            <div className="hidden md:block absolute top-[50%] -translate-y-1/2 -left-4 w-2.5 h-2.5 rounded-full"
+                              style={{ background: item.color, boxShadow: `0 0 8px ${item.color}` }} />
+                          )}
                           {i > 0 && (
-                            <div className="hidden md:block absolute top-[50%] -translate-y-1/2 -left-4 w-3 h-3 rounded-full border-2"
-                              style={{ borderColor: item.color, background: '#06060a' }} />
+                            <div className="hidden md:block absolute top-[50%] -translate-y-1/2 -right-4 w-2.5 h-2.5 rounded-full"
+                              style={{ background: item.color, boxShadow: `0 0 8px ${item.color}` }} />
                           )}
                         </div>
 
-                        {/* Content */}
-                        <div className="space-y-3">
+                        {/* Text */}
+                        <div className="space-y-2.5">
                           <h3 className="text-xl font-black text-white">{item.title}</h3>
-                          <p className="text-white/50 text-sm leading-relaxed max-w-xs mx-auto">{item.desc}</p>
+                          <p className="text-white/50 text-sm leading-relaxed max-w-[250px] mx-auto">{item.desc}</p>
                         </div>
 
-                        {/* Bottom tag */}
+                        {/* Tag */}
                         <div
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-black"
                           style={{ background: item.bg, border: `1px solid ${item.border}`, color: item.color }}
                         >
-                          <Check size={10} strokeWidth={3} />
-                          {i === 0 ? 'בחר ושלם' : i === 1 ? 'פחות מ-3 דקות' : 'תוך 24 שעות'}
+                          {item.tagIcon}
+                          {item.tag}
                         </div>
                       </motion.div>
-                    ))}
-                  </div>
-
-                  {/* Mobile connecting line */}
-                  <div className="md:hidden flex flex-col items-center gap-0 mt-4">
-                    {[0, 1].map(i => (
-                      <div key={i} className="w-px h-8 bg-brand-red/25" />
                     ))}
                   </div>
                 </div>
@@ -3017,10 +3043,10 @@ export default function App() {
                       </p>
                     </div>
 
-                    {/* Social Icons – ثابتة ومحسنة */}
+                    {/* Social Icons – ثابتة ومنظمة */}
                     <div>
                       <p className="text-center text-[10px] text-white/25 font-black uppercase tracking-[0.25em] mb-6">עקבו אחרינו</p>
-                      <div className="flex items-center justify-center gap-5 flex-wrap">
+                      <div className="flex items-center justify-center gap-4 flex-wrap">
                         {[
                           {
                             href: 'https://instagram.com/yougo.israel', label: 'Instagram',
@@ -3073,11 +3099,11 @@ export default function App() {
                             className="flex flex-col items-center gap-2 group"
                           >
                             <div
-                              className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:-translate-y-1"
+                              className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-200 group-hover:scale-110 group-hover:shadow-lg"
                               style={{
                                 background: s.bg,
-                                border: s.border ? `1px solid ${s.border}` : undefined,
-                                boxShadow: '0 4px 15px rgba(0,0,0,0.3)'
+                                border: (s as any).border ? `1px solid ${(s as any).border}` : undefined,
+                                boxShadow: '0 2px 10px rgba(0,0,0,0.25)'
                               }}
                             >
                               {s.icon}
