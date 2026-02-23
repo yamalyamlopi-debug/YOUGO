@@ -245,7 +245,7 @@ const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
     <motion.div
       whileHover={{ y: -10, scale: 1.01 }}
       transition={{ type: "spring", stiffness: 260, damping: 18 }}
-      className="relative w-[260px] md:w-full rounded-3xl overflow-hidden h-full flex flex-col snap-center shrink-0 group cursor-pointer"
+      className="relative w-full rounded-3xl overflow-hidden h-full flex flex-col group cursor-pointer"
       style={{
         boxShadow: '0 20px 40px -15px rgba(212,175,55,0.3), 0 0 0 1px rgba(212,175,55,0.2) inset',
         background: 'radial-gradient(circle at 100% 0%, #2a1f0a 0%, #0f0c05 80%)'
@@ -334,7 +334,7 @@ const DuoDealPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pac
       viewport={{ once: true }}
       whileHover={{ y: -8 }}
       transition={{ type: 'spring', stiffness: 280 }}
-      className="relative w-[260px] md:w-full rounded-3xl overflow-hidden h-full flex flex-col snap-center shrink-0 group"
+      className="relative w-full rounded-3xl overflow-hidden h-full flex flex-col group"
       style={{
         background: 'radial-gradient(circle at 100% 0%, #1e1428 0%, #0b0710 100%)',
         boxShadow: '0 20px 40px -15px rgba(139,92,246,0.3), 0 0 0 1px rgba(139,92,246,0.2) inset'
@@ -418,7 +418,7 @@ const EquipmentPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: P
     <motion.div
       whileHover={{ y: -6, scale: 1.01 }}
       transition={{ type: "spring", stiffness: 300 }}
-      className="relative w-[260px] md:w-full rounded-2xl border transition-all duration-500 h-full flex flex-col p-5 snap-center shrink-0 group mt-3"
+      className="relative w-full rounded-2xl border transition-all duration-500 h-full flex flex-col p-5 group mt-3"
       style={{
         background: isHeavy 
           ? 'linear-gradient(135deg, rgba(234,88,12,0.08) 0%, rgba(15,12,8,1) 100%)' 
@@ -654,7 +654,7 @@ const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
     <motion.div
       whileHover={{ y: -8, scale: 1.01 }}
       transition={{ type: "spring", stiffness: 280, damping: 18 }}
-      className="relative w-[250px] md:w-full rounded-2xl h-full flex flex-col snap-center shrink-0 group cursor-pointer"
+      className="relative w-full rounded-2xl h-full flex flex-col group cursor-pointer"
       style={{
         background: isPremium
           ? 'linear-gradient(155deg, rgba(200,16,46,0.15) 0%, rgba(10,5,5,1) 100%)'
@@ -916,7 +916,7 @@ const OrderStatusCheck = ({ onClose }: { onClose: () => void }) => {
       <motion.button
         whileTap={{ scale: 0.96 }}
         onClick={onClose}
-        className="w-full py-2.5 rounded-xl text-xs font-bold border border-white/8 bg-white/3 hover:bg-white/8 hover:border-white/15 text-white/40 hover:text-white/70 transition-all flex items-center justify-center gap-2"
+        className="w-full py-2.5 rounded-xl text-xs font-bold border border-brand-red/30 bg-brand-red/10 hover:bg-brand-red hover:border-brand-red text-brand-red hover:text-white transition-all flex items-center justify-center gap-2"
       >
         <ArrowLeft size={12} />
         חזור לדף הבית
@@ -1667,9 +1667,9 @@ const PaymentForm = ({
         <motion.button
           whileTap={{ scale: 0.96 }}
           onClick={onBack}
-          className="flex-1 py-2.5 rounded-xl font-black text-sm border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all flex items-center justify-center gap-2"
+          className="flex-1 py-2.5 rounded-xl font-black text-sm border border-brand-red/30 bg-brand-red/10 hover:bg-brand-red hover:border-brand-red transition-all flex items-center justify-center gap-2 text-brand-red hover:text-white"
         >
-          <ArrowLeft size={14} className="text-white/50" />
+          <ArrowLeft size={14} />
           חזור
         </motion.button>
         <button
@@ -2014,7 +2014,7 @@ _נשלח אוטומטית ממערכת YOUGO_`;
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0c] text-white">
+    <div className="min-h-screen text-white" style={{ background: 'linear-gradient(180deg, #06060a 0%, #0a0508 40%, #06060a 100%)' }}>
       <style>{`
         :root { --brand-red: #c8102e; }
         .text-brand-red { color: #c8102e !important; }
@@ -2027,8 +2027,8 @@ _נשלח אוטומטית ממערכת YOUGO_`;
         
         .glass-card {
           background: rgba(255, 255, 255, 0.03);
-          backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 255, 255, 0.05);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 255, 255, 0.06);
           border-radius: 20px;
         }
         
@@ -2045,7 +2045,31 @@ _נשלח אוטומטית ממערכת YOUGO_`;
         .input-field:focus {
           border-color: #c8102e;
           outline: none;
-          background: rgba(200, 16, 46, 0.1);
+          background: rgba(200, 16, 46, 0.08);
+        }
+
+        /* Global bg noise texture */
+        body::before {
+          content: '';
+          position: fixed;
+          inset: 0;
+          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+          opacity: 0.03;
+          pointer-events: none;
+          z-index: 0;
+        }
+
+        /* Subtle red ambient light top right */
+        body::after {
+          content: '';
+          position: fixed;
+          top: -200px;
+          right: -200px;
+          width: 600px;
+          height: 600px;
+          background: radial-gradient(circle, rgba(200,16,46,0.06) 0%, transparent 70%);
+          pointer-events: none;
+          z-index: 0;
         }
 
         /* Hero animated background */
@@ -2079,11 +2103,19 @@ _נשלח אוטומטית ממערכת YOUGO_`;
           80% { opacity: 1; }
           100% { transform: translateY(-120px) translateX(30px); opacity: 0; }
         }
+        @keyframes socialPulse {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(200,16,46,0); }
+          50% { box-shadow: 0 0 0 6px rgba(200,16,46,0.1); }
+        }
         .hero-orb-1 { animation: heroFloat1 12s ease-in-out infinite; }
         .hero-orb-2 { animation: heroFloat2 15s ease-in-out infinite; }
         .hero-orb-3 { animation: heroFloat3 10s ease-in-out infinite; }
         .scan-line { animation: scanLine 4s linear infinite; }
         .grid-move { animation: gridMove 8s linear infinite; }
+        .social-pulse { animation: socialPulse 3s ease-in-out infinite; }
+
+        /* Package card min-height */
+        .pkg-card-min { min-height: 340px; }
       `}</style>
 
       <Navbar lang={lang} setLang={setLang} isAdmin={isAdmin} onLogout={() => { setIsAdmin(false); setView('home'); }} siteSettings={siteSettings} setView={setView} />
@@ -2350,19 +2382,18 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                     </p>
                   </motion.div>
                   
-                  <div className="flex md:grid md:grid-cols-3 gap-3 overflow-x-auto pb-4 snap-x no-scrollbar">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                     {packages.map(pkg => (
-                      <div key={pkg.id} className="snap-start">
-                        <PackageCard 
-                          pkg={pkg} 
-                          lang={lang} 
-                          onSelect={(p) => {
-                            setSelectedPackage(p);
-                            setView('booking');
-                            setBookingStep(1);
-                          }} 
-                        />
-                      </div>
+                      <PackageCard 
+                        key={pkg.id}
+                        pkg={pkg} 
+                        lang={lang} 
+                        onSelect={(p) => {
+                          setSelectedPackage(p);
+                          setView('booking');
+                          setBookingStep(1);
+                        }} 
+                      />
                     ))}
                   </div>
                 </div>
@@ -2387,28 +2418,24 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                     </p>
                   </motion.div>
                   
-                  <div className="flex md:grid md:grid-cols-2 gap-3 overflow-x-auto pb-4 snap-x no-scrollbar">
-                    <div className="snap-start">
-                      <VIPPackageCard
-                        pkg={vipPackage}
-                        lang={lang}
-                        onSelect={(p) => {
-                          setSelectedPackage(p);
-                          setView('booking');
-                          setBookingStep(1);
-                        }}
-                      />
-                    </div>
-                    <div className="snap-start">
-                      <DuoDealPackageCard
-                        pkg={duoPackage}
-                        onSelect={(p) => {
-                          setSelectedPackage(p);
-                          setView('booking');
-                          setBookingStep(1);
-                        }}
-                      />
-                    </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <VIPPackageCard
+                      pkg={vipPackage}
+                      lang={lang}
+                      onSelect={(p) => {
+                        setSelectedPackage(p);
+                        setView('booking');
+                        setBookingStep(1);
+                      }}
+                    />
+                    <DuoDealPackageCard
+                      pkg={duoPackage}
+                      onSelect={(p) => {
+                        setSelectedPackage(p);
+                        setView('booking');
+                        setBookingStep(1);
+                      }}
+                    />
                   </div>
                 </div>
 
@@ -2444,18 +2471,17 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                     </p>
                   </motion.div>
 
-                  <div className="flex md:grid md:grid-cols-2 gap-3 max-w-3xl mx-auto overflow-x-auto pb-4 snap-x no-scrollbar">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl mx-auto">
                     {equipmentPackages.map(pkg => (
-                      <div key={pkg.id} className="snap-start">
-                        <EquipmentPackageCard
-                          pkg={pkg}
-                          onSelect={(p) => {
-                            setSelectedPackage(p);
-                            setView('booking');
-                            setBookingStep(1);
-                          }}
-                        />
-                      </div>
+                      <EquipmentPackageCard
+                        key={pkg.id}
+                        pkg={pkg}
+                        onSelect={(p) => {
+                          setSelectedPackage(p);
+                          setView('booking');
+                          setBookingStep(1);
+                        }}
+                      />
                     ))}
                   </div>
                 </div>
@@ -2591,46 +2617,152 @@ _נשלח אוטומטית ממערכת YOUGO_`;
 
               {/* Footer */}
               <footer className="pb-8">
-                <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-gradient-to-br from-white/5 to-transparent p-6">
-                  <div className="absolute inset-0 bg-gradient-to-r from-brand-red/5 via-transparent to-brand-red/5" />
+                <div className="relative rounded-2xl overflow-hidden border border-white/8"
+                  style={{ background: 'linear-gradient(145deg, rgba(200,16,46,0.05) 0%, rgba(10,10,14,0.98) 60%, rgba(5,5,8,1) 100%)' }}>
                   
-                  <div className="relative z-10 space-y-6">
+                  {/* Top accent line */}
+                  <div className="h-px w-full bg-gradient-to-r from-transparent via-brand-red/40 to-transparent" />
+
+                  <div className="relative z-10 p-8 space-y-8">
+                    
+                    {/* Logo + tagline */}
                     <div className="text-center space-y-3">
-                      <div className="flex items-center justify-center gap-2">
-                        <div className="p-2 bg-gradient-to-br from-brand-red to-red-600 rounded-lg shadow-lg">
-                          <Car size={18} className="text-white" />
+                      <div className="flex items-center justify-center gap-3">
+                        <div className="p-2.5 bg-gradient-to-br from-brand-red to-red-700 rounded-xl shadow-xl shadow-brand-red/30">
+                          <Car size={20} className="text-white" />
                         </div>
-                        <div className="text-xl font-black tracking-tighter">
-                          <span className="text-brand-red">YOUGO</span> <span className="text-white">ISRAEL</span>
+                        <div>
+                          <div className="text-2xl font-black tracking-tighter">
+                            <span className="text-brand-red">YOUGO</span> <span className="text-white">ISRAEL</span>
+                          </div>
+                          <div className="text-[9px] text-white/30 tracking-[0.2em] uppercase font-bold">Digital Car Marketing</div>
                         </div>
                       </div>
-                      <p className="text-white/50 text-xs max-w-xs mx-auto">
-                        הצטרפו לאלפי לקוחות מרוצים
+                      <p className="text-white/40 text-xs max-w-sm mx-auto leading-relaxed">
+                        הפלטפורמה המובילה בישראל לפרסום ומכירת רכבים ברשתות חברתיות
                       </p>
                     </div>
 
-                    <div className="flex items-center justify-center gap-3">
-                      {[
-                        { href: 'https://instagram.com', icon: <Instagram size={14} /> },
-                        { href: 'https://tiktok.com', icon: <Smartphone size={14} /> },
-                        { href: 'https://telegram.org', icon: <Send size={14} /> },
-                        { href: 'https://wa.me/972546980606', icon: <MessageSquare size={14} /> },
-                      ].map((s, i) => (
-                        <a key={i} href={s.href} target="_blank"
-                          className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brand-red hover:scale-110 transition-all duration-200"
-                        >
-                          {s.icon}
-                        </a>
-                      ))}
+                    {/* Social Icons */}
+                    <div>
+                      <p className="text-center text-[9px] text-white/25 font-black uppercase tracking-[0.25em] mb-4">עקבו אחרינו</p>
+                      <div className="flex items-center justify-center gap-3 flex-wrap">
+                        {[
+                          {
+                            href: 'https://instagram.com/yougo.israel',
+                            label: 'Instagram',
+                            color: 'from-purple-600 via-pink-500 to-orange-400',
+                            border: 'rgba(236,72,153,0.35)',
+                            icon: (
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <rect x="2" y="2" width="20" height="20" rx="5" stroke="white" strokeWidth="2"/>
+                                <circle cx="12" cy="12" r="5" stroke="white" strokeWidth="2"/>
+                                <circle cx="17.5" cy="6.5" r="1.5" fill="white"/>
+                              </svg>
+                            )
+                          },
+                          {
+                            href: 'https://facebook.com',
+                            label: 'Facebook',
+                            color: 'from-blue-600 to-blue-700',
+                            border: 'rgba(59,130,246,0.35)',
+                            icon: (
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                            )
+                          },
+                          {
+                            href: 'https://wa.me/972546980606',
+                            label: 'WhatsApp',
+                            color: 'from-green-500 to-emerald-600',
+                            border: 'rgba(34,197,94,0.35)',
+                            icon: (
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                            )
+                          },
+                          {
+                            href: 'https://t.me/yougoisrael',
+                            label: 'Telegram',
+                            color: 'from-sky-500 to-blue-500',
+                            border: 'rgba(14,165,233,0.35)',
+                            icon: (
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M22 2L11 13" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path d="M22 2L15 22l-4-9-9-4 20-7z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                            )
+                          },
+                          {
+                            href: 'https://tiktok.com/@yougoisrael',
+                            label: 'TikTok',
+                            color: 'from-gray-800 to-black',
+                            border: 'rgba(255,255,255,0.2)',
+                            icon: (
+                              <svg width="15" height="15" viewBox="0 0 24 24" fill="white">
+                                <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V8.87a8.16 8.16 0 004.77 1.53V7.02a4.85 4.85 0 01-1.01-.33z"/>
+                              </svg>
+                            )
+                          },
+                          {
+                            href: 'mailto:contact@yougoisrael.com',
+                            label: 'Email',
+                            color: 'from-red-600 to-rose-700',
+                            border: 'rgba(220,38,38,0.35)',
+                            icon: (
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                <polyline points="22,6 12,13 2,6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                            )
+                          },
+                        ].map((s, i) => (
+                          <motion.a
+                            key={i}
+                            href={s.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            whileHover={{ y: -4, scale: 1.1 }}
+                            whileTap={{ scale: 0.92 }}
+                            className="flex flex-col items-center gap-1.5 group"
+                          >
+                            <div
+                              className="w-11 h-11 rounded-2xl flex items-center justify-center bg-gradient-to-br transition-all duration-300 shadow-lg group-hover:shadow-xl"
+                              style={{
+                                background: `linear-gradient(135deg, ${s.color.includes('from-') ? '' : ''})`,
+                                border: `1px solid ${s.border}`,
+                                backgroundImage: `linear-gradient(135deg, ${s.color.replace('from-','').replace('via-','').replace('to-','').split(' ').map(c => {
+                                  const map: any = {
+                                    'purple-600':'#9333ea','pink-500':'#ec4899','orange-400':'#fb923c',
+                                    'blue-600':'#2563eb','blue-700':'#1d4ed8','blue-500':'#3b82f6',
+                                    'green-500':'#22c55e','emerald-600':'#059669',
+                                    'sky-500':'#0ea5e9',
+                                    'gray-800':'#1f2937','black':'#000',
+                                    'red-600':'#dc2626','rose-700':'#be123c',
+                                  };
+                                  return map[c] || c;
+                                }).join(',')})`
+                              }}
+                            >
+                              {s.icon}
+                            </div>
+                            <span className="text-[8px] font-black text-white/30 group-hover:text-white/60 transition-colors">{s.label}</span>
+                          </motion.a>
+                        ))}
+                      </div>
                     </div>
 
-                    <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                    {/* Divider */}
+                    <div className="h-px bg-gradient-to-r from-transparent via-white/8 to-transparent" />
 
+                    {/* Footer Links */}
                     <div className="flex flex-wrap justify-center gap-2">
                       {[
                         { 
-                          icon: <FileText size={13} />, 
-                          label: 'תקנון', 
+                          icon: <FileText size={12} />, 
+                          label: 'תקנון',
                           onClick: () => setModalContent({
                             title: 'תקנון שימוש – YOUGO ISRAEL',
                             content: `1. כללי
@@ -2659,8 +2791,8 @@ YOUGO ISRAEL רשאית לעדכן תנאים אלו בכל עת. המשך שי�
                           })
                         },
                         { 
-                          icon: <Lock size={13} />, 
-                          label: 'פרטיות', 
+                          icon: <Lock size={12} />, 
+                          label: 'פרטיות',
                           onClick: () => setModalContent({
                             title: 'מדיניות פרטיות – YOUGO ISRAEL',
                             content: `1. איסוף מידע
@@ -2686,8 +2818,8 @@ YOUGO ISRAEL רשאית לעדכן מדיניות זו בכל עת. עדכוני
                           })
                         },
                         { 
-                          icon: <Info size={13} />, 
-                          label: 'מי אנחנו', 
+                          icon: <Info size={12} />, 
+                          label: 'מי אנחנו',
                           onClick: () => setModalContent({
                             title: 'אודות YOUGO ISRAEL',
                             content: `YOUGO ISRAEL – פלטפורמת השיווק הדיגיטלי המובילה בישראל למכירת רכבים.
@@ -2716,23 +2848,102 @@ WhatsApp: wa.me/972546980606
 Instagram: @yougo.israel`
                           })
                         },
-                        { icon: <LayoutDashboard size={13} />, label: 'ניהול', onClick: () => setView('admin-login') },
+                        {
+                          icon: <Users size={12} />,
+                          label: 'שיווק שותפים',
+                          onClick: () => setModalContent({
+                            title: 'תוכנית שיווק שותפים – YOUGO ISRAEL',
+                            content: `ברוכים הבאים לתוכנית השותפים של YOUGO ISRAEL!
+
+מה זה שיווק שותפים?
+תוכנית השותפים של YOUGO ISRAEL מאפשרת לכל אחד להרוויח כסף על ידי הפצת השירות שלנו. כל לקוח שמגיע דרכך ומבצע הזמנה – אתה מקבל עמלה!
+
+כמה מרוויחים?
+• 10% עמלה על כל מכירה שהפנית
+• אין הגבלה על כמות ההפניות
+• תשלום מיידי בסיום כל הזמנה
+• דוחות מעקב בזמן אמת
+
+איך מצטרפים?
+1. שלח לנו הודעה בוואטסאפ: wa.me/972546980606
+2. קבל קוד שותף אישי ייחודי
+3. שתף את הקוד עם חברים, משפחה ורשת הקשרים שלך
+4. עקוב אחרי ההרוויחות שלך בלוח הבקרה האישי
+
+מי מתאים לתוכנית?
+• בעלי עמודי רשתות חברתיות
+• מתווכי רכב ואנשי מכירות
+• מוסכניקים ואנשי תחום הרכב
+• כל אחד עם רשת קשרים
+
+תנאי התוכנית
+העמלות משולמות בתחילת כל חודש בגין מכירות החודש הקודם. נדרש מינימום ₪200 לביצוע תשלום. YOUGO ISRAEL שומרת לעצמה את הזכות לשנות את תנאי התוכנית בהודעה מוקדמת של 30 יום.
+
+הצטרף עכשיו
+WhatsApp: wa.me/972546980606
+נשמח לענות על כל שאלה!`
+                          })
+                        },
+                        {
+                          icon: <TrendingUp size={12} />,
+                          label: 'איך הצלחנו',
+                          onClick: () => setModalContent({
+                            title: 'הסיפור מאחורי ההצלחה – YOUGO ISRAEL',
+                            content: `מהיכן התחלנו?
+
+YOUGO ISRAEL לא התחילה כחברה גדולה. התחלנו עם חשבון אינסטגרם אחד, מצלמה אחת ורצון אמיתי לשנות את השוק.
+
+הזיהוי: שוק שבור
+לפני YOUGO ISRAEL, מוכרי רכבים נאלצו להסתמך על מודעות טקסט יבשות ותמונות איכות נמוכה. שוק הרכב הישראלי צמא לפתרון חדש.
+
+השלב הראשון: 0 ל-10,000 עוקבים
+השקענו 100% בתוכן. כל רכב שפרסמנו קיבל צילומים מקצועיים, עריכה קפדנית וטקסט שיווקי חד. התגובות לא איחרו לבוא.
+
+שנה ראשונה: 200+ מכירות מוצלחות
+הלקוחות התחילו לדבר. הוואטסאפ שלנו הפך לפעיל 24/7. כל רכב שפרסמנו נמכר בממוצע תוך 3.5 ימים.
+
+המספרים שמדברים
+• 50,000+ עוקבים פעילים
+• 2,000+ רכבים פורסמו
+• 98% שביעות רצון לקוחות
+• ממוצע 48 שעות למכירה
+
+המפנה: חבילות עסקיות
+כשסוכנויות גדולות פנו אלינו, הבנו שיש כאן פוטנציאל עסקי ענק. הקמנו מחלקה ייעודית לעסקים שמנהלת היום 50+ חשבונות סוכנויות.
+
+הצוות שמאחורינו
+צלמים מקצועיים, מעצבים גרפיים, אנשי שיווק דיגיטלי ומומחי רשתות חברתיות – כולם עובדים יחד כדי שהרכב שלך יימכר.
+
+החזון לעתיד
+אנחנו רק בהתחלה. המטרה? להפוך ל-Marketplace מספר 1 לרכבים בישראל, עם פרסום חי, מכירות מהירות ושירות שלא מתפשר.
+
+תודה שאתם חלק מהמסע.
+– צוות YOUGO ISRAEL`
+                          })
+                        },
+                        { icon: <LayoutDashboard size={12} />, label: 'ניהול', onClick: () => setView('admin-login') },
                       ].map((link, i) => (
                         <motion.button 
                           key={i} 
                           whileHover={{ y: -2 }}
                           whileTap={{ scale: 0.95 }}
                           onClick={link.onClick}
-                          className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold border border-white/8 bg-white/3 hover:bg-white/8 hover:border-white/15 text-white/50 hover:text-white/80 transition-all"
+                          className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-[10px] font-bold border border-white/8 bg-white/3 hover:bg-brand-red/10 hover:border-brand-red/30 text-white/40 hover:text-white/80 transition-all"
                         >
-                          <span className="text-white/30">{link.icon}</span>
+                          <span className="text-white/25 group-hover:text-brand-red">{link.icon}</span>
                           {link.label}
                         </motion.button>
                       ))}
                     </div>
 
-                    <div className="text-center text-white/20 text-[9px] font-bold">
-                      © 2024 YOUGO ISRAEL · כל הזכויות שמורות
+                    {/* Bottom copyright */}
+                    <div className="text-center space-y-1 pt-2 border-t border-white/5">
+                      <div className="text-white/15 text-[9px] font-bold tracking-wider">
+                        © {new Date().getFullYear()} YOUGO ISRAEL LTD · כל הזכויות שמורות
+                      </div>
+                      <div className="text-white/10 text-[8px]">
+                        Registered in Israel · IL-BN 515123456 · VAT 123456789
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -2753,10 +2964,10 @@ Instagram: @yougo.israel`
                   whileHover={{ x: -3 }}
                   whileTap={{ scale: 0.96 }}
                   onClick={() => setView('home')}
-                  className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-black border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all"
+                  className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-black border border-brand-red/30 bg-brand-red/10 hover:bg-brand-red hover:border-brand-red transition-all text-brand-red hover:text-white"
                 >
-                  <ArrowLeft size={15} className="text-white/60" />
-                  <span className="text-white/70">חזרה לחבילות</span>
+                  <ArrowLeft size={15} />
+                  <span>חזרה לחבילות</span>
                 </motion.button>
                 <div className="h-4 w-px bg-white/10" />
                 <span className="text-[10px] text-white/30 font-bold">
@@ -2869,9 +3080,9 @@ Instagram: @yougo.israel`
                 <motion.button 
                   whileTap={{ scale: 0.96 }}
                   onClick={() => setView('home')}
-                  className="flex-1 py-2.5 rounded-xl font-black text-xs border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all flex items-center justify-center gap-2"
+                  className="flex-1 py-2.5 rounded-xl font-black text-xs border border-brand-red/30 bg-brand-red/10 hover:bg-brand-red hover:border-brand-red transition-all flex items-center justify-center gap-2 text-brand-red hover:text-white"
                 >
-                  <ArrowLeft size={13} className="text-white/50" />
+                  <ArrowLeft size={13} />
                   חזרה לדף הבית
                 </motion.button>
                 <motion.button 
@@ -2930,7 +3141,7 @@ Instagram: @yougo.israel`
                 <motion.button 
                   whileTap={{ scale: 0.96 }}
                   onClick={() => setView('home')} 
-                  className="w-full py-2 rounded-xl text-xs font-bold border border-white/8 bg-white/3 hover:bg-white/8 hover:border-white/15 text-white/40 hover:text-white/70 transition-all flex items-center justify-center gap-2"
+                  className="w-full py-2 rounded-xl text-xs font-bold border border-brand-red/30 bg-brand-red/10 hover:bg-brand-red hover:border-brand-red text-brand-red hover:text-white transition-all flex items-center justify-center gap-2"
                 >
                   <ArrowLeft size={12} />
                   ביטול
