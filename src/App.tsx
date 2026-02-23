@@ -1,2169 +1,539 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
-  CheckCircle2, 
-  Instagram, 
-  Users, 
-  Calendar, 
-  ChevronRight, 
-  Globe, 
-  ArrowLeft,
-  Upload,
-  Camera,
-  Video,
-  CreditCard,
-  Check,
-  Menu,
-  X,
-  LayoutDashboard,
-  LogOut,
-  Eye,
-  MessageSquare,
-  Send,
-  Smartphone,
-  ChevronDown,
-  ChevronUp,
-  ShieldCheck,
-  FileText,
-  Info,
-  Lock,
-  Car,
-  Zap,
-  TrendingUp,
-  Wrench,
-  Star,
-  Crown,
-  Hammer,
-  Truck,
-  Building2,
-  Briefcase,
-  Search,
-  Phone,
-  Mail,
-  MapPin,
-  Clock,
-  Award,
-  Sparkles,
-  Rocket,
-  Target,
-  BarChart3,
-  PlayCircle,
-  Headphones,
-  ThumbsUp
+  CheckCircle2, Instagram, Users, Calendar, ChevronRight, Globe, ArrowLeft,
+  Upload, Camera, Video, CreditCard, Check, X, LayoutDashboard, LogOut,
+  Eye, MessageSquare, Send, Smartphone, ChevronDown, ChevronUp, ShieldCheck,
+  FileText, Info, Lock, Car, Zap, TrendingUp, Wrench, Star, Crown, Hammer,
+  Truck, Building2, Award, Clock, Search
 } from 'lucide-react';
-import { translations, Language } from './translations';
 
-// --- Types ---
-interface Package {
-  id: string;
-  name: string;
-  price: string;
-  features: string[];
-  popular?: boolean;
-  premium?: boolean;
-  vip?: boolean;
-  equipment?: boolean;
-  business?: boolean;
-}
+// \u2500\u2500\u2500 TRANSLATIONS \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+const translations = {
+  he: {
+    positioningLine: '\u05d4\u05e4\u05e8\u05e1\u05d5\u05dd \u05e9\u05de\u05d5\u05db\u05e8 \u05e8\u05db\u05d1\u05d9\u05dd \u2013 \u05dc\u05d0 \u05e8\u05e7 \u05de\u05e6\u05d9\u05d2 \u05d0\u05d5\u05ea\u05dd.',
+    heroTitle: '\u05de\u05d5\u05db\u05e8\u05d9\u05dd \u05e8\u05db\u05d1? \u05d0\u05e0\u05d7\u05e0\u05d5 \u05de\u05d5\u05db\u05e8\u05d9\u05dd \u05d0\u05d5\u05ea\u05d5 \u05de\u05d4\u05e8 \u05d9\u05d5\u05ea\u05e8.',
+    heroSubtitle: 'YOUGO ISRAEL - \u05e4\u05dc\u05d8\u05e4\u05d5\u05e8\u05de\u05ea \u05d4\u05e9\u05d9\u05d5\u05d5\u05e7 \u05d4\u05de\u05d5\u05d1\u05d9\u05dc\u05d4 \u05d1\u05d0\u05d9\u05e0\u05e1\u05d8\u05d2\u05e8\u05dd \u05dc\u05de\u05db\u05d9\u05e8\u05ea \u05e8\u05db\u05d1\u05d9\u05dd.',
+    startOrder: '\u05d4\u05ea\u05d7\u05dc \u05d4\u05d6\u05de\u05e0\u05d4',
+    packages: '\u05d7\u05d1\u05d9\u05dc\u05d5\u05ea',
+    checkout: '\u05d4\u05e9\u05dc\u05de\u05ea \u05d4\u05d6\u05de\u05e0\u05d4',
+    carDetails: '\u05e4\u05e8\u05d8\u05d9 \u05d4\u05e8\u05db\u05d1',
+    personalDetails: '\u05e4\u05e8\u05d8\u05d9 \u05d9\u05e6\u05d9\u05e8\u05ea \u05e7\u05e9\u05e8',
+    uploadProof: '\u05d4\u05e2\u05dc\u05d0\u05ea \u05d0\u05d9\u05e9\u05d5\u05e8 \u05ea\u05e9\u05dc\u05d5\u05dd',
+    submitOrder: '\u05e9\u05dc\u05d7 \u05d4\u05d6\u05de\u05e0\u05d4',
+    orderSuccess: '\u05d4\u05d4\u05d6\u05de\u05e0\u05d4 \u05e0\u05e9\u05dc\u05d7\u05d4 \u05d1\u05d4\u05e6\u05dc\u05d7\u05d4!',
+    mostPopular: '\u05d4\u05db\u05d9 \u05e4\u05d5\u05e4\u05d5\u05dc\u05e8\u05d9',
+    basic: 'BASIC',
+    pro: 'PRO',
+    premium: 'PREMIUM',
+    packageSubtitles: {
+      basic: '\u05d7\u05d1\u05d9\u05dc\u05ea \u05db\u05e0\u05d9\u05e1\u05d4 \u05dc\u05e4\u05e8\u05e1\u05d5\u05dd',
+      pro: '\u05d4\u05d1\u05d7\u05d9\u05e8\u05d4 \u05d4\u05e4\u05d5\u05e4\u05d5\u05dc\u05e8\u05d9\u05ea',
+      premium: '\u05d7\u05e9\u05d9\u05e4\u05d4 \u05de\u05e7\u05e1\u05d9\u05de\u05dc\u05d9\u05ea'
+    },
+    features: {
+      images2: '2 \u05ea\u05de\u05d5\u05e0\u05d5\u05ea \u05de\u05e7\u05e6\u05d5\u05e2\u05d9\u05d5\u05ea',
+      post1: '\u05e4\u05d5\u05e1\u05d8 \u05d0\u05d7\u05d3 \u05d1\u05d0\u05d9\u05e0\u05e1\u05d8\u05d2\u05e8\u05dd',
+      story7: '\u05e1\u05d8\u05d5\u05e8\u05d9 7 \u05d9\u05de\u05d9\u05dd',
+      exposureBasic: '\u05d7\u05e9\u05d9\u05e4\u05d4 \u05dc\u05e7\u05d4\u05dc \u05de\u05e2\u05d5\u05e0\u05d9\u05d9\u05df',
+      images4: '4 \u05ea\u05de\u05d5\u05e0\u05d5\u05ea \u05de\u05e7\u05e6\u05d5\u05e2\u05d9\u05d5\u05ea',
+      postPro: '\u05e4\u05d5\u05e1\u05d8 + \u05d2\u05e8\u05e4\u05d9\u05e7\u05d4 \u05de\u05d9\u05d5\u05d7\u05d3\u05ea',
+      story14: '\u05e1\u05d8\u05d5\u05e8\u05d9 14 \u05d9\u05d5\u05dd',
+      priorityPro: '\u05e2\u05d3\u05d9\u05e4\u05d5\u05ea \u05d1\u05e4\u05e8\u05e1\u05d5\u05dd',
+      exposurePro: '\u05d7\u05e9\u05d9\u05e4\u05d4 \u05dc\u05e7\u05d4\u05dc \u05de\u05de\u05d5\u05e7\u05d3',
+      imagesPremium: '8 \u05ea\u05de\u05d5\u05e0\u05d5\u05ea \u05de\u05e7\u05e6\u05d5\u05e2\u05d9\u05d5\u05ea',
+      postPremium: '\u05e4\u05d5\u05e1\u05d8 \u05e4\u05e8\u05de\u05d9\u05d5\u05dd \u05e2\u05dd \u05e2\u05d9\u05e6\u05d5\u05d1',
+      story30: '\u05e1\u05d8\u05d5\u05e8\u05d9 30 \u05d9\u05d5\u05dd',
+      priorityFull: '\u05e2\u05d3\u05d9\u05e4\u05d5\u05ea \u05de\u05dc\u05d0\u05d4',
+      exposureMax: '\u05d7\u05e9\u05d9\u05e4\u05d4 \u05de\u05e7\u05e1\u05d9\u05de\u05dc\u05d9\u05ea',
+      guidance: '\u05dc\u05d9\u05d5\u05d5\u05d9 \u05d0\u05d9\u05e9\u05d9 \u05e2\u05d3 \u05de\u05db\u05d9\u05e8\u05d4',
+      video: '\u05e8\u05d9\u05dc\u05e1 \u05d5\u05d9\u05d3\u05d0\u05d5 15 \u05e9\u05e0\u05d9\u05d5\u05ea'
+    },
+    whyUs: {
+      title: '\u05dc\u05de\u05d4 \u05dc\u05d1\u05d7\u05d5\u05e8 \u05d1\u05e0\u05d5?',
+      audience: { title: '\u05e7\u05d4\u05dc \u05d9\u05e2\u05d3 \u05de\u05d3\u05d5\u05d9\u05e7', desc: '50,000+ \u05e2\u05d5\u05e7\u05d1\u05d9\u05dd \u05e4\u05e2\u05d9\u05dc\u05d9\u05dd \u05e9\u05de\u05d7\u05e4\u05e9\u05d9\u05dd \u05e8\u05db\u05d1 \u05db\u05e8\u05d2\u05e2.' },
+      speed: { title: '\u05de\u05db\u05d9\u05e8\u05d4 \u05de\u05d4\u05d9\u05e8\u05d4', desc: '\u05d4\u05e8\u05db\u05d1 \u05e9\u05dc\u05da \u05de\u05ea\u05e4\u05e8\u05e1\u05dd \u05ea\u05d5\u05da 24 \u05e9\u05e2\u05d5\u05ea \u05d5\u05de\u05d2\u05d9\u05e2 \u05dc\u05d0\u05dc\u05e4\u05d9 \u05e7\u05d5\u05e0\u05d9\u05dd.' },
+      results: { title: '\u05ea\u05d5\u05e6\u05d0\u05d5\u05ea \u05de\u05d5\u05db\u05d7\u05d5\u05ea', desc: '98% \u05de\u05d4\u05dc\u05e7\u05d5\u05d7\u05d5\u05ea \u05e9\u05dc\u05e0\u05d5 \u05de\u05d5\u05db\u05e8\u05d9\u05dd \u05d0\u05ea \u05d4\u05e8\u05db\u05d1 \u05d1\u05ea\u05d5\u05da 7 \u05d9\u05de\u05d9\u05dd.' }
+    },
+    faqs: [
+      { q: '\u05db\u05de\u05d4 \u05d6\u05de\u05df \u05dc\u05d5\u05e7\u05d7 \u05e2\u05d3 \u05e9\u05d4\u05e8\u05db\u05d1 \u05e9\u05dc\u05d9 \u05de\u05ea\u05e4\u05e8\u05e1\u05dd?', a: '\u05dc\u05d0\u05d7\u05e8 \u05e7\u05d1\u05dc\u05ea \u05e4\u05e8\u05d8\u05d9 \u05d4\u05e8\u05db\u05d1, \u05d4\u05ea\u05de\u05d5\u05e0\u05d5\u05ea \u05d5\u05d0\u05d9\u05e9\u05d5\u05e8 \u05d4\u05ea\u05e9\u05dc\u05d5\u05dd \u2013 \u05d4\u05e8\u05db\u05d1 \u05e9\u05dc\u05da \u05d9\u05e2\u05dc\u05d4 \u05dc\u05e4\u05e8\u05e1\u05d5\u05dd \u05ea\u05d5\u05da 24 \u05e9\u05e2\u05d5\u05ea \u05e2\u05e1\u05e7\u05d9\u05d5\u05ea.' },
+      { q: '\u05d4\u05d0\u05dd \u05e0\u05d9\u05ea\u05df \u05dc\u05e4\u05e8\u05e1\u05dd \u05e8\u05db\u05d1 \u05d9\u05e9\u05df?', a: '\u05db\u05df! \u05d0\u05e0\u05d7\u05e0\u05d5 \u05de\u05e4\u05e8\u05e1\u05de\u05d9\u05dd \u05db\u05dc\u05d9 \u05e8\u05db\u05d1 \u05de\u05db\u05dc \u05e9\u05e0\u05d4 \u05d5\u05de\u05db\u05dc \u05e1\u05d5\u05d2. \u05db\u05dc \u05e9\u05e6\u05e8\u05d9\u05da \u05d4\u05d5\u05d0 \u05ea\u05de\u05d5\u05e0\u05d5\u05ea \u05d0\u05d9\u05db\u05d5\u05ea\u05d9\u05d5\u05ea \u05d5\u05e4\u05e8\u05d8\u05d9\u05dd \u05de\u05d3\u05d5\u05d9\u05e7\u05d9\u05dd.' },
+      { q: '\u05d0\u05d9\u05da \u05de\u05ea\u05d1\u05e6\u05e2 \u05d4\u05ea\u05e9\u05dc\u05d5\u05dd?', a: '\u05d4\u05ea\u05e9\u05dc\u05d5\u05dd \u05de\u05ea\u05d1\u05e6\u05e2 \u05d3\u05e8\u05da Bit \u05d0\u05d5 PayBox, \u05d4\u05e2\u05d1\u05e8\u05d4 \u05de\u05d4\u05d9\u05e8\u05d4 \u05d5\u05de\u05d0\u05d5\u05d1\u05d8\u05d7\u05ea \u05dc\u05d7\u05e9\u05d1\u05d5\u05e0\u05e0\u05d5. \u05dc\u05d0\u05d7\u05e8 \u05e7\u05d1\u05dc\u05ea \u05d4\u05d0\u05d9\u05e9\u05d5\u05e8, \u05de\u05ea\u05d7\u05d9\u05dc \u05ea\u05d4\u05dc\u05d9\u05da \u05d4\u05e4\u05e8\u05e1\u05d5\u05dd.' },
+      { q: '\u05de\u05d4 \u05e7\u05d5\u05e8\u05d4 \u05d0\u05dd \u05d4\u05e8\u05db\u05d1 \u05dc\u05d0 \u05e0\u05de\u05db\u05e8?', a: '\u05d1\u05de\u05e7\u05e8\u05d4 \u05db\u05d6\u05d4, \u05e0\u05d9\u05e6\u05d5\u05e8 \u05e7\u05e9\u05e8 \u05d5\u05e0\u05d1\u05d7\u05df \u05d0\u05e4\u05e9\u05e8\u05d5\u05d9\u05d5\u05ea \u05dc\u05d4\u05d2\u05d1\u05e8\u05ea \u05d4\u05d7\u05e9\u05d9\u05e4\u05d4. \u05d0\u05e0\u05d7\u05e0\u05d5 \u05db\u05d0\u05df \u05dc\u05e2\u05d6\u05d5\u05e8 \u05e2\u05d3 \u05e9\u05d4\u05e2\u05e1\u05e7\u05d4 \u05de\u05ea\u05d1\u05e6\u05e2\u05ea.' },
+      { q: '\u05d4\u05d0\u05dd \u05d0\u05d5\u05db\u05dc \u05dc\u05e2\u05e7\u05d5\u05d1 \u05d0\u05d7\u05e8 \u05d4\u05d4\u05d6\u05de\u05e0\u05d4 \u05e9\u05dc\u05d9?', a: '\u05d1\u05d4\u05d7\u05dc\u05d8! \u05dc\u05d0\u05d7\u05e8 \u05e9\u05dc\u05d9\u05d7\u05ea \u05d4\u05d4\u05d6\u05de\u05e0\u05d4 \u05ea\u05e7\u05d1\u05dc \u05de\u05e1\u05e4\u05e8 \u05d4\u05d6\u05de\u05e0\u05d4 \u05d9\u05d9\u05d7\u05d5\u05d3\u05d9 \u05e9\u05d3\u05e8\u05db\u05d5 \u05ea\u05d5\u05db\u05dc \u05dc\u05d1\u05d3\u05d5\u05e7 \u05d0\u05ea \u05d4\u05e1\u05d8\u05d8\u05d5\u05e1 \u05d1\u05db\u05dc \u05e2\u05ea.' },
+      { q: '\u05de\u05d4 \u05d4\u05d4\u05d1\u05d3\u05dc \u05d1\u05d9\u05df \u05d4\u05d7\u05d1\u05d9\u05dc\u05d5\u05ea?', a: '\u05d4\u05d4\u05d1\u05d3\u05dc \u05d4\u05e2\u05d9\u05e7\u05e8\u05d9 \u05d4\u05d5\u05d0 \u05d1\u05db\u05de\u05d5\u05ea \u05d4\u05ea\u05de\u05d5\u05e0\u05d5\u05ea, \u05de\u05e9\u05da \u05d4\u05e4\u05e8\u05e1\u05d5\u05dd, \u05e1\u05d5\u05d2 \u05d4\u05d2\u05e8\u05e4\u05d9\u05e7\u05d4, \u05d5\u05e8\u05de\u05ea \u05d4\u05e7\u05d9\u05d3\u05d5\u05dd. \u05d7\u05d1\u05d9\u05dc\u05ea PRO \u05d4\u05d9\u05d0 \u05d4\u05d1\u05d7\u05d9\u05e8\u05d4 \u05d4\u05e4\u05d5\u05e4\u05d5\u05dc\u05e8\u05d9\u05ea \u05d1\u05d9\u05d5\u05ea\u05e8.' },
+    ],
+    pages: {
+      terms: {
+        title: '\u05ea\u05e7\u05e0\u05d5\u05df \u05d4\u05d0\u05ea\u05e8',
+        content: `1. \u05db\u05dc\u05dc\u05d9\nYOUGO ISRAEL \u05de\u05e1\u05e4\u05e7\u05ea \u05e9\u05d9\u05e8\u05d5\u05ea\u05d9 \u05e4\u05e8\u05e1\u05d5\u05dd \u05d1\u05e8\u05e9\u05ea\u05d5\u05ea \u05d7\u05d1\u05e8\u05ea\u05d9\u05d5\u05ea \u05dc\u05de\u05db\u05d9\u05e8\u05ea \u05e8\u05db\u05d1\u05d9\u05dd.\n\n2. \u05ea\u05e0\u05d0\u05d9 \u05e9\u05d9\u05e8\u05d5\u05ea\n\u05d4\u05e9\u05d9\u05e8\u05d5\u05ea \u05de\u05d5\u05ea\u05e0\u05d4 \u05d1\u05ea\u05e9\u05dc\u05d5\u05dd \u05de\u05e8\u05d0\u05e9 \u05d5\u05d1\u05d0\u05e1\u05e4\u05e7\u05ea \u05ea\u05de\u05d5\u05e0\u05d5\u05ea \u05d5\u05e1\u05e8\u05d8\u05d5\u05e0\u05d9\u05dd \u05d0\u05d9\u05db\u05d5\u05ea\u05d9\u05d9\u05dd \u05e9\u05dc \u05d4\u05e8\u05db\u05d1.\n\n3. \u05de\u05d3\u05d9\u05e0\u05d9\u05d5\u05ea \u05d4\u05d7\u05d6\u05e8\u05d9\u05dd\n\u05dc\u05d0 \u05d9\u05d9\u05e0\u05ea\u05e0\u05d5 \u05d4\u05d7\u05d6\u05e8\u05d9\u05dd \u05dc\u05d0\u05d7\u05e8 \u05e4\u05e8\u05e1\u05d5\u05dd \u05d4\u05de\u05d5\u05d3\u05e2\u05d4. \u05d1\u05de\u05e7\u05e8\u05d4 \u05e9\u05dc \u05d1\u05e2\u05d9\u05d4 \u05d8\u05db\u05e0\u05d9\u05ea, \u05e0\u05e6\u05d9\u05e2 \u05e4\u05ea\u05e8\u05d5\u05df \u05d7\u05dc\u05d5\u05e4\u05d9.\n\n4. \u05d0\u05d7\u05e8\u05d9\u05d5\u05ea\nYOUGO ISRAEL \u05d0\u05d9\u05e0\u05d4 \u05d0\u05d7\u05e8\u05d0\u05d9\u05ea \u05dc\u05ea\u05d5\u05e6\u05d0\u05d5\u05ea \u05d4\u05de\u05db\u05d9\u05e8\u05d4, \u05d0\u05da \u05de\u05ea\u05d7\u05d9\u05d9\u05d1\u05ea \u05dc\u05e1\u05e4\u05e7 \u05d0\u05ea \u05e9\u05d9\u05e8\u05d5\u05ea \u05d4\u05e4\u05e8\u05e1\u05d5\u05dd \u05db\u05de\u05d5\u05e1\u05db\u05dd.`
+      },
+      privacy: {
+        title: '\u05de\u05d3\u05d9\u05e0\u05d9\u05d5\u05ea \u05e4\u05e8\u05d8\u05d9\u05d5\u05ea',
+        content: `1. \u05d0\u05d9\u05e1\u05d5\u05e3 \u05de\u05d9\u05d3\u05e2\n\u05d0\u05e0\u05d5 \u05d0\u05d5\u05e1\u05e4\u05d9\u05dd \u05e4\u05e8\u05d8\u05d9\u05dd \u05d0\u05d9\u05e9\u05d9\u05d9\u05dd \u05db\u05d2\u05d5\u05df \u05e9\u05dd, \u05d8\u05dc\u05e4\u05d5\u05df, \u05d5\u05de\u05d9\u05d3\u05e2 \u05e2\u05dc \u05d4\u05e8\u05db\u05d1 \u05dc\u05e6\u05d5\u05e8\u05da \u05de\u05ea\u05df \u05d4\u05e9\u05d9\u05e8\u05d5\u05ea \u05d1\u05dc\u05d1\u05d3.\n\n2. \u05e9\u05de\u05d9\u05e8\u05ea \u05de\u05d9\u05d3\u05e2\n\u05db\u05dc \u05d4\u05de\u05d9\u05d3\u05e2 \u05de\u05d0\u05d5\u05d7\u05e1\u05df \u05d1\u05e6\u05d5\u05e8\u05d4 \u05de\u05d0\u05d5\u05d1\u05d8\u05d7\u05ea \u05d5\u05d0\u05d9\u05e0\u05d5 \u05de\u05d5\u05e2\u05d1\u05e8 \u05dc\u05e6\u05d3 \u05e9\u05dc\u05d9\u05e9\u05d9.\n\n3. \u05d6\u05db\u05d5\u05d9\u05d5\u05ea \u05d4\u05de\u05e9\u05ea\u05de\u05e9\n\u05d9\u05e9 \u05dc\u05da \u05d4\u05d6\u05db\u05d5\u05ea \u05dc\u05d1\u05e7\u05e9 \u05de\u05d7\u05d9\u05e7\u05ea \u05d4\u05e0\u05ea\u05d5\u05e0\u05d9\u05dd \u05e9\u05dc\u05da \u05d1\u05db\u05dc \u05e2\u05ea.`
+      },
+      about: {
+        title: '\u05de\u05d9 \u05d0\u05e0\u05d7\u05e0\u05d5',
+        content: `YOUGO ISRAEL \u05d4\u05d9\u05d0 \u05e4\u05dc\u05d8\u05e4\u05d5\u05e8\u05de\u05ea \u05d4\u05e9\u05d9\u05d5\u05d5\u05e7 \u05d4\u05d3\u05d9\u05d2\u05d9\u05d8\u05dc\u05d9 \u05d4\u05de\u05d5\u05d1\u05d9\u05dc\u05d4 \u05dc\u05de\u05db\u05d9\u05e8\u05ea \u05e8\u05db\u05d1\u05d9\u05dd \u05d1\u05d9\u05e9\u05e8\u05d0\u05dc.\n\n\u05d0\u05e0\u05d7\u05e0\u05d5 \u05de\u05ea\u05de\u05d7\u05d9\u05dd \u05d1\u05e4\u05e8\u05e1\u05d5\u05dd \u05de\u05de\u05d5\u05e7\u05d3 \u05d1\u05e8\u05e9\u05ea\u05d5\u05ea \u05d7\u05d1\u05e8\u05ea\u05d9\u05d5\u05ea, \u05e2\u05dd \u05d3\u05d2\u05e9 \u05e2\u05dc \u05d0\u05d9\u05e0\u05e1\u05d8\u05d2\u05e8\u05dd \u05d5\u05e8\u05d9\u05dc\u05e1.\n\n\u05d4\u05e6\u05d5\u05d5\u05ea \u05e9\u05dc\u05e0\u05d5 \u05de\u05d5\u05e8\u05db\u05d1 \u05de\u05d0\u05e0\u05e9\u05d9 \u05e9\u05d9\u05d5\u05d5\u05e7 \u05d3\u05d9\u05d2\u05d9\u05d8\u05dc\u05d9 \u05d5\u05de\u05e2\u05e6\u05d1\u05d9\u05dd \u05de\u05e7\u05e6\u05d5\u05e2\u05d9\u05d9\u05dd \u05e9\u05d9\u05d5\u05e6\u05e8\u05d9\u05dd \u05de\u05d5\u05d3\u05e2\u05d5\u05ea \u05e9\u05de\u05d5\u05db\u05e8\u05d5\u05ea.`
+      }
+    }
+  },
+  ar: {
+    positioningLine: '\u0627\u0644\u0625\u0639\u0644\u0627\u0646 \u0627\u0644\u0630\u064a \u064a\u0628\u064a\u0639 \u0627\u0644\u0633\u064a\u0627\u0631\u0627\u062a \u2013 \u0644\u0627 \u064a\u0639\u0631\u0636\u0647\u0627 \u0641\u0642\u0637.',
+    heroTitle: '\u062a\u0628\u064a\u0639 \u0633\u064a\u0627\u0631\u0629\u061f \u0646\u0628\u064a\u0639\u0647\u0627 \u0623\u0633\u0631\u0639.',
+    heroSubtitle: 'YOUGO ISRAEL - \u0645\u0646\u0635\u0629 \u0627\u0644\u062a\u0633\u0648\u064a\u0642 \u0627\u0644\u0631\u0627\u0626\u062f\u0629 \u0639\u0644\u0649 \u0625\u0646\u0633\u062a\u063a\u0631\u0627\u0645 \u0644\u0628\u064a\u0639 \u0627\u0644\u0633\u064a\u0627\u0631\u0627\u062a.',
+    startOrder: '\u0627\u0628\u062f\u0623 \u0627\u0644\u0637\u0644\u0628',
+    packages: '\u0627\u0644\u0628\u0627\u0642\u0627\u062a',
+    checkout: '\u0625\u062a\u0645\u0627\u0645 \u0627\u0644\u0637\u0644\u0628',
+    carDetails: '\u062a\u0641\u0627\u0635\u064a\u0644 \u0627\u0644\u0633\u064a\u0627\u0631\u0629',
+    personalDetails: '\u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u062a\u0648\u0627\u0635\u0644',
+    uploadProof: '\u0631\u0641\u0639 \u0625\u064a\u0635\u0627\u0644 \u0627\u0644\u062f\u0641\u0639',
+    submitOrder: '\u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0637\u0644\u0628',
+    orderSuccess: '\u062a\u0645 \u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0637\u0644\u0628 \u0628\u0646\u062c\u0627\u062d!',
+    mostPopular: '\u0627\u0644\u0623\u0643\u062b\u0631 \u0634\u064a\u0648\u0639\u0627\u064b',
+    basic: '\u0623\u0633\u0627\u0633\u064a',
+    pro: '\u0628\u0631\u0648',
+    premium: '\u0628\u0631\u064a\u0645\u064a\u0648\u0645',
+    packageSubtitles: {
+      basic: '\u0628\u0627\u0642\u0629 \u0627\u0644\u0628\u062f\u0627\u064a\u0629 \u0644\u0644\u0625\u0639\u0644\u0627\u0646',
+      pro: '\u0627\u0644\u0627\u062e\u062a\u064a\u0627\u0631 \u0627\u0644\u0634\u0639\u0628\u064a',
+      premium: '\u0623\u0642\u0635\u0649 \u062a\u0639\u0631\u0636'
+    },
+    features: {
+      images2: '\u0635\u0648\u0631\u062a\u0627\u0646 \u0627\u062d\u062a\u0631\u0627\u0641\u064a\u062a\u0627\u0646',
+      post1: '\u0645\u0646\u0634\u0648\u0631 \u0648\u0627\u062d\u062f \u0639\u0644\u0649 \u0625\u0646\u0633\u062a\u063a\u0631\u0627\u0645',
+      story7: '\u0633\u062a\u0648\u0631\u064a 7 \u0623\u064a\u0627\u0645',
+      exposureBasic: '\u062a\u0639\u0631\u0636 \u0644\u062c\u0645\u0647\u0648\u0631 \u0645\u0647\u062a\u0645',
+      images4: '4 \u0635\u0648\u0631 \u0627\u062d\u062a\u0631\u0627\u0641\u064a\u0629',
+      postPro: '\u0645\u0646\u0634\u0648\u0631 + \u0631\u0633\u0648\u0645 \u062e\u0627\u0635\u0629',
+      story14: '\u0633\u062a\u0648\u0631\u064a 14 \u064a\u0648\u0645',
+      priorityPro: '\u0623\u0648\u0644\u0648\u064a\u0629 \u0627\u0644\u0646\u0634\u0631',
+      exposurePro: '\u062a\u0639\u0631\u0636 \u0644\u062c\u0645\u0647\u0648\u0631 \u0645\u0633\u062a\u0647\u062f\u0641',
+      imagesPremium: '8 \u0635\u0648\u0631 \u0627\u062d\u062a\u0631\u0627\u0641\u064a\u0629',
+      postPremium: '\u0645\u0646\u0634\u0648\u0631 \u0628\u0631\u064a\u0645\u064a\u0648\u0645',
+      story30: '\u0633\u062a\u0648\u0631\u064a 30 \u064a\u0648\u0645',
+      priorityFull: '\u0623\u0648\u0644\u0648\u064a\u0629 \u0643\u0627\u0645\u0644\u0629',
+      exposureMax: '\u0623\u0642\u0635\u0649 \u062a\u0639\u0631\u0636',
+      guidance: '\u0645\u062a\u0627\u0628\u0639\u0629 \u0634\u062e\u0635\u064a\u0629 \u062d\u062a\u0649 \u0627\u0644\u0628\u064a\u0639',
+      video: '\u0631\u064a\u0644\u0632 \u0641\u064a\u062f\u064a\u0648 15 \u062b\u0627\u0646\u064a\u0629'
+    },
+    whyUs: {
+      title: '\u0644\u0645\u0627\u0630\u0627 \u062a\u062e\u062a\u0627\u0631\u0646\u0627\u061f',
+      audience: { title: '\u062c\u0645\u0647\u0648\u0631 \u0645\u0633\u062a\u0647\u062f\u0641', desc: '+50,000 \u0645\u062a\u0627\u0628\u0639 \u0646\u0634\u0637 \u064a\u0628\u062d\u062b\u0648\u0646 \u0639\u0646 \u0633\u064a\u0627\u0631\u0629 \u0627\u0644\u0622\u0646.' },
+      speed: { title: '\u0628\u064a\u0639 \u0633\u0631\u064a\u0639', desc: '\u0633\u064a\u0627\u0631\u062a\u0643 \u062a\u064f\u0646\u0634\u0631 \u062e\u0644\u0627\u0644 24 \u0633\u0627\u0639\u0629 \u0648\u062a\u0635\u0644 \u0644\u0622\u0644\u0627\u0641 \u0627\u0644\u0645\u0634\u062a\u0631\u064a\u0646.' },
+      results: { title: '\u0646\u062a\u0627\u0626\u062c \u0645\u062b\u0628\u062a\u0629', desc: '98% \u0645\u0646 \u0639\u0645\u0644\u0627\u0626\u0646\u0627 \u064a\u0628\u064a\u0639\u0648\u0646 \u0633\u064a\u0627\u0631\u0627\u062a\u0647\u0645 \u062e\u0644\u0627\u0644 7 \u0623\u064a\u0627\u0645.' }
+    },
+    faqs: [
+      { q: '\u0643\u0645 \u064a\u0633\u062a\u063a\u0631\u0642 \u0646\u0634\u0631 \u0625\u0639\u0644\u0627\u0646 \u0633\u064a\u0627\u0631\u062a\u064a\u061f', a: '\u0628\u0639\u062f \u0627\u0633\u062a\u0644\u0627\u0645 \u062a\u0641\u0627\u0635\u064a\u0644 \u0627\u0644\u0633\u064a\u0627\u0631\u0629 \u0648\u0627\u0644\u0635\u0648\u0631 \u0648\u0625\u064a\u0635\u0627\u0644 \u0627\u0644\u062f\u0641\u0639 - \u0633\u064a\u062a\u0645 \u0646\u0634\u0631 \u0633\u064a\u0627\u0631\u062a\u0643 \u062e\u0644\u0627\u0644 24 \u0633\u0627\u0639\u0629 \u0639\u0645\u0644.' },
+      { q: '\u0647\u0644 \u064a\u0645\u0643\u0646 \u0627\u0644\u0625\u0639\u0644\u0627\u0646 \u0639\u0646 \u0633\u064a\u0627\u0631\u0629 \u0642\u062f\u064a\u0645\u0629\u061f', a: '\u0646\u0639\u0645! \u0646\u064f\u0639\u0644\u0646 \u0639\u0646 \u062c\u0645\u064a\u0639 \u0623\u0646\u0648\u0627\u0639 \u0648\u0645\u0648\u062f\u064a\u0644\u0627\u062a \u0627\u0644\u0633\u064a\u0627\u0631\u0627\u062a. \u0627\u0644\u0645\u0637\u0644\u0648\u0628 \u0641\u0642\u0637 \u0635\u0648\u0631 \u062c\u064a\u062f\u0629 \u0648\u062a\u0641\u0627\u0635\u064a\u0644 \u062f\u0642\u064a\u0642\u0629.' },
+      { q: '\u0643\u064a\u0641 \u064a\u062a\u0645 \u0627\u0644\u062f\u0641\u0639\u061f', a: '\u0627\u0644\u062f\u0641\u0639 \u0639\u0628\u0631 Bit \u0623\u0648 PayBox\u060c \u062a\u062d\u0648\u064a\u0644 \u0633\u0631\u064a\u0639 \u0648\u0622\u0645\u0646. \u0628\u0639\u062f \u0627\u0644\u0627\u0633\u062a\u0644\u0627\u0645 \u064a\u0628\u062f\u0623 \u0639\u0645\u0644\u064a\u0629 \u0627\u0644\u0646\u0634\u0631.' },
+      { q: '\u0645\u0627\u0630\u0627 \u0644\u0648 \u0644\u0645 \u062a\u064f\u0628\u0627\u0639 \u0627\u0644\u0633\u064a\u0627\u0631\u0629\u061f', a: '\u0633\u0646\u062a\u0648\u0627\u0635\u0644 \u0645\u0639\u0643 \u0644\u0645\u0631\u0627\u062c\u0639\u0629 \u062e\u064a\u0627\u0631\u0627\u062a \u0632\u064a\u0627\u062f\u0629 \u0627\u0644\u062a\u0639\u0631\u0636. \u0646\u062d\u0646 \u0647\u0646\u0627 \u0644\u0644\u0645\u0633\u0627\u0639\u062f\u0629 \u062d\u062a\u0649 \u0625\u062a\u0645\u0627\u0645 \u0627\u0644\u0635\u0641\u0642\u0629.' },
+      { q: '\u0647\u0644 \u064a\u0645\u0643\u0646\u0646\u064a \u0645\u062a\u0627\u0628\u0639\u0629 \u0637\u0644\u0628\u064a\u061f', a: '\u0628\u0627\u0644\u062a\u0623\u0643\u064a\u062f! \u0628\u0639\u062f \u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0637\u0644\u0628 \u0633\u062a\u062d\u0635\u0644 \u0639\u0644\u0649 \u0631\u0642\u0645 \u0637\u0644\u0628 \u0641\u0631\u064a\u062f \u064a\u0645\u0643\u0646\u0643 \u0645\u0646 \u062e\u0644\u0627\u0644\u0647 \u0627\u0644\u062a\u062d\u0642\u0642 \u0645\u0646 \u0627\u0644\u062d\u0627\u0644\u0629 \u0641\u064a \u0623\u064a \u0648\u0642\u062a.' },
+      { q: '\u0645\u0627 \u0627\u0644\u0641\u0631\u0642 \u0628\u064a\u0646 \u0627\u0644\u0628\u0627\u0642\u0627\u062a\u061f', a: '\u0627\u0644\u0641\u0631\u0642 \u0627\u0644\u0631\u0626\u064a\u0633\u064a \u0641\u064a \u0639\u062f\u062f \u0627\u0644\u0635\u0648\u0631 \u0648\u0645\u062f\u0629 \u0627\u0644\u0646\u0634\u0631 \u0648\u0646\u0648\u0639 \u0627\u0644\u062a\u0635\u0645\u064a\u0645 \u0648\u0645\u0633\u062a\u0648\u0649 \u0627\u0644\u062a\u0631\u0648\u064a\u062c.' },
+    ],
+    pages: {
+      terms: { title: '\u0644\u0627\u0626\u062d\u0629 \u0627\u0644\u0645\u0648\u0642\u0639', content: '1. \u0639\u0627\u0645\n\u064a\u0648\u063a\u0648 \u0625\u0633\u0631\u0627\u0626\u064a\u0644 \u062a\u0642\u062f\u0645 \u062e\u062f\u0645\u0627\u062a \u0625\u0639\u0644\u0627\u0646 \u0639\u0644\u0649 \u0648\u0633\u0627\u0626\u0644 \u0627\u0644\u062a\u0648\u0627\u0635\u0644 \u0627\u0644\u0627\u062c\u062a\u0645\u0627\u0639\u064a.' },
+      privacy: { title: '\u0633\u064a\u0627\u0633\u0629 \u0627\u0644\u062e\u0635\u0648\u0635\u064a\u0629', content: '1. \u062c\u0645\u0639 \u0627\u0644\u0645\u0639\u0644\u0648\u0645\u0627\u062a\n\u0646\u062c\u0645\u0639 \u0628\u064a\u0627\u0646\u0627\u062a \u0634\u062e\u0635\u064a\u0629 \u0644\u062a\u0642\u062f\u064a\u0645 \u0627\u0644\u062e\u062f\u0645\u0629 \u0641\u0642\u0637.' },
+      about: { title: '\u0645\u0646 \u0646\u062d\u0646', content: '\u064a\u0648\u063a\u0648 \u0625\u0633\u0631\u0627\u0626\u064a\u0644 \u0647\u064a \u0645\u0646\u0635\u0629 \u0627\u0644\u062a\u0633\u0648\u064a\u0642 \u0627\u0644\u0631\u0642\u0645\u064a \u0627\u0644\u0631\u0627\u0626\u062f\u0629 \u0644\u0628\u064a\u0639 \u0627\u0644\u0633\u064a\u0627\u0631\u0627\u062a \u0641\u064a \u0625\u0633\u0631\u0627\u0626\u064a\u0644.' }
+    }
+  }
+};
 
-interface Order {
-  id: string;
-  package_name: string;
-  full_name: string;
-  phone: string;
-  car_model: string;
-  car_year: string;
-  car_mileage: string;
-  car_price: string;
-  car_registration: string;
-  car_test_until: string;
-  location: string;
-  payment_proof: string;
-  car_images: string;
-  status: string;
-  created_at: string;
-}
+// \u2500\u2500\u2500 STATUS HELPER \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+const getStatusInfo = (status) => {
+  switch (status) {
+    case 'Published': return { label: '\u05e4\u05d5\u05e8\u05e1\u05dd \u2713', labelAr: '\u062a\u0645 \u0627\u0644\u0646\u0634\u0631 \u2713', color: '#22c55e', bg: 'rgba(34,197,94,0.12)', border: 'rgba(34,197,94,0.3)' };
+    case 'Payment Verified': return { label: '\u05ea\u05e9\u05dc\u05d5\u05dd \u05d0\u05d5\u05e9\u05e8', labelAr: '\u062a\u0645 \u0627\u0644\u062a\u062d\u0642\u0642 \u0645\u0646 \u0627\u0644\u062f\u0641\u0639', color: '#3b82f6', bg: 'rgba(59,130,246,0.12)', border: 'rgba(59,130,246,0.3)' };
+    case 'Rejected': return { label: '\u05e0\u05d3\u05d7\u05d4', labelAr: '\u0645\u0631\u0641\u0648\u0636', color: '#ef4444', bg: 'rgba(239,68,68,0.12)', border: 'rgba(239,68,68,0.3)' };
+    default: return { label: '\u05de\u05de\u05ea\u05d9\u05df \u05dc\u05d1\u05d3\u05d9\u05e7\u05d4', labelAr: '\u0642\u064a\u062f \u0627\u0644\u0645\u0631\u0627\u062c\u0639\u0629', color: '#f59e0b', bg: 'rgba(245,158,11,0.12)', border: 'rgba(245,158,11,0.3)' };
+  }
+};
 
-// --- Components ---
-
-const Navbar = ({ lang, setLang, isAdmin, onLogout, siteSettings, setView }: { lang: Language, setLang: (l: Language) => void, isAdmin?: boolean, onLogout?: () => void, siteSettings: any, setView: (v: string) => void }) => {
+// \u2500\u2500\u2500 NAVBAR \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+const Navbar = ({ lang, setLang, isAdmin, onLogout, siteSettings, setView }) => {
   const t = translations[lang];
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', fn);
+    return () => window.removeEventListener('scroll', fn);
+  }, []);
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-dark-bg/90 backdrop-blur-xl border-b border-white/5">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
-          {/* Logo */}
-          <div className="flex items-center gap-3">
-            <motion.div 
-              whileHover={{ rotate: 10, scale: 1.1 }}
-              className="p-2.5 bg-gradient-to-br from-brand-red to-red-700 rounded-xl shadow-lg shadow-brand-red/20"
-            >
-              <Car size={26} className="text-white" />
-            </motion.div>
-            <div>
-              <div className="text-2xl font-black tracking-tighter">
-                <span className="text-brand-red">YOUGO</span> <span className="text-white">ISRAEL</span>
-              </div>
-              <div className="text-[9px] text-white/40 font-bold tracking-wider">
-                {siteSettings.positioning_line_he || t.positioningLine}
-              </div>
+    <nav style={{
+      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
+      background: scrolled ? 'rgba(8,6,10,0.92)' : 'rgba(8,6,10,0.6)',
+      backdropFilter: 'blur(20px)',
+      borderBottom: scrolled ? '1px solid rgba(200,16,46,0.15)' : '1px solid rgba(255,255,255,0.04)',
+      transition: 'all 0.3s ease'
+    }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 24px', height: 72, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        {/* Logo */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ width: 38, height: 38, background: 'linear-gradient(135deg,#c8102e,#8b0011)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 16px rgba(200,16,46,0.35)' }}>
+            <Car size={20} color="#fff" />
+          </div>
+          <div>
+            <div style={{ fontWeight: 900, fontSize: 18, letterSpacing: '-0.5px', color: '#fff', lineHeight: 1 }}>
+              YOUGO <span style={{ color: '#c8102e' }}>ISRAEL</span>
+            </div>
+            <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', fontWeight: 700, letterSpacing: '0.04em', lineHeight: 1, marginTop: 2 }}>
+              {siteSettings?.positioning_line_he || t.positioningLine}
             </div>
           </div>
-
-          {/* Desktop Menu */}
-          <div className="hidden md:flex items-center gap-8">
-            <a href="#how-it-works" className="text-sm font-bold text-white/70 hover:text-brand-red transition-colors">איך זה עובד</a>
-            <a href="#packages" className="text-sm font-bold text-white/70 hover:text-brand-red transition-colors">חבילות</a>
-            <button onClick={() => setView('check-status')} className="text-sm font-bold text-white/70 hover:text-brand-red transition-colors">בדיקת סטטוס</button>
-            <a href="#faq" className="text-sm font-bold text-white/70 hover:text-brand-red transition-colors">שאלות</a>
-            
-            <button 
-              onClick={() => setLang(lang === 'he' ? 'ar' : 'he')}
-              className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-xl border border-white/10 text-sm font-bold hover:bg-white/10 transition-colors"
-            >
-              <Globe size={16} />
-              {lang === 'he' ? 'العربية' : 'עברית'}
-            </button>
-
-            {isAdmin && (
-              <button onClick={onLogout} className="text-sm font-bold text-white/40 hover:text-white transition-colors">
-                <LogOut size={18} />
-              </button>
-            )}
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button 
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg bg-white/5 border border-white/10"
-          >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
         </div>
 
-        {/* Mobile Menu */}
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div 
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="md:hidden py-4 space-y-2 border-t border-white/5"
-            >
-              <a href="#how-it-works" className="block py-3 px-4 text-white/70 hover:bg-white/5 rounded-lg transition-colors">איך זה עובד</a>
-              <a href="#packages" className="block py-3 px-4 text-white/70 hover:bg-white/5 rounded-lg transition-colors">חבילות</a>
-              <button onClick={() => { setView('check-status'); setMobileMenuOpen(false); }} className="block w-full text-right py-3 px-4 text-white/70 hover:bg-white/5 rounded-lg transition-colors">בדיקת סטטוס</button>
-              <a href="#faq" className="block py-3 px-4 text-white/70 hover:bg-white/5 rounded-lg transition-colors">שאלות</a>
-              
-              <button 
-                onClick={() => setLang(lang === 'he' ? 'ar' : 'he')}
-                className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-white/5 rounded-lg border border-white/10"
-              >
-                <Globe size={16} />
-                {lang === 'he' ? 'العربية' : 'עברית'}
-              </button>
-            </motion.div>
+        {/* Nav links */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
+          <div style={{ display: 'flex', gap: 28 }}>
+            {[
+              { label: '\u05d0\u05d9\u05da \u05d6\u05d4 \u05e2\u05d5\u05d1\u05d3', href: '#how-it-works' },
+              { label: '\u05d7\u05d1\u05d9\u05dc\u05d5\u05ea', href: '#packages' },
+            ].map((l, i) => (
+              <a key={i} href={l.href} style={{ fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.55)', textDecoration: 'none', transition: 'color 0.2s' }}
+                onMouseEnter={e => e.target.style.color = '#c8102e'}
+                onMouseLeave={e => e.target.style.color = 'rgba(255,255,255,0.55)'}>
+                {l.label}
+              </a>
+            ))}
+            <button onClick={() => setView('check-status')} style={{ fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.55)', background: 'none', border: 'none', cursor: 'pointer', transition: 'color 0.2s', display: 'flex', alignItems: 'center', gap: 6 }}
+              onMouseEnter={e => e.target.style.color = '#c8102e'}
+              onMouseLeave={e => e.target.style.color = 'rgba(255,255,255,0.55)'}>
+              <Search size={13} />
+              \u05d1\u05d3\u05d9\u05e7\u05ea \u05e1\u05d8\u05d8\u05d5\u05e1
+            </button>
+          </div>
+
+          <div style={{ width: 1, height: 24, background: 'rgba(255,255,255,0.08)' }} />
+
+          <button onClick={() => setLang(lang === 'he' ? 'ar' : 'he')} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.5)', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', padding: '6px 14px', borderRadius: 20, cursor: 'pointer' }}>
+            <Globe size={13} />
+            {lang === 'he' ? '\u0627\u0644\u0639\u0631\u0628\u064a\u0629' : '\u05e2\u05d1\u05e8\u05d9\u05ea'}
+          </button>
+
+          {isAdmin && (
+            <button onClick={onLogout} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, fontWeight: 800, color: 'rgba(255,255,255,0.4)', background: 'none', border: 'none', cursor: 'pointer' }}>
+              <LogOut size={15} />
+            </button>
           )}
-        </AnimatePresence>
+        </div>
       </div>
     </nav>
   );
 };
 
-interface PackageCardProps {
-  pkg: Package;
-  lang: Language;
-  onSelect: (p: Package) => void;
-  key?: string;
-}
-
-const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose: () => void, title: string, children: React.ReactNode }) => {
+// \u2500\u2500\u2500 BIT / PAYBOX LOGOS \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+const BitLogo = ({ size = 'md' }) => {
+  const h = size === 'sm' ? 26 : size === 'lg' ? 38 : 30;
+  const fs = size === 'sm' ? 12 : size === 'lg' ? 17 : 14;
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-          />
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="relative glass-card w-full max-w-2xl max-h-[80vh] overflow-y-auto p-8 space-y-6"
-          >
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
-              <h3 className="text-2xl font-bold text-brand-red">{title}</h3>
-              <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full transition-colors">
-                <X size={24} />
-              </button>
-            </div>
-            <div className="text-white/80 leading-relaxed whitespace-pre-wrap text-lg">
-              {children.toString().split('\n').map((line, i) => (
-                <p key={i} className={line.match(/^\d+\./) ? "mb-4 font-bold text-white" : "mb-4"}>
-                  {line}
-                </p>
-              ))}
-            </div>
-            <div className="pt-4 flex justify-end">
-              <button onClick={onClose} className="btn-primary py-2 px-6">סגור</button>
-            </div>
-          </motion.div>
-        </div>
-      )}
-    </AnimatePresence>
+    <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: 10, overflow: 'hidden', background: '#0D3D3D', height: h, padding: '0 12px', gap: 5 }}>
+      <svg width={fs * 0.5} height={h * 0.65} viewBox="0 0 9 18" fill="none">
+        <circle cx="4.5" cy="2" r="2" fill="#00E5CC"/>
+        <rect x="2.5" y="6" width="4" height="10" rx="2" fill="#00E5CC"/>
+      </svg>
+      <span style={{ fontWeight: 800, fontSize: fs, color: '#00E5CC', letterSpacing: '-0.5px' }}>bit</span>
+    </div>
   );
 };
 
-// --- VIP Package Card ---
-const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
-  const t = translations[lang];
+const PayBoxLogo = ({ size = 'md' }) => {
+  const h = size === 'sm' ? 26 : size === 'lg' ? 38 : 30;
+  const fs = size === 'sm' ? 10 : size === 'lg' ? 15 : 12;
   return (
-    <motion.div
-      whileHover={{ y: -8 }}
-      transition={{ type: "spring", stiffness: 280 }}
-      className="relative w-[260px] md:w-full rounded-3xl overflow-hidden h-full flex flex-col snap-center shrink-0 group"
-      style={{
-        boxShadow: '0 20px 40px -15px rgba(212,175,55,0.3), 0 0 0 1px rgba(212,175,55,0.2) inset',
-        background: 'radial-gradient(circle at 100% 0%, #2a1f0a 0%, #0f0c05 80%)'
-      }}
-    >
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-amber-300 to-transparent" />
-      
-      <div className="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity duration-500" style={{
-        backgroundImage: 'radial-gradient(circle at 20% 30%, #d4af37 2px, transparent 2px), radial-gradient(circle at 80% 70%, #d4af37 1px, transparent 1px)',
-        backgroundSize: '50px 50px, 30px 30px'
-      }} />
+    <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: 10, overflow: 'hidden', background: '#29ABE2', height: h, padding: '0 12px', gap: 6 }}>
+      <svg width={fs} height={fs} viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="6" r="3" stroke="white" strokeWidth="2.5" fill="none"/>
+        <path d="M5 10 L9 14 L9 20 L15 20 L15 14 L19 10" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+      </svg>
+      <span style={{ fontWeight: 700, fontSize: fs, color: '#fff' }}>PayBox</span>
+    </div>
+  );
+};
 
-      <div className="relative z-10 p-5 space-y-4 flex-grow flex flex-col">
-        <div className="flex items-center flex-wrap gap-2">
-          <div className="flex items-center gap-1.5 bg-gradient-to-r from-amber-900/40 to-amber-800/20 rounded-full px-3 py-1 border border-amber-500/30">
-            <Crown size={12} className="text-amber-400" />
-            <span className="text-[9px] font-black uppercase tracking-wider text-amber-300">VIP LUXURY</span>
-          </div>
-          <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-full px-2 py-1">
-            <span className="text-[8px] font-black text-emerald-400">15%</span>
-          </div>
-          <div className="flex mr-auto">
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} size={10} className="text-amber-400 fill-amber-400" />
-            ))}
-          </div>
+// \u2500\u2500\u2500 BUSINESS BANNER \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+const BusinessBanner = () => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    style={{
+      borderRadius: 24,
+      overflow: 'hidden',
+      border: '1px solid rgba(255,255,255,0.07)',
+      background: 'linear-gradient(135deg, #0d0d0f 0%, #12090a 100%)',
+      position: 'relative'
+    }}
+  >
+    {/* Decorative accent */}
+    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'linear-gradient(90deg, transparent, #c8102e 40%, #ff6b35 70%, transparent)' }} />
+    <div style={{ position: 'absolute', top: 0, right: 0, width: 300, height: 300, background: 'radial-gradient(circle, rgba(200,16,46,0.06) 0%, transparent 70%)', pointerEvents: 'none' }} />
+
+    <div style={{ padding: '40px 48px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 32, flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 20 }}>
+        <div style={{ width: 56, height: 56, borderRadius: 16, background: 'rgba(200,16,46,0.12)', border: '1px solid rgba(200,16,46,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <Building2 size={26} color="#c8102e" />
         </div>
-
         <div>
-          <h3 className="text-xl md:text-2xl font-black bg-gradient-to-l from-amber-200 via-amber-400 to-amber-300 bg-clip-text text-transparent">
-            VIP LUXURY
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(200,16,46,0.1)', border: '1px solid rgba(200,16,46,0.2)', borderRadius: 20, padding: '4px 14px', marginBottom: 10 }}>
+            <span style={{ fontSize: 9, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.2em', color: '#c8102e' }}>\u05dc\u05e1\u05d5\u05db\u05e0\u05d5\u05d9\u05d5\u05ea \u05d5\u05de\u05d2\u05e8\u05e9\u05d9\u05dd</span>
+          </div>
+          <h3 style={{ fontSize: 28, fontWeight: 900, color: '#fff', margin: '0 0 8px', lineHeight: 1.1 }}>
+            \u05d7\u05d1\u05d9\u05dc\u05ea <span style={{ color: '#c8102e' }}>BUSINESS</span> \u05dc\u05e2\u05e1\u05e7\u05d9\u05dd
           </h3>
-          <p className="text-amber-100/40 text-[11px] mt-1 leading-relaxed">
-            חבילת הפרסום האולטימטיבית
+          <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', lineHeight: 1.7, margin: 0, maxWidth: 420 }}>
+            \u05de\u05e0\u05d4\u05dc\u05d9\u05dd \u05de\u05d2\u05e8\u05e9 \u05e8\u05db\u05d1\u05d9\u05dd \u05d0\u05d5 \u05e1\u05d5\u05db\u05e0\u05d5\u05ea? \u05e7\u05d1\u05dc\u05d5 \u05e4\u05e8\u05e1\u05d5\u05dd \u05dc\u05d1\u05dc\u05d9 \u05de\u05d2\u05d1\u05dc\u05d4 \u2014 \u05e2\u05d3 50 \u05e8\u05db\u05d1\u05d9\u05dd \u05d1\u05d7\u05d5\u05d3\u05e9, \u05e0\u05d9\u05d4\u05d5\u05dc \u05d9\u05d9\u05e2\u05d5\u05d3\u05d9, \u05d3\u05d5\u05d7\u05d5\u05ea \u05d7\u05e9\u05d9\u05e4\u05d4 \u05d7\u05d5\u05d3\u05e9\u05d9\u05d9\u05dd, \u05d5\u05de\u05e0\u05d4\u05dc \u05ea\u05d9\u05e7 \u05d0\u05d9\u05e9\u05d9 \u05e9\u05d6\u05de\u05d9\u05df \u05dc\u05db\u05dd 24/7.
           </p>
-        </div>
-
-        <div className="flex items-baseline gap-2">
-          <span className="text-2xl font-black text-amber-400">₪749</span>
-          <span className="text-xs line-through text-white/20">₪882</span>
-          <span className="text-[9px] font-black bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/30">
-            חיסכון ₪133
-          </span>
-        </div>
-
-        <div className="h-px bg-gradient-to-r from-transparent via-amber-500/30 to-transparent" />
-
-        <div className="grid grid-cols-2 gap-2 flex-grow">
-          {[
-            { icon: <Camera size={12} />, label: '15+ תמונות' },
-            { icon: <Video size={12} />, label: 'רילס + סטורי' },
-            { icon: <Calendar size={12} />, label: '60 ימים' },
-            { icon: <TrendingUp size={12} />, label: 'חשיפה מקס' },
-            { icon: <ShieldCheck size={12} />, label: 'ליווי 24/7' },
-            { icon: <Crown size={12} />, label: 'עיצוב VIP' },
-          ].slice(0, 4).map((feat, i) => (
-            <div key={i} className="flex items-center gap-1.5 bg-white/5 rounded-lg px-2 py-1.5 border border-white/5">
-              <span className="text-amber-400">{feat.icon}</span>
-              <span className="text-[9px] font-medium text-white/80">{feat.label}</span>
-            </div>
-          ))}
-        </div>
-
-        <motion.button
-          onClick={() => onSelect(pkg)}
-          whileTap={{ scale: 0.98 }}
-          className="w-full py-3 rounded-xl font-black text-sm bg-gradient-to-l from-amber-500 to-amber-600 text-black shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 transition-all mt-2 relative overflow-hidden group"
-        >
-          <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-          <span className="relative flex items-center justify-center gap-2">
-            <Crown size={16} />
-            הזמן VIP
-          </span>
-        </motion.button>
-      </div>
-    </motion.div>
-  );
-};
-
-// --- DUO DEAL Package Card ---
-const DuoDealPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Package) => void }) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      whileHover={{ y: -8 }}
-      transition={{ type: 'spring', stiffness: 280 }}
-      className="relative w-[260px] md:w-full rounded-3xl overflow-hidden h-full flex flex-col snap-center shrink-0 group"
-      style={{
-        background: 'radial-gradient(circle at 100% 0%, #1e1428 0%, #0b0710 100%)',
-        boxShadow: '0 20px 40px -15px rgba(139,92,246,0.3), 0 0 0 1px rgba(139,92,246,0.2) inset'
-      }}
-    >
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-purple-400 to-transparent" />
-      
-      <div className="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity duration-500" style={{
-        backgroundImage: 'radial-gradient(circle at 30% 40%, #a78bfa 2px, transparent 2px), radial-gradient(circle at 70% 60%, #8b5cf6 1px, transparent 1px)',
-        backgroundSize: '50px 50px, 30px 30px'
-      }} />
-
-      <div className="relative z-10 p-5 space-y-4 flex-grow flex flex-col">
-        <div className="flex items-center flex-wrap gap-2">
-          <div className="flex items-center gap-1.5 bg-purple-900/40 rounded-full px-3 py-1 border border-purple-500/30">
-            <Car size={12} className="text-purple-400" />
-            <Car size={12} className="text-purple-400" />
-            <span className="text-[9px] font-black uppercase tracking-wider text-purple-300">DUO DEAL</span>
-          </div>
-          <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-full px-2 py-1">
-            <span className="text-[8px] font-black text-emerald-400">40%</span>
-          </div>
-        </div>
-
-        <div>
-          <h3 className="text-xl md:text-2xl font-black bg-gradient-to-l from-purple-200 via-purple-400 to-purple-300 bg-clip-text text-transparent">
-            DUO DEAL
-          </h3>
-          <p className="text-purple-100/40 text-[11px] mt-1">פרסום 2 רכבים</p>
-        </div>
-
-        <div className="flex items-baseline gap-2">
-          <span className="text-2xl font-black text-purple-400">₪349</span>
-          <span className="text-xs line-through text-white/20">₪598</span>
-          <span className="text-[9px] font-black bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded-full border border-purple-500/30">
-            חיסכון ₪249
-          </span>
-        </div>
-
-        <div className="h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent" />
-
-        <div className="grid grid-cols-2 gap-2 flex-grow">
-          {[
-            { icon: <Car size={12} />, label: '2 רכבים' },
-            { icon: <Camera size={12} />, label: '4 תמונות' },
-            { icon: <Instagram size={12} />, label: 'פוסטים' },
-            { icon: <Calendar size={12} />, label: '14 ימים' },
-          ].map((feat, i) => (
-            <div key={i} className="flex items-center gap-1.5 bg-white/5 rounded-lg px-2 py-1.5 border border-white/5">
-              <span className="text-purple-400">{feat.icon}</span>
-              <span className="text-[9px] font-medium text-white/80">{feat.label}</span>
-            </div>
-          ))}
-        </div>
-
-        <motion.button
-          onClick={() => onSelect(pkg)}
-          whileTap={{ scale: 0.98 }}
-          className="w-full py-3 rounded-xl font-black text-sm bg-gradient-to-l from-purple-500 to-purple-600 text-white shadow-lg shadow-purple-500/20 hover:shadow-purple-500/30 transition-all mt-2 relative overflow-hidden group"
-        >
-          <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-          <span className="relative flex items-center justify-center gap-2">
-            <Car size={16} />
-            הזמן DUO
-          </span>
-        </motion.button>
-
-        <p className="text-center text-[9px] text-purple-300/40 mt-1">
-          הכי משתלם לשני רכבים
-        </p>
-      </div>
-    </motion.div>
-  );
-};
-
-// --- Equipment Package Card ---
-const EquipmentPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Package) => void }) => {
-  const isHeavy = pkg.id === 'equipment-heavy';
-  
-  return (
-    <motion.div
-      whileHover={{ y: -6, scale: 1.01 }}
-      transition={{ type: "spring", stiffness: 300 }}
-      className="relative w-[260px] md:w-full rounded-2xl border transition-all duration-500 h-full flex flex-col p-5 snap-center shrink-0 group"
-      style={{
-        background: isHeavy 
-          ? 'linear-gradient(135deg, rgba(234,88,12,0.08) 0%, rgba(15,12,8,1) 100%)' 
-          : 'linear-gradient(135deg, rgba(100,116,139,0.08) 0%, rgba(10,12,15,1) 100%)',
-        borderColor: isHeavy ? 'rgba(234,88,12,0.35)' : 'rgba(100,116,139,0.25)',
-        boxShadow: isHeavy ? '0 0 30px rgba(234,88,12,0.06)' : 'none'
-      }}
-    >
-      {isHeavy && (
-        <div className="absolute -top-3 right-4 z-10 bg-orange-600 text-white text-[8px] font-black py-1 px-2 rounded-full shadow-lg uppercase tracking-widest">
-          הכי מבוקש
-        </div>
-      )}
-
-      <div className="flex items-center gap-2 mb-3 pb-2 border-b"
-        style={{ borderColor: isHeavy ? 'rgba(234,88,12,0.15)' : 'rgba(100,116,139,0.1)' }}>
-        <div className="w-8 h-8 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
-          style={{ background: isHeavy ? 'rgba(234,88,12,0.15)' : 'rgba(100,116,139,0.12)' }}>
-          {isHeavy 
-            ? <Truck size={18} style={{ color: '#ea580c' }} />
-            : <Wrench size={18} style={{ color: '#94a3b8' }} />
-          }
-        </div>
-        <div>
-          <div className="text-[8px] font-black uppercase tracking-[0.2em] mb-0.5"
-            style={{ color: isHeavy ? '#ea580c' : '#94a3b8' }}>
-            {isHeavy ? 'ציוד כבד' : 'ציוד קל'}
-          </div>
-          <h3 className="text-sm font-black text-white">{pkg.name}</h3>
-        </div>
-        <div className="mr-auto text-right">
-          <div className="text-lg font-black text-white">{pkg.price}</div>
-          <div className="text-[8px] text-white/30 line-through">
-            ₪{Math.round(parseInt(pkg.price.replace('₪', '')) / 0.85)}
-          </div>
-        </div>
-      </div>
-
-      <div className="mb-3 flex flex-wrap gap-1">
-        {(isHeavy 
-          ? ['באגר', 'מחפרון', 'מיני באגר', 'בולדוזר', 'עגורן'] 
-          : ['פופקט', 'ג\'ק', 'מלגזה', 'סקיד סטיר', 'מערבל']
-        ).slice(0, 3).map((item, i) => (
-          <span key={i} className="text-[8px] font-black px-1.5 py-0.5 rounded-full border group-hover:bg-white/5 transition-all duration-300"
-            style={{ 
-              color: isHeavy ? '#fb923c' : '#94a3b8',
-              borderColor: isHeavy ? 'rgba(234,88,12,0.25)' : 'rgba(100,116,139,0.2)',
-              background: isHeavy ? 'rgba(234,88,12,0.08)' : 'rgba(100,116,139,0.06)'
-            }}>
-            {item}
-          </span>
-        ))}
-      </div>
-
-      <div className="space-y-1.5 mb-4 flex-grow">
-        {pkg.features.slice(0, 3).map((f, i) => (
-          <div key={i} className="flex items-start gap-1.5 text-[9px] font-medium group/feature">
-            <div className="mt-0.5 p-0.5 rounded-full shrink-0 group-hover/feature:scale-110 transition-transform duration-300"
-              style={{ background: isHeavy ? 'rgba(234,88,12,0.6)' : 'rgba(100,116,139,0.4)' }}>
-              <Check size={6} className="text-dark-bg" strokeWidth={5} />
-            </div>
-            <span className="text-white/80 group-hover/feature:text-white transition-colors duration-300">{f}</span>
-          </div>
-        ))}
-      </div>
-
-      <button
-        onClick={() => onSelect(pkg)}
-        className="w-full py-2.5 rounded-xl font-black text-xs transition-all duration-300 active:scale-95 relative overflow-hidden group/btn"
-        style={{
-          background: isHeavy 
-            ? 'linear-gradient(135deg, #ea580c, #c2410c)' 
-            : 'rgba(100,116,139,0.2)',
-          color: isHeavy ? '#fff' : '#cbd5e1',
-          border: isHeavy ? 'none' : '1px solid rgba(100,116,139,0.3)'
-        }}
-      >
-        <span className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300" />
-        <span className="relative">{isHeavy ? '🚜 הזמן עכשיו' : '🔧 הזמן עכשיו'}</span>
-      </button>
-    </motion.div>
-  );
-};
-
-// --- Business Package Card (New Professional Design) ---
-const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Package) => void }) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      whileHover={{ y: -8 }}
-      transition={{ type: 'spring', stiffness: 300 }}
-      className="relative w-full rounded-2xl overflow-hidden group"
-      style={{
-        background: 'linear-gradient(135deg, #0a1929 0%, #0f2744 50%, #1a3650 100%)',
-        boxShadow: '0 20px 40px -15px rgba(0,100,255,0.3), 0 0 0 1px rgba(0,150,255,0.3) inset'
-      }}
-    >
-      {/* Animated background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-transparent to-purple-600/10 animate-pulse" />
-      
-      {/* Grid pattern */}
-      <div className="absolute inset-0 opacity-10" style={{
-        backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
-        backgroundSize: '30px 30px'
-      }} />
-
-      <div className="relative z-10 p-5">
-        {/* Top badges */}
-        <div className="flex items-center justify-between gap-2 mb-4">
-          <div className="flex items-center gap-2">
-            <motion.div 
-              animate={{ rotate: [0, 10, -10, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-xl shadow-blue-500/30"
-            >
-              <Building2 size={20} className="text-white" />
-            </motion.div>
-            <div>
-              <div className="text-[9px] font-black text-blue-400 uppercase tracking-[0.2em]">לסוכנויות</div>
-              <h3 className="text-xl font-black text-white">BUSINESS</h3>
-            </div>
-          </div>
-          <div className="flex items-center gap-1 bg-blue-500/20 px-2 py-1 rounded-full border border-blue-500/30">
-            <Award size={12} className="text-blue-400" />
-            <span className="text-[8px] font-black text-blue-400">מומלץ</span>
-          </div>
-        </div>
-
-        {/* Main content */}
-        <div className="grid md:grid-cols-2 gap-4 mb-4">
-          {/* Left column - Features */}
-          <div className="space-y-3">
-            <div className="flex items-baseline gap-2">
-              <div>
-                <span className="text-2xl font-black text-white">₪1,499</span>
-                <span className="text-white/40 text-xs mr-1">/חודש</span>
-              </div>
-              <span className="text-xs line-through text-white/30">₪2,499</span>
-              <span className="text-[8px] font-black bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded-full border border-green-500/30">
-                חיסכון 40%
-              </span>
-            </div>
-
-            <div className="space-y-2">
-              {[
-                'עד 50 רכבים בחודש',
-                'צילומים מקצועיים',
-                'דפי נחיתה מותאמים',
-                'מנהל לקוח ייעודי',
-                'דוחות ביצועים',
-                'קידום ממומן'
-              ].slice(0, 4).map((text, i) => (
-                <div key={i} className="flex items-center gap-2 text-white/80 text-[10px]">
-                  <div className="w-4 h-4 rounded-full bg-blue-500/20 flex items-center justify-center">
-                    <Check size={8} className="text-blue-400" />
-                  </div>
-                  <span>{text}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Right column - Benefits */}
-          <div className="grid grid-cols-2 gap-2">
-            {[
-              { icon: <Target size={16} />, title: 'חשיפה ממוקדת' },
-              { icon: <BarChart3 size={16} />, title: 'דוחות חודשיים' },
-              { icon: <Headphones size={16} />, title: 'תמיכה VIP' },
-              { icon: <Rocket size={16} />, title: 'תוצאות מהירות' },
-            ].map((item, i) => (
-              <div key={i} className="p-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all">
-                <div className="text-blue-400 mb-1">{item.icon}</div>
-                <div className="text-[9px] font-black">{item.title}</div>
+          <div style={{ display: 'flex', gap: 16, marginTop: 16, flexWrap: 'wrap' }}>
+            {['\u05e4\u05e8\u05e1\u05d5\u05dd \u05dc\u05dc\u05d0 \u05d4\u05d2\u05d1\u05dc\u05d4', '\u05de\u05e0\u05d4\u05dc \u05ea\u05d9\u05e7 \u05d0\u05d9\u05e9\u05d9', '\u05d3\u05d5\u05d7\u05d5\u05ea \u05d7\u05d5\u05d3\u05e9\u05d9\u05d9\u05dd', '\u05ea\u05de\u05d7\u05d5\u05e8 \u05de\u05d5\u05ea\u05d0\u05dd'].map((tag, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'rgba(255,255,255,0.45)', fontWeight: 700 }}>
+                <Check size={12} color="#c8102e" />
+                {tag}
               </div>
             ))}
           </div>
         </div>
-
-        {/* CTA Buttons */}
-        <div className="flex flex-col md:flex-row gap-2 mt-3 pt-3 border-t border-white/10">
-          <motion.button
-            onClick={() => onSelect(pkg)}
-            whileTap={{ scale: 0.98 }}
-            className="flex-1 py-2.5 rounded-xl font-black text-xs bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-xl shadow-blue-500/30 hover:shadow-blue-500/40 transition-all relative overflow-hidden group/btn"
-          >
-            <span className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300" />
-            <span className="relative flex items-center justify-center gap-2">
-              <Briefcase size={14} />
-              התחל חבילה
-            </span>
-          </motion.button>
-          
-          <a 
-            href="https://wa.me/972546980606?text=שלום, אני מעוניין בחבילת עסקים לסוכנות שלי"
-            target="_blank"
-            className="flex-1 py-2.5 rounded-xl font-black text-xs bg-white/5 border border-white/20 text-white hover:bg-white/10 hover:border-white/30 transition-all flex items-center justify-center gap-2"
-          >
-            <MessageSquare size={14} />
-            דבר עם יועץ
-          </a>
-        </div>
-
-        {/* Trust badges */}
-        <div className="flex items-center justify-center gap-3 mt-3">
-          <div className="flex items-center gap-1 text-white/40">
-            <ShieldCheck size={10} />
-            <span className="text-[7px]">חוזה חודשי</span>
-          </div>
-          <div className="flex items-center gap-1 text-white/40">
-            <ThumbsUp size={10} />
-            <span className="text-[7px]">100% שביעות רצון</span>
-          </div>
-          <div className="flex items-center gap-1 text-white/40">
-            <Users size={10} />
-            <span className="text-[7px]">50+ סוכנויות</span>
-          </div>
-        </div>
       </div>
-    </motion.div>
-  );
-};
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'flex-end' }}>
+        <a href="https://wa.me/972546980606?text=\u05e9\u05dc\u05d5\u05dd, \u05d0\u05e0\u05d9 \u05de\u05e2\u05d5\u05e0\u05d9\u05d9\u05df \u05d1\u05d7\u05d1\u05d9\u05dc\u05ea \u05e2\u05e1\u05e7\u05d9\u05dd \u05dc\u05e1\u05d5\u05db\u05e0\u05d5\u05ea \u05e9\u05dc\u05d9" target="_blank" style={{
+          display: 'inline-flex', alignItems: 'center', gap: 10,
+          background: 'linear-gradient(135deg, #c8102e, #a50d25)',
+          color: '#fff', fontWeight: 900, fontSize: 14,
+          padding: '14px 28px', borderRadius: 14, textDecoration: 'none',
+          boxShadow: '0 8px 24px rgba(200,16,46,0.35)',
+          whiteSpace: 'nowrap'
+        }}>
+          <MessageSquare size={18} />
+          \u05d3\u05d1\u05e8\u05d5 \u05d0\u05d9\u05ea\u05e0\u05d5 \u05d1\u05d5\u05d5\u05d0\u05d8\u05e1\u05d0\u05e4
+        </a>
+        <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.2)', fontWeight: 700, textAlign: 'center', margin: 0 }}>\u05dc\u05dc\u05d0 \u05d3\u05de\u05d9 \u05db\u05e0\u05d9\u05e1\u05d4 \u00b7 \u05ea\u05de\u05d7\u05d5\u05e8 \u05d0\u05d9\u05e9\u05d9</p>
+      </div>
+    </div>
+  </motion.div>
+);
 
-const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
+// \u2500\u2500\u2500 PACKAGE CARD \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+const PackageCard = ({ pkg, lang, onSelect }) => {
   const t = translations[lang];
-
-  const tierConfig = {
-    basic:   { color: '#94a3b8', glow: 'rgba(148,163,184,0.08)', badge: '🚀', accentBg: 'rgba(148,163,184,0.06)', borderColor: 'rgba(148,163,184,0.15)' },
-    pro:     { color: '#c8102e', glow: 'rgba(200,16,46,0.10)',   badge: '⭐', accentBg: 'rgba(200,16,46,0.07)',   borderColor: 'rgba(200,16,46,0.35)'    },
-    premium: { color: '#c8102e', glow: 'rgba(200,16,46,0.14)',   badge: '💎', accentBg: 'rgba(200,16,46,0.10)',   borderColor: 'rgba(200,16,46,0.45)'    },
+  const configs = {
+    basic:   { accent: '#94a3b8', glow: 'rgba(148,163,184,0.08)', badge: '\ud83d\ude80', bg: 'rgba(8,8,12,1)', borderC: 'rgba(148,163,184,0.15)' },
+    pro:     { accent: '#c8102e', glow: 'rgba(200,16,46,0.12)',   badge: '\u2b50', bg: 'rgba(12,5,7,1)',  borderC: 'rgba(200,16,46,0.35)'    },
+    premium: { accent: '#c8102e', glow: 'rgba(200,16,46,0.18)',   badge: '\ud83d\udc8e', bg: 'rgba(12,4,6,1)',  borderC: 'rgba(200,16,46,0.5)'     },
   };
-  const cfg = tierConfig[pkg.id as keyof typeof tierConfig] || tierConfig.basic;
-  const isPro = pkg.id === 'pro';
-  const isPremium = pkg.premium;
-
-  const featureChips = pkg.features.slice(0, 4);
+  const c = configs[pkg.id] || configs.basic;
 
   return (
-    <motion.div
-      whileHover={{ y: -6 }}
-      transition={{ type: "spring", stiffness: 300 }}
-      className="relative w-[250px] md:w-full rounded-2xl h-full flex flex-col snap-center shrink-0 group"
-      style={{
-        background: isPremium
-          ? 'linear-gradient(155deg, rgba(200,16,46,0.12) 0%, rgba(10,5,5,1) 100%)'
-          : 'linear-gradient(155deg, rgba(255,255,255,0.04) 0%, rgba(10,10,12,1) 100%)',
-        border: `1px solid ${cfg.borderColor}`,
-        boxShadow: isPremium ? `0 0 28px ${cfg.glow}` : 'none',
-        overflow: 'hidden'
-      }}
-    >
-      <div className="h-[3px] w-full" style={{ background: `linear-gradient(90deg, transparent, ${cfg.color}, transparent)` }} />
-
+    <motion.div whileHover={{ y: -8, scale: 1.01 }} transition={{ type: 'spring', stiffness: 300 }}
+      style={{ background: c.bg, border: `1px solid ${c.borderC}`, borderRadius: 20, overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%', boxShadow: `0 0 30px ${c.glow}`, position: 'relative', minWidth: 280 }}>
+      <div style={{ height: 3, background: `linear-gradient(90deg, transparent, ${c.accent}, transparent)` }} />
       {pkg.popular && (
-        <div className="absolute top-2 right-2 z-10 text-white text-[8px] font-black py-0.5 px-2 rounded-full shadow-lg uppercase tracking-widest"
-          style={{ background: cfg.color }}>
+        <div style={{ position: 'absolute', top: 16, right: 16, background: c.accent, color: '#fff', fontSize: 9, fontWeight: 900, padding: '4px 10px', borderRadius: 20, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
           {t.mostPopular}
         </div>
       )}
-
-      <div className="absolute top-2 left-2 text-[8px] font-black py-0.5 px-2 rounded-full"
-        style={{ background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', color: '#4ade80' }}>
+      <div style={{ position: 'absolute', top: 16, left: 16, background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.3)', color: '#4ade80', fontSize: 9, fontWeight: 900, padding: '4px 10px', borderRadius: 20 }}>
         15% OFF
       </div>
 
-      <div className="p-4 flex flex-col flex-grow gap-3">
-        <div className="flex items-center gap-2 mt-2">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center text-base shrink-0 group-hover:scale-110 transition-transform duration-300"
-            style={{ background: cfg.accentBg, border: `1px solid ${cfg.borderColor}` }}>
-            {cfg.badge}
+      <div style={{ padding: '24px 24px 28px', display: 'flex', flexDirection: 'column', gap: 18, flex: 1 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 24 }}>
+          <div style={{ width: 40, height: 40, borderRadius: 12, background: `rgba(${c.accent === '#c8102e' ? '200,16,46' : '148,163,184'},0.1)`, border: `1px solid ${c.borderC}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, flexShrink: 0 }}>
+            {c.badge}
           </div>
           <div>
-            <h3 className="text-base font-black tracking-tight" style={{ color: isPremium || isPro ? cfg.color : '#fff' }}>
-              {pkg.name}
-            </h3>
-            <p className="text-[8px] leading-tight" style={{ color: 'rgba(255,255,255,0.35)' }}>
-              {pkg.id === 'basic' ? t.packageSubtitles.basic :
-               pkg.id === 'pro' ? t.packageSubtitles.pro :
-               t.packageSubtitles.premium}
+            <h3 style={{ fontWeight: 900, fontSize: 17, color: c.accent === '#c8102e' ? '#fff' : '#fff', margin: 0 }}>{pkg.name}</h3>
+            <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', margin: 0 }}>
+              {pkg.id === 'basic' ? t.packageSubtitles.basic : pkg.id === 'pro' ? t.packageSubtitles.pro : t.packageSubtitles.premium}
             </p>
           </div>
         </div>
 
-        <div className="flex items-baseline gap-1">
-          <span className="text-xl font-black text-white">{pkg.price}</span>
-          <span className="text-[9px] line-through" style={{ color: 'rgba(255,255,255,0.3)' }}>
-            ₪{Math.round(parseInt(pkg.price.replace('₪', '')) / 0.85)}
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+          <span style={{ fontSize: 36, fontWeight: 900, color: '#fff' }}>{pkg.price}</span>
+          <span style={{ fontSize: 12, textDecoration: 'line-through', color: 'rgba(255,255,255,0.25)' }}>
+            \u20aa{Math.round(parseInt(pkg.price.replace('\u20aa', '')) / 0.85)}
           </span>
         </div>
 
-        <div className="h-px" style={{ background: `linear-gradient(90deg, transparent, ${cfg.borderColor}, transparent)` }} />
+        <div style={{ height: 1, background: `linear-gradient(90deg, transparent, ${c.borderC}, transparent)` }} />
 
-        <div className="flex flex-col gap-1.5 flex-grow">
-          {featureChips.map((feat, i) => (
-            <div key={i} className="flex items-center gap-1.5 group/feature">
-              <div className="w-3 h-3 rounded-full flex items-center justify-center shrink-0 group-hover/feature:scale-110 transition-transform duration-300"
-                style={{ background: cfg.accentBg, border: `1px solid ${cfg.borderColor}` }}>
-                <Check size={6} strokeWidth={3} style={{ color: cfg.color }} />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, flex: 1 }}>
+          {pkg.features.map((f, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ width: 18, height: 18, borderRadius: '50%', background: `rgba(${c.accent === '#c8102e' ? '200,16,46' : '148,163,184'},0.12)`, border: `1px solid ${c.borderC}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <Check size={9} strokeWidth={3} color={c.accent} />
               </div>
-              <span className="text-[9px] font-medium" style={{ color: 'rgba(255,255,255,0.78)' }}>{feat}</span>
+              <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.75)', fontWeight: 500 }}>{f}</span>
             </div>
           ))}
-          {pkg.features.length > 4 && (
-            <span className="text-[8px] font-bold mt-0.5" style={{ color: cfg.color }}>
-              + {pkg.features.length - 4} תכונות נוספות
-            </span>
-          )}
         </div>
 
-        <button
-          onClick={() => onSelect(pkg)}
-          className="w-full py-2.5 rounded-lg font-black text-xs transition-all duration-200 active:scale-95 mt-1 relative overflow-hidden group/btn"
-          style={{
-            background: isPremium || isPro ? cfg.color : 'rgba(255,255,255,0.1)',
-            color: isPremium || isPro ? '#fff' : '#fff'
-          }}
-        >
-          <span className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300" />
-          <span className="relative">{t.startOrder}</span>
+        <button onClick={() => onSelect(pkg)} style={{
+          width: '100%', padding: '13px 0', borderRadius: 12, fontWeight: 900, fontSize: 13,
+          background: c.accent === '#c8102e' ? 'linear-gradient(135deg,#c8102e,#a50d25)' : 'rgba(255,255,255,0.9)',
+          color: c.accent === '#c8102e' ? '#fff' : '#0a0a0c',
+          border: 'none', cursor: 'pointer', transition: 'all 0.2s', boxShadow: c.accent === '#c8102e' ? '0 6px 20px rgba(200,16,46,0.3)' : 'none'
+        }}>
+          {t.startOrder}
         </button>
       </div>
     </motion.div>
   );
 };
 
-// --- Bit / PayBox Logo ---
-const BitLogo = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) => {
-  const h = size === 'sm' ? 24 : size === 'lg' ? 36 : 28;
-  const fontSize = size === 'sm' ? 11 : size === 'lg' ? 16 : 13;
-  const px = size === 'sm' ? 8 : 12;
-  return (
-    <div
-      className="inline-flex items-center justify-center rounded-lg overflow-hidden shrink-0"
-      style={{ background: '#0D3D3D', height: h, paddingLeft: px, paddingRight: px, gap: 4 }}
-    >
-      <svg width={fontSize * 0.5} height={h * 0.6} viewBox="0 0 9 18" fill="none">
-        <circle cx="4.5" cy="2" r="2" fill="#00E5CC"/>
-        <rect x="2.5" y="6" width="4" height="10" rx="2" fill="#00E5CC"/>
-      </svg>
-      <span style={{
-        fontFamily: '"Nunito", "Varela Round", Arial Rounded MT Bold, Arial, sans-serif',
-        fontWeight: 800,
-        fontSize,
-        color: '#00E5CC',
-        letterSpacing: '-0.5px',
-        lineHeight: 1
-      }}>bit</span>
-    </div>
-  );
-};
-
-const PayBoxLogo = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) => {
-  const h = size === 'sm' ? 24 : size === 'lg' ? 36 : 28;
-  const fontSize = size === 'sm' ? 10 : size === 'lg' ? 14 : 12;
-  const iconSize = size === 'sm' ? 12 : size === 'lg' ? 18 : 14;
-  const px = size === 'sm' ? 8 : 12;
-  return (
-    <div
-      className="inline-flex items-center justify-center rounded-lg overflow-hidden shrink-0"
-      style={{ background: '#29ABE2', height: h, paddingLeft: px, paddingRight: px, gap: 4 }}
-    >
-      <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none">
-        <circle cx="12" cy="6" r="3" stroke="white" strokeWidth="2" fill="none"/>
-        <path d="M5 10 L9 14 L9 20 L15 20 L15 14 L19 10" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-      </svg>
-      <span style={{
-        fontFamily: 'Arial, Helvetica, sans-serif',
-        fontWeight: 700,
-        fontSize,
-        color: '#ffffff',
-        letterSpacing: '0.2px',
-        lineHeight: 1
-      }}>PayBox</span>
-    </div>
-  );
-};
-
-// --- Order Status Check Component ---
-const OrderStatusCheck = ({ onClose }: { onClose: () => void }) => {
-  const [orderNumber, setOrderNumber] = useState('');
-  const [status, setStatus] = useState<'idle' | 'loading' | 'found' | 'notfound'>('idle');
-  const [orderDetails, setOrderDetails] = useState<any>(null);
-
-  const checkOrder = () => {
-    if (!orderNumber) return;
-    
-    setStatus('loading');
-    
-    // Simulate API call
-    setTimeout(() => {
-      // This would be replaced with actual API call
-      if (orderNumber.length > 3) {
-        setStatus('found');
-        setOrderDetails({
-          id: orderNumber,
-          date: '2024-02-23',
-          package: 'VIP LUXURY',
-          status: 'בתהליך',
-          car: 'מזדה 3 2020'
-        });
-      } else {
-        setStatus('notfound');
-      }
-    }, 1500);
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="glass-card p-6 space-y-5"
-    >
-      <div className="text-center space-y-2">
-        <div className="w-16 h-16 bg-gradient-to-br from-brand-red to-red-600 rounded-xl flex items-center justify-center mx-auto shadow-xl shadow-brand-red/30">
-          <Search size={28} className="text-white" />
+// \u2500\u2500\u2500 VIP CARD \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+const VIPCard = ({ onSelect }) => (
+  <motion.div whileHover={{ y: -8 }} transition={{ type: 'spring', stiffness: 280 }}
+    style={{ background: 'radial-gradient(circle at 100% 0%, #2a1f0a, #0f0c05 80%)', borderRadius: 20, border: '1px solid rgba(212,175,55,0.25)', overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%', boxShadow: '0 20px 40px -15px rgba(212,175,55,0.25)', position: 'relative', minWidth: 280 }}>
+    <div style={{ height: 2, background: 'linear-gradient(90deg, transparent, #d4af37, transparent)' }} />
+    <div style={{ padding: '28px 28px 32px', display: 'flex', flexDirection: 'column', gap: 20, flex: 1 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(212,175,55,0.1)', border: '1px solid rgba(212,175,55,0.25)', borderRadius: 20, padding: '5px 14px' }}>
+          <Crown size={12} color="#d4af37" />
+          <span style={{ fontSize: 9, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#d4af37' }}>VIP LUXURY</span>
         </div>
-        <h3 className="text-xl font-black">בדיקת סטטוס הזמנה</h3>
-        <p className="text-white/50 text-xs">הכנס את מספר ההזמנה שקיבלת בוואטסאפ</p>
-      </div>
-
-      <div className="space-y-3">
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="לדוגמה: #12345"
-            value={orderNumber}
-            onChange={(e) => setOrderNumber(e.target.value)}
-            className="w-full px-4 py-3 bg-white/5 border-2 border-white/10 rounded-xl text-center text-base font-black tracking-widest focus:border-brand-red focus:outline-none transition-all"
-          />
-          {orderNumber && (
-            <button
-              onClick={() => setOrderNumber('')}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60"
-            >
-              <X size={14} />
-            </button>
-          )}
+        <div style={{ display: 'flex' }}>
+          {[...Array(5)].map((_, i) => <Star key={i} size={12} color="#d4af37" fill="#d4af37" />)}
         </div>
-
-        <button
-          onClick={checkOrder}
-          disabled={status === 'loading'}
-          className="w-full py-3 bg-gradient-to-r from-brand-red to-red-600 rounded-xl font-black text-sm shadow-xl shadow-brand-red/30 hover:shadow-brand-red/40 transition-all disabled:opacity-50"
-        >
-          {status === 'loading' ? (
-            <span className="flex items-center justify-center gap-2">
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              בודק...
-            </span>
-          ) : (
-            'בדוק סטטוס'
-          )}
-        </button>
-
-        {status === 'found' && orderDetails && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="p-4 rounded-xl bg-gradient-to-br from-green-500/10 to-emerald-500/5 border border-green-500/20 space-y-3"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-green-400 text-xs font-black">סטטוס:</span>
-              <span className="bg-green-500/20 text-green-400 px-3 py-0.5 rounded-full text-xs font-black border border-green-500/30">
-                {orderDetails.status}
-              </span>
-            </div>
-            <div className="grid grid-cols-2 gap-3 text-xs">
-              <div>
-                <span className="text-white/40">מספר הזמנה:</span>
-                <div className="font-black text-white">#{orderDetails.id}</div>
-              </div>
-              <div>
-                <span className="text-white/40">תאריך:</span>
-                <div className="font-black text-white">{orderDetails.date}</div>
-              </div>
-              <div>
-                <span className="text-white/40">חבילה:</span>
-                <div className="font-black text-white">{orderDetails.package}</div>
-              </div>
-              <div>
-                <span className="text-white/40">רכב:</span>
-                <div className="font-black text-white">{orderDetails.car}</div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-
-        {status === 'notfound' && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="p-4 rounded-xl bg-gradient-to-br from-red-500/10 to-orange-500/5 border border-red-500/20 text-center"
-          >
-            <X size={24} className="text-red-400 mx-auto mb-1" />
-            <p className="text-red-400 font-black text-sm">ההזמנה לא נמצאה</p>
-            <p className="text-white/40 text-xs mt-1">בדוק את המספר ונסה שנית</p>
-          </motion.div>
-        )}
+        <div style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.25)', borderRadius: 20, padding: '4px 10px' }}>
+          <span style={{ fontSize: 9, fontWeight: 900, color: '#4ade80' }}>15% \u05d4\u05e0\u05d7\u05d4</span>
+        </div>
       </div>
+      <div>
+        <h3 style={{ fontSize: 32, fontWeight: 900, background: 'linear-gradient(135deg, #d4af37, #f5d876, #b8922a)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', margin: '0 0 6px' }}>VIP LUXURY</h3>
+        <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', lineHeight: 1.6, margin: 0 }}>\u05d7\u05d1\u05d9\u05dc\u05ea \u05d4\u05e4\u05e8\u05e1\u05d5\u05dd \u05d4\u05d0\u05d5\u05dc\u05d8\u05d9\u05de\u05d8\u05d9\u05d1\u05d9\u05ea \u2014 \u05dc\u05e8\u05db\u05d1\u05d9\u05dd \u05e9\u05de\u05d2\u05d9\u05e2\u05d9\u05dd \u05dc\u05d9\u05d7\u05e1 \u05d4\u05db\u05d9 \u05d8\u05d5\u05d1.</p>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
+        <span style={{ fontSize: 40, fontWeight: 900, color: '#d4af37' }}>\u20aa749</span>
+        <span style={{ fontSize: 14, textDecoration: 'line-through', color: 'rgba(255,255,255,0.2)' }}>\u20aa882</span>
+      </div>
+      <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.3), transparent)' }} />
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, flex: 1 }}>
+        {[['15+ \u05ea\u05de\u05d5\u05e0\u05d5\u05ea', Camera], ['\u05e8\u05d9\u05dc\u05e1 + \u05e1\u05d8\u05d5\u05e8\u05d9 VIP', Video], ['60 \u05d9\u05de\u05d9 \u05e4\u05e8\u05e1\u05d5\u05dd', Calendar], ['\u05d7\u05e9\u05d9\u05e4\u05d4 \u05de\u05e7\u05e1\u05d9\u05de\u05dc\u05d9\u05ea', TrendingUp], ['\u05dc\u05d9\u05d5\u05d5\u05d9 \u05d0\u05d9\u05e9\u05d9 24/7', ShieldCheck], ['\u05e2\u05d9\u05e6\u05d5\u05d1 VIP \u05d1\u05dc\u05e2\u05d3\u05d9', Crown], ['\u05d8\u05e8\u05d2\u05d5\u05d8 \u05de\u05ea\u05e7\u05d3\u05dd', Users], ['\u05e2\u05d3\u05d9\u05e4\u05d5\u05ea \u05e8\u05d0\u05e9\u05d5\u05e0\u05d4', Zap]].map(([label, Icon], i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 7, background: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: '8px 10px', border: '1px solid rgba(255,255,255,0.05)' }}>
+            <Icon size={12} color="#d4af37" />
+            <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>{label}</span>
+          </div>
+        ))}
+      </div>
+      <button onClick={() => onSelect({ id: 'vip', name: 'VIP LUXURY', price: '\u20aa749', features: [] })} style={{ width: '100%', padding: '14px 0', borderRadius: 14, fontWeight: 900, fontSize: 14, background: 'linear-gradient(135deg, #d4af37, #b8922a)', color: '#000', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+        <Crown size={17} />
+        \u05d4\u05d6\u05de\u05df VIP \u05e2\u05db\u05e9\u05d9\u05d5
+      </button>
+    </div>
+  </motion.div>
+);
 
-      <button
-        onClick={onClose}
-        className="w-full text-xs text-white/40 hover:text-white/60 transition-colors"
-      >
-        חזור לדף הבית
+// \u2500\u2500\u2500 DUO CARD \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+const DuoCard = ({ onSelect }) => (
+  <motion.div whileHover={{ y: -8 }} transition={{ type: 'spring', stiffness: 280 }}
+    style={{ background: 'radial-gradient(circle at 100% 0%, #1e1428, #0b0710 100%)', borderRadius: 20, border: '1px solid rgba(139,92,246,0.25)', overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%', boxShadow: '0 20px 40px -15px rgba(139,92,246,0.2)', position: 'relative', minWidth: 280 }}>
+    <div style={{ height: 2, background: 'linear-gradient(90deg, transparent, #a78bfa, transparent)' }} />
+    <div style={{ padding: '28px 28px 32px', display: 'flex', flexDirection: 'column', gap: 20, flex: 1 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.25)', borderRadius: 20, padding: '5px 14px' }}>
+          <Car size={11} color="#a78bfa" /><Car size={11} color="#a78bfa" />
+          <span style={{ fontSize: 9, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#a78bfa' }}>DUO DEAL</span>
+        </div>
+        <div style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.25)', borderRadius: 20, padding: '4px 10px' }}>
+          <span style={{ fontSize: 9, fontWeight: 900, color: '#4ade80' }}>\u05d7\u05d9\u05e1\u05db\u05d5\u05df 40%</span>
+        </div>
+      </div>
+      <div>
+        <h3 style={{ fontSize: 32, fontWeight: 900, background: 'linear-gradient(135deg, #c4b5fd, #a78bfa)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', margin: '0 0 6px' }}>DUO DEAL</h3>
+        <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', lineHeight: 1.6, margin: 0 }}>\u05de\u05d5\u05db\u05e8\u05d9\u05dd 2 \u05e8\u05db\u05d1\u05d9\u05dd? \u05e7\u05d1\u05dc\u05d5 \u05d7\u05e9\u05d9\u05e4\u05d4 \u05db\u05e4\u05d5\u05dc\u05d4 \u05d1\u05de\u05d7\u05d9\u05e8 \u05e9\u05dc\u05d0 \u05ea\u05de\u05e6\u05d0\u05d5 \u05d1\u05e9\u05d5\u05dd \u05de\u05e7\u05d5\u05dd.</p>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
+        <span style={{ fontSize: 40, fontWeight: 900, color: '#a78bfa' }}>\u20aa349</span>
+        <span style={{ fontSize: 14, textDecoration: 'line-through', color: 'rgba(255,255,255,0.2)' }}>\u20aa598</span>
+        <span style={{ fontSize: 10, fontWeight: 900, background: 'rgba(139,92,246,0.15)', color: '#a78bfa', border: '1px solid rgba(139,92,246,0.3)', padding: '3px 10px', borderRadius: 20 }}>\u05d7\u05d9\u05e1\u05db\u05d5\u05df \u20aa249</span>
+      </div>
+      <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, rgba(139,92,246,0.3), transparent)' }} />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 9, flex: 1 }}>
+        {['\u05e4\u05e8\u05e1\u05d5\u05dd 2 \u05e8\u05db\u05d1\u05d9\u05dd \u05d1\u05de\u05d7\u05d9\u05e8 \u05de\u05d9\u05d5\u05d7\u05d3', '4 \u05ea\u05de\u05d5\u05e0\u05d5\u05ea \u05dc\u05db\u05dc \u05e8\u05db\u05d1', '\u05e4\u05d5\u05e1\u05d8 \u05e0\u05e4\u05e8\u05d3 \u05dc\u05db\u05dc \u05e8\u05db\u05d1', '\u05e1\u05d8\u05d5\u05e8\u05d9 14 \u05d9\u05d5\u05dd \u05dc\u05db\u05dc \u05d0\u05d7\u05d3', '\u05d7\u05e9\u05d9\u05e4\u05d4 \u05db\u05e4\u05d5\u05dc\u05d4 \u05dc\u05e7\u05d4\u05dc \u05de\u05e2\u05d5\u05e0\u05d9\u05d9\u05df'].map((f, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ width: 17, height: 17, borderRadius: '50%', background: 'rgba(139,92,246,0.15)', border: '1px solid rgba(139,92,246,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Check size={9} strokeWidth={3} color="#a78bfa" />
+            </div>
+            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.75)', fontWeight: 500 }}>{f}</span>
+          </div>
+        ))}
+      </div>
+      <button onClick={() => onSelect({ id: 'duo', name: 'DUO DEAL', price: '\u20aa349', features: [] })} style={{ width: '100%', padding: '14px 0', borderRadius: 14, fontWeight: 900, fontSize: 14, background: 'linear-gradient(135deg, #a78bfa, #7c3aed)', color: '#fff', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+        <Car size={17} />
+        \u05d4\u05d6\u05de\u05df DUO \u05e2\u05db\u05e9\u05d9\u05d5
+      </button>
+    </div>
+  </motion.div>
+);
+
+// \u2500\u2500\u2500 EQUIPMENT CARD \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+const EquipmentCard = ({ pkg, onSelect }) => {
+  const heavy = pkg.id === 'equipment-heavy';
+  const ac = heavy ? '#ea580c' : '#94a3b8';
+  return (
+    <motion.div whileHover={{ y: -6 }} transition={{ type: 'spring', stiffness: 300 }}
+      style={{ background: heavy ? 'linear-gradient(135deg, rgba(234,88,12,0.06), #0f0c08 100%)' : 'linear-gradient(135deg, rgba(100,116,139,0.06), #0a0c0f 100%)', borderRadius: 20, border: `1px solid ${heavy ? 'rgba(234,88,12,0.3)' : 'rgba(100,116,139,0.2)'}`, display: 'flex', flexDirection: 'column', padding: '28px', gap: 20, height: '100%', position: 'relative', minWidth: 280 }}>
+      {heavy && <div style={{ position: 'absolute', top: -12, right: 20, background: '#ea580c', color: '#fff', fontSize: 9, fontWeight: 900, padding: '4px 12px', borderRadius: 20, textTransform: 'uppercase', letterSpacing: '0.1em' }}>\u05d4\u05db\u05d9 \u05de\u05d1\u05d5\u05e7\u05e9</div>}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14, borderBottom: `1px solid ${heavy ? 'rgba(234,88,12,0.12)' : 'rgba(100,116,139,0.1)'}`, paddingBottom: 18 }}>
+        <div style={{ width: 48, height: 48, borderRadius: 14, background: heavy ? 'rgba(234,88,12,0.12)' : 'rgba(100,116,139,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          {heavy ? <Truck size={22} color="#ea580c" /> : <Wrench size={22} color="#94a3b8" />}
+        </div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 9, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.18em', color: ac, marginBottom: 3 }}>{heavy ? '\u05e6\u05d9\u05d5\u05d3 \u05db\u05d1\u05d3' : '\u05e6\u05d9\u05d5\u05d3 \u05e7\u05dc'}</div>
+          <h3 style={{ fontSize: 16, fontWeight: 900, color: '#fff', margin: 0 }}>{pkg.name}</h3>
+        </div>
+        <div style={{ textAlign: 'left' }}>
+          <div style={{ fontSize: 24, fontWeight: 900, color: '#fff' }}>{pkg.price}</div>
+        </div>
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+        {(heavy ? ['\u05d1\u05d0\u05d2\u05e8', '\u05de\u05d7\u05e4\u05e8\u05d5\u05df', '\u05d1\u05d5\u05dc\u05d3\u05d5\u05d6\u05e8', '\u05e2\u05d2\u05d5\u05e8\u05df', '\u05de\u05d9\u05e0\u05d9 \u05d1\u05d0\u05d2\u05e8'] : ['\u05e4\u05d5\u05e4\u05e7\u05d8', '\u05d2\'\u05e7', '\u05de\u05dc\u05d2\u05d6\u05d4', '\u05e1\u05e7\u05d9\u05d3', '\u05de\u05e2\u05e8\u05d1\u05dc']).map((t, i) => (
+          <span key={i} style={{ fontSize: 10, fontWeight: 800, padding: '4px 10px', borderRadius: 20, border: `1px solid ${heavy ? 'rgba(234,88,12,0.2)' : 'rgba(100,116,139,0.18)'}`, background: heavy ? 'rgba(234,88,12,0.06)' : 'rgba(100,116,139,0.05)', color: ac }}>{t}</span>
+        ))}
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 9, flex: 1 }}>
+        {pkg.features.map((f, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ width: 16, height: 16, borderRadius: '50%', background: ac, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Check size={8} strokeWidth={4} color="#fff" />
+            </div>
+            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>{f}</span>
+          </div>
+        ))}
+      </div>
+      <button onClick={() => onSelect(pkg)} style={{ width: '100%', padding: '13px 0', borderRadius: 12, fontWeight: 900, fontSize: 13, background: heavy ? 'linear-gradient(135deg,#ea580c,#c2410c)' : 'rgba(100,116,139,0.18)', color: heavy ? '#fff' : '#cbd5e1', border: heavy ? 'none' : '1px solid rgba(100,116,139,0.25)', cursor: 'pointer' }}>
+        {heavy ? '\ud83d\ude9c \u05d4\u05d6\u05de\u05df \u05e2\u05db\u05e9\u05d9\u05d5' : '\ud83d\udd27 \u05d4\u05d6\u05de\u05df \u05e2\u05db\u05e9\u05d9\u05d5'}
       </button>
     </motion.div>
   );
 };
 
-// --- Step 1: Car Details Form ---
-const CarDetailsForm = ({ formData, setFormData, onNext }: { 
-  formData: any, 
-  setFormData: (data: any) => void, 
-  onNext: () => void 
-}) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 20 }}
-      className="space-y-5"
-    >
-      <div className="text-center space-y-2">
-        <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mx-auto shadow-xl shadow-blue-500/30">
-          <Car size={28} className="text-white" />
-        </div>
-        <h3 className="text-xl font-black">פרטי הרכב</h3>
-        <p className="text-white/50 text-xs">הכנס את פרטי הרכב שברצונך לפרסם</p>
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-3">
-        <div className="space-y-1">
-          <label className="text-xs font-black text-white/60">דגם רכב *</label>
-          <input
-            type="text"
-            placeholder="מאזדה 3"
-            value={formData.model}
-            onChange={(e) => setFormData({...formData, model: e.target.value})}
-            className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm focus:border-brand-red focus:outline-none transition-all"
-            required
-          />
-        </div>
-        <div className="space-y-1">
-          <label className="text-xs font-black text-white/60">שנה *</label>
-          <input
-            type="text"
-            placeholder="2020"
-            value={formData.year}
-            onChange={(e) => setFormData({...formData, year: e.target.value})}
-            className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm focus:border-brand-red focus:outline-none transition-all"
-            required
-          />
-        </div>
-        <div className="space-y-1">
-          <label className="text-xs font-black text-white/60">קילומטראז' *</label>
-          <input
-            type="text"
-            placeholder="50,000"
-            value={formData.mileage}
-            onChange={(e) => setFormData({...formData, mileage: e.target.value})}
-            className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm focus:border-brand-red focus:outline-none transition-all"
-            required
-          />
-        </div>
-        <div className="space-y-1">
-          <label className="text-xs font-black text-white/60">מחיר מבוקש *</label>
-          <input
-            type="text"
-            placeholder="89,000 ₪"
-            value={formData.price}
-            onChange={(e) => setFormData({...formData, price: e.target.value})}
-            className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm focus:border-brand-red focus:outline-none transition-all"
-            required
-          />
-        </div>
-        <div className="space-y-1">
-          <label className="text-xs font-black text-white/60">תאריך עלייה לכביש *</label>
-          <input
-            type="text"
-            placeholder="2020"
-            value={formData.registration}
-            onChange={(e) => setFormData({...formData, registration: e.target.value})}
-            className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm focus:border-brand-red focus:outline-none transition-all"
-            required
-          />
-        </div>
-        <div className="space-y-1">
-          <label className="text-xs font-black text-white/60">טסט עד *</label>
-          <input
-            type="text"
-            placeholder="12/2024"
-            value={formData.testUntil}
-            onChange={(e) => setFormData({...formData, testUntil: e.target.value})}
-            className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm focus:border-brand-red focus:outline-none transition-all"
-            required
-          />
-        </div>
-        <div className="md:col-span-2 space-y-1">
-          <label className="text-xs font-black text-white/60">מיקום בארץ *</label>
-          <input
-            type="text"
-            placeholder="תל אביב"
-            value={formData.location}
-            onChange={(e) => setFormData({...formData, location: e.target.value})}
-            className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm focus:border-brand-red focus:outline-none transition-all"
-            required
-          />
-        </div>
-      </div>
-
-      <div className="space-y-3">
-        <div className="space-y-1">
-          <label className="text-xs font-black text-white/60">שם מלא *</label>
-          <input
-            type="text"
-            placeholder="ישראל ישראלי"
-            value={formData.fullName}
-            onChange={(e) => setFormData({...formData, fullName: e.target.value})}
-            className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm focus:border-brand-red focus:outline-none transition-all"
-            required
-          />
-        </div>
-        <div className="space-y-1">
-          <label className="text-xs font-black text-white/60">טלפון *</label>
-          <input
-            type="tel"
-            placeholder="050-1234567"
-            value={formData.phone}
-            onChange={(e) => setFormData({...formData, phone: e.target.value})}
-            className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm focus:border-brand-red focus:outline-none transition-all"
-            required
-          />
-        </div>
-      </div>
-
-      <button
-        onClick={onNext}
-        className="w-full py-3 bg-gradient-to-r from-brand-red to-red-600 rounded-xl font-black text-sm shadow-xl shadow-brand-red/30 hover:shadow-brand-red/40 transition-all mt-2"
-      >
-        להמשך לתשלום
-      </button>
-    </motion.div>
-  );
-};
-
-// --- Step 2: Payment Form ---
-const PaymentForm = ({ 
-  formData, 
-  setFormData, 
-  selectedPackage, 
-  onSubmit, 
-  loading,
-  onBack 
-}: { 
-  formData: any, 
-  setFormData: (data: any) => void, 
-  selectedPackage: Package | null, 
-  onSubmit: () => void, 
-  loading: boolean,
-  onBack: () => void 
-}) => {
-  const [paymentMethod, setPaymentMethod] = useState<'bit' | 'paybox' | null>(null);
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -20 }}
-      className="space-y-5"
-    >
-      <div className="text-center space-y-2">
-        <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mx-auto shadow-xl shadow-green-500/30">
-          <CreditCard size={28} className="text-white" />
-        </div>
-        <h3 className="text-xl font-black">תשלום והעלאת אישור</h3>
-        <p className="text-white/50 text-xs">בחר אמצעי תשלום והעלה צילום מסך</p>
-      </div>
-
-      {/* Package summary */}
-      <div className="p-3 rounded-xl bg-gradient-to-r from-brand-red/10 to-transparent border border-brand-red/20">
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-white/60">חבילה נבחרת:</span>
-          <span className="font-black text-brand-red">{selectedPackage?.name}</span>
-        </div>
-        <div className="flex items-center justify-between mt-1">
-          <span className="text-white/60">מחיר:</span>
-          <span className="font-black text-white text-base">{selectedPackage?.price}</span>
-        </div>
-      </div>
-
-      {/* Payment methods */}
-      <div className="space-y-2">
-        <label className="text-xs font-black text-white/60">אמצעי תשלום *</label>
-        <div className="grid grid-cols-2 gap-2">
-          <button
-            type="button"
-            onClick={() => setPaymentMethod('bit')}
-            className={`p-3 rounded-xl border-2 transition-all ${
-              paymentMethod === 'bit' 
-                ? 'border-[#00E5CC] bg-[#00E5CC]/10' 
-                : 'border-white/10 bg-white/5 hover:bg-white/10'
-            }`}
-          >
-            <BitLogo size="md" />
-          </button>
-          <button
-            type="button"
-            onClick={() => setPaymentMethod('paybox')}
-            className={`p-3 rounded-xl border-2 transition-all ${
-              paymentMethod === 'paybox' 
-                ? 'border-[#29ABE2] bg-[#29ABE2]/10' 
-                : 'border-white/10 bg-white/5 hover:bg-white/10'
-            }`}
-          >
-            <PayBoxLogo size="md" />
-          </button>
-        </div>
-      </div>
-
-      {paymentMethod && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="p-4 rounded-xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 space-y-3"
-        >
-          <div className="text-center">
-            <p className="text-white/60 text-xs">העבר את הסכום למספר:</p>
-            <p className="text-xl font-black tracking-wider text-white">054-6980606</p>
+// \u2500\u2500\u2500 STEP INDICATOR \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+const StepIndicator = ({ step }) => (
+  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0, marginBottom: 32 }}>
+    {[
+      { num: 1, label: '\u05e4\u05e8\u05d8\u05d9 \u05d4\u05e8\u05db\u05d1 \u05d5\u05d4\u05de\u05d5\u05db\u05e8' },
+      { num: 2, label: '\u05ea\u05e9\u05dc\u05d5\u05dd \u05d5\u05d0\u05d9\u05e9\u05d5\u05e8' }
+    ].map((s, i) => (
+      <React.Fragment key={i}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+          <div style={{
+            width: 40, height: 40, borderRadius: '50%',
+            background: step >= s.num ? 'linear-gradient(135deg,#c8102e,#a50d25)' : 'rgba(255,255,255,0.06)',
+            border: step >= s.num ? 'none' : '1px solid rgba(255,255,255,0.12)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: step >= s.num ? '#fff' : 'rgba(255,255,255,0.3)',
+            fontWeight: 900, fontSize: 14, boxShadow: step >= s.num ? '0 4px 16px rgba(200,16,46,0.35)' : 'none',
+            transition: 'all 0.3s'
+          }}>
+            {step > s.num ? <Check size={18} strokeWidth={3} /> : s.num}
           </div>
-
-          <button
-            onClick={() => navigator.clipboard.writeText('0546980606')}
-            className="w-full py-2 bg-white/5 rounded-lg border border-white/10 text-xs font-black hover:bg-white/10 transition-all flex items-center justify-center gap-2"
-          >
-            <FileText size={12} />
-            העתק מספר
-          </button>
-
-          <div className="space-y-1">
-            <label className="text-xs font-black text-white/60">העלה צילום מסך של ההעברה *</label>
-            <div className="relative">
-              <input
-                type="file"
-                accept="image/*"
-                required
-                onChange={(e) => {
-                  const files = e.target.files;
-                  if (files && files[0]) {
-                    const reader = new FileReader();
-                    reader.onloadend = () => {
-                      setFormData({...formData, paymentProof: reader.result});
-                    };
-                    reader.readAsDataURL(files[0]);
-                  }
-                }}
-                className="absolute inset-0 opacity-0 cursor-pointer z-10"
-              />
-              <div className={`rounded-lg border-2 border-dashed py-3 px-3 flex flex-col items-center gap-1 transition-colors ${
-                formData.paymentProof ? 'border-green-500/50 bg-green-500/5' : 'border-white/10 bg-white/5'
-              }`}>
-                {formData.paymentProof ? (
-                  <>
-                    <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
-                      <Check size={16} className="text-green-400" />
-                    </div>
-                    <span className="text-xs font-black text-green-400">הקובץ הועלה בהצלחה</span>
-                  </>
-                ) : (
-                  <>
-                    <Upload size={18} className="text-white/40" />
-                    <span className="text-xs font-black text-white/60">לחץ להעלאת צילום מסך</span>
-                    <span className="text-[9px] text-white/30">PNG, JPG או JPEG</span>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      )}
-
-      <div className="flex gap-2">
-        <button
-          onClick={onBack}
-          className="flex-1 py-2.5 bg-white/5 rounded-xl font-black text-sm border border-white/10 hover:bg-white/10 transition-all"
-        >
-          חזור
-        </button>
-        <button
-          onClick={onSubmit}
-          disabled={!paymentMethod || !formData.paymentProof || loading}
-          className="flex-1 py-2.5 bg-gradient-to-r from-brand-red to-red-600 rounded-xl font-black text-sm shadow-xl shadow-brand-red/30 hover:shadow-brand-red/40 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {loading ? (
-            <span className="flex items-center justify-center gap-2">
-              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              שולח...
-            </span>
-          ) : (
-            'שלח הזמנה'
-          )}
-        </button>
-      </div>
-    </motion.div>
-  );
-};
-
-export default function App() {
-  const [lang, setLang] = useState<Language>('he');
-  const [view, setView] = useState<'home' | 'booking' | 'success' | 'admin-login' | 'admin-dashboard' | 'check-status'>('home');
-  const [bookingStep, setBookingStep] = useState<1 | 2>(1);
-  const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [adminPassword, setAdminPassword] = useState('');
-  const [adminTab, setAdminTab] = useState<'orders' | 'settings'>('orders');
-  const [loading, setLoading] = useState(false);
-  const [orderId, setOrderId] = useState('');
-  const [activeFaq, setActiveFaq] = useState<number | null>(null);
-  const [showAllFaqs, setShowAllFaqs] = useState(false);
-  const [modalContent, setModalContent] = useState<{ title: string; content: string } | null>(null);
-  const [siteSettings, setSiteSettings] = useState<any>({
-    followers_count: '50K+',
-    whatsapp_number: '972546980606',
-    hero_title_he: 'מוכרים רכב? אנחנו מוכרים אותו מהר יותר.',
-    hero_subtitle_he: 'YOUGO ISRAEL - פלטפורמת השיווק המובילה באינסטגרם למכירת רכבים.',
-    positioning_line_he: 'הפרסום שמוכר רכבים – לא רק מציג אותם.'
-  });
-
-  const t = translations[lang];
-
-  useEffect(() => {
-    fetch('/api/settings')
-      .then(res => res.json())
-      .then(data => setSiteSettings(data));
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.dir = lang === 'he' ? 'rtl' : 'rtl';
-  }, [lang]);
-
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [view, bookingStep]);
-
-  const packages: Package[] = [
-    {
-      id: 'basic',
-      name: t.basic,
-      price: '₪149',
-      features: [
-        t.features.images2,
-        t.features.post1,
-        t.features.story7,
-        t.features.exposureBasic
-      ]
-    },
-    {
-      id: 'pro',
-      name: t.pro,
-      price: '₪249',
-      popular: true,
-      features: [
-        t.features.images4,
-        t.features.postPro,
-        t.features.story14,
-        t.features.priorityPro,
-        t.features.exposurePro
-      ]
-    },
-    {
-      id: 'premium',
-      name: t.premium,
-      price: '₪449',
-      premium: true,
-      features: [
-        t.features.imagesPremium,
-        t.features.postPremium,
-        t.features.story30,
-        t.features.priorityFull,
-        t.features.exposureMax,
-        t.features.guidance,
-        t.features.video
-      ]
-    }
-  ];
-
-  const vipPackage: Package = {
-    id: 'vip',
-    name: 'VIP LUXURY',
-    price: '₪749',
-    vip: true,
-    features: [
-      '15+ תמונות מקצועיות',
-      'רילס + סטורי VIP',
-      '60 ימי פרסום פרמיום',
-      'חשיפה מקסימלית',
-      'ליווי אישי 24/7',
-      'עיצוב VIP בלעדי',
-      'טרגוט מתקדם',
-      'עדיפות ראשונה תמיד'
-    ]
-  };
-
-  const duoPackage: Package = {
-    id: 'duo',
-    name: 'DUO DEAL',
-    price: '₪349',
-    features: [
-      'פרסום 2 רכבים במחיר מיוחד',
-      '4 תמונות לכל רכב',
-      'פוסט נפרד לכל רכב',
-      'סטורי 14 יום לכל אחד',
-      'חשיפה כפולה לקהל מעוניין',
-      'חיסכון של 40% לעומת 2 חבילות'
-    ]
-  };
-
-  const businessPackage: Package = {
-    id: 'business',
-    name: 'BUSINESS',
-    price: '₪1,499',
-    business: true,
-    features: []
-  };
-
-  const equipmentPackages: Package[] = [
-    {
-      id: 'equipment-heavy',
-      name: 'חבילת ציוד כבד',
-      price: '₪349',
-      equipment: true,
-      features: [
-        '10 תמונות מקצועיות של הציוד',
-        'פוסט ייעודי עם מפרט טכני',
-        'סטורי 21 יום',
-        'חשיפה לקהל קבלנים ומגזר הבנייה',
-        'עדיפות בתוצאות חיפוש',
-        'ייעוץ תמחור מקצועי'
-      ]
-    },
-    {
-      id: 'equipment-light',
-      name: 'חבילת ציוד קל',
-      price: '₪199',
-      equipment: true,
-      features: [
-        '6 תמונות מקצועיות',
-        'פוסט מותאם לציוד קל',
-        'סטורי 14 יום',
-        'חשיפה לקהל מקצועי רלוונטי',
-        'תיאור טכני מפורט',
-        'תמיכה ב-WhatsApp'
-      ]
-    }
-  ];
-
-  const handleAdminLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const res = await fetch('/api/admin/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: adminPassword })
-    });
-    if (res.ok) {
-      setIsAdmin(true);
-      setView('admin-dashboard');
-      fetchOrders();
-    } else {
-      alert('סיסמה שגויה');
-    }
-  };
-
-  const fetchOrders = async () => {
-    const res = await fetch('/api/admin/orders');
-    const data = await res.json();
-    setOrders(data);
-  };
-
-  const updateOrderStatus = async (id: string, status: string) => {
-    await fetch(`/api/admin/orders/${id}/status`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status })
-    });
-    fetchOrders();
-  };
-
-  const [formData, setFormData] = useState({
-    fullName: '',
-    phone: '',
-    model: '',
-    year: '',
-    mileage: '',
-    price: '',
-    registration: '',
-    testUntil: '',
-    location: '',
-    paymentProof: '',
-    carImages: [] as string[]
-  });
-
-  const handleSubmitOrder = async () => {
-    setLoading(true);
-    
-    try {
-      const pkgId = selectedPackage?.id || '';
-      const pkgEmoji = pkgId === 'vip' ? '👑' : pkgId === 'premium' ? '💎' : pkgId === 'pro' ? '⭐' : pkgId.includes('equipment') ? '🚜' : pkgId === 'business' ? '🏢' : '✅';
-
-      const randomId = Math.floor(10000 + Math.random() * 90000);
-      const orderNum = String(randomId).slice(0, 5);
-
-      const message = `*YOUGO ISRAEL | אישור הזמנה חדשה* 🚗💨
----------------------------------------
-*מספר הזמנה:* #${orderNum}
-*חבילה נבחרת:* ${selectedPackage?.name} ${pkgEmoji}
----------------------------------------
-
-👤 *פרטי לקוח:*
-• שם מלא: ${formData.fullName}
-• טלפון: ${formData.phone}
-
-🚘 *פרטי רכב:*
-• דגם: ${formData.model}
-• שנה: ${formData.year}
-• קילומטראז': ${formData.mileage}
-• מחיר מבוקש: ${formData.price}
-• עליה לכביש: ${formData.registration}
-• טסט עד: ${formData.testUntil}
-• מיקום: ${formData.location}
-
----------------------------------------
-✅ *אישור תשלום הועלה בהצלחה למערכת.*
-
-📸 *נא לשלוח כאן את תמונות וסרטון הרכב כדי שנוכל להתחיל בעיצוב המודעה!*
----------------------------------------
-_נשלח אוטומטית ממערכת YOUGO_`;
-
-      const whatsappUrl = `https://wa.me/${siteSettings.whatsapp_number}?text=${encodeURIComponent(message)}`;
-      window.open(whatsappUrl, '_blank');
-      
-      setOrderId(orderNum);
-      setView('success');
-    } catch (err) {
-      alert('אירעה שגיאה. אנא נסה שנית.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-[#0a0a0c] text-white">
-      <style>{`
-        :root { --brand-red: #c8102e; }
-        .text-brand-red { color: #c8102e !important; }
-        .bg-brand-red { background-color: #c8102e !important; }
-        .border-brand-red { border-color: #c8102e !important; }
-        .btn-primary { background: linear-gradient(135deg, #c8102e, #a50d25) !important; }
-        
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        .glass-card {
-          background: rgba(255, 255, 255, 0.03);
-          backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 255, 255, 0.05);
-          border-radius: 20px;
-        }
-        
-        .input-field {
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 10px;
-          padding: 10px 12px;
-          color: white;
-          width: 100%;
-          transition: all 0.3s;
-          font-size: 14px;
-        }
-        .input-field:focus {
-          border-color: #c8102e;
-          outline: none;
-          background: rgba(200, 16, 46, 0.1);
-        }
-      `}</style>
-
-      <Navbar lang={lang} setLang={setLang} isAdmin={isAdmin} onLogout={() => { setIsAdmin(false); setView('home'); }} siteSettings={siteSettings} setView={setView} />
-
-      <main className="pt-24 px-3 max-w-6xl mx-auto">
-        <AnimatePresence mode="wait">
-          {view === 'home' && (
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="space-y-16"
-            >
-              {/* Hero Section */}
-              <section className="relative text-center space-y-6 py-10">
-                <motion.div
-                  initial={{ scale: 0.9, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ duration: 0.5 }}
-                  className="absolute inset-0 pointer-events-none"
-                >
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[800px] h-[300px] bg-brand-red/20 rounded-full blur-[100px]" />
-                </motion.div>
-
-                <motion.div
-                  initial={{ y: 30, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.2 }}
-                  className="relative z-10"
-                >
-                  <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-3 py-1 mb-4">
-                    <Sparkles size={14} className="text-brand-red" />
-                    <span className="text-[10px] font-black tracking-wider text-white/60">הדרך המהירה ביותר למכור רכב</span>
-                  </div>
-                  
-                  <h1 className="text-3xl md:text-5xl font-black leading-tight">
-                    {siteSettings.hero_title_he || t.heroTitle}
-                  </h1>
-                  <p className="text-sm md:text-base text-white/60 max-w-xl mx-auto mt-3">
-                    {siteSettings.hero_subtitle_he || t.heroSubtitle}
-                  </p>
-                  
-                  <div className="flex flex-wrap justify-center gap-3 mt-6">
-                    <motion.button 
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => {
-                        const el = document.getElementById('packages');
-                        el?.scrollIntoView({ behavior: 'smooth' });
-                      }}
-                      className="px-6 py-3 bg-gradient-to-r from-brand-red to-red-600 rounded-xl font-black text-sm shadow-lg shadow-brand-red/30"
-                    >
-                      {t.startOrder}
-                    </motion.button>
-                    
-                    <button 
-                      onClick={() => setView('check-status')}
-                      className="px-6 py-3 bg-white/5 rounded-xl font-black text-sm border border-white/10 hover:bg-white/10 transition-all flex items-center gap-2"
-                    >
-                      <Search size={16} />
-                      בדוק סטטוס
-                    </button>
-                  </div>
-
-                  <div className="flex items-center justify-center gap-4 mt-4">
-                    <div className="flex items-center gap-1 text-white/40">
-                      <ShieldCheck size={12} />
-                      <span className="text-[10px]">תשלום מאובטח</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-white/40">
-                      <Clock size={12} />
-                      <span className="text-[10px]">פרסום תוך 24 שעות</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-white/40">
-                      <Users size={12} />
-                      <span className="text-[10px]">{siteSettings.followers_count} עוקבים</span>
-                    </div>
-                  </div>
-                </motion.div>
-              </section>
-
-              {/* How it Works */}
-              <section id="how-it-works" className="space-y-10">
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  className="text-center space-y-2"
-                >
-                  <div className="inline-flex items-center gap-2 bg-brand-red/10 border border-brand-red/20 rounded-full px-4 py-1">
-                    <span className="w-1.5 h-1.5 bg-brand-red rounded-full animate-pulse" />
-                    <span className="text-xs font-black tracking-wider text-brand-red">תהליך פשוט ומהיר</span>
-                  </div>
-                  <h2 className="text-2xl md:text-4xl font-black">איך זה עובד?</h2>
-                  <p className="text-white/50 text-xs md:text-sm max-w-xl mx-auto">3 שלבים פשוטים והרכב שלך באוויר</p>
-                </motion.div>
-
-                <div className="grid md:grid-cols-3 gap-4">
-                  {[
-                    {
-                      step: '01',
-                      title: 'בחירת חבילה',
-                      desc: 'בוחרים את חבילת הפרסום המתאימה',
-                      icon: <LayoutDashboard size={24} />,
-                      color: 'from-blue-500 to-cyan-500'
-                    },
-                    {
-                      step: '02',
-                      title: 'הזנת פרטים',
-                      desc: 'ממלאים פרטי הרכב ומעלים אישור תשלום',
-                      icon: <FileText size={24} />,
-                      color: 'from-brand-red to-red-600'
-                    },
-                    {
-                      step: '03',
-                      title: 'פרסום וחשיפה',
-                      desc: 'הצוות שלנו מעצב ומפרסם מודעה מקצועית',
-                      icon: <Send size={24} />,
-                      color: 'from-green-500 to-emerald-500'
-                    },
-                  ].map((item, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, y: 30 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: i * 0.1 }}
-                      whileHover={{ y: -5 }}
-                      className="relative group"
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-2xl group-hover:scale-105 transition-transform duration-300" />
-                      <div className="relative p-5 text-center">
-                        <div className={`w-14 h-14 mx-auto mb-4 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center shadow-lg`}>
-                          {item.icon}
-                        </div>
-                        <div className="text-4xl font-black text-white/10 absolute top-2 left-2">{item.step}</div>
-                        <h3 className="text-base font-black mb-2">{item.title}</h3>
-                        <p className="text-white/50 text-xs">{item.desc}</p>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </section>
-
-              {/* Packages Section */}
-              <section id="packages" className="space-y-12">
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  className="text-center space-y-2"
-                >
-                  <h2 className="text-2xl md:text-4xl font-black">{t.packages}</h2>
-                  <p className="text-white/50 text-xs md:text-sm max-w-xl mx-auto">בחר את המסלול המתאים ביותר עבורך</p>
-                </motion.div>
-                
-                {/* Regular packages */}
-                <div>
-                  <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="text-center space-y-2 mb-4"
-                  >
-                    <div className="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/25 px-3 py-1 rounded-full">
-                      <Car size={12} className="text-blue-400" />
-                      <span className="text-[10px] font-black tracking-wider text-blue-400">חבילות רכב פרטי</span>
-                    </div>
-                    <h3 className="text-xl md:text-2xl font-black">
-                      מוכרים <span className="text-brand-red">רכב פרטי?</span>
-                    </h3>
-                    <p className="text-white/50 text-xs max-w-lg mx-auto">
-                      חבילות פרסום מותאמות אישית למכירת רכב פרטי
-                    </p>
-                  </motion.div>
-                  
-                  <div className="flex md:grid md:grid-cols-3 gap-3 overflow-x-auto pb-4 snap-x no-scrollbar">
-                    {packages.map(pkg => (
-                      <div key={pkg.id} className="snap-start">
-                        <PackageCard 
-                          pkg={pkg} 
-                          lang={lang} 
-                          onSelect={(p) => {
-                            setSelectedPackage(p);
-                            setView('booking');
-                            setBookingStep(1);
-                          }} 
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Premium Packages */}
-                <div>
-                  <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="text-center space-y-2 mb-4"
-                  >
-                    <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/25 px-3 py-1 rounded-full">
-                      <Crown size={12} className="text-amber-400" />
-                      <span className="text-[10px] font-black tracking-wider text-amber-400">חבילות פרימיום VIP</span>
-                    </div>
-                    <h3 className="text-xl md:text-2xl font-black">
-                      מחפשים <span className="text-amber-400">יחס VIP?</span>
-                    </h3>
-                    <p className="text-white/50 text-xs max-w-lg mx-auto">
-                      חבילות פרימיום עם חשיפה מקסימלית
-                    </p>
-                  </motion.div>
-                  
-                  <div className="flex md:grid md:grid-cols-2 gap-3 overflow-x-auto pb-4 snap-x no-scrollbar">
-                    <div className="snap-start">
-                      <VIPPackageCard
-                        pkg={vipPackage}
-                        lang={lang}
-                        onSelect={(p) => {
-                          setSelectedPackage(p);
-                          setView('booking');
-                          setBookingStep(1);
-                        }}
-                      />
-                    </div>
-                    <div className="snap-start">
-                      <DuoDealPackageCard
-                        pkg={duoPackage}
-                        onSelect={(p) => {
-                          setSelectedPackage(p);
-                          setView('booking');
-                          setBookingStep(1);
-                        }}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Business Package */}
-                <div>
-                  <BusinessPackageCard
-                    pkg={businessPackage}
-                    onSelect={(p) => {
-                      setSelectedPackage(p);
-                      setView('booking');
-                      setBookingStep(1);
-                    }}
-                  />
-                </div>
-
-                {/* Equipment Packages */}
-                <div>
-                  <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="text-center space-y-2 mb-4"
-                  >
-                    <div className="inline-flex items-center gap-2 bg-orange-500/10 border border-orange-500/25 px-3 py-1 rounded-full">
-                      <Truck size={12} className="text-orange-400" />
-                      <span className="text-[10px] font-black tracking-wider text-orange-400">חבילות ציוד כבד</span>
-                    </div>
-                    <h3 className="text-xl md:text-2xl font-black">
-                      מוכרים <span className="text-orange-400">ציוד מקצועי?</span>
-                    </h3>
-                    <p className="text-white/50 text-xs max-w-lg mx-auto">
-                      פרסום לבאגרים, מחפרונים וכל ציוד כבד
-                    </p>
-                  </motion.div>
-
-                  <div className="flex md:grid md:grid-cols-2 gap-3 max-w-3xl mx-auto overflow-x-auto pb-4 snap-x no-scrollbar">
-                    {equipmentPackages.map(pkg => (
-                      <div key={pkg.id} className="snap-start">
-                        <EquipmentPackageCard
-                          pkg={pkg}
-                          onSelect={(p) => {
-                            setSelectedPackage(p);
-                            setView('booking');
-                            setBookingStep(1);
-                          }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </section>
-
-              {/* Why Us Section */}
-              <section id="why-us" className="space-y-10">
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  className="text-center space-y-2"
-                >
-                  <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-1">
-                    <span className="w-1.5 h-1.5 bg-brand-red rounded-full" />
-                    <span className="text-xs font-black tracking-wider text-white/60">היתרון שלנו</span>
-                  </div>
-                  <h2 className="text-2xl md:text-4xl font-black">{t.whyUs.title}</h2>
-                  <p className="text-white/50 text-xs md:text-sm max-w-xl mx-auto">הסיבות שאלפי מוכרים בחרו דווקא בנו</p>
-                </motion.div>
-
-                <div className="grid md:grid-cols-3 gap-4">
-                  {[
-                    {
-                      icon: <Users size={24} />,
-                      title: 'קהל איכותי',
-                      desc: '50,000+ עוקבים פעילים',
-                      stat: '50K+',
-                      color: 'from-blue-500 to-cyan-500'
-                    },
-                    {
-                      icon: <Zap size={24} />,
-                      title: 'מהירות מכירה',
-                      desc: 'זמן ממוצע של 48 שעות',
-                      stat: '48h',
-                      color: 'from-brand-red to-red-600'
-                    },
-                    {
-                      icon: <TrendingUp size={24} />,
-                      title: 'אחוזי הצלחה',
-                      desc: '98% מהלקוחות מרוצים',
-                      stat: '98%',
-                      color: 'from-green-500 to-emerald-500'
-                    },
-                  ].map((item, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, y: 30 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: i * 0.1 }}
-                      whileHover={{ y: -5 }}
-                      className="relative p-5 rounded-2xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 group"
-                    >
-                      <div className={`w-12 h-12 mb-3 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                        {item.icon}
-                      </div>
-                      <div className="text-3xl font-black text-white/10 absolute top-3 right-3">{item.stat}</div>
-                      <h3 className="text-base font-black mb-1">{item.title}</h3>
-                      <p className="text-white/50 text-xs">{item.desc}</p>
-                    </motion.div>
-                  ))}
-                </div>
-              </section>
-
-              {/* FAQ Section */}
-              <section id="faq" className="max-w-3xl mx-auto space-y-8">
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  className="text-center space-y-2"
-                >
-                  <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-1">
-                    <span className="w-1.5 h-1.5 bg-brand-red rounded-full" />
-                    <span className="text-xs font-black tracking-wider text-white/60">שאלות נפוצות</span>
-                  </div>
-                  <h2 className="text-2xl md:text-4xl font-black">שאלות נפוצות</h2>
-                  <p className="text-white/50 text-xs">כל מה שצריך לדעת על תהליך הפרסום והמכירה</p>
-                </motion.div>
-
-                <div className="space-y-2">
-                  {t.faqs.slice(0, showAllFaqs ? t.faqs.length : 3).map((item, i) => (
-                    <motion.div 
-                      key={i}
-                      initial={{ opacity: 0, y: 10 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: i * 0.05 }}
-                      className="rounded-xl overflow-hidden border border-white/10 bg-white/5"
-                    >
-                      <button 
-                        onClick={() => setActiveFaq(activeFaq === i ? null : i)}
-                        className="w-full px-4 py-3 flex items-center justify-between text-right gap-3 hover:bg-white/10 transition-colors"
-                      >
-                        <div className="flex items-center gap-3 flex-1">
-                          <div className="w-6 h-6 rounded-lg bg-brand-red/10 flex items-center justify-center text-brand-red font-black text-xs">
-                            {i + 1}
-                          </div>
-                          <span className="font-bold text-sm">{item.q}</span>
-                        </div>
-                        {activeFaq === i ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                      </button>
-                      <AnimatePresence>
-                        {activeFaq === i && (
-                          <motion.div 
-                            initial={{ height: 0 }}
-                            animate={{ height: 'auto' }}
-                            exit={{ height: 0 }}
-                            className="overflow-hidden"
-                          >
-                            <div className="px-4 pb-3 pr-12 text-white/60 text-xs leading-relaxed">
-                              {item.a}
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </motion.div>
-                  ))}
-                </div>
-                
-                {!showAllFaqs && t.faqs.length > 3 && (
-                  <div className="text-center">
-                    <button 
-                      onClick={() => setShowAllFaqs(true)}
-                      className="px-5 py-2 bg-white/5 rounded-lg font-black text-xs border border-white/10 hover:bg-white/10 transition-all"
-                    >
-                      הצג את כל השאלות
-                    </button>
-                  </div>
-                )}
-              </section>
-
-              {/* Footer */}
-              <footer className="pb-8">
-                <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-gradient-to-br from-white/5 to-transparent p-6">
-                  <div className="absolute inset-0 bg-gradient-to-r from-brand-red/5 via-transparent to-brand-red/5" />
-                  
-                  <div className="relative z-10 space-y-6">
-                    <div className="text-center space-y-3">
-                      <div className="flex items-center justify-center gap-2">
-                        <div className="p-2 bg-gradient-to-br from-brand-red to-red-600 rounded-lg shadow-lg">
-                          <Car size={18} className="text-white" />
-                        </div>
-                        <div className="text-xl font-black tracking-tighter">
-                          <span className="text-brand-red">YOUGO</span> <span className="text-white">ISRAEL</span>
-                        </div>
-                      </div>
-                      <p className="text-white/50 text-xs max-w-xs mx-auto">
-                        הצטרפו לאלפי לקוחות מרוצים
-                      </p>
-                    </div>
-
-                    <div className="flex items-center justify-center gap-3">
-                      {[
-                        { href: 'https://instagram.com', icon: <Instagram size={14} /> },
-                        { href: 'https://tiktok.com', icon: <Smartphone size={14} /> },
-                        { href: 'https://telegram.org', icon: <Send size={14} /> },
-                        { href: 'https://wa.me/972546980606', icon: <MessageSquare size={14} /> },
-                      ].map((s, i) => (
-                        <a key={i} href={s.href} target="_blank"
-                          className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-brand-red hover:scale-110 transition-all duration-200"
-                        >
-                          {s.icon}
-                        </a>
-                      ))}
-                    </div>
-
-                    <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-
-                    <div className="flex flex-wrap justify-center gap-3">
-                      {[
-                        { icon: <FileText size={12} />, label: 'תקנון', onClick: () => setModalContent(t.pages.terms) },
-                        { icon: <Lock size={12} />, label: 'פרטיות', onClick: () => setModalContent(t.pages.privacy) },
-                        { icon: <Info size={12} />, label: 'מי אנחנו', onClick: () => setModalContent(t.pages.about) },
-                        { icon: <LayoutDashboard size={12} />, label: 'ניהול', onClick: () => setView('admin-login') },
-                      ].map((link, i) => (
-                        <button key={i} onClick={link.onClick}
-                          className="flex items-center gap-1 px-3 py-1 rounded-lg text-xs text-white/50 hover:text-white hover:bg-white/5 transition-all"
-                        >
-                          {link.icon}
-                          {link.label}
-                        </button>
-                      ))}
-                    </div>
-
-                    <div className="text-center text-white/20 text-[9px] font-bold">
-                      © 2024 YOUGO ISRAEL · כל הזכויות שמורות
-                    </div>
-                  </div>
-                </div>
-              </footer>
-            </motion.div>
-          )}
-
-          {/* Booking - Two Steps */}
-          {view === 'booking' && (
-            <motion.div 
-              initial={{ opacity: 0, y: -60 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -30 }}
-              className="max-w-2xl mx-auto space-y-6"
-            >
-              <button 
-                onClick={() => setView('home')}
-                className="flex items-center gap-2 text-white/60 hover:text-white text-sm mb-2"
-              >
-                <ArrowLeft size={16} />
-                חזרה לחבילות
-              </button>
-
-              {/* Progress Steps */}
-              <div className="flex items-center justify-center gap-2 mb-4">
-                <div className={`flex items-center gap-1 ${bookingStep >= 1 ? 'text-brand-red' : 'text-white/30'}`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-xs border-2 ${
-                    bookingStep >= 1 ? 'border-brand-red bg-brand-red/10' : 'border-white/20'
-                  }`}>
-                    1
-                  </div>
-                  <span className="text-xs font-black">פרטי רכב</span>
-                </div>
-                <div className={`w-12 h-px ${bookingStep >= 2 ? 'bg-brand-red' : 'bg-white/10'}`} />
-                <div className={`flex items-center gap-1 ${bookingStep >= 2 ? 'text-brand-red' : 'text-white/30'}`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-xs border-2 ${
-                    bookingStep >= 2 ? 'border-brand-red bg-brand-red/10' : 'border-white/20'
-                  }`}>
-                    2
-                  </div>
-                  <span className="text-xs font-black">תשלום</span>
-                </div>
-              </div>
-
-              <div className="glass-card p-5">
-                <AnimatePresence mode="wait">
-                  {bookingStep === 1 && (
-                    <CarDetailsForm
-                      formData={formData}
-                      setFormData={setFormData}
-                      onNext={() => setBookingStep(2)}
-                    />
-                  )}
-                  {bookingStep === 2 && (
-                    <PaymentForm
-                      formData={formData}
-                      setFormData={setFormData}
-                      selectedPackage={selectedPackage}
-                      onSubmit={handleSubmitOrder}
-                      loading={loading}
-                      onBack={() => setBookingStep(1)}
-                    />
-                  )}
-                </AnimatePresence>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Success Page */}
-          {view === 'success' && (
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="max-w-md mx-auto text-center space-y-6 py-12"
-            >
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
-                className="w-20 h-20 mx-auto bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center shadow-2xl shadow-green-500/30"
-              >
-                <Check size={32} strokeWidth={3} className="text-white" />
-              </motion.div>
-              
-              <div className="space-y-2">
-                <h2 className="text-2xl font-black">ההזמנה התקבלה!</h2>
-                <p className="text-white/60 text-sm">
-                  מספר הזמנה: <span className="text-brand-red font-black">#{orderId}</span>
-                </p>
-              </div>
-
-              <div className="glass-card p-5 space-y-4">
-                <p className="text-base font-black">מה קורה עכשיו?</p>
-                <div className="space-y-2 text-right">
-                  {[
-                    'הודעת וואטסאפ נשלחה למנהל המערכת',
-                    'הצוות שלנו יבדוק את פרטי ההזמנה תוך שעה',
-                    'נחזור אליך עם אישור סופי'
-                  ].map((text, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.3 + i * 0.1 }}
-                      className="flex items-center gap-2 text-xs"
-                    >
-                      <div className="w-5 h-5 rounded-full bg-green-500/20 flex items-center justify-center">
-                        <Check size={10} className="text-green-400" />
-                      </div>
-                      <span className="text-white/70">{text}</span>
-                    </motion.div>
-                  ))}
-                </div>
-
-                <div className="pt-3 border-t border-white/10">
-                  <p className="text-brand-red text-xs font-black">
-                    ניתן לבדוק את מצב ההזמנה דרך מספר ההזמנה באתר!
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex gap-2">
-                <button 
-                  onClick={() => setView('home')}
-                  className="flex-1 py-2.5 bg-white/5 rounded-xl font-black text-xs border border-white/10 hover:bg-white/10 transition-all"
-                >
-                  חזרה לדף הבית
-                </button>
-                <button 
-                  onClick={() => setView('check-status')}
-                  className="flex-1 py-2.5 bg-gradient-to-r from-brand-red to-red-600 rounded-xl font-black text-xs shadow-lg"
-                >
-                  בדוק סטטוס
-                </button>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Check Status Page */}
-          {view === 'check-status' && (
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="max-w-md mx-auto py-8"
-            >
-              <OrderStatusCheck onClose={() => setView('home')} />
-            </motion.div>
-          )}
-
-          {/* Admin Login */}
-          {view === 'admin-login' && (
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="max-w-sm mx-auto py-12"
-            >
-              <div className="glass-card p-6 space-y-5">
-                <div className="text-center">
-                  <div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-brand-red to-red-600 rounded-xl flex items-center justify-center shadow-lg">
-                    <Lock size={24} className="text-white" />
-                  </div>
-                  <h2 className="text-xl font-black">כניסת מנהל</h2>
-                </div>
-                
-                <form onSubmit={handleAdminLogin} className="space-y-3">
-                  <input 
-                    type="password" 
-                    placeholder="סיסמה" 
-                    required
-                    className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm focus:border-brand-red focus:outline-none"
-                    value={adminPassword}
-                    onChange={e => setAdminPassword(e.target.value)}
-                  />
-                  <button type="submit" className="w-full py-2.5 bg-gradient-to-r from-brand-red to-red-600 rounded-lg font-black text-sm">
-                    כניסה
-                  </button>
-                </form>
-                
-                <button onClick={() => setView('home')} className="w-full text-xs text-white/40 hover:text-white/60 transition-colors">
-                  ביטול
-                </button>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Admin Dashboard - مختصر للإيجاز، لكنه موجود كامل في الكود الأصلي */}
-          {view === 'admin-dashboard' && (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="space-y-8"
-            >
-              {/* Admin Dashboard Content - محذوف للاختصار لكنه موجود في الكود الأصلي */}
-              <div className="text-center py-10">
-                <p className="text-white/50">לוח בקרה - טוען...</p>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </main>
-
-      <Modal 
-        isOpen={!!modalContent} 
-        onClose={() => setModalContent(null)} 
-        title={modalContent?.title || ''}
-      >
-        {modalContent?.content}
-      </Modal>
-    </div>
-  );
-}
+          <span style={{ fontSize: 10, fontWeight: 700, color: step >= s.num ? '#c8102e' : 'rgba(255,255,255,0.25)', textAlign: 'center', maxWidth: 90, lineHeight: 1.3 }}>{s.label}</span>
+        </div>
+        {i < 1 && (
+          <div style={{ width: 80, height: 2, background: step >= 2 ? '#c8102e' : 'rgba(255,255,255,0.08)', transition: 'background 0.3s', margin: '0 4px', marginBottom: 22 }} />
+        )}
+      </React.Fragment>
+    ))}
+  </div>
