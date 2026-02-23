@@ -65,6 +65,8 @@ interface Package {
   vip?: boolean;
   equipment?: boolean;
   business?: boolean;
+  description?: string;
+  detailedDescription?: string;
 }
 
 interface Order {
@@ -177,6 +179,7 @@ interface PackageCardProps {
   pkg: Package;
   lang: Language;
   onSelect: (p: Package) => void;
+  onShowDetails?: (p: Package) => void;
   key?: string;
 }
 
@@ -238,14 +241,16 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose:
   );
 };
 
-// --- VIP Package Card ---
-const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
+// --- VIP Package Card (Clickable with details) ---
+const VIPPackageCard = ({ pkg, lang, onSelect, onShowDetails }: PackageCardProps) => {
   const t = translations[lang];
+  
   return (
     <motion.div
       whileHover={{ y: -10, scale: 1.01 }}
       transition={{ type: "spring", stiffness: 260, damping: 18 }}
       className="relative w-full rounded-3xl overflow-hidden h-full flex flex-col group cursor-pointer"
+      onClick={() => onShowDetails && onShowDetails(pkg)}
       style={{
         boxShadow: '0 20px 40px -15px rgba(212,175,55,0.3), 0 0 0 1px rgba(212,175,55,0.2) inset',
         background: 'radial-gradient(circle at 100% 0%, #2a1f0a 0%, #0f0c05 80%)'
@@ -299,9 +304,7 @@ const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
             { icon: <Video size={12} />, label: 'רילס + סטורי' },
             { icon: <Calendar size={12} />, label: '60 ימים' },
             { icon: <TrendingUp size={12} />, label: 'חשיפה מקס' },
-            { icon: <ShieldCheck size={12} />, label: 'ליווי 24/7' },
-            { icon: <Crown size={12} />, label: 'עיצוב VIP' },
-          ].slice(0, 4).map((feat, i) => (
+          ].map((feat, i) => (
             <div key={i} className="flex items-center gap-1.5 bg-white/5 rounded-lg px-2 py-1.5 border border-white/5">
               <span className="text-amber-400">{feat.icon}</span>
               <span className="text-[9px] font-medium text-white/80">{feat.label}</span>
@@ -309,24 +312,35 @@ const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
           ))}
         </div>
 
-        <motion.button
-          onClick={() => onSelect(pkg)}
-          whileTap={{ scale: 0.98 }}
-          className="w-full py-3 rounded-xl font-black text-sm bg-gradient-to-l from-amber-500 to-amber-600 text-black shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 transition-all mt-2 relative overflow-hidden group"
-        >
-          <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-          <span className="relative flex items-center justify-center gap-2">
-            <Crown size={16} />
-            הזמן VIP
-          </span>
-        </motion.button>
+        <div className="flex gap-2 mt-2">
+          <motion.button
+            onClick={(e) => { e.stopPropagation(); onSelect(pkg); }}
+            whileTap={{ scale: 0.98 }}
+            className="flex-1 py-3 rounded-xl font-black text-sm bg-gradient-to-l from-amber-500 to-amber-600 text-black shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 transition-all relative overflow-hidden group"
+          >
+            <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+            <span className="relative flex items-center justify-center gap-2">
+              <Crown size={16} />
+              הזמן VIP
+            </span>
+          </motion.button>
+          
+          <motion.button
+            onClick={(e) => { e.stopPropagation(); onShowDetails && onShowDetails(pkg); }}
+            whileTap={{ scale: 0.98 }}
+            className="px-3 py-3 rounded-xl font-black text-sm bg-white/5 border border-amber-500/30 text-amber-300 hover:bg-amber-500/10 transition-all"
+            title="פרטים נוספים"
+          >
+            <Info size={16} />
+          </motion.button>
+        </div>
       </div>
     </motion.div>
   );
 };
 
-// --- DUO DEAL Package Card ---
-const DuoDealPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Package) => void }) => {
+// --- DUO DEAL Package Card (Clickable with details) ---
+const DuoDealPackageCard = ({ pkg, onSelect, onShowDetails }: { pkg: Package, onSelect: (p: Package) => void, onShowDetails?: (p: Package) => void }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -334,7 +348,8 @@ const DuoDealPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pac
       viewport={{ once: true }}
       whileHover={{ y: -8 }}
       transition={{ type: 'spring', stiffness: 280 }}
-      className="relative w-full rounded-3xl overflow-hidden h-full flex flex-col group"
+      className="relative w-full rounded-3xl overflow-hidden h-full flex flex-col group cursor-pointer"
+      onClick={() => onShowDetails && onShowDetails(pkg)}
       style={{
         background: 'radial-gradient(circle at 100% 0%, #1e1428 0%, #0b0710 100%)',
         boxShadow: '0 20px 40px -15px rgba(139,92,246,0.3), 0 0 0 1px rgba(139,92,246,0.2) inset'
@@ -390,17 +405,28 @@ const DuoDealPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pac
           ))}
         </div>
 
-        <motion.button
-          onClick={() => onSelect(pkg)}
-          whileTap={{ scale: 0.98 }}
-          className="w-full py-3 rounded-xl font-black text-sm bg-gradient-to-l from-purple-500 to-purple-600 text-white shadow-lg shadow-purple-500/20 hover:shadow-purple-500/30 transition-all mt-2 relative overflow-hidden group"
-        >
-          <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-          <span className="relative flex items-center justify-center gap-2">
-            <Car size={16} />
-            הזמן DUO
-          </span>
-        </motion.button>
+        <div className="flex gap-2 mt-2">
+          <motion.button
+            onClick={(e) => { e.stopPropagation(); onSelect(pkg); }}
+            whileTap={{ scale: 0.98 }}
+            className="flex-1 py-3 rounded-xl font-black text-sm bg-gradient-to-l from-purple-500 to-purple-600 text-white shadow-lg shadow-purple-500/20 hover:shadow-purple-500/30 transition-all relative overflow-hidden group"
+          >
+            <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+            <span className="relative flex items-center justify-center gap-2">
+              <Car size={16} />
+              הזמן DUO
+            </span>
+          </motion.button>
+          
+          <motion.button
+            onClick={(e) => { e.stopPropagation(); onShowDetails && onShowDetails(pkg); }}
+            whileTap={{ scale: 0.98 }}
+            className="px-3 py-3 rounded-xl font-black text-sm bg-white/5 border border-purple-500/30 text-purple-300 hover:bg-purple-500/10 transition-all"
+            title="פרטים נוספים"
+          >
+            <Info size={16} />
+          </motion.button>
+        </div>
 
         <p className="text-center text-[9px] text-purple-300/40 mt-1">
           הכי משתלם לשני רכבים
@@ -410,15 +436,16 @@ const DuoDealPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pac
   );
 };
 
-// --- Equipment Package Card ---
-const EquipmentPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Package) => void }) => {
+// --- Equipment Package Card (Clickable with details) ---
+const EquipmentPackageCard = ({ pkg, onSelect, onShowDetails }: { pkg: Package, onSelect: (p: Package) => void, onShowDetails?: (p: Package) => void }) => {
   const isHeavy = pkg.id === 'equipment-heavy';
   
   return (
     <motion.div
       whileHover={{ y: -6, scale: 1.01 }}
       transition={{ type: "spring", stiffness: 300 }}
-      className="relative w-full rounded-2xl border transition-all duration-500 h-full flex flex-col p-5 group mt-3"
+      className="relative w-full rounded-2xl border transition-all duration-500 h-full flex flex-col p-5 group cursor-pointer"
+      onClick={() => onShowDetails && onShowDetails(pkg)}
       style={{
         background: isHeavy 
           ? 'linear-gradient(135deg, rgba(234,88,12,0.08) 0%, rgba(15,12,8,1) 100%)' 
@@ -460,9 +487,9 @@ const EquipmentPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: P
 
       <div className="mb-3 flex flex-wrap gap-1">
         {(isHeavy 
-          ? ['באגר', 'מחפרון', 'מיני באגר', 'בולדוזר', 'עגורן'] 
-          : ['פופקט', 'ג\'ק', 'מלגזה', 'סקיד סטיר', 'מערבל']
-        ).slice(0, 3).map((item, i) => (
+          ? ['באגר', 'מחפרון', 'מיני באגר'] 
+          : ['פופקט', 'ג\'ק', 'מלגזה']
+        ).map((item, i) => (
           <span key={i} className="text-[8px] font-black px-1.5 py-0.5 rounded-full border group-hover:bg-white/5 transition-all duration-300"
             style={{ 
               color: isHeavy ? '#fb923c' : '#94a3b8',
@@ -486,26 +513,36 @@ const EquipmentPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: P
         ))}
       </div>
 
-      <button
-        onClick={() => onSelect(pkg)}
-        className="w-full py-2.5 rounded-xl font-black text-xs transition-all duration-300 active:scale-95 relative overflow-hidden group/btn"
-        style={{
-          background: isHeavy 
-            ? 'linear-gradient(135deg, #ea580c, #c2410c)' 
-            : 'rgba(100,116,139,0.2)',
-          color: isHeavy ? '#fff' : '#cbd5e1',
-          border: isHeavy ? 'none' : '1px solid rgba(100,116,139,0.3)'
-        }}
-      >
-        <span className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300" />
-        <span className="relative">{isHeavy ? '🚜 הזמן עכשיו' : '🔧 הזמן עכשיו'}</span>
-      </button>
+      <div className="flex gap-2">
+        <button
+          onClick={(e) => { e.stopPropagation(); onSelect(pkg); }}
+          className="flex-1 py-2.5 rounded-xl font-black text-xs transition-all duration-300 active:scale-95 relative overflow-hidden group/btn"
+          style={{
+            background: isHeavy 
+              ? 'linear-gradient(135deg, #ea580c, #c2410c)' 
+              : 'rgba(100,116,139,0.2)',
+            color: isHeavy ? '#fff' : '#cbd5e1',
+            border: isHeavy ? 'none' : '1px solid rgba(100,116,139,0.3)'
+          }}
+        >
+          <span className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300" />
+          <span className="relative">{isHeavy ? '🚜 הזמן עכשיו' : '🔧 הזמן עכשיו'}</span>
+        </button>
+        
+        <button
+          onClick={(e) => { e.stopPropagation(); onShowDetails && onShowDetails(pkg); }}
+          className="px-2 py-2.5 rounded-xl font-black text-xs bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
+          title="פרטים נוספים"
+        >
+          <Info size={14} />
+        </button>
+      </div>
     </motion.div>
   );
 };
 
-// --- Business Package Card ---
-const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Package) => void }) => {
+// --- Business Package Card (Clickable with details) ---
+const BusinessPackageCard = ({ pkg, onSelect, onShowDetails }: { pkg: Package, onSelect: (p: Package) => void, onShowDetails?: (p: Package) => void }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -513,7 +550,8 @@ const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pa
       viewport={{ once: true }}
       whileHover={{ y: -8 }}
       transition={{ type: 'spring', stiffness: 300 }}
-      className="relative w-full rounded-2xl overflow-hidden group"
+      className="relative w-full rounded-2xl overflow-hidden group cursor-pointer"
+      onClick={() => onShowDetails && onShowDetails(pkg)}
       style={{
         background: 'linear-gradient(135deg, #0a1929 0%, #0f2744 50%, #1a3650 100%)',
         boxShadow: '0 20px 40px -15px rgba(0,100,255,0.3), 0 0 0 1px rgba(0,150,255,0.3) inset'
@@ -566,8 +604,6 @@ const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pa
                 'צילומים מקצועיים',
                 'דפי נחיתה מותאמים',
                 'מנהל לקוח ייעודי',
-                'דוחות ביצועים',
-                'קידום ממומן'
               ].slice(0, 4).map((text, i) => (
                 <div key={i} className="flex items-center gap-2 text-white/80 text-[10px]">
                   <div className="w-4 h-4 rounded-full bg-blue-500/20 flex items-center justify-center">
@@ -583,8 +619,6 @@ const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pa
             {[
               { icon: <Target size={16} />, title: 'חשיפה ממוקדת' },
               { icon: <BarChart3 size={16} />, title: 'דוחות חודשיים' },
-              { icon: <Headphones size={16} />, title: 'תמיכה VIP' },
-              { icon: <Rocket size={16} />, title: 'תוצאות מהירות' },
             ].map((item, i) => (
               <div key={i} className="p-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all">
                 <div className="text-blue-400 mb-1">{item.icon}</div>
@@ -594,9 +628,9 @@ const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pa
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-2 mt-3 pt-3 border-t border-white/10">
+        <div className="flex gap-2 mt-3 pt-3 border-t border-white/10">
           <motion.button
-            onClick={() => onSelect(pkg)}
+            onClick={(e) => { e.stopPropagation(); onSelect(pkg); }}
             whileTap={{ scale: 0.98 }}
             className="flex-1 py-2.5 rounded-xl font-black text-xs bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-xl shadow-blue-500/30 hover:shadow-blue-500/40 transition-all relative overflow-hidden group/btn"
           >
@@ -607,14 +641,14 @@ const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pa
             </span>
           </motion.button>
           
-          <a 
-            href="https://wa.me/972546980606?text=שלום, אני מעוניין בחבילת עסקים לסוכנות שלי"
-            target="_blank"
-            className="flex-1 py-2.5 rounded-xl font-black text-xs bg-white/5 border border-white/20 text-white hover:bg-white/10 hover:border-white/30 transition-all flex items-center justify-center gap-2"
+          <motion.button
+            onClick={(e) => { e.stopPropagation(); onShowDetails && onShowDetails(pkg); }}
+            whileTap={{ scale: 0.98 }}
+            className="px-3 py-2.5 rounded-xl font-black text-xs bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
+            title="פרטים נוספים"
           >
-            <MessageSquare size={14} />
-            דבר עם יועץ
-          </a>
+            <Info size={14} />
+          </motion.button>
         </div>
 
         <div className="flex items-center justify-center gap-3 mt-3">
@@ -626,17 +660,13 @@ const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pa
             <ThumbsUp size={10} />
             <span className="text-[7px]">100% שביעות רצון</span>
           </div>
-          <div className="flex items-center gap-1 text-white/40">
-            <Users size={10} />
-            <span className="text-[7px]">50+ סוכנויות</span>
-          </div>
         </div>
       </div>
     </motion.div>
   );
 };
 
-const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
+const PackageCard = ({ pkg, lang, onSelect, onShowDetails }: PackageCardProps) => {
   const t = translations[lang];
 
   const tierConfig = {
@@ -655,6 +685,7 @@ const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
       whileHover={{ y: -8, scale: 1.01 }}
       transition={{ type: "spring", stiffness: 280, damping: 18 }}
       className="relative w-full rounded-2xl h-full flex flex-col group cursor-pointer"
+      onClick={() => onShowDetails && onShowDetails(pkg)}
       style={{
         background: isPremium
           ? 'linear-gradient(155deg, rgba(200,16,46,0.15) 0%, rgba(10,5,5,1) 100%)'
@@ -724,17 +755,27 @@ const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
           )}
         </div>
 
-        <button
-          onClick={() => onSelect(pkg)}
-          className="w-full py-2.5 rounded-lg font-black text-xs transition-all duration-200 active:scale-95 mt-1 relative overflow-hidden group/btn"
-          style={{
-            background: isPremium || isPro ? cfg.color : 'rgba(255,255,255,0.1)',
-            color: isPremium || isPro ? '#fff' : '#fff'
-          }}
-        >
-          <span className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300" />
-          <span className="relative">{t.startOrder}</span>
-        </button>
+        <div className="flex gap-2 mt-1">
+          <button
+            onClick={(e) => { e.stopPropagation(); onSelect(pkg); }}
+            className="flex-1 py-2.5 rounded-lg font-black text-xs transition-all duration-200 active:scale-95 relative overflow-hidden group/btn"
+            style={{
+              background: isPremium || isPro ? cfg.color : 'rgba(255,255,255,0.1)',
+              color: isPremium || isPro ? '#fff' : '#fff'
+            }}
+          >
+            <span className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300" />
+            <span className="relative">{t.startOrder}</span>
+          </button>
+          
+          <button
+            onClick={(e) => { e.stopPropagation(); onShowDetails && onShowDetails(pkg); }}
+            className="px-2 py-2.5 rounded-lg font-black text-xs bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
+            title="פרטים נוספים"
+          >
+            <Info size={14} />
+          </button>
+        </div>
       </div>
     </motion.div>
   );
@@ -1718,6 +1759,194 @@ export default function App() {
     positioning_line_he: 'הפרסום שמוכר רכבים – לא רק מציג אותם.'
   });
 
+  // Package descriptions for modals
+  const packageDetails: Record<string, { title: string; content: string }> = {
+    basic: {
+      title: 'חבילת BASIC – פרסום בסיסי',
+      content: `חבילת הפרסום הבסיסית של YOUGO ISRAEL, מתאימה למי שמחפש להתחיל עם פרסום רכב.
+
+מה כוללת החבילה?
+📸 2 תמונות מקצועיות של הרכב
+📝 פוסט אחד ממוקד באינסטגרם
+📱 סטורי 7 ימים
+🎯 חשיפה לקהל הרלוונטי
+
+למי זה מתאים?
+למוכרים פרטיים שרוצים לבדוק את השוק עם השקעה מינימלית.
+
+משך הפרסום: 7 ימים
+אחריות: 3 ימי חשיפה מובטחת
+
+מחיר: 149 ₪ (במקום 175 ₪, מחיר מבצע)`
+    },
+    pro: {
+      title: 'חבילת PRO – החבילה הפופולרית',
+      content: `חבילת PRO היא החבילה הנבחרת ביותר שלנו, המעניקה איזון מושלם בין תמורה למחיר.
+
+מה כוללת החבילה?
+📸 4 תמונות מקצועיות באיכות גבוהה
+📝 פוסט אחד + פוסט שמור (עריכה מקצועית)
+📱 סטורי 14 ימים
+⚡ עדיפות בפרסום (קדימות)
+🎯 חשיפה מורחבת לקהלים ממוקדים
+
+למה בוחרים בה?
+• יחס עלות-תועלת מעולה
+• תוצאות מוכחות
+• זמן פרסום ממושך יותר
+
+משך הפרסום: 14 ימים
+אחריות: 7 ימי חשיפה מובטחת
+
+מחיר: 249 ₪ (במקום 293 ₪, מחיר מבצע)`
+    },
+    premium: {
+      title: 'חבילת PREMIUM – החבילה המושלמת',
+      content: `חבילת PREMIUM היא חבילת הדגל שלנו למכירת רכבים פרטיים, הכוללת את כל היתרונות והעוצמה השיווקית של YOUGO.
+
+מה כוללת החבילה?
+📸 8+ תמונות מקצועיות
+🎥 סרטון רכב מקצועי + רילס
+📝 פוסט מותאם אישית
+📱 סטורי 30 ימים
+⚡ עדיפות מלאה תמיד
+🎯 חשיפה מקסימלית
+👨‍💼 ליווי צמוד
+🏷️ עיצוב VIP
+
+מה מקבלים?
+• תוכן ויזואלי מרהיב שמוכר
+• חשיפה מתמדת לאורך חודש שלם
+• ליווי אישי של צוות המקצוענים
+
+משך הפרסום: 30 ימים
+אחריות: 14 ימי חשיפה מובטחת
+
+מחיר: 449 ₪ (במקום 528 ₪, מחיר מבצע)`
+    },
+    vip: {
+      title: 'חבילת VIP LUXURY – האולטימטיבית',
+      content: `חבילת VIP LUXURY היא חבילת הפרימיום האולטימטיבית של YOUGO ISRAEL, המיועדת לבעלי רכבי יוקרה ומי שדורש את הטוב ביותר.
+
+מה כוללת החבילה?
+📸 15+ תמונות מקצועיות בצילום סטילש
+🎥 רילס וידאו + סטורי VIP
+📱 60 ימי פרסום ברמה הגבוהה ביותר
+🎯 חשיפה מקסימלית לכלל הקהלים
+👨‍💼 ליווי אישי צמוד 24/7
+💎 עיצוב VIP בלעדי
+📊 טרגוט מתקדם לפי פרמטרים מדויקים
+⚡ עדיפות ראשונה תמיד בכל הפרסומים
+
+למי זה מיועד?
+• רכבי יוקרה (פורשה, מרצדס, ב.מ.וו, אאודי)
+• רכבי אספנות
+• מי שדורש שירות ברמה הכי גבוהה שיש
+
+מה מקבלים?
+• צוות VIP שמטפל בך אישית
+• תוכן שיווקי ברמה הכי גבוהה
+• 60 ימי חשיפה – פי 2 מכל חבילה אחרת
+
+משך הפרסום: 60 ימים
+אחריות: 30 ימי חשיפה מובטחת + אפשרות להארכה
+
+מחיר: 749 ₪ (במקום 882 ₪, מחיר השקה)`
+    },
+    duo: {
+      title: 'חבילת DUO DEAL – פרסום 2 רכבים',
+      content: `חבילת DUO DEAL היא הפתרון המושלם למי שיש לו שני רכבים למכירה, או למי שרוצה לפרסם רכב + רכב של בן משפחה.
+
+מה כוללת החבילה?
+🚗🚗 פרסום 2 רכבים במחיר מיוחד
+📸 4 תמונות מקצועיות לכל רכב
+📝 פוסט נפרד לכל רכב
+📱 סטורי 14 יום לכל רכב
+🎯 חשיפה כפולה לקהל מעוניין
+💰 חיסכון של 40% לעומת 2 חבילות
+
+למה זה משתלם?
+• במקום לשלם 598 ₪ לשני רכבים – משלמים רק 349 ₪!
+• חוסכים 249 ₪
+• מקבלים יחס אישי ופרסום מקצועי לשני הרכבים
+
+משך הפרסום: 14 ימים לכל רכב
+אחריות: חשיפה מובטחת כפולה
+
+מחיר: 349 ₪ (במקום 598 ₪)`
+    },
+    business: {
+      title: 'חבילת BUSINESS – לסוכנויות רכב',
+      content: `חבילת BUSINESS מיועדת לסוכנויות רכב, מגרשי רכב ועסקים בתחום הרכב שדורשים פתרון שיווקי מקיף ומקצועי.
+
+מה כוללת החבילה?
+🏢 עד 50 רכבים בחודש
+📸 צילומים מקצועיים
+📝 דפי נחיתה מותאמים אישית
+👨‍💼 מנהל לקוח ייעודי
+📊 דוחות ביצועים חודשיים
+💰 קידום ממומן
+🎯 חשיפה ממוקדת
+📈 נתונים וסטטיסטיקות
+
+יתרונות לעסקים:
+• תוכנית שיווקית סדורה
+• תיאום ציפיות ובניית אסטרטגיה
+• חיסכון בעלויות פרסום לטווח ארוך
+• מיתוג העסק בערוצים החברתיים
+
+משך החבילה: חודשי
+מחיר: 1,499 ₪ לחודש (במקום 2,499 ₪)`
+    },
+    'equipment-heavy': {
+      title: 'חבילת ציוד כבד – באגרים, מחפרונים ועוד',
+      content: `חבילת ציוד כבד מותאמת במיוחד למוכרי ציוד מכני הנדסי, באגרים, מחפרונים, מיני באגרים, בולדוזרים וכל ציוד כבד אחר.
+
+מה כוללת החבילה?
+📸 10 תמונות מקצועיות של הציוד
+📝 פוסט ייעודי עם מפרט טכני מלא
+📱 סטורי 21 יום
+🎯 חשיפה לקהל קבלנים ומגזר הבנייה
+⚡ עדיפות בתוצאות חיפוש
+👨‍💼 ייעוץ תמחור מקצועי
+
+למה זה חשוב?
+קהל הקבלנים ומנהלי העבודה נמצא כל היום ברשתות החברתיות. אנחנו מחברים בינך לבין הלקוחות הנכונים.
+
+התמחות:
+• באגרים ומיני באגרים
+• מחפרונים
+• בולדוזרים
+• שופלים
+• עגורנים
+
+משך הפרסום: 21 יום
+מחיר: 349 ₪`
+    },
+    'equipment-light': {
+      title: 'חבילת ציוד קל – מלגזות, פופקטים ועוד',
+      content: `חבילת ציוד קל מיועדת למכירת ציוד מכני קל כמו מלגזות, פופקטים, ג'קים, סקיד סטיר ומערבלי בטון.
+
+מה כוללת החבילה?
+📸 6 תמונות מקצועיות
+📝 פוסט מותאם לציוד קל
+📱 סטורי 14 יום
+🎯 חשיפה לקהל מקצועי רלוונטי
+📋 תיאור טכני מפורט
+📞 תמיכה ב-WhatsApp
+
+למי זה מתאים?
+• בעלי מלגזות
+• פופקטים
+• ג'קים וציוד הרמה
+• סקיד סטיר
+• מערבלי בטון
+
+משך הפרסום: 14 יום
+מחיר: 199 ₪`
+    }
+  };
+
   const t = translations[lang];
 
   useEffect(() => {
@@ -2010,6 +2239,18 @@ _נשלח אוטומטית ממערכת YOUGO_`;
       alert('אירעה שגיאה. אנא נסה שנית.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleShowPackageDetails = (pkg: Package) => {
+    if (packageDetails[pkg.id]) {
+      setModalContent(packageDetails[pkg.id]);
+    } else {
+      // Fallback for packages without detailed description
+      setModalContent({
+        title: pkg.name,
+        content: pkg.features.map(f => `• ${f}`).join('\n')
+      });
     }
   };
 
@@ -2362,7 +2603,7 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                   <p className="text-white/50 text-xs md:text-sm max-w-xl mx-auto">בחר את המסלול המתאים ביותר עבורך</p>
                 </motion.div>
                 
-                {/* Regular packages */}
+                {/* Regular packages - FIXED: These are now in a proper grid */}
                 <div>
                   <motion.div 
                     initial={{ opacity: 0, y: 20 }}
@@ -2382,7 +2623,8 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                     </p>
                   </motion.div>
                   
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {/* FIXED: Proper grid with 3 columns on md screens */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {packages.map(pkg => (
                       <PackageCard 
                         key={pkg.id}
@@ -2392,7 +2634,8 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                           setSelectedPackage(p);
                           setView('booking');
                           setBookingStep(1);
-                        }} 
+                        }}
+                        onShowDetails={handleShowPackageDetails}
                       />
                     ))}
                   </div>
@@ -2418,7 +2661,7 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                     </p>
                   </motion.div>
                   
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <VIPPackageCard
                       pkg={vipPackage}
                       lang={lang}
@@ -2427,6 +2670,7 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                         setView('booking');
                         setBookingStep(1);
                       }}
+                      onShowDetails={handleShowPackageDetails}
                     />
                     <DuoDealPackageCard
                       pkg={duoPackage}
@@ -2435,6 +2679,7 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                         setView('booking');
                         setBookingStep(1);
                       }}
+                      onShowDetails={handleShowPackageDetails}
                     />
                   </div>
                 </div>
@@ -2448,6 +2693,7 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                       setView('booking');
                       setBookingStep(1);
                     }}
+                    onShowDetails={handleShowPackageDetails}
                   />
                 </div>
 
@@ -2471,7 +2717,7 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                     </p>
                   </motion.div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl mx-auto">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto">
                     {equipmentPackages.map(pkg => (
                       <EquipmentPackageCard
                         key={pkg.id}
@@ -2481,13 +2727,14 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                           setView('booking');
                           setBookingStep(1);
                         }}
+                        onShowDetails={handleShowPackageDetails}
                       />
                     ))}
                   </div>
                 </div>
               </section>
 
-              {/* Why Us Section */}
+              {/* Why Us Section - FIXED: Now in a proper row */}
               <section id="why-us" className="space-y-10">
                 <motion.div 
                   initial={{ opacity: 0, y: 20 }}
@@ -2503,7 +2750,8 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                   <p className="text-white/50 text-xs md:text-sm max-w-xl mx-auto">הסיבות שאלפי מוכרים בחרו דווקא בנו</p>
                 </motion.div>
 
-                <div className="grid md:grid-cols-3 gap-4">
+                {/* FIXED: Proper grid with 3 columns on md screens */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   {[
                     {
                       icon: <Users size={24} />,
