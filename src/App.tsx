@@ -50,7 +50,10 @@ import {
   PlayCircle,
   Headphones,
   ThumbsUp,
-  Edit3,
+  Image,
+  Repeat,
+  ChevronLeft,
+  Home,
   RefreshCw
 } from 'lucide-react';
 import { translations, Language } from './translations';
@@ -66,9 +69,10 @@ interface Package {
   vip?: boolean;
   equipment?: boolean;
   business?: boolean;
+  duo?: boolean;
   color?: string;
   gradient?: string;
-  icon?: any;
+  icon?: JSX.Element;
 }
 
 interface Order {
@@ -99,7 +103,6 @@ const Navbar = ({ lang, setLang, isAdmin, onLogout, siteSettings, setView }: { l
     <nav className="fixed top-0 left-0 right-0 z-50 bg-dark-bg/90 backdrop-blur-xl border-b border-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
-          {/* Logo */}
           <div className="flex items-center gap-3">
             <motion.div 
               whileHover={{ rotate: 10, scale: 1.1 }}
@@ -117,7 +120,6 @@ const Navbar = ({ lang, setLang, isAdmin, onLogout, siteSettings, setView }: { l
             </div>
           </div>
 
-          {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-8">
             <a href="#how-it-works" className="text-sm font-bold text-white/70 hover:text-brand-red transition-colors">איך זה עובד</a>
             <a href="#packages" className="text-sm font-bold text-white/70 hover:text-brand-red transition-colors">חבילות</a>
@@ -139,7 +141,6 @@ const Navbar = ({ lang, setLang, isAdmin, onLogout, siteSettings, setView }: { l
             )}
           </div>
 
-          {/* Mobile Menu Button */}
           <button 
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden p-2 rounded-lg bg-white/5 border border-white/10"
@@ -148,7 +149,6 @@ const Navbar = ({ lang, setLang, isAdmin, onLogout, siteSettings, setView }: { l
           </button>
         </div>
 
-        {/* Mobile Menu */}
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div 
@@ -227,11 +227,11 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose:
 
 // --- Package Change Modal ---
 const PackageChangeModal = ({ isOpen, onClose, packages, onSelectPackage, currentPackage }: { 
-  isOpen: boolean; 
-  onClose: () => void; 
-  packages: Package[]; 
-  onSelectPackage: (pkg: Package) => void;
-  currentPackage: Package | null;
+  isOpen: boolean, 
+  onClose: () => void, 
+  packages: Package[], 
+  onSelectPackage: (pkg: Package) => void,
+  currentPackage: Package | null
 }) => {
   return (
     <AnimatePresence>
@@ -248,7 +248,7 @@ const PackageChangeModal = ({ isOpen, onClose, packages, onSelectPackage, curren
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="relative glass-card w-full max-w-3xl max-h-[80vh] overflow-y-auto p-6 space-y-6"
+            className="relative glass-card w-full max-w-4xl max-h-[80vh] overflow-y-auto p-8 space-y-6"
           >
             <div className="flex items-center justify-between border-b border-white/10 pb-4">
               <h3 className="text-2xl font-bold text-brand-red">בחר חבילה אחרת</h3>
@@ -257,22 +257,26 @@ const PackageChangeModal = ({ isOpen, onClose, packages, onSelectPackage, curren
               </button>
             </div>
             
-            <div className="grid md:grid-cols-2 gap-4">
-              {packages.map(pkg => (
+            <div className="grid md:grid-cols-3 gap-4">
+              {packages.map((pkg) => (
                 <motion.div
                   key={pkg.id}
-                  whileHover={{ scale: 1.02 }}
+                  whileHover={{ y: -5 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                  className={`relative p-4 rounded-xl cursor-pointer border-2 transition-all ${
+                    currentPackage?.id === pkg.id ? 'border-brand-red bg-brand-red/10' : 'border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/30'
+                  }`}
                   onClick={() => {
                     onSelectPackage(pkg);
                     onClose();
                   }}
-                  className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                    currentPackage?.id === pkg.id 
-                      ? 'border-brand-red bg-brand-red/10' 
-                      : 'border-white/10 bg-white/5 hover:border-white/30'
-                  }`}
                 >
-                  <div className="flex items-center gap-3 mb-2">
+                  {pkg.popular && (
+                    <div className="absolute -top-2 -right-2 bg-brand-red text-white text-[8px] font-black px-2 py-0.5 rounded-full shadow-lg">
+                      פופולרי
+                    </div>
+                  )}
+                  <div className="flex items-center gap-3 mb-3">
                     <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-brand-red to-red-600 flex items-center justify-center">
                       {pkg.id === 'vip' ? <Crown size={18} className="text-white" /> :
                        pkg.id === 'duo' ? <Car size={18} className="text-white" /> :
@@ -282,10 +286,10 @@ const PackageChangeModal = ({ isOpen, onClose, packages, onSelectPackage, curren
                     </div>
                     <div>
                       <h4 className="font-black text-white">{pkg.name}</h4>
-                      <p className="text-brand-red font-black text-sm">{pkg.price}</p>
+                      <p className="text-brand-red text-sm font-black">{pkg.price}</p>
                     </div>
                   </div>
-                  <p className="text-xs text-white/50 line-clamp-2">{pkg.features[0]}</p>
+                  <p className="text-xs text-white/60 line-clamp-2">{pkg.features[0]}</p>
                 </motion.div>
               ))}
             </div>
@@ -296,18 +300,177 @@ const PackageChangeModal = ({ isOpen, onClose, packages, onSelectPackage, curren
   );
 };
 
+// --- Business Package Card (Enhanced) ---
+const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Package) => void }) => {
+  const [showDetails, setShowDetails] = useState(false);
+  
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      whileHover={{ y: -8 }}
+      transition={{ type: 'spring', stiffness: 300 }}
+      className="relative w-full rounded-2xl overflow-hidden group cursor-pointer"
+      style={{
+        background: 'linear-gradient(135deg, #0a1929 0%, #0f2744 50%, #1a3650 100%)',
+        boxShadow: '0 20px 40px -15px rgba(0,100,255,0.3), 0 0 0 1px rgba(0,150,255,0.3) inset'
+      }}
+      onClick={() => setShowDetails(!showDetails)}
+    >
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-transparent to-purple-600/10 animate-pulse" />
+      
+      <div className="absolute inset-0 opacity-10" style={{
+        backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
+        backgroundSize: '30px 30px'
+      }} />
+
+      <div className="relative z-10 p-5">
+        <div className="flex items-center justify-between gap-2 mb-4">
+          <div className="flex items-center gap-2">
+            <motion.div 
+              animate={{ rotate: [0, 10, -10, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-xl shadow-blue-500/30"
+            >
+              <Building2 size={20} className="text-white" />
+            </motion.div>
+            <div>
+              <div className="text-[9px] font-black text-blue-400 uppercase tracking-[0.2em]">לסוכנויות ומגרשים</div>
+              <h3 className="text-xl font-black text-white">חבילת BUSINESS</h3>
+            </div>
+          </div>
+          <div className="flex items-center gap-1 bg-blue-500/20 px-2 py-1 rounded-full border border-blue-500/30">
+            <Award size={12} className="text-blue-400" />
+            <span className="text-[8px] font-black text-blue-400">מומלץ לעסקים</span>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4 mb-4">
+          <div className="space-y-3">
+            <div className="flex items-baseline gap-2">
+              <div>
+                <span className="text-2xl font-black text-white">₪1,499</span>
+                <span className="text-white/40 text-xs mr-1">/חודש</span>
+              </div>
+              <span className="text-xs line-through text-white/30">₪2,499</span>
+              <span className="text-[8px] font-black bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded-full border border-green-500/30">
+                חיסכון 40%
+              </span>
+            </div>
+
+            <AnimatePresence>
+              {showDetails && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="space-y-2"
+                >
+                  {[
+                    'עד 50 רכבים בחודש',
+                    'צילומים מקצועיים לכל רכב',
+                    'דפי נחיתה מותאמים אישית',
+                    'מנהל לקוחות ייעודי',
+                    'דוחות ביצועים חודשיים',
+                    'קידום ממומן בגוגל ובאינסטגרם'
+                  ].map((text, i) => (
+                    <div key={i} className="flex items-center gap-2 text-white/80 text-[10px]">
+                      <div className="w-4 h-4 rounded-full bg-blue-500/20 flex items-center justify-center">
+                        <Check size={8} className="text-blue-400" />
+                      </div>
+                      <span>{text}</span>
+                    </div>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {!showDetails && (
+              <div className="flex items-center gap-2 text-blue-400 text-[10px]">
+                <Info size={12} />
+                <span>לחץ לפרטים נוספים</span>
+              </div>
+            )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              { icon: <Target size={16} />, title: 'חשיפה ממוקדת', desc: 'לקהל קונים פוטנציאלי' },
+              { icon: <BarChart3 size={16} />, title: 'ניתוח נתונים', desc: 'מעקב אחר ביצועים' },
+              { icon: <Headphones size={16} />, title: 'תמיכה VIP', desc: 'זמינים 24/7' },
+              { icon: <Rocket size={16} />, title: 'תוצאות מהירות', desc: 'מכירות תוך 48 שעות' },
+            ].map((item, i) => (
+              <div key={i} className="p-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all">
+                <div className="text-blue-400 mb-1">{item.icon}</div>
+                <div className="text-[9px] font-black">{item.title}</div>
+                <div className="text-[7px] text-white/40">{item.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex flex-col md:flex-row gap-2 mt-3 pt-3 border-t border-white/10">
+          <motion.button
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelect(pkg);
+            }}
+            whileTap={{ scale: 0.98 }}
+            className="flex-1 py-2.5 rounded-xl font-black text-xs bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-xl shadow-blue-500/30 hover:shadow-blue-500/40 transition-all relative overflow-hidden group/btn"
+          >
+            <span className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300" />
+            <span className="relative flex items-center justify-center gap-2">
+              <Briefcase size={14} />
+              התחל חבילה
+            </span>
+          </motion.button>
+          
+          <a 
+            href="https://wa.me/972546980606?text=שלום, אני מעוניין בחבילת עסקים לסוכנות שלי"
+            target="_blank"
+            onClick={(e) => e.stopPropagation()}
+            className="flex-1 py-2.5 rounded-xl font-black text-xs bg-white/5 border border-white/20 text-white hover:bg-white/10 hover:border-white/30 transition-all flex items-center justify-center gap-2"
+          >
+            <MessageSquare size={14} />
+            דבר עם יועץ
+          </a>
+        </div>
+
+        <div className="flex items-center justify-center gap-3 mt-3">
+          <div className="flex items-center gap-1 text-white/40">
+            <ShieldCheck size={10} />
+            <span className="text-[7px]">חוזה חודשי</span>
+          </div>
+          <div className="flex items-center gap-1 text-white/40">
+            <ThumbsUp size={10} />
+            <span className="text-[7px]">100% שביעות רצון</span>
+          </div>
+          <div className="flex items-center gap-1 text-white/40">
+            <Users size={10} />
+            <span className="text-[7px]">50+ סוכנויות</span>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
 // --- VIP Package Card ---
 const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
   const t = translations[lang];
+  const [showDetails, setShowDetails] = useState(false);
+  
   return (
     <motion.div
       whileHover={{ y: -8 }}
       transition={{ type: "spring", stiffness: 280 }}
-      className="relative w-[260px] md:w-full rounded-3xl overflow-hidden h-full flex flex-col snap-center shrink-0 group"
+      className="relative w-[260px] md:w-full rounded-3xl overflow-hidden h-full flex flex-col snap-center shrink-0 group cursor-pointer"
       style={{
         boxShadow: '0 20px 40px -15px rgba(212,175,55,0.3), 0 0 0 1px rgba(212,175,55,0.2) inset',
         background: 'radial-gradient(circle at 100% 0%, #2a1f0a 0%, #0f0c05 80%)'
       }}
+      onClick={() => setShowDetails(!showDetails)}
     >
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-amber-300 to-transparent" />
       
@@ -351,28 +514,49 @@ const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
 
         <div className="h-px bg-gradient-to-r from-transparent via-amber-500/30 to-transparent" />
 
-        <div className="grid grid-cols-2 gap-2 flex-grow">
-          {[
-            { icon: <Camera size={12} />, label: '15+ תמונות' },
-            { icon: <Video size={12} />, label: 'רילס + סטורי' },
-            { icon: <Calendar size={12} />, label: '60 ימים' },
-            { icon: <TrendingUp size={12} />, label: 'חשיפה מקס' },
-            { icon: <ShieldCheck size={12} />, label: 'ליווי 24/7' },
-            { icon: <Crown size={12} />, label: 'עיצוב VIP' },
-          ].slice(0, 4).map((feat, i) => (
-            <div key={i} className="flex items-center gap-1.5 bg-white/5 rounded-lg px-2 py-1.5 border border-white/5">
-              <span className="text-amber-400">{feat.icon}</span>
-              <span className="text-[9px] font-medium text-white/80">{feat.label}</span>
-            </div>
-          ))}
-        </div>
+        <AnimatePresence>
+          {showDetails && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="space-y-2"
+            >
+              {[
+                '15+ תמונות מקצועיות',
+                'רילס + סטורי VIP',
+                '60 ימי פרסום',
+                'חשיפה מקסימלית',
+                'ליווי אישי 24/7',
+                'עיצוב VIP בלעדי',
+                'טרגוט מתקדם',
+                'עדיפות ראשונה'
+              ].map((feat, i) => (
+                <div key={i} className="flex items-center gap-1.5 text-[9px]">
+                  <Check size={8} className="text-amber-400" />
+                  <span className="text-white/70">{feat}</span>
+                </div>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {!showDetails && (
+          <div className="flex items-center gap-1 text-amber-400 text-[8px]">
+            <Info size={10} />
+            <span>לחץ לפרטים נוספים</span>
+          </div>
+        )}
 
         <motion.button
-          onClick={() => onSelect(pkg)}
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelect(pkg);
+          }}
           whileTap={{ scale: 0.98 }}
-          className="w-full py-3 rounded-xl font-black text-sm bg-gradient-to-l from-amber-500 to-amber-600 text-black shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 transition-all mt-2 relative overflow-hidden group"
+          className="w-full py-3 rounded-xl font-black text-sm bg-gradient-to-l from-amber-500 to-amber-600 text-black shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 transition-all mt-2 relative overflow-hidden group/btn"
         >
-          <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+          <span className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300" />
           <span className="relative flex items-center justify-center gap-2">
             <Crown size={16} />
             הזמן VIP
@@ -385,6 +569,8 @@ const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
 
 // --- DUO DEAL Package Card ---
 const DuoDealPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Package) => void }) => {
+  const [showDetails, setShowDetails] = useState(false);
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -392,11 +578,12 @@ const DuoDealPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pac
       viewport={{ once: true }}
       whileHover={{ y: -8 }}
       transition={{ type: 'spring', stiffness: 280 }}
-      className="relative w-[260px] md:w-full rounded-3xl overflow-hidden h-full flex flex-col snap-center shrink-0 group"
+      className="relative w-[260px] md:w-full rounded-3xl overflow-hidden h-full flex flex-col snap-center shrink-0 group cursor-pointer"
       style={{
         background: 'radial-gradient(circle at 100% 0%, #1e1428 0%, #0b0710 100%)',
         boxShadow: '0 20px 40px -15px rgba(139,92,246,0.3), 0 0 0 1px rgba(139,92,246,0.2) inset'
       }}
+      onClick={() => setShowDetails(!showDetails)}
     >
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-purple-400 to-transparent" />
       
@@ -434,26 +621,47 @@ const DuoDealPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pac
 
         <div className="h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent" />
 
-        <div className="grid grid-cols-2 gap-2 flex-grow">
-          {[
-            { icon: <Car size={12} />, label: '2 רכבים' },
-            { icon: <Camera size={12} />, label: '4 תמונות' },
-            { icon: <Instagram size={12} />, label: 'פוסטים' },
-            { icon: <Calendar size={12} />, label: '14 ימים' },
-          ].map((feat, i) => (
-            <div key={i} className="flex items-center gap-1.5 bg-white/5 rounded-lg px-2 py-1.5 border border-white/5">
-              <span className="text-purple-400">{feat.icon}</span>
-              <span className="text-[9px] font-medium text-white/80">{feat.label}</span>
-            </div>
-          ))}
-        </div>
+        <AnimatePresence>
+          {showDetails && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="space-y-2"
+            >
+              {[
+                'פרסום 2 רכבים במחיר מיוחד',
+                '4 תמונות לכל רכב',
+                'פוסט נפרד לכל רכב',
+                'סטורי 14 יום לכל אחד',
+                'חשיפה כפולה לקהל מעוניין',
+                'חיסכון של 40%'
+              ].map((feat, i) => (
+                <div key={i} className="flex items-center gap-1.5 text-[9px]">
+                  <Check size={8} className="text-purple-400" />
+                  <span className="text-white/70">{feat}</span>
+                </div>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {!showDetails && (
+          <div className="flex items-center gap-1 text-purple-400 text-[8px]">
+            <Info size={10} />
+            <span>לחץ לפרטים נוספים</span>
+          </div>
+        )}
 
         <motion.button
-          onClick={() => onSelect(pkg)}
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelect(pkg);
+          }}
           whileTap={{ scale: 0.98 }}
-          className="w-full py-3 rounded-xl font-black text-sm bg-gradient-to-l from-purple-500 to-purple-600 text-white shadow-lg shadow-purple-500/20 hover:shadow-purple-500/30 transition-all mt-2 relative overflow-hidden group"
+          className="w-full py-3 rounded-xl font-black text-sm bg-gradient-to-l from-purple-500 to-purple-600 text-white shadow-lg shadow-purple-500/20 hover:shadow-purple-500/30 transition-all mt-2 relative overflow-hidden group/btn"
         >
-          <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+          <span className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300" />
           <span className="relative flex items-center justify-center gap-2">
             <Car size={16} />
             הזמן DUO
@@ -471,12 +679,13 @@ const DuoDealPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pac
 // --- Equipment Package Card ---
 const EquipmentPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Package) => void }) => {
   const isHeavy = pkg.id === 'equipment-heavy';
+  const [showDetails, setShowDetails] = useState(false);
   
   return (
     <motion.div
       whileHover={{ y: -6, scale: 1.01 }}
       transition={{ type: "spring", stiffness: 300 }}
-      className="relative w-[260px] md:w-full rounded-2xl border transition-all duration-500 h-full flex flex-col p-5 snap-center shrink-0 group"
+      className="relative w-[260px] md:w-full rounded-2xl border transition-all duration-500 h-full flex flex-col p-5 snap-center shrink-0 group cursor-pointer"
       style={{
         background: isHeavy 
           ? 'linear-gradient(135deg, rgba(234,88,12,0.08) 0%, rgba(15,12,8,1) 100%)' 
@@ -484,10 +693,11 @@ const EquipmentPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: P
         borderColor: isHeavy ? 'rgba(234,88,12,0.35)' : 'rgba(100,116,139,0.25)',
         boxShadow: isHeavy ? '0 0 30px rgba(234,88,12,0.06)' : 'none'
       }}
+      onClick={() => setShowDetails(!showDetails)}
     >
       {isHeavy && (
-        <div className="absolute -top-3 right-4 z-10 bg-orange-600 text-white text-[8px] font-black py-1 px-2 rounded-full shadow-lg uppercase tracking-widest">
-          הכי מבוקש
+        <div className="absolute -top-3 -right-3 z-20 bg-orange-600 text-white text-[8px] font-black py-1 px-2 rounded-full shadow-lg uppercase tracking-widest border border-orange-300/30">
+          הכי מבוקש! 🔥
         </div>
       )}
 
@@ -531,20 +741,36 @@ const EquipmentPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: P
         ))}
       </div>
 
-      <div className="space-y-1.5 mb-4 flex-grow">
-        {pkg.features.slice(0, 3).map((f, i) => (
-          <div key={i} className="flex items-start gap-1.5 text-[9px] font-medium group/feature">
-            <div className="mt-0.5 p-0.5 rounded-full shrink-0 group-hover/feature:scale-110 transition-transform duration-300"
-              style={{ background: isHeavy ? 'rgba(234,88,12,0.6)' : 'rgba(100,116,139,0.4)' }}>
-              <Check size={6} className="text-dark-bg" strokeWidth={5} />
-            </div>
-            <span className="text-white/80 group-hover/feature:text-white transition-colors duration-300">{f}</span>
-          </div>
-        ))}
-      </div>
+      <AnimatePresence>
+        {showDetails && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="space-y-1.5 mb-3"
+          >
+            {pkg.features.slice(0, 3).map((f, i) => (
+              <div key={i} className="flex items-start gap-1.5 text-[8px] font-medium">
+                <Check size={6} className="shrink-0 mt-0.5" style={{ color: isHeavy ? '#ea580c' : '#94a3b8' }} />
+                <span className="text-white/70">{f}</span>
+              </div>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {!showDetails && (
+        <div className="flex items-center gap-1 text-[8px] mb-3" style={{ color: isHeavy ? '#ea580c' : '#94a3b8' }}>
+          <Info size={8} />
+          <span>לחץ לפרטים נוספים</span>
+        </div>
+      )}
 
       <button
-        onClick={() => onSelect(pkg)}
+        onClick={(e) => {
+          e.stopPropagation();
+          onSelect(pkg);
+        }}
         className="w-full py-2.5 rounded-xl font-black text-xs transition-all duration-300 active:scale-95 relative overflow-hidden group/btn"
         style={{
           background: isHeavy 
@@ -557,184 +783,6 @@ const EquipmentPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: P
         <span className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300" />
         <span className="relative">{isHeavy ? '🚜 הזמן עכשיו' : '🔧 הזמן עכשיו'}</span>
       </button>
-    </motion.div>
-  );
-};
-
-// --- Business Package Card (New Enhanced Design) ---
-const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Package) => void }) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      whileHover={{ y: -10 }}
-      transition={{ type: 'spring', stiffness: 300 }}
-      className="relative w-full rounded-3xl overflow-hidden group cursor-pointer"
-      onClick={() => onSelect(pkg)}
-      style={{
-        background: 'linear-gradient(135deg, #0a1929 0%, #0f2744 50%, #1a3650 100%)',
-        boxShadow: '0 30px 60px -15px rgba(0,100,255,0.3), 0 0 0 1px rgba(0,150,255,0.3) inset'
-      }}
-    >
-      {/* Animated background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-transparent to-purple-600/10 animate-pulse" />
-      
-      {/* Grid pattern */}
-      <div className="absolute inset-0 opacity-10" style={{
-        backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
-        backgroundSize: '30px 30px'
-      }} />
-
-      <div className="relative z-10 p-8 md:p-10">
-        {/* Top badges */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
-          <div className="flex items-center gap-3">
-            <motion.div 
-              animate={{ rotate: [0, 10, -10, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-xl shadow-blue-500/30"
-            >
-              <Building2 size={28} className="text-white" />
-            </motion.div>
-            <div>
-              <div className="text-sm font-black text-blue-400 uppercase tracking-[0.2em]">לסוכנויות ומגרשים</div>
-              <h3 className="text-3xl md:text-4xl font-black text-white">חבילת BUSINESS</h3>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 bg-blue-500/20 px-4 py-2 rounded-full border border-blue-500/30">
-            <Award size={16} className="text-blue-400" />
-            <span className="text-xs font-black text-blue-400">מומלץ לעסקים</span>
-          </div>
-        </div>
-
-        {/* Main content */}
-        <div className="grid md:grid-cols-2 gap-8 mb-8">
-          {/* Left column - Features */}
-          <div className="space-y-6">
-            <div className="flex items-baseline gap-4">
-              <div>
-                <span className="text-5xl font-black text-white">₪1,499</span>
-                <span className="text-white/40 text-sm mr-2">/ לחודש</span>
-              </div>
-              <span className="text-base line-through text-white/30">₪2,499</span>
-              <span className="text-xs font-black bg-green-500/20 text-green-400 px-3 py-1 rounded-full border border-green-500/30">
-                חיסכון 40%
-              </span>
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center gap-3 text-white/80">
-                <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
-                  <Check size={16} className="text-blue-400" />
-                </div>
-                <span>פרסום עד 50 רכבים בחודש</span>
-              </div>
-              <div className="flex items-center gap-3 text-white/80">
-                <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
-                  <Check size={16} className="text-blue-400" />
-                </div>
-                <span>צילומים מקצועיים לכל רכב</span>
-              </div>
-              <div className="flex items-center gap-3 text-white/80">
-                <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
-                  <Check size={16} className="text-blue-400" />
-                </div>
-                <span>דפי נחיתה מותאמים אישית</span>
-              </div>
-              <div className="flex items-center gap-3 text-white/80">
-                <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
-                  <Check size={16} className="text-blue-400" />
-                </div>
-                <span>מנהל לקוחות ייעודי</span>
-              </div>
-              <div className="flex items-center gap-3 text-white/80">
-                <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
-                  <Check size={16} className="text-blue-400" />
-                </div>
-                <span>דוחות ביצועים חודשיים</span>
-              </div>
-              <div className="flex items-center gap-3 text-white/80">
-                <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
-                  <Check size={16} className="text-blue-400" />
-                </div>
-                <span>קידום ממומן בגוגל ובאינסטגרם</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Right column - Benefits */}
-          <div className="space-y-6">
-            <h4 className="text-xl font-black text-white flex items-center gap-2">
-              <Sparkles size={20} className="text-blue-400" />
-              יתרונות החבילה
-            </h4>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300">
-                <Target size={24} className="text-blue-400 mb-2" />
-                <div className="text-sm font-black">חשיפה ממוקדת</div>
-                <div className="text-xs text-white/50">לקהל קונים פוטנציאלי</div>
-              </div>
-              <div className="p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300">
-                <BarChart3 size={24} className="text-purple-400 mb-2" />
-                <div className="text-sm font-black">ניתוח נתונים</div>
-                <div className="text-xs text-white/50">מעקב אחר ביצועים</div>
-              </div>
-              <div className="p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300">
-                <Headphones size={24} className="text-green-400 mb-2" />
-                <div className="text-sm font-black">תמיכה VIP</div>
-                <div className="text-xs text-white/50">זמינים 24/7</div>
-              </div>
-              <div className="p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300">
-                <Rocket size={24} className="text-orange-400 mb-2" />
-                <div className="text-sm font-black">תוצאות מהירות</div>
-                <div className="text-xs text-white/50">מכירות תוך 48 שעות</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* CTA Buttons */}
-        <div className="flex flex-col md:flex-row gap-4 mt-8 pt-8 border-t border-white/10">
-          <motion.button
-            onClick={(e) => { e.stopPropagation(); onSelect(pkg); }}
-            whileTap={{ scale: 0.98 }}
-            className="flex-1 py-5 rounded-2xl font-black text-lg bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-xl shadow-blue-500/30 hover:shadow-blue-500/40 transition-all relative overflow-hidden group/btn"
-          >
-            <span className="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300" />
-            <span className="relative flex items-center justify-center gap-3">
-              <Briefcase size={22} />
-              התחל חבילת BUSINESS
-            </span>
-          </motion.button>
-          
-          <a 
-            href="https://wa.me/972546980606?text=שלום, אני מעוניין בחבילת עסקים לסוכנות שלי"
-            target="_blank"
-            className="flex-1 py-5 rounded-2xl font-black text-lg bg-white/5 border-2 border-white/20 text-white hover:bg-white/10 hover:border-white/30 transition-all flex items-center justify-center gap-3 group"
-          >
-            <MessageSquare size={22} className="group-hover:scale-110 transition-transform" />
-            דבר עם יועץ עסקי
-          </a>
-        </div>
-
-        {/* Trust badges */}
-        <div className="flex items-center justify-center gap-6 mt-6 pt-4">
-          <div className="flex items-center gap-2 text-white/40">
-            <ShieldCheck size={16} />
-            <span className="text-xs">חוזה חודשי</span>
-          </div>
-          <div className="flex items-center gap-2 text-white/40">
-            <ThumbsUp size={16} />
-            <span className="text-xs">100% שביעות רצון</span>
-          </div>
-          <div className="flex items-center gap-2 text-white/40">
-            <Users size={16} />
-            <span className="text-xs">50+ סוכנויות מרות</span>
-          </div>
-        </div>
-      </div>
     </motion.div>
   );
 };
@@ -1024,73 +1072,73 @@ const OrderStatusCheck = ({ onClose }: { onClose: () => void }) => {
   );
 };
 
-// --- Step 1: Car Details Form with Package Change Option ---
+// --- Step 1: Car Details Form ---
 const CarDetailsForm = ({ 
   formData, 
   setFormData, 
-  onNext,
+  onNext, 
   selectedPackage,
-  packages,
-  onPackageChange
+  allPackages,
+  onPackageChange 
 }: { 
   formData: any, 
   setFormData: (data: any) => void, 
   onNext: () => void,
   selectedPackage: Package | null,
-  packages: Package[],
+  allPackages: Package[],
   onPackageChange: (pkg: Package) => void
 }) => {
   const [showPackageModal, setShowPackageModal] = useState(false);
 
-  // Get package style based on package id
-  const getPackageStyle = () => {
+  // Get package-specific styling
+  const getPackageStyles = () => {
     switch(selectedPackage?.id) {
       case 'vip':
         return {
-          bg: 'bg-gradient-to-r from-amber-900/20 to-amber-800/10',
+          bg: 'from-amber-900/20 to-amber-800/5',
           border: 'border-amber-500/30',
           text: 'text-amber-400',
-          icon: <Crown size={16} className="text-amber-400" />
+          icon: <Crown size={20} className="text-amber-400" />
         };
       case 'duo':
         return {
-          bg: 'bg-gradient-to-r from-purple-900/20 to-purple-800/10',
+          bg: 'from-purple-900/20 to-purple-800/5',
           border: 'border-purple-500/30',
           text: 'text-purple-400',
-          icon: <Car size={16} className="text-purple-400" />
+          icon: <Car size={20} className="text-purple-400" />
         };
       case 'business':
         return {
-          bg: 'bg-gradient-to-r from-blue-900/20 to-blue-800/10',
+          bg: 'from-blue-900/20 to-blue-800/5',
           border: 'border-blue-500/30',
           text: 'text-blue-400',
-          icon: <Building2 size={16} className="text-blue-400" />
+          icon: <Building2 size={20} className="text-blue-400" />
         };
       case 'equipment-heavy':
         return {
-          bg: 'bg-gradient-to-r from-orange-900/20 to-orange-800/10',
+          bg: 'from-orange-900/20 to-orange-800/5',
           border: 'border-orange-500/30',
           text: 'text-orange-400',
-          icon: <Truck size={16} className="text-orange-400" />
+          icon: <Truck size={20} className="text-orange-400" />
         };
       case 'equipment-light':
         return {
-          bg: 'bg-gradient-to-r from-slate-900/20 to-slate-800/10',
+          bg: 'from-slate-900/20 to-slate-800/5',
           border: 'border-slate-500/30',
           text: 'text-slate-400',
-          icon: <Wrench size={16} className="text-slate-400" />
+          icon: <Wrench size={20} className="text-slate-400" />
         };
       default:
         return {
-          bg: 'bg-gradient-to-r from-brand-red/20 to-red-800/10',
+          bg: 'from-brand-red/20 to-red-800/5',
           border: 'border-brand-red/30',
           text: 'text-brand-red',
-          icon: <Star size={16} className="text-brand-red" />
+          icon: <Star size={20} className="text-brand-red" />
         };
     }
   };
 
-  const style = getPackageStyle();
+  const styles = getPackageStyles();
 
   return (
     <motion.div
@@ -1099,39 +1147,37 @@ const CarDetailsForm = ({
       exit={{ opacity: 0, x: 20 }}
       className="space-y-5"
     >
-      {/* Package Change Modal */}
-      <PackageChangeModal 
-        isOpen={showPackageModal}
-        onClose={() => setShowPackageModal(false)}
-        packages={packages}
-        onSelectPackage={onPackageChange}
-        currentPackage={selectedPackage}
-      />
-
-      {/* Selected Package Banner */}
-      <div className={`p-4 rounded-xl border-2 ${style.border} ${style.bg} flex items-center justify-between`}>
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-brand-red to-red-600 flex items-center justify-center">
-            {style.icon}
+      {/* Package Change Button - تصميم مربع احترافي */}
+      <motion.div 
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className={`p-4 rounded-xl bg-gradient-to-r ${styles.bg} border-2 ${styles.border} cursor-pointer hover:scale-[1.02] hover:shadow-lg transition-all duration-300`}
+        onClick={() => setShowPackageModal(true)}
+        whileHover={{ y: -2 }}
+        whileTap={{ scale: 0.98 }}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${styles.bg} border-2 ${styles.border} flex items-center justify-center`}>
+              {styles.icon}
+            </div>
+            <div>
+              <span className="text-xs text-white/60">חבילה נבחרת</span>
+              <h4 className={`font-black text-lg ${styles.text}`}>{selectedPackage?.name}</h4>
+            </div>
           </div>
-          <div>
-            <p className="text-xs text-white/50">חבילה נבחרת</p>
-            <p className={`font-black ${style.text}`}>{selectedPackage?.name}</p>
-            <p className="text-xs text-white/70">{selectedPackage?.price}</p>
+          <div className="flex items-center gap-3">
+            <span className={`text-xl font-black ${styles.text}`}>{selectedPackage?.price}</span>
+            <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center hover:bg-white/20 transition-all">
+              <RefreshCw size={18} className="text-white/70" />
+            </div>
           </div>
         </div>
-        <button
-          onClick={() => setShowPackageModal(true)}
-          className="flex items-center gap-1 px-3 py-1.5 bg-white/10 rounded-lg border border-white/20 hover:bg-white/20 transition-all text-xs"
-        >
-          <RefreshCw size={12} />
-          שנה חבילה
-        </button>
-      </div>
+      </motion.div>
 
       <div className="text-center space-y-2">
-        <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mx-auto shadow-xl shadow-blue-500/30">
-          <Car size={28} className="text-white" />
+        <div className={`w-16 h-16 bg-gradient-to-br ${styles.bg} rounded-xl flex items-center justify-center mx-auto shadow-xl border-2 ${styles.border}`}>
+          {styles.icon}
         </div>
         <h3 className="text-xl font-black">פרטי הרכב</h3>
         <p className="text-white/50 text-xs">הכנס את פרטי הרכב שברצונך לפרסם</p>
@@ -1242,12 +1288,28 @@ const CarDetailsForm = ({
         </div>
       </div>
 
-      <button
-        onClick={onNext}
-        className="w-full py-3 bg-gradient-to-r from-brand-red to-red-600 rounded-xl font-black text-sm shadow-xl shadow-brand-red/30 hover:shadow-brand-red/40 transition-all mt-2"
-      >
-        להמשך לתשלום
-      </button>
+      <div className="flex gap-2">
+        <button
+          onClick={() => setView('home')}
+          className="w-14 h-14 rounded-xl bg-white/5 border-2 border-white/10 hover:bg-white/10 transition-all flex items-center justify-center"
+        >
+          <Home size={20} className="text-white/60" />
+        </button>
+        <button
+          onClick={onNext}
+          className="flex-1 py-3 bg-gradient-to-r from-brand-red to-red-600 rounded-xl font-black text-sm shadow-xl shadow-brand-red/30 hover:shadow-brand-red/40 transition-all"
+        >
+          להמשך לתשלום
+        </button>
+      </div>
+
+      <PackageChangeModal
+        isOpen={showPackageModal}
+        onClose={() => setShowPackageModal(false)}
+        packages={allPackages}
+        onSelectPackage={onPackageChange}
+        currentPackage={selectedPackage}
+      />
     </motion.div>
   );
 };
@@ -1259,58 +1321,49 @@ const PaymentForm = ({
   selectedPackage, 
   onSubmit, 
   loading,
-  onBack 
+  onBack,
+  onPackageChange,
+  allPackages
 }: { 
   formData: any, 
   setFormData: (data: any) => void, 
   selectedPackage: Package | null, 
   onSubmit: () => void, 
   loading: boolean,
-  onBack: () => void 
+  onBack: () => void,
+  onPackageChange: (pkg: Package) => void,
+  allPackages: Package[]
 }) => {
   const [paymentMethod, setPaymentMethod] = useState<'bit' | 'paybox' | null>(null);
+  const [showPackageModal, setShowPackageModal] = useState(false);
 
-  // Get package style based on package id
-  const getPackageStyle = () => {
+  // Get package-specific styling
+  const getPackageStyles = () => {
     switch(selectedPackage?.id) {
       case 'vip':
         return {
-          bg: 'bg-gradient-to-r from-amber-900/20 to-amber-800/10',
+          bg: 'from-amber-900/20 to-amber-800/5',
           border: 'border-amber-500/30',
           text: 'text-amber-400',
           icon: <Crown size={20} className="text-amber-400" />
         };
       case 'duo':
         return {
-          bg: 'bg-gradient-to-r from-purple-900/20 to-purple-800/10',
+          bg: 'from-purple-900/20 to-purple-800/5',
           border: 'border-purple-500/30',
           text: 'text-purple-400',
           icon: <Car size={20} className="text-purple-400" />
         };
       case 'business':
         return {
-          bg: 'bg-gradient-to-r from-blue-900/20 to-blue-800/10',
+          bg: 'from-blue-900/20 to-blue-800/5',
           border: 'border-blue-500/30',
           text: 'text-blue-400',
           icon: <Building2 size={20} className="text-blue-400" />
         };
-      case 'equipment-heavy':
-        return {
-          bg: 'bg-gradient-to-r from-orange-900/20 to-orange-800/10',
-          border: 'border-orange-500/30',
-          text: 'text-orange-400',
-          icon: <Truck size={20} className="text-orange-400" />
-        };
-      case 'equipment-light':
-        return {
-          bg: 'bg-gradient-to-r from-slate-900/20 to-slate-800/10',
-          border: 'border-slate-500/30',
-          text: 'text-slate-400',
-          icon: <Wrench size={20} className="text-slate-400" />
-        };
       default:
         return {
-          bg: 'bg-gradient-to-r from-brand-red/20 to-red-800/10',
+          bg: 'from-brand-red/20 to-red-800/5',
           border: 'border-brand-red/30',
           text: 'text-brand-red',
           icon: <Star size={20} className="text-brand-red" />
@@ -1318,7 +1371,88 @@ const PaymentForm = ({
     }
   };
 
-  const style = getPackageStyle();
+  const styles = getPackageStyles();
+
+  // Get WhatsApp message based on package
+  const getWhatsAppMessage = () => {
+    const orderNum = String(Math.floor(10000 + Math.random() * 90000)).slice(0, 5);
+    const pkgEmoji = selectedPackage?.id === 'vip' ? '👑' : 
+                     selectedPackage?.id === 'duo' ? '🚗🚗' : 
+                     selectedPackage?.id === 'business' ? '🏢' : 
+                     selectedPackage?.id.includes('equipment') ? '🚜' : '✅';
+
+    let baseMessage = `*YOUGO ISRAEL | אישור הזמנה חדשה* 🚗💨
+---------------------------------------
+*מספר הזמנה:* #${orderNum}
+*חבילה נבחרת:* ${selectedPackage?.name} ${pkgEmoji}
+---------------------------------------
+
+👤 *פרטי לקוח:*
+• שם מלא: ${formData.fullName}
+• טלפון: ${formData.phone}
+
+🚘 *פרטי רכב:*
+• דגם: ${formData.model}
+• שנה: ${formData.year}
+• קילומטראז': ${formData.mileage}
+• מחיר מבוקש: ${formData.price}
+• עליה לכביש: ${formData.registration}
+• טסט עד: ${formData.testUntil}
+• מיקום: ${formData.location}
+
+---------------------------------------
+✅ *אישור תשלום הועלה בהצלחה למערכת.*`;
+
+    // Add package-specific instructions
+    if (selectedPackage?.id === 'duo') {
+      baseMessage += `
+
+📸 *חשוב! חבילת DUO DEAL:*
+נא לשלוח תמונות וסרטונים של *שני הרכבים*:
+• רכב ראשון: תמונות + סרטון
+• רכב שני: תמונות + סרטון
+
+---------------------------------------`;
+    } else if (selectedPackage?.id === 'business') {
+      baseMessage += `
+
+📸 *חבילת BUSINESS:*
+נא לשלוח:
+• תמונות של כל הרכבים לפרסום
+• סרטונים קצרים לכל רכב
+• מסמכי רישוי וטסטים
+
+---------------------------------------`;
+    } else if (selectedPackage?.id.includes('equipment')) {
+      baseMessage += `
+
+📸 *חבילת ציוד כבד:*
+נא לשלוח:
+• תמונות מכל הזוויות של הציוד
+• סרטון הדגמה של הציוד בעבודה
+• תעודות ומסמכים טכניים
+
+---------------------------------------`;
+    } else {
+      baseMessage += `
+
+📸 *נא לשלוח כאן את תמונות וסרטון הרכב:*
+• 4-8 תמונות מכל הזוויות
+• סרטון קצר של הרכב
+
+---------------------------------------`;
+    }
+
+    baseMessage += `\n_נשלח אוטומטית ממערכת YOUGO_`;
+    return baseMessage;
+  };
+
+  const handleSubmit = () => {
+    const message = getWhatsAppMessage();
+    const whatsappUrl = `https://wa.me/972546980606?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+    onSubmit();
+  };
 
   return (
     <motion.div
@@ -1327,32 +1461,53 @@ const PaymentForm = ({
       exit={{ opacity: 0, x: -20 }}
       className="space-y-5"
     >
+      {/* Package Change Button - تصميم مربع احترافي */}
+      <motion.div 
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className={`p-4 rounded-xl bg-gradient-to-r ${styles.bg} border-2 ${styles.border} cursor-pointer hover:scale-[1.02] hover:shadow-lg transition-all duration-300`}
+        onClick={() => setShowPackageModal(true)}
+        whileHover={{ y: -2 }}
+        whileTap={{ scale: 0.98 }}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${styles.bg} border-2 ${styles.border} flex items-center justify-center`}>
+              {styles.icon}
+            </div>
+            <div>
+              <span className="text-xs text-white/60">חבילה נבחרת</span>
+              <h4 className={`font-black text-lg ${styles.text}`}>{selectedPackage?.name}</h4>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className={`text-xl font-black ${styles.text}`}>{selectedPackage?.price}</span>
+            <div className="w-10 h-10 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center hover:bg-white/20 transition-all">
+              <RefreshCw size={18} className="text-white/70" />
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
       <div className="text-center space-y-2">
-        <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mx-auto shadow-xl shadow-green-500/30">
-          <CreditCard size={28} className="text-white" />
+        <div className={`w-16 h-16 bg-gradient-to-br ${styles.bg} rounded-xl flex items-center justify-center mx-auto shadow-xl border-2 ${styles.border}`}>
+          <CreditCard size={28} className={styles.text} />
         </div>
         <h3 className="text-xl font-black">תשלום והעלאת אישור</h3>
         <p className="text-white/50 text-xs">בחר אמצעי תשלום והעלה צילום מסך</p>
       </div>
 
-      {/* Package summary with package-specific styling */}
-      <div className={`p-4 rounded-xl border-2 ${style.border} ${style.bg}`}>
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-brand-red to-red-600 flex items-center justify-center">
-            {style.icon}
-          </div>
-          <div>
-            <p className="text-xs text-white/50">חבילה נבחרת</p>
-            <p className={`font-black ${style.text}`}>{selectedPackage?.name}</p>
-          </div>
+      <div className={`p-3 rounded-xl bg-gradient-to-r ${styles.bg} border-2 ${styles.border}`}>
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-white/60">חבילה נבחרת:</span>
+          <span className={`font-black ${styles.text}`}>{selectedPackage?.name}</span>
         </div>
-        <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/10">
+        <div className="flex items-center justify-between mt-1">
           <span className="text-white/60">מחיר:</span>
-          <span className={`font-black text-lg ${style.text}`}>{selectedPackage?.price}</span>
+          <span className={`font-black text-base ${styles.text}`}>{selectedPackage?.price}</span>
         </div>
       </div>
 
-      {/* Payment methods */}
       <div className="space-y-2">
         <label className="text-xs font-black text-white/60">אמצעי תשלום *</label>
         <div className="grid grid-cols-2 gap-2">
@@ -1385,7 +1540,7 @@ const PaymentForm = ({
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className={`p-4 rounded-xl border ${style.border} ${style.bg} space-y-3`}
+          className="p-4 rounded-xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 space-y-3"
         >
           <div className="text-center">
             <p className="text-white/60 text-xs">העבר את הסכום למספר:</p>
@@ -1445,14 +1600,14 @@ const PaymentForm = ({
       <div className="flex gap-2">
         <button
           onClick={onBack}
-          className="flex-1 py-2.5 bg-white/5 rounded-xl font-black text-sm border border-white/10 hover:bg-white/10 transition-all"
+          className="w-14 h-14 rounded-xl bg-white/5 border-2 border-white/10 hover:bg-white/10 transition-all flex items-center justify-center"
         >
-          חזור
+          <ArrowLeft size={20} className="text-white/60" />
         </button>
         <button
-          onClick={onSubmit}
+          onClick={handleSubmit}
           disabled={!paymentMethod || !formData.paymentProof || loading}
-          className="flex-1 py-2.5 bg-gradient-to-r from-brand-red to-red-600 rounded-xl font-black text-sm shadow-xl shadow-brand-red/30 hover:shadow-brand-red/40 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 py-3 bg-gradient-to-r from-brand-red to-red-600 rounded-xl font-black text-sm shadow-xl shadow-brand-red/30 hover:shadow-brand-red/40 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? (
             <span className="flex items-center justify-center gap-2">
@@ -1464,9 +1619,126 @@ const PaymentForm = ({
           )}
         </button>
       </div>
+
+      <PackageChangeModal
+        isOpen={showPackageModal}
+        onClose={() => setShowPackageModal(false)}
+        packages={allPackages}
+        onSelectPackage={onPackageChange}
+        currentPackage={selectedPackage}
+      />
     </motion.div>
   );
 };
+
+// --- Pages Content ---
+const termsContent = `תקנון השימוש באתר YOUGO ISRAEL
+
+ברוכים הבאים לאתר YOUGO ISRAEL. התקנון להלן מסדיר את השימוש באתר ותנאי ההתקשרות עמו.
+
+1. כללי
+אתר YOUGO ISRAEL הינו פלטפורמה לפרסום ומכירת רכבים וציוד כבד באינסטגרם. השימוש באתר כפוף לתנאים המפורטים להלן.
+
+2. רכישת חבילות פרסום
+2.1 האתר מציע חבילות פרסום שונות כפי שמפורט בעמוד החבילות.
+2.2 התשלום עבור החבילות מתבצע באמצעות Bit או PayBox.
+2.3 לאחר אישור התשלום, יפנה אליכם נציג תוך 24 שעות.
+
+3. אחריות
+3.1 YOUGO ISRAEL אינה אחראית לתוכן המודעות שמועלות על ידי המשתמשים.
+3.2 האחריות לדיוק הפרטים במודעה הינה על המשתמש בלבד.
+
+4. מדיניות ביטולים
+4.1 ניתן לבטל הזמנה תוך 14 יום מקבלת האישור.
+4.2 ביטול הזמנה יחויב בדמי ביטול בשיעור 5% ממחיר העסקה.
+
+5. קניין רוחני
+כל הזכויות בתכני האתר, כולל לוגו, עיצוב ותמונות, שמורות לYOUGO ISRAEL.
+
+6. שונות
+YOUGO ISRAEL רשאית לעדכן תקנון זה מעת לעת. השימוש המתמיד באתר מהווה הסכמה לתנאים המעודכנים.
+
+לשאלות ובירורים: WhatsApp 054-6980606
+
+תאריך עדכון אחרון: 23 בפברואר 2024`;
+
+const privacyContent = `מדיניות פרטיות - YOUGO ISRAEL
+
+אנו מכבדים את פרטיותך ומחויבים להגן על המידע האישי שלך. מסמך זה מתאר כיצד אנו אוספים, משתמשים ומגנים על המידע שלך.
+
+1. איסוף מידע
+אנו אוספים את המידע הבא:
+• שם מלא
+• מספר טלפון
+• פרטי רכב (דגם, שנה, ק"מ, מחיר, מיקום)
+• תמונות רכב
+• אישורי תשלום
+
+2. שימוש במידע
+המידע נאסף למטרות הבאות:
+• אספקת שירותי הפרסום
+• יצירת קשר עם המשתמש
+• שיפור השירות
+• עמידה בדרישות החוק
+
+3. אבטחת מידע
+אנו נוקטים באמצעי אבטחה מתקדמים להגנה על המידע שלך, כולל הצפנה וגיבויים.
+
+4. שיתוף מידע
+איננו מוכרים או משכירים את המידע האישי שלך לצדדים שלישיים. מידע משותף רק עם:
+• ספקי שירות (עיבוד תשלומים)
+• רשויות החוק במידת הצורך
+
+5. זכויות המשתמש
+למשתמש הזכות:
+• לעיין במידע האישי שלו
+• לתקן מידע שגוי
+• למחוק את המידע
+• להתנגד לשימוש במידע
+
+6. צור קשר
+לשאלות בנושא פרטיות: WhatsApp 054-6980606
+
+תאריך עדכון אחרון: 23 בפברואר 2024`;
+
+const aboutContent = `מי אנחנו - YOUGO ISRAEL
+
+YOUGO ISRAEL היא פלטפורמת השיווק המובילה בישראל למכירת רכבים וציוד כבד דרך רשתות חברתיות, עם דגש על אינסטגרם.
+
+החזון שלנו
+אנו מאמינים שמכירת רכב צריכה להיות חוויה פשוטה, מהירה ומקצועית. החזון שלנו הוא לחבר בין מוכרים אמיתיים לקונים אמיתיים באמצעות תוכן איכותי וחשיפה ממוקדת.
+
+הערכים שלנו
+• מקצועיות: צוות מנוסה ומסור
+• שקיפות: מחירים ברורים ללא הפתעות
+• תוצאות: לקוחות מרוצים ומכירות מוצלחות
+
+הנתונים שלנו
+• 50,000+ עוקבים פעילים באינסטגרם
+• 48 שעות - זמן ממוצע למכירה
+• 98% לקוחות מרוצים
+• 500+ מכירות בחודש
+
+הצוות שלנו
+אנו גאים בצוות מקצועי ומסור הכולל:
+• צלמים מקצועיים
+• מומחי שיווק דיגיטלי
+• מנהלי לקוחות אישיים
+• יועצי מכירות
+
+השירותים שלנו
+• פרסום רכבים פרטיים באינסטגרם
+• חבילות VIP עם חשיפה מקסימלית
+• חבילות DUO לפרסום שני רכבים
+• חבילות BUSINESS לסוכנויות
+• פרסום ציוד כבד ומכונות
+
+למה לבחור בנו?
+כי אנחנו מבינים שכל רכב הוא סיפור. אנחנו לא סתם מעלים מודעה - אנחנו יוצרים תוכן שמוכר. עם הניסיון שלנו, הקהל האיכותי והגישה המקצועית, אנחנו מבטיחים לך את התוצאות הטובות ביותר.
+
+YOUGO ISRAEL - הדרך המהירה ביותר למכור רכב.
+
+צור קשר: WhatsApp 054-6980606`;
 
 export default function App() {
   const [lang, setLang] = useState<Language>('he');
@@ -1499,8 +1771,8 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    document.documentElement.dir = lang === 'he' ? 'rtl' : 'rtl';
-  }, [lang]);
+    document.documentElement.dir = 'rtl';
+  }, []);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1569,6 +1841,7 @@ export default function App() {
     id: 'duo',
     name: 'DUO DEAL',
     price: '₪349',
+    duo: true,
     features: [
       'פרסום 2 רכבים במחיר מיוחד',
       '4 תמונות לכל רכב',
@@ -1584,7 +1857,14 @@ export default function App() {
     name: 'BUSINESS',
     price: '₪1,499',
     business: true,
-    features: []
+    features: [
+      'עד 50 רכבים בחודש',
+      'צילומים מקצועיים',
+      'דפי נחיתה מותאמים',
+      'מנהל לקוח ייעודי',
+      'דוחות ביצועים',
+      'קידום ממומן'
+    ]
   };
 
   const equipmentPackages: Package[] = [
@@ -1618,23 +1898,12 @@ export default function App() {
     }
   ];
 
-  // All packages for change modal
-  const allPackages = [
-    ...packages,
-    vipPackage,
-    duoPackage,
-    businessPackage,
-    ...equipmentPackages
-  ];
+  const allPackages = [...packages, vipPackage, duoPackage, businessPackage, ...equipmentPackages];
 
   const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await fetch('/api/admin/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: adminPassword })
-    });
-    if (res.ok) {
+    // Admin password: admin123
+    if (adminPassword === 'admin123') {
       setIsAdmin(true);
       setView('admin-dashboard');
       fetchOrders();
@@ -1676,51 +1945,7 @@ export default function App() {
     setLoading(true);
     
     try {
-      const pkgId = selectedPackage?.id || '';
-      const pkgEmoji = pkgId === 'vip' ? '👑' : pkgId === 'premium' ? '💎' : pkgId === 'pro' ? '⭐' : pkgId.includes('equipment') ? '🚜' : pkgId === 'business' ? '🏢' : pkgId === 'duo' ? '🚗🚗' : '✅';
-
-      const randomId = Math.floor(10000 + Math.random() * 90000);
-      const orderNum = String(randomId).slice(0, 5);
-
-      // Custom message based on package type
-      let packageSpecificMessage = '';
-      if (pkgId === 'duo') {
-        packageSpecificMessage = '\n📸 *נא לשלוח תמונות של שני הרכבים לוואטסאפ*';
-      } else if (pkgId.includes('equipment')) {
-        packageSpecificMessage = '\n🔧 *נא לשלוח תמונות מפורטות של הציוד*';
-      } else if (pkgId === 'vip') {
-        packageSpecificMessage = '\n👑 *נא לשלוח תמונות וסרטון באיכות גבוהה*';
-      }
-
-      const message = `*YOUGO ISRAEL | אישור הזמנה חדשה* 🚗💨
----------------------------------------
-*מספר הזמנה:* #${orderNum}
-*חבילה נבחרת:* ${selectedPackage?.name} ${pkgEmoji}
----------------------------------------
-
-👤 *פרטי לקוח:*
-• שם מלא: ${formData.fullName}
-• טלפון: ${formData.phone}
-
-🚘 *פרטי רכב:*
-• דגם: ${formData.model}
-• שנה: ${formData.year}
-• קילומטראז': ${formData.mileage}
-• מחיר מבוקש: ${formData.price}
-• עליה לכביש: ${formData.registration}
-• טסט עד: ${formData.testUntil}
-• מיקום: ${formData.location}
-
----------------------------------------
-✅ *אישור תשלום הועלה בהצלחה למערכת.*
-${packageSpecificMessage}
----------------------------------------
-_נשלח אוטומטית ממערכת YOUGO_`;
-
-      const whatsappUrl = `https://wa.me/${siteSettings.whatsapp_number}?text=${encodeURIComponent(message)}`;
-      window.open(whatsappUrl, '_blank');
-      
-      setOrderId(orderNum);
+      setOrderId(String(Math.floor(10000 + Math.random() * 90000)).slice(0, 5));
       setView('success');
     } catch (err) {
       alert('אירעה שגיאה. אנא נסה שנית.');
@@ -1747,21 +1972,15 @@ _נשלח אוטומטית ממערכת YOUGO_`;
           border: 1px solid rgba(255, 255, 255, 0.05);
           border-radius: 20px;
         }
-        
-        .input-field {
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 10px;
-          padding: 10px 12px;
-          color: white;
-          width: 100%;
-          transition: all 0.3s;
-          font-size: 14px;
+
+        @keyframes gradient {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
         }
-        .input-field:focus {
-          border-color: #c8102e;
-          outline: none;
-          background: rgba(200, 16, 46, 0.1);
+        .animate-gradient {
+          background-size: 200% 200%;
+          animation: gradient 10s ease infinite;
         }
       `}</style>
 
@@ -1776,36 +1995,62 @@ _נשלח אוטומטית ממערכת YOUGO_`;
               exit={{ opacity: 0, y: -20 }}
               className="space-y-16"
             >
-              {/* Hero Section - بدون فيديو، تصميم احترافي */}
-              <section className="relative text-center py-16 overflow-hidden">
-                {/* خلفية احترافية */}
-                <div className="absolute inset-0 bg-gradient-to-br from-brand-red/20 via-dark-bg to-purple-600/20" />
-                <div className="absolute inset-0 opacity-10" style={{
-                  backgroundImage: 'radial-gradient(circle at 30% 40%, #fff 1px, transparent 1px)',
-                  backgroundSize: '40px 40px'
-                }} />
-                
+              {/* Hero Section - بدون فيديو، خلفية احترافية */}
+              <section className="relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden">
+                {/* خلفية متحركة احترافية */}
+                <div className="absolute inset-0">
+                  <div className="absolute inset-0 bg-gradient-to-br from-brand-red/20 via-purple-900/20 to-blue-900/20 animate-gradient" />
+                  <div className="absolute inset-0 opacity-30" style={{
+                    backgroundImage: 'radial-gradient(circle at 20% 30%, rgba(200,16,46,0.1) 0px, transparent 50px), radial-gradient(circle at 80% 70%, rgba(100,50,200,0.1) 0px, transparent 100px)',
+                    backgroundSize: '200px 200px'
+                  }} />
+                  <div className="absolute inset-0" style={{
+                    backgroundImage: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
+                    opacity: 0.1
+                  }} />
+                </div>
+
                 <motion.div
-                  initial={{ y: 30, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8 }}
-                  className="relative z-10"
+                  className="relative z-10 text-center px-4 max-w-4xl mx-auto"
                 >
-                  <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-2 mb-6">
+                  <motion.div 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.2, type: 'spring' }}
+                    className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-4 py-2 mb-6"
+                  >
                     <Sparkles size={16} className="text-brand-red" />
                     <span className="text-xs font-black tracking-wider text-white/90">הדרך המהירה ביותר למכור רכב</span>
-                  </div>
+                  </motion.div>
                   
-                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-black leading-tight text-white mb-4">
+                  <motion.h1 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="text-4xl md:text-6xl lg:text-7xl font-black leading-tight text-white mb-4"
+                  >
                     מוכרים רכב? <br />
                     <span className="text-brand-red">אנחנו מוכרים אותו מהר יותר.</span>
-                  </h1>
+                  </motion.h1>
                   
-                  <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-8">
+                  <motion.p 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                    className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-8"
+                  >
                     YOUGO ISRAEL - פלטפורמת השיווק המובילה באינסטגרם למכירת רכבים.
-                  </p>
+                  </motion.p>
                   
-                  <div className="flex flex-wrap justify-center gap-4 mb-8">
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
+                    className="flex flex-wrap justify-center gap-4 mb-8"
+                  >
                     <motion.button 
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -1825,9 +2070,14 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                       <Search size={20} />
                       בדוק סטטוס
                     </button>
-                  </div>
+                  </motion.div>
 
-                  <div className="flex items-center justify-center gap-6">
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.6 }}
+                    className="flex items-center justify-center gap-6"
+                  >
                     <div className="flex items-center gap-2 text-white/70">
                       <ShieldCheck size={16} className="text-brand-red" />
                       <span className="text-sm">תשלום מאובטח</span>
@@ -1840,7 +2090,15 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                       <Users size={16} className="text-brand-red" />
                       <span className="text-sm">50K+ עוקבים</span>
                     </div>
-                  </div>
+                  </motion.div>
+                </motion.div>
+
+                <motion.div 
+                  animate={{ y: [0, 10, 0] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white/50"
+                >
+                  <ChevronDown size={24} />
                 </motion.div>
               </section>
 
@@ -2001,7 +2259,7 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                   </div>
                 </div>
 
-                {/* Business Package - Enhanced */}
+                {/* Business Package */}
                 <div>
                   <BusinessPackageCard
                     pkg={businessPackage}
@@ -2178,7 +2436,7 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                 )}
               </section>
 
-              {/* Footer */}
+              {/* Footer مع أزرار תקנון, פרטיות, מי אנחנו */}
               <footer className="pb-8">
                 <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-gradient-to-br from-white/5 to-transparent p-6">
                   <div className="absolute inset-0 bg-gradient-to-r from-brand-red/5 via-transparent to-brand-red/5" />
@@ -2194,7 +2452,7 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                         </div>
                       </div>
                       <p className="text-white/50 text-xs max-w-xs mx-auto">
-                        הצטרפו לאלפי לקוחות מרוצים
+                        פלטפורמת השיווק המובילה בישראל למכירת רכבים וציוד כבד
                       </p>
                     </div>
 
@@ -2215,24 +2473,41 @@ _נשלח אוטומטית ממערכת YOUGO_`;
 
                     <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
-                    <div className="flex flex-wrap justify-center gap-3">
-                      {[
-                        { icon: <FileText size={12} />, label: 'תקנון', onClick: () => setModalContent(t.pages.terms) },
-                        { icon: <Lock size={12} />, label: 'פרטיות', onClick: () => setModalContent(t.pages.privacy) },
-                        { icon: <Info size={12} />, label: 'מי אנחנו', onClick: () => setModalContent(t.pages.about) },
-                        { icon: <LayoutDashboard size={12} />, label: 'ניהול', onClick: () => setView('admin-login') },
-                      ].map((link, i) => (
-                        <button key={i} onClick={link.onClick}
-                          className="flex items-center gap-1 px-3 py-1 rounded-lg text-xs text-white/50 hover:text-white hover:bg-white/5 transition-all"
-                        >
-                          {link.icon}
-                          {link.label}
-                        </button>
-                      ))}
+                    {/* 3 أزرار احترافية: תקנון, פרטיות, מי אנחנו */}
+                    <div className="grid grid-cols-3 gap-3">
+                      <button
+                        onClick={() => setModalContent({ title: 'תקנון האתר', content: termsContent })}
+                        className="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-brand-red/30 transition-all group"
+                      >
+                        <div className="w-10 h-10 rounded-lg bg-brand-red/10 flex items-center justify-center group-hover:bg-brand-red/20 transition-all">
+                          <FileText size={18} className="text-brand-red" />
+                        </div>
+                        <span className="text-xs font-black text-white/70">תקנון</span>
+                      </button>
+
+                      <button
+                        onClick={() => setModalContent({ title: 'מדיניות פרטיות', content: privacyContent })}
+                        className="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-brand-red/30 transition-all group"
+                      >
+                        <div className="w-10 h-10 rounded-lg bg-brand-red/10 flex items-center justify-center group-hover:bg-brand-red/20 transition-all">
+                          <Lock size={18} className="text-brand-red" />
+                        </div>
+                        <span className="text-xs font-black text-white/70">פרטיות</span>
+                      </button>
+
+                      <button
+                        onClick={() => setModalContent({ title: 'מי אנחנו', content: aboutContent })}
+                        className="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-brand-red/30 transition-all group"
+                      >
+                        <div className="w-10 h-10 rounded-lg bg-brand-red/10 flex items-center justify-center group-hover:bg-brand-red/20 transition-all">
+                          <Users size={18} className="text-brand-red" />
+                        </div>
+                        <span className="text-xs font-black text-white/70">מי אנחנו</span>
+                      </button>
                     </div>
 
                     <div className="text-center text-white/20 text-[9px] font-bold">
-                      © 2024 YOUGO ISRAEL · כל הזכויות שמורות
+                      © 2024 YOUGO ISRAEL · כל הזכויות שמורות · חבלי מודיעין בע"מ
                     </div>
                   </div>
                 </div>
@@ -2248,18 +2523,26 @@ _נשלח אוטומטית ממערכת YOUGO_`;
               exit={{ opacity: 0, y: -30 }}
               className="max-w-2xl mx-auto space-y-6"
             >
-              <button 
-                onClick={() => setView('home')}
-                className="flex items-center gap-2 text-white/60 hover:text-white text-sm mb-2"
-              >
-                <ArrowLeft size={16} />
-                חזרה לחבילות
-              </button>
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => setView('home')}
+                  className="w-14 h-14 rounded-xl bg-white/5 border-2 border-white/10 hover:bg-white/10 transition-all flex items-center justify-center"
+                >
+                  <Home size={20} className="text-white/60" />
+                </button>
+                <button 
+                  onClick={() => setView('check-status')}
+                  className="flex-1 py-3 bg-white/5 border-2 border-white/10 rounded-xl font-black text-sm hover:bg-white/10 transition-all flex items-center justify-center gap-2"
+                >
+                  <Search size={16} />
+                  בדוק סטטוס
+                </button>
+              </div>
 
               {/* Progress Steps */}
               <div className="flex items-center justify-center gap-2 mb-4">
                 <div className={`flex items-center gap-1 ${bookingStep >= 1 ? 'text-brand-red' : 'text-white/30'}`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-xs border-2 ${
+                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-black text-xs border-2 ${
                     bookingStep >= 1 ? 'border-brand-red bg-brand-red/10' : 'border-white/20'
                   }`}>
                     1
@@ -2268,7 +2551,7 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                 </div>
                 <div className={`w-12 h-px ${bookingStep >= 2 ? 'bg-brand-red' : 'bg-white/10'}`} />
                 <div className={`flex items-center gap-1 ${bookingStep >= 2 ? 'text-brand-red' : 'text-white/30'}`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-xs border-2 ${
+                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center font-black text-xs border-2 ${
                     bookingStep >= 2 ? 'border-brand-red bg-brand-red/10' : 'border-white/20'
                   }`}>
                     2
@@ -2285,10 +2568,8 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                       setFormData={setFormData}
                       onNext={() => setBookingStep(2)}
                       selectedPackage={selectedPackage}
-                      packages={allPackages}
-                      onPackageChange={(pkg) => {
-                        setSelectedPackage(pkg);
-                      }}
+                      allPackages={allPackages}
+                      onPackageChange={setSelectedPackage}
                     />
                   )}
                   {bookingStep === 2 && (
@@ -2299,6 +2580,8 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                       onSubmit={handleSubmitOrder}
                       loading={loading}
                       onBack={() => setBookingStep(1)}
+                      onPackageChange={setSelectedPackage}
+                      allPackages={allPackages}
                     />
                   )}
                 </AnimatePresence>
@@ -2400,6 +2683,7 @@ _נשלח אוטומטית ממערכת YOUGO_`;
                     <Lock size={24} className="text-white" />
                   </div>
                   <h2 className="text-xl font-black">כניסת מנהל</h2>
+                  <p className="text-white/40 text-xs mt-1">הסיסמה: admin123</p>
                 </div>
                 
                 <form onSubmit={handleAdminLogin} className="space-y-3">
