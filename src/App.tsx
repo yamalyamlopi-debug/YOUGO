@@ -779,22 +779,8 @@ const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
   const isPro = pkg.id === 'pro';
   const isPremium = pkg.premium;
 
-  if (showDetails) {
-    return (
-      <PackageDetailPanel
-        pkg={pkg}
-        details={packageDetails[pkg.id] || { title: pkg.name, content: pkg.features.join('\n') }}
-        accentColor={cfg.color}
-        borderColor={cfg.borderColor}
-        badge={cfg.badge}
-        onSelect={onSelect}
-        onBack={() => setShowDetails(false)}
-        lang={lang}
-      />
-    );
-  }
-
   return (
+  <>
     <motion.div
       className="relative w-full h-full rounded-2xl flex flex-col overflow-hidden"
       style={{
@@ -924,6 +910,42 @@ const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
         </div>
       </div>
     </motion.div>
+
+    {/* Package Details Modal */}
+    <AnimatePresence>
+      {showDetails && (
+        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            onClick={() => setShowDetails(false)}
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92, y: 30 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.92, y: 20 }}
+            transition={{ duration: 0.2 }}
+            className="relative w-full max-w-lg"
+            style={{ maxHeight: '85vh' }}
+          >
+            <PackageDetailPanel
+              pkg={pkg}
+              details={packageDetails[pkg.id] || { title: pkg.name, content: pkg.features.join('\n') }}
+              accentColor={cfg.color}
+              borderColor={cfg.borderColor}
+              badge={cfg.badge}
+              onSelect={(p) => { setShowDetails(false); onSelect(p); }}
+              onBack={() => setShowDetails(false)}
+              lang={lang}
+            />
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  </>
   );
 };
 
@@ -2605,43 +2627,23 @@ export default function App() {
               {/* HERO */}
               <section className="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
                 <div className="absolute inset-0">
-                  <div className="absolute inset-0 bg-[#060608]" />
-                  <motion.div className="hero-orb-1 absolute top-[-10%] right-[-5%] w-[55%] h-[55%] rounded-full"
-                    style={{ background: 'radial-gradient(circle, #c8102e 0%, transparent 70%)' }}
-                    animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.3, 0.2] }}
-                    transition={{ duration: 8, repeat: Infinity }} />
-                  <motion.div className="hero-orb-2 absolute bottom-[-15%] left-[-10%] w-[60%] h-[60%] rounded-full"
-                    style={{ background: 'radial-gradient(circle, #c8102e 0%, transparent 70%)' }}
-                    animate={{ scale: [1, 1.3, 1], opacity: [0.15, 0.25, 0.15] }}
-                    transition={{ duration: 10, repeat: Infinity }} />
-                  <motion.div className="hero-orb-3 absolute top-[30%] left-[30%] w-[40%] h-[40%] rounded-full"
-                    style={{ background: 'radial-gradient(circle, #ff4560 0%, transparent 70%)' }}
-                    animate={{ scale: [1, 1.4, 1], opacity: [0.1, 0.2, 0.1] }}
-                    transition={{ duration: 12, repeat: Infinity }} />
-                  <div className="absolute inset-0 overflow-hidden opacity-[0.05]">
-                    <motion.div className="grid-move absolute inset-0" 
-                      style={{ backgroundImage: 'linear-gradient(rgba(200,16,46,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(200,16,46,0.6) 1px, transparent 1px)', backgroundSize: '60px 60px', height: '200%' }}
-                      animate={{ y: [0, -60, 0] }}
-                      transition={{ duration: 15, repeat: Infinity, ease: 'linear' }} />
-                  </div>
-                  <motion.div 
-                    className="absolute left-0 right-0 h-[2px] pointer-events-none"
-                    style={{ background: 'linear-gradient(90deg, transparent, rgba(200,16,46,0.6), transparent)' }}
-                    animate={{ top: ['-10%', '110%'] }}
-                    transition={{ duration: 4, repeat: Infinity, ease: 'linear' }} />
-                  {[...Array(12)].map((_, i) => (
-                    <motion.div key={i} className="absolute w-1.5 h-1.5 rounded-full"
-                      style={{ background: `rgba(200,16,46,${0.3 + Math.random() * 0.4})`, left: `${Math.random() * 100}%` }}
-                      animate={{ y: [0, -200, 0], x: [0, (Math.random() - 0.5) * 100, 0], opacity: [0, 1, 0], scale: [0, 1.5, 0] }}
-                      transition={{ duration: 5 + Math.random() * 5, repeat: Infinity, delay: i * 0.3 }} />
-                  ))}
-                  <motion.div className="absolute top-12 right-12 w-20 h-20"
-                    style={{ borderTop: '2px solid #c8102e', borderRight: '2px solid #c8102e' }}
-                    animate={{ opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 3, repeat: Infinity }} />
-                  <motion.div className="absolute bottom-12 left-12 w-20 h-20"
-                    style={{ borderBottom: '2px solid #c8102e', borderLeft: '2px solid #c8102e' }}
-                    animate={{ opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 3, repeat: Infinity, delay: 1 }} />
-                  <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, transparent 30%, #060608 100%)' }} />
+                  <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, #0a0005 0%, #060608 40%, #07000d 100%)' }} />
+                  {/* Static red glow accents */}
+                  <div className="absolute top-[-10%] right-[-5%] w-[55%] h-[55%] rounded-full pointer-events-none"
+                    style={{ background: 'radial-gradient(circle, rgba(200,16,46,0.18) 0%, transparent 70%)' }} />
+                  <div className="absolute bottom-[-15%] left-[-10%] w-[60%] h-[60%] rounded-full pointer-events-none"
+                    style={{ background: 'radial-gradient(circle, rgba(200,16,46,0.12) 0%, transparent 70%)' }} />
+                  <div className="absolute top-[30%] left-[30%] w-[40%] h-[40%] rounded-full pointer-events-none"
+                    style={{ background: 'radial-gradient(circle, rgba(255,69,96,0.07) 0%, transparent 70%)' }} />
+                  {/* Static grid */}
+                  <div className="absolute inset-0 opacity-[0.04] pointer-events-none"
+                    style={{ backgroundImage: 'linear-gradient(rgba(200,16,46,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(200,16,46,0.6) 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
+                  {/* Corner accents */}
+                  <div className="absolute top-12 right-12 w-20 h-20 pointer-events-none"
+                    style={{ borderTop: '2px solid rgba(200,16,46,0.3)', borderRight: '2px solid rgba(200,16,46,0.3)' }} />
+                  <div className="absolute bottom-12 left-12 w-20 h-20 pointer-events-none"
+                    style={{ borderBottom: '2px solid rgba(200,16,46,0.3)', borderLeft: '2px solid rgba(200,16,46,0.3)' }} />
+                  <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at center, transparent 30%, #060608 100%)' }} />
                 </div>
 
                 <motion.div
@@ -2691,26 +2693,35 @@ export default function App() {
                     </motion.button>
                   </motion.div>
 
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9 }}
-                    className="flex items-center justify-center gap-8 flex-wrap">
-                    {[
-                      { icon: <ShieldCheck size={20} />, label: 'תשלום מאובטח' },
-                      { icon: <Clock size={20} />, label: 'פרסום תוך 24 שעות' },
-                      { icon: <Users size={20} />, label: '50K+ עוקבים' },
-                    ].map((item, i) => (
-                      <motion.div key={i} className="flex items-center gap-3 text-white/60" whileHover={{ scale: 1.1, color: '#fff' }}>
-                        <span className="text-brand-red">{item.icon}</span>
-                        <span className="text-base">{item.label}</span>
-                      </motion.div>
-                    ))}
+                  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9 }}
+                    className="flex justify-center">
+                    <div className="flex flex-wrap items-center justify-center gap-3 px-6 py-4 rounded-2xl"
+                      style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(10px)' }}>
+                      {[
+                        { icon: <ShieldCheck size={16} />, label: 'תשלום מאובטח', color: '#22c55e' },
+                        { icon: <Clock size={16} />, label: 'פרסום תוך 24 שעות', color: '#3b82f6' },
+                        { icon: <Users size={16} />, label: '50K+ עוקבים', color: '#c8102e' },
+                      ].map((item, i) => (
+                        <React.Fragment key={i}>
+                          <div className="flex items-center gap-2">
+                            <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
+                              style={{ background: `${item.color}18`, border: `1px solid ${item.color}30` }}>
+                              <span style={{ color: item.color }}>{item.icon}</span>
+                            </div>
+                            <span className="text-sm font-bold text-white/70">{item.label}</span>
+                          </div>
+                          {i < 2 && <div className="w-px h-5 bg-white/10 hidden sm:block" />}
+                        </React.Fragment>
+                      ))}
+                    </div>
                   </motion.div>
                 </motion.div>
 
-                <motion.div animate={{ y: [0, 15, 0] }} transition={{ duration: 2, repeat: Infinity }}
-                  className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white/40 cursor-pointer"
+                <div
+                  className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white/40 cursor-pointer hover:text-white/70 transition-colors"
                   onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}>
                   <ChevronDown size={32} />
-                </motion.div>
+                </div>
               </section>
 
               {/* ============================================================
@@ -2950,28 +2961,81 @@ export default function App() {
               </section>
 
               {/* WHY US */}
-              <section id="why-us" className="space-y-12">
+              <section id="why-us" className="space-y-10">
                 <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
                   className="text-center space-y-3">
                   <h2 className="text-4xl md:text-5xl font-black">{t.whyUs.title}</h2>
                   <p className="text-white/45 text-base max-w-2xl mx-auto">הסיבות שאלפי מוכרים בחרו דווקא בנו</p>
                 </motion.div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                   {[
-                    { icon: <Users size={30} />, title: 'קהל איכותי', desc: '50,000+ עוקבים פעילים', stat: '50K+', color: 'from-blue-500 to-cyan-500' },
-                    { icon: <Zap size={30} />, title: 'מהירות מכירה', desc: 'זמן ממוצע של 48 שעות', stat: '48h', color: 'from-brand-red to-red-600' },
-                    { icon: <TrendingUp size={30} />, title: 'אחוזי הצלחה', desc: '98% מהלקוחות מרוצים', stat: '98%', color: 'from-green-500 to-emerald-500' },
+                    {
+                      icon: <Users size={22} className="text-white" />,
+                      title: 'קהל איכותי',
+                      desc: '50,000+ עוקבים פעילים ומעורבים שמחפשים לקנות רכב',
+                      stat: '50K+',
+                      statLabel: 'עוקבים',
+                      gradFrom: '#1d4ed8',
+                      gradTo: '#0ea5e9',
+                      glowColor: 'rgba(59,130,246,0.3)'
+                    },
+                    {
+                      icon: <Zap size={22} className="text-white" />,
+                      title: 'מהירות מכירה',
+                      desc: 'פרסום חכם וממוקד שמביא תוצאות מהירות – ממוצע 48 שעות עד עסקה',
+                      stat: '48h',
+                      statLabel: 'ממוצע מכירה',
+                      gradFrom: '#c8102e',
+                      gradTo: '#f43f5e',
+                      glowColor: 'rgba(200,16,46,0.35)'
+                    },
+                    {
+                      icon: <TrendingUp size={22} className="text-white" />,
+                      title: 'אחוזי הצלחה',
+                      desc: '98% מלקוחותינו מרוצים ומוכרים בהצלחה תוך זמן קצר',
+                      stat: '98%',
+                      statLabel: 'שביעות רצון',
+                      gradFrom: '#16a34a',
+                      gradTo: '#22c55e',
+                      glowColor: 'rgba(34,197,94,0.3)'
+                    },
                   ].map((item, i) => (
-                    <motion.div key={i} initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                      transition={{ delay: i * 0.2 }} whileHover={{ y: -10, scale: 1.05 }}
-                      className="relative p-8 rounded-2xl bg-gradient-to-br from-white/8 to-transparent border border-white/15 group">
-                      <div className={`w-14 h-14 mb-4 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-300`}>
-                        {item.icon}
+                    <motion.div key={i}
+                      initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                      transition={{ delay: i * 0.1 }}
+                      className="relative rounded-2xl overflow-hidden flex flex-col"
+                      style={{
+                        background: 'linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)',
+                        border: '1px solid rgba(255,255,255,0.08)',
+                        boxShadow: `0 20px 40px -15px ${item.glowColor}`
+                      }}
+                    >
+                      {/* Top color bar */}
+                      <div className="h-1 w-full" style={{ background: `linear-gradient(90deg, ${item.gradFrom}, ${item.gradTo})` }} />
+
+                      <div className="p-6 flex flex-col gap-5 flex-1">
+                        {/* Icon + Stat row */}
+                        <div className="flex items-center justify-between">
+                          <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg"
+                            style={{ background: `linear-gradient(135deg, ${item.gradFrom}, ${item.gradTo})`, boxShadow: `0 6px 20px ${item.glowColor}` }}>
+                            {item.icon}
+                          </div>
+                          <div className="text-right">
+                            <div className="text-3xl font-black" style={{ color: item.gradTo }}>{item.stat}</div>
+                            <div className="text-[10px] text-white/35 font-bold uppercase tracking-wider">{item.statLabel}</div>
+                          </div>
+                        </div>
+
+                        {/* Divider */}
+                        <div className="h-px w-full" style={{ background: `linear-gradient(90deg, ${item.gradFrom}30, transparent)` }} />
+
+                        {/* Text */}
+                        <div>
+                          <h3 className="text-lg font-black text-white mb-2">{item.title}</h3>
+                          <p className="text-white/55 text-sm leading-relaxed">{item.desc}</p>
+                        </div>
                       </div>
-                      <div className="text-4xl font-black text-white/10 absolute top-4 right-4">{item.stat}</div>
-                      <h3 className="text-xl font-black mb-2">{item.title}</h3>
-                      <p className="text-white/55 text-sm">{item.desc}</p>
                     </motion.div>
                   ))}
                 </div>
