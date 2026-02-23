@@ -123,8 +123,8 @@ const Navbar = ({ lang, setLang, isAdmin, onLogout, siteSettings, setView }: { l
     <motion.nav 
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      transition={{ duration: 0.5, type: 'spring', stiffness: 100 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      transition={{ duration: 0.25 }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
         scrolled 
           ? 'bg-dark-bg/95 backdrop-blur-xl border-b border-white/10 py-2' 
           : 'bg-transparent py-4'
@@ -137,28 +137,13 @@ const Navbar = ({ lang, setLang, isAdmin, onLogout, siteSettings, setView }: { l
             whileHover={{ scale: 1.05 }}
             transition={{ type: 'spring', stiffness: 400 }}
           >
-            <motion.div 
-              animate={{ 
-                rotate: [0, 10, -10, 0],
-                scale: [1, 1.1, 1.1, 1]
-              }}
-              transition={{ 
-                duration: 5, 
-                repeat: Infinity,
-                repeatType: 'loop'
-              }}
-              className="p-2.5 bg-gradient-to-br from-brand-red to-red-700 rounded-xl shadow-lg shadow-brand-red/20"
-            >
+            <div className="p-2.5 bg-gradient-to-br from-brand-red to-red-700 rounded-xl shadow-lg shadow-brand-red/20">
               <Car size={26} className="text-white" />
-            </motion.div>
+            </div>
             <div>
-              <motion.div 
-                className="text-2xl font-black tracking-tighter"
-                animate={{ textShadow: ['0 0 0px rgba(200,16,46,0)', '0 0 10px rgba(200,16,46,0.5)', '0 0 0px rgba(200,16,46,0)'] }}
-                transition={{ duration: 3, repeat: Infinity }}
-              >
+              <div className="text-2xl font-black tracking-tighter">
                 <span className="text-brand-red">YOUGO</span> <span className="text-white">ISRAEL</span>
-              </motion.div>
+              </div>
               <div className="text-[9px] text-white/40 font-bold tracking-wider">
                 {siteSettings.positioning_line_he || t.positioningLine}
               </div>
@@ -815,73 +800,95 @@ const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
       style={{
         background: cfg.gradient,
         border: `1px solid ${cfg.borderColor}`,
-        boxShadow: `0 20px 40px -15px ${cfg.color}30`,
+        boxShadow: `0 25px 50px -15px ${cfg.color}25, inset 0 1px 0 rgba(255,255,255,0.05)`,
       }}
-      whileHover={{ y: -4 }}
-      transition={{ type: 'spring', stiffness: 300 }}
+      whileHover={{ y: -6, boxShadow: `0 35px 60px -15px ${cfg.color}40, inset 0 1px 0 rgba(255,255,255,0.08)` }}
+      transition={{ duration: 0.2 }}
     >
       {/* Top accent line */}
-      <div className="absolute top-0 left-0 right-0 h-[2px]"
+      <div className="absolute top-0 left-0 right-0 h-[3px]"
         style={{ background: `linear-gradient(90deg, transparent, ${cfg.color}, transparent)` }} />
 
+      {/* Subtle inner glow */}
+      <div className="absolute top-0 left-0 right-0 h-32 pointer-events-none"
+        style={{ background: `radial-gradient(ellipse at 50% 0%, ${cfg.color}12 0%, transparent 70%)` }} />
+
       {pkg.popular && (
-        <div className="absolute top-3 right-3 z-10 text-white text-[8px] font-black py-1 px-3 rounded-full flex items-center gap-1"
-          style={{ background: `linear-gradient(135deg, ${cfg.color}, #a00d23)` }}>
+        <div className="absolute top-3 right-3 z-10 text-white text-[8px] font-black py-1.5 px-3 rounded-full flex items-center gap-1.5 shadow-lg"
+          style={{ background: `linear-gradient(135deg, ${cfg.color}, #a00d23)`, boxShadow: `0 4px 12px ${cfg.color}50` }}>
           <Trophy size={9} />
           {t.mostPopular}
         </div>
       )}
 
       <div className="absolute top-3 left-3 text-[8px] font-black py-1 px-2.5 rounded-full flex items-center gap-1"
-        style={{ background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', color: '#4ade80' }}>
+        style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.25)', color: '#4ade80' }}>
         <Zap size={7} />
         15% OFF
       </div>
 
-      <div className="p-5 flex flex-col flex-grow gap-4 h-full">
+      <div className="p-6 flex flex-col flex-grow gap-4 h-full relative z-10">
         {/* Header */}
         <div className="flex items-center gap-3 mt-3">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0"
-            style={{ background: cfg.accentBg, border: `1px solid ${cfg.borderColor}` }}>
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0 shadow-lg"
+            style={{ background: `linear-gradient(135deg, ${cfg.color}25, ${cfg.color}10)`, border: `1px solid ${cfg.borderColor}`, boxShadow: `0 4px 15px ${cfg.color}20` }}>
             {cfg.badge}
           </div>
           <div>
-            <h3 className="text-lg font-black tracking-tight" style={{ color: isPremium || isPro ? cfg.color : '#fff' }}>
+            <h3 className="text-xl font-black tracking-tight" style={{ color: isPremium || isPro ? cfg.color : '#fff' }}>
               {pkg.name}
             </h3>
-            <p className="text-[9px]" style={{ color: 'rgba(255,255,255,0.4)' }}>
-              {pkg.id === 'basic' ? 'פתרון בסיסי ומקצועי' :
-               pkg.id === 'pro' ? 'הבחירה החכמה למכירה מהירה' :
-               'מקסימום חשיפה, מינימום זמן'}
+            <p className="text-[10px] font-semibold mt-0.5" style={{ color: `${cfg.color}90` }}>
+              {pkg.id === 'basic' ? '✓ פתרון מהיר ומקצועי' :
+               pkg.id === 'pro' ? '✓ הבחירה הפופולרית ביותר' :
+               '✓ מקסימום חשיפה ותוצאות'}
             </p>
           </div>
         </div>
 
+        {/* Description */}
+        <div className="rounded-xl p-3" style={{ background: `${cfg.color}08`, border: `1px solid ${cfg.color}15` }}>
+          <p className="text-[10px] text-white/60 leading-relaxed">
+            {pkg.id === 'basic'
+              ? 'חבילת הכניסה האידיאלית – פרסום ממוקד ברשתות חברתיות עם תמונות מקצועיות ותיאור משכנע לרכבך'
+              : pkg.id === 'pro'
+              ? 'חבילת הפרו המאוזנת – יותר תמונות, חשיפה רחבה יותר ועדיפות בתזמון הפרסום לתוצאות מהירות'
+              : 'חבילת הפרמיום המלאה – ריל מקצועי, פרסום VIP ממושך וחשיפה מקסימלית לקהל הרלוונטי ביותר'}
+          </p>
+        </div>
+
         {/* Price */}
         <div className="flex items-baseline gap-2">
-          <span className="text-3xl font-black text-white">{pkg.price}</span>
-          <span className="text-[10px] line-through text-white/25">
-            ₪{Math.round(parseInt(pkg.price.replace('₪', '')) / 0.85)}
-          </span>
+          <span className="text-4xl font-black text-white">{pkg.price}</span>
+          <div className="flex flex-col">
+            <span className="text-[10px] line-through text-white/25">
+              ₪{Math.round(parseInt(pkg.price.replace('₪', '')) / 0.85)}
+            </span>
+            <span className="text-[9px] text-green-400 font-bold">חיסכון 15%</span>
+          </div>
         </div>
 
         <div className="h-px" style={{ background: `linear-gradient(90deg, transparent, ${cfg.borderColor}, transparent)` }} />
 
         {/* Features */}
-        <div className="flex flex-col gap-2.5 flex-grow">
+        <div className="flex flex-col gap-2 flex-grow">
           {pkg.features.slice(0, 4).map((feat, i) => (
-            <div key={i} className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded-full flex items-center justify-center shrink-0"
-                style={{ background: cfg.accentBg, border: `1px solid ${cfg.borderColor}` }}>
-                <Check size={8} strokeWidth={3} style={{ color: cfg.color }} />
+            <div key={i} className="flex items-center gap-2.5">
+              <div className="w-5 h-5 rounded-md flex items-center justify-center shrink-0"
+                style={{ background: `${cfg.color}18`, border: `1px solid ${cfg.color}30` }}>
+                <Check size={9} strokeWidth={3} style={{ color: cfg.color }} />
               </div>
-              <span className="text-[11px] font-medium text-white/80">{feat}</span>
+              <span className="text-[11px] font-medium text-white/75">{feat}</span>
             </div>
           ))}
           {pkg.features.length > 4 && (
-            <span className="text-[9px] font-bold" style={{ color: cfg.color }}>
-              + {pkg.features.length - 4} תכונות נוספות
-            </span>
+            <div className="flex items-center gap-2 mt-1">
+              <div className="flex-1 h-px" style={{ background: `${cfg.color}20` }} />
+              <span className="text-[9px] font-black px-2 py-0.5 rounded-full" style={{ color: cfg.color, background: `${cfg.color}15` }}>
+                + {pkg.features.length - 4} הטבות נוספות
+              </span>
+              <div className="flex-1 h-px" style={{ background: `${cfg.color}20` }} />
+            </div>
           )}
         </div>
 
@@ -889,27 +896,30 @@ const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
         <div className="flex gap-2 mt-auto">
           <button
             onClick={() => setShowDetails(true)}
-            className="flex-1 py-2.5 rounded-xl font-black text-xs transition-all"
+            className="flex-1 py-3 rounded-xl font-black text-xs transition-all hover:opacity-80"
             style={{
               border: `1px solid ${cfg.borderColor}`,
               color: cfg.color,
-              background: cfg.accentBg
+              background: `${cfg.color}10`
             }}
           >
             פרטים נוספים
           </button>
           <motion.button
             onClick={() => onSelect(pkg)}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="flex-1 py-2.5 rounded-xl font-black text-xs text-white transition-all relative overflow-hidden group"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            className="flex-1 py-3 rounded-xl font-black text-xs text-white transition-all relative overflow-hidden"
             style={{
-              background: isPremium || isPro ? cfg.color : 'rgba(255,255,255,0.1)',
-              border: isPremium || isPro ? 'none' : '1px solid rgba(255,255,255,0.15)'
+              background: isPremium || isPro ? `linear-gradient(135deg, ${cfg.color}, ${cfg.color}bb)` : 'rgba(255,255,255,0.1)',
+              border: isPremium || isPro ? 'none' : '1px solid rgba(255,255,255,0.15)',
+              boxShadow: isPremium || isPro ? `0 4px 15px ${cfg.color}40` : 'none'
             }}
           >
-            <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-            <span className="relative">{t.startOrder}</span>
+            <span className="relative flex items-center justify-center gap-1.5">
+              <RocketIcon size={11} />
+              {t.startOrder}
+            </span>
           </motion.button>
         </div>
       </div>
@@ -1714,79 +1724,71 @@ const ChangePackageModal = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/85 backdrop-blur-md"
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
           />
           <motion.div
-            initial={{ opacity: 0, scale: 0.92, y: 30 }}
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.92, y: 30 }}
-            transition={{ type: 'spring', stiffness: 260, damping: 20 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ duration: 0.18 }}
             className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl"
             style={{
-              background: 'linear-gradient(145deg, #0f0f14 0%, #0a0a0e 100%)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              boxShadow: '0 40px 80px -20px rgba(0,0,0,0.8)'
+              background: 'linear-gradient(145deg, #111116 0%, #0a0a0e 100%)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              boxShadow: '0 40px 80px -20px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05)'
             }}
           >
+            {/* Header */}
             <div className="sticky top-0 z-10 px-5 py-4 border-b border-white/8 flex items-center justify-between"
-              style={{ background: 'rgba(15,15,20,0.95)', backdropFilter: 'blur(10px)' }}>
+              style={{ background: 'rgba(11,11,16,0.97)', backdropFilter: 'blur(8px)' }}>
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-brand-red/10 border border-brand-red/20 flex items-center justify-center">
-                  <RefreshCw size={14} className="text-brand-red" />
+                <div className="w-9 h-9 rounded-xl bg-brand-red/10 border border-brand-red/20 flex items-center justify-center">
+                  <RefreshCw size={15} className="text-brand-red" />
                 </div>
                 <div>
                   <h3 className="text-sm font-black text-white">החלפת חבילה</h3>
-                  <p className="text-[9px] text-white/40">בחר חבילה אחרת להזמנה</p>
+                  <p className="text-[10px] text-white/40 mt-0.5">בחר חבילה אחרת להזמנה</p>
                 </div>
               </div>
-              <motion.button 
-                whileHover={{ rotate: 90, scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={onClose} 
-                className="p-1.5 hover:bg-white/5 rounded-lg transition-colors"
+              <button
+                onClick={onClose}
+                className="p-2 hover:bg-white/5 rounded-lg transition-colors"
               >
-                <X size={18} className="text-white/50" />
-              </motion.button>
+                <X size={16} className="text-white/50" />
+              </button>
             </div>
 
-            <div className="p-5 space-y-2">
+            {/* Package Grid */}
+            <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
               {allPackages.map((pkg) => {
                 const style = getPackageStyle(pkg);
                 const isActive = pkg.id === currentPackageId;
                 return (
-                  <motion.button
+                  <button
                     key={pkg.id}
-                    whileHover={{ x: -4, scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
                     onClick={() => { onSelect(pkg); onClose(); }}
-                    className={`w-full flex items-center gap-4 p-4 rounded-xl border-2 transition-all text-right ${
+                    className={`flex items-center gap-3 p-3.5 rounded-xl border-2 transition-all text-right hover:scale-[1.02] active:scale-[0.98] ${
                       isActive
                         ? `${style.activeBorder} ${style.bg}`
-                        : `${style.border} bg-white/3 hover:bg-white/5`
+                        : `${style.border} bg-white/2 hover:bg-white/4`
                     }`}
                   >
                     <div className={`w-10 h-10 rounded-xl ${style.bg} border ${style.border} flex items-center justify-center text-lg shrink-0`}>
                       {style.badge}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className={`text-sm font-black ${isActive ? style.color : 'text-white'}`}>{pkg.name}</span>
+                    <div className="flex-1 min-w-0 text-right">
+                      <div className="flex items-center gap-2 justify-end">
                         {isActive && (
                           <span className="text-[8px] font-black px-1.5 py-0.5 rounded-full bg-white/10 text-white/60">נוכחית</span>
                         )}
+                        <span className={`text-sm font-black ${isActive ? style.color : 'text-white'}`}>{pkg.name}</span>
                       </div>
                       <p className="text-[9px] text-white/40 mt-0.5 truncate">{pkg.features[0] || ''}</p>
                     </div>
-                    <div className="text-right shrink-0">
-                      <div className={`text-base font-black ${isActive ? style.color : 'text-white'}`}>{pkg.price}</div>
-                    </div>
-                    {isActive && (
-                      <div className={`w-4 h-4 rounded-full border-2 ${style.activeBorder} flex items-center justify-center shrink-0`}>
-                        <div className={`w-2 h-2 rounded-full ${style.color.replace('text-', 'bg-')}`} />
-                      </div>
-                    )}
-                  </motion.button>
+                    <div className={`text-base font-black shrink-0 ${isActive ? style.color : 'text-white'}`}>{pkg.price}</div>
+                  </button>
                 );
               })}
             </div>
@@ -2888,9 +2890,9 @@ export default function App() {
                     <h3 className="text-2xl md:text-3xl font-black">מוכרים <span className="text-brand-red">רכב פרטי?</span></h3>
                   </motion.div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
                     {packages.map(pkg => (
-                      <div key={pkg.id} className="h-[440px]">
+                      <div key={pkg.id} className="h-[520px] sm:h-[500px]">
                         <PackageCard pkg={pkg} lang={lang} onSelect={(p) => { setSelectedPackage(p); setView('booking'); setBookingStep(1); }} />
                       </div>
                     ))}
@@ -3118,15 +3120,31 @@ export default function App() {
 
                     <div className="flex flex-wrap justify-center gap-3">
                       {[
-                        { icon: <FileText size={13} />, label: 'תקנון', onClick: () => setModalContent({ title: 'תקנון שימוש – YOUGO ISRAEL', content: `1. כללי\nYOUGO ISRAEL הינה פלטפורמת שיווק דיגיטלי המתמחה בפרסום רכבים, ציוד כבד ושירותים עסקיים ברשתות חברתיות. השימוש בשירות מהווה הסכמה מלאה לתנאים אלו.\n\n2. השירות\nהחברה מספקת שירותי פרסום ברשתות חברתיות (Instagram, TikTok ועוד). החברה אינה צד לעסקת המכירה בין הלקוח לקונה הסופי ואינה אחראית לתוצאות מכירה.\n\n3. תשלום\nהתשלום מבוצע מראש בהעברה בנקאית, Bit או PayBox. לאחר אישור התשלום יחל תהליך הפרסום תוך 24-48 שעות עסקיות. לא יינתן החזר כספי לאחר שהמודעה פורסמה.\n\n4. אחריות הלקוח\nהלקוח מצהיר כי כל המידע שמסר הוא נכון ומדויק. הלקוח אחראי לחוקיות הרכב המפורסם.\n\n5. קניין רוחני\nכל התוכן שיוצר על ידי YOUGO ISRAEL שייך לחברה. הלקוח רשאי לעשות שימוש בתוכן לצרכי המכירה בלבד.` }) },
-                        { icon: <Lock size={13} />, label: 'פרטיות', onClick: () => setModalContent({ title: 'מדיניות פרטיות – YOUGO ISRAEL', content: `1. איסוף מידע\nYOUGO ISRAEL אוספת מידע אישי הכולל: שם, טלפון, מיקום ופרטי הרכב, אך ורק לצורך מתן השירות המבוקש.\n\n2. שימוש במידע\nהמידע משמש אך ורק לצורך: יצירת המודעה הפרסומית, תיאום ביצוע השירות, ושליחת עדכונים הקשורים להזמנה.\n\n3. אבטחת מידע\nהחברה נוקטת בצעדי אבטחה מתקדמים להגנה על המידע.` }) },
-                        { icon: <Info size={13} />, label: 'מי אנחנו', onClick: () => setModalContent({ title: 'אודות YOUGO ISRAEL', content: `YOUGO ISRAEL – פלטפורמת השיווק הדיגיטלי המובילה בישראל למכירת רכבים.\n\nהסיפור שלנו\nYOUGO ISRAEL נוסדה מתוך חזון אחד פשוט: לשנות את הדרך שבה ישראלים מוכרים רכבים.\n\nמה שמבדיל אותנו\n• 50,000+ עוקבים פעילים ומעורבים\n• צוות מקצועי של צלמים, מעצבים ואנשי שיווק\n• ניסיון של שנים בשוק הרכב הישראלי\n• 98% שביעות רצון לקוחות` }) },
-                        { icon: <LayoutDashboard size={13} />, label: 'ניהול', onClick: () => setView('admin-login') },
+                        { icon: <FileText size={14} />, label: 'תקנון', onClick: () => setModalContent({ title: 'תקנון שימוש – YOUGO ISRAEL', content: `1. כללי\nYOUGO ISRAEL הינה פלטפורמת שיווק דיגיטלי המתמחה בפרסום רכבים, ציוד כבד ושירותים עסקיים ברשתות חברתיות. השימוש בשירות מהווה הסכמה מלאה לתנאים אלו.\n\n2. השירות\nהחברה מספקת שירותי פרסום ברשתות חברתיות (Instagram, TikTok ועוד). החברה אינה צד לעסקת המכירה בין הלקוח לקונה הסופי ואינה אחראית לתוצאות מכירה.\n\n3. תשלום\nהתשלום מבוצע מראש בהעברה בנקאית, Bit או PayBox. לאחר אישור התשלום יחל תהליך הפרסום תוך 24-48 שעות עסקיות. לא יינתן החזר כספי לאחר שהמודעה פורסמה.\n\n4. אחריות הלקוח\nהלקוח מצהיר כי כל המידע שמסר הוא נכון ומדויק. הלקוח אחראי לחוקיות הרכב המפורסם.\n\n5. קניין רוחני\nכל התוכן שיוצר על ידי YOUGO ISRAEL שייך לחברה. הלקוח רשאי לעשות שימוש בתוכן לצרכי המכירה בלבד.` }) },
+                        { icon: <Lock size={14} />, label: 'פרטיות', onClick: () => setModalContent({ title: 'מדיניות פרטיות – YOUGO ISRAEL', content: `1. איסוף מידע\nYOUGO ISRAEL אוספת מידע אישי הכולל: שם, טלפון, מיקום ופרטי הרכב, אך ורק לצורך מתן השירות המבוקש.\n\n2. שימוש במידע\nהמידע משמש אך ורק לצורך: יצירת המודעה הפרסומית, תיאום ביצוע השירות, ושליחת עדכונים הקשורים להזמנה.\n\n3. אבטחת מידע\nהחברה נוקטת בצעדי אבטחה מתקדמים להגנה על המידע.` }) },
+                        { icon: <Info size={14} />, label: 'מי אנחנו', onClick: () => setModalContent({ title: 'אודות YOUGO ISRAEL', content: `YOUGO ISRAEL – פלטפורמת השיווק הדיגיטלי המובילה בישראל למכירת רכבים.\n\nהסיפור שלנו\nYOUGO ISRAEL נוסדה מתוך חזון אחד פשוט: לשנות את הדרך שבה ישראלים מוכרים רכבים.\n\nמה שמבדיל אותנו\n• 50,000+ עוקבים פעילים ומעורבים\n• צוות מקצועי של צלמים, מעצבים ואנשי שיווק\n• ניסיון של שנים בשוק הרכב הישראלי\n• 98% שביעות רצון לקוחות` }) },
+                        { icon: <LayoutDashboard size={14} />, label: 'ניהול', onClick: () => setView('admin-login') },
                       ].map((link, i) => (
-                        <motion.button key={i} whileHover={{ y: -3, scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={link.onClick}
-                          className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold border border-white/8 bg-white/4 hover:bg-brand-red/15 hover:border-brand-red/35 text-white/45 hover:text-white/80 transition-all">
-                          <span className="text-white/35">{link.icon}</span>
-                          {link.label}
+                        <motion.button key={i} whileHover={{ y: -2, scale: 1.04 }} whileTap={{ scale: 0.97 }} onClick={link.onClick}
+                          className="flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs font-bold transition-all"
+                          style={{
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            background: 'rgba(255,255,255,0.04)',
+                            color: 'rgba(255,255,255,0.55)'
+                          }}
+                          onMouseEnter={e => {
+                            (e.currentTarget as HTMLElement).style.background = 'rgba(200,16,46,0.12)';
+                            (e.currentTarget as HTMLElement).style.borderColor = 'rgba(200,16,46,0.35)';
+                            (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.85)';
+                          }}
+                          onMouseLeave={e => {
+                            (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)';
+                            (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.1)';
+                            (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.55)';
+                          }}
+                        >
+                          <span style={{ color: 'rgba(200,16,46,0.7)' }}>{link.icon}</span>
+                          <span>{link.label}</span>
                         </motion.button>
                       ))}
                     </div>
