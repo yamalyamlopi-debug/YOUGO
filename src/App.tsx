@@ -133,13 +133,6 @@ const CARD_HEIGHTS = {
   transport: '440px'
 };
 
-const BREAKPOINTS = {
-  sm: '640px',
-  md: '768px',
-  lg: '1024px',
-  xl: '1280px'
-};
-
 // --- Helper Functions ---
 const getPackageEmoji = (pkgId: string): string => {
   const map: Record<string, string> = {
@@ -184,18 +177,6 @@ const getPackageBorder = (pkgId: string): string => {
     basic: COLORS.basic.border
   };
   return map[pkgId] || COLORS.brandBorder;
-};
-
-const getPackageLightBg = (pkgId: string): string => {
-  const map: Record<string, string> = {
-    vip: COLORS.vip.light,
-    duo: COLORS.duo.light,
-    business: COLORS.business.light,
-    transport: COLORS.transport.light,
-    'equipment-heavy': COLORS.equipmentHeavy.light,
-    'equipment-light': COLORS.equipmentLight.light
-  };
-  return map[pkgId] || 'rgba(200,16,46,0.1)';
 };
 
 const getCardHeight = (pkgId: string): string => {
@@ -498,6 +479,21 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose:
 };
 
 // ============================================================
+// FEATURE BOX COMPONENT
+// ============================================================
+const FeatureBox = ({ icon, text, color }: { icon: React.ReactNode; text: string; color: string }) => {
+  return (
+    <div 
+      className="feature-box"
+      style={{ '--feature-color': color } as React.CSSProperties}
+    >
+      <span className="feature-box-icon">{icon}</span>
+      <span className="feature-box-text">{text}</span>
+    </div>
+  );
+};
+
+// ============================================================
 // FLIP CARD BACK
 // ============================================================
 const FlipCardBack = ({
@@ -525,7 +521,7 @@ const FlipCardBack = ({
   const original = priceNum ? `₪${Math.round(priceNum / 0.85).toLocaleString()}` : '';
 
   return (
-    <div className="flip-card-back flip-card-face" style={{ '--accent': color } as React.CSSProperties}>
+    <div className="flip-card-back" style={{ position: 'relative', width: '100%', height: '100%' }}>
       <div className="absolute inset-0" style={{ background: `linear-gradient(160deg, ${color}18 0%, #0c0c14 40%, #080810 100%)` }} />
       <div className="absolute top-0 inset-x-0 h-[3px]" style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} />
 
@@ -545,7 +541,7 @@ const FlipCardBack = ({
         </button>
       </div>
 
-      <div className="relative fcb-scroll px-3 py-2">
+      <div className="relative flex-1 overflow-y-auto px-3 py-2" style={{ minHeight: 0 }}>
         <div className="flex flex-col gap-[3px]">
           {shown.map((item, i) => (
             <div key={i} className="flex items-start gap-2 px-2.5 py-[6px] rounded-xl"
@@ -793,7 +789,7 @@ const packageDetails: Record<string, { title: string; content: string }> = {
 };
 
 // ============================================================
-// SECTION DESCRIPTION COMPONENT (REFACTORED)
+// SECTION DESCRIPTION COMPONENT
 // ============================================================
 interface SectionDescriptionProps {
   icon: React.ReactNode;
@@ -878,7 +874,7 @@ const SectionDescription: React.FC<SectionDescriptionProps> = ({
 };
 
 // ============================================================
-// MOBILE PACKAGE SWIPER — IMPROVED
+// MOBILE PACKAGE SWIPER
 // ============================================================
 const MobilePackageSwiper = ({ packages, lang, onSelect }: { packages: Package[], lang: Language, onSelect: (p: Package) => void }) => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -931,7 +927,6 @@ const MobilePackageSwiper = ({ packages, lang, onSelect }: { packages: Package[]
     }
   };
 
-  // RTL-aware arrow direction
   const isRTL = lang === 'he' || lang === 'ar';
   const leftArrow = isRTL ? '→' : '←';
   const rightArrow = isRTL ? '←' : '→';
@@ -1048,12 +1043,11 @@ const MobilePackageSwiper = ({ packages, lang, onSelect }: { packages: Package[]
 };
 
 // ============================================================
-// PACKAGE CARD
+// PACKAGE CARD - FIXED VERSION
 // ============================================================
 const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
   const t = translations[lang];
   const [flipped, setFlipped] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
 
   const color = getPackageColor(pkg.id);
   const borderColor = getPackageBorder(pkg.id);
@@ -1062,83 +1056,51 @@ const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
   const isPro = pkg.id === 'pro';
   const isPremium = pkg.premium;
 
-  const tierGradient = {
-    basic: 'linear-gradient(145deg, #1a1d24, #111316)',
-    pro: 'linear-gradient(145deg, #1c0c10, #110609)',
-    premium: 'linear-gradient(145deg, #1c0c10, #110609)',
-  };
-  const gradient = tierGradient[pkg.id as keyof typeof tierGradient] || tierGradient.basic;
-
   const details = packageDetails[pkg.id] || { title: pkg.name, content: pkg.features.join('\n') };
 
   return (
-    <div 
-      className="flip-card w-full h-full"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <div className="flip-card">
       <div className={`flip-card-inner ${flipped ? 'flipped' : ''}`}>
 
         {/* FRONT */}
-        <div 
-          className="flip-card-face"
-          style={{ 
-            background: gradient, 
-            border: `1px solid ${borderColor}`, 
-            boxShadow: `0 20px 45px -15px ${color}25, inset 0 1px 0 rgba(255,255,255,0.05)` 
-          }}
-        >
-          <div 
-            className="absolute top-0 left-0 right-0 h-[3px]"
+        <div className="flip-card-front">
+          <div className="absolute top-0 left-0 right-0 h-[3px] z-10"
             style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} 
           />
-          <div 
-            className="absolute top-0 left-0 right-0 h-28 pointer-events-none"
+          
+          <div className="absolute inset-0 pointer-events-none"
             style={{ background: `radial-gradient(ellipse at 50% 0%, ${color}10 0%, transparent 70%)` }} 
           />
 
-          {pkg.popular && (
-            <motion.div 
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="absolute top-3 right-3 z-10 text-white text-[8px] font-black py-1.5 px-3 rounded-full flex items-center gap-1.5"
-              style={{ background: `linear-gradient(135deg, ${color}, #a00d23)`, boxShadow: `0 4px 12px ${color}50` }}
-            >
-              <Trophy size={9} />{t.mostPopular}
-            </motion.div>
-          )}
-          
-          {pkg.id === 'pro' && (
-            <motion.div 
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="absolute top-3 right-3 z-10 text-white text-[8px] font-black py-1.5 px-3 rounded-full flex items-center gap-1.5"
-              style={{ background: `linear-gradient(135deg, ${color}, #a00d23)`, boxShadow: `0 4px 12px ${color}50` }}
-            >
-              <Trophy size={9} />{t.mostPopular}
-            </motion.div>
+          {/* Popular Badge - FIXED */}
+          {(pkg.popular || pkg.id === 'pro') && (
+            <div className="absolute top-3 right-3 z-20">
+              <div className="badge badge-popular">
+                <Trophy size={9} />
+                <span>{t.mostPopular || 'הכי נבחר'}</span>
+              </div>
+            </div>
           )}
 
           {pkg.id === 'equipment-heavy' && (
-            <motion.div 
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="absolute -top-3 right-4 z-20 text-white text-[8px] font-black py-1 px-3 rounded-full flex items-center gap-1"
-              style={{ background: 'linear-gradient(135deg, #ea580c, #c2410c)', boxShadow: '0 4px 15px rgba(234,88,12,0.4)' }}
-            >
-              <span className="w-1 h-1 rounded-full bg-white animate-pulse" />הכי מבוקש
-            </motion.div>
+            <div className="absolute -top-3 right-4 z-20">
+              <div className="badge badge-popular">
+                <span className="w-1 h-1 rounded-full bg-white animate-pulse" />
+                הכי מבוקש
+              </div>
+            </div>
           )}
 
-          <div className="absolute top-3 left-3 text-[8px] font-black py-1 px-2.5 rounded-full flex items-center gap-1"
-            style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.25)', color: '#4ade80' }}>
-            <Zap size={7} />15% OFF
+          {/* Discount Badge */}
+          <div className="absolute top-3 left-3 z-20">
+            <div className="badge badge-success">
+              <Zap size={7} />
+              <span>15% OFF</span>
+            </div>
           </div>
 
           <div className="p-5 flex flex-col h-full relative z-10 gap-3">
+            {/* Header */}
             <div className="flex items-center gap-3 mt-2">
               <div 
                 className="w-11 h-11 rounded-xl flex items-center justify-center text-xl shrink-0"
@@ -1151,13 +1113,19 @@ const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
                 {badge}
               </div>
               <div>
-                <h3 className="text-[18px] font-black tracking-tight leading-tight" style={{ color: isPremium || isPro ? color : '#fff' }}>{pkg.name}</h3>
+                <h3 className="text-[18px] font-black tracking-tight leading-tight" 
+                    style={{ color: isPremium || isPro ? color : '#fff' }}>
+                  {pkg.name}
+                </h3>
                 <p className="text-[10px] font-semibold mt-[2px]" style={{ color: `${color}99` }}>
-                  {pkg.id === 'basic' ? '✓ פתרון מהיר ומקצועי' : pkg.id === 'pro' ? '✓ הבחירה הפופולרית ביותר' : '✓ מקסימום חשיפה ותוצאות'}
+                  {pkg.id === 'basic' ? '✓ פתרון מהיר ומקצועי' : 
+                   pkg.id === 'pro' ? '✓ הבחירה הפופולרית ביותר' : 
+                   '✓ מקסימום חשיפה ותוצאות'}
                 </p>
               </div>
             </div>
 
+            {/* Description */}
             <div className="rounded-xl p-2.5" style={{ background: `${color}0a`, border: `1px solid ${color}18` }}>
               <p className="text-[11px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>
                 {pkg.id === 'basic' ? 'חבילת הכניסה האידיאלית – פרסום ממוקד עם תמונות מקצועיות ותיאור משכנע לרכבך'
@@ -1166,6 +1134,7 @@ const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
               </p>
             </div>
 
+            {/* Price */}
             <div className="flex items-baseline gap-2">
               <span className="text-[34px] font-black text-white leading-none">{pkg.price}</span>
               <div className="flex flex-col">
@@ -1178,6 +1147,7 @@ const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
 
             <div className="h-px" style={{ background: `linear-gradient(90deg, transparent, ${borderColor}80, transparent)` }} />
 
+            {/* Features */}
             <div className="flex flex-col gap-1.5 flex-grow">
               {pkg.features.slice(0, 4).map((feat, i) => (
                 <div key={i} className="flex items-start gap-2">
@@ -1187,7 +1157,9 @@ const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
                   >
                     <Check size={8} strokeWidth={3.5} style={{ color }} />
                   </div>
-                  <span className="text-[11.5px] font-medium leading-snug" style={{ color: 'rgba(255,255,255,0.80)' }}>{feat}</span>
+                  <span className="text-[11.5px] font-medium leading-snug" style={{ color: 'rgba(255,255,255,0.80)' }}>
+                    {feat}
+                  </span>
                 </div>
               ))}
               {pkg.features.length > 4 && (
@@ -1201,6 +1173,7 @@ const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
               )}
             </div>
 
+            {/* Buttons */}
             <div className="flex gap-2 mt-auto">
               <motion.button
                 onClick={() => setFlipped(true)}
@@ -1222,29 +1195,34 @@ const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
                   boxShadow: isPremium || isPro ? `0 4px 15px ${color}40` : 'none'
                 }}
               >
-                <span className="flex items-center justify-center gap-1.5"><RocketIcon size={11} />{t.startOrder}</span>
+                <span className="flex items-center justify-center gap-1.5">
+                  <RocketIcon size={11} />
+                  {t.startOrder}
+                </span>
               </motion.button>
             </div>
           </div>
         </div>
 
         {/* BACK */}
-        <FlipCardBack
-          pkg={pkg}
-          details={details}
-          color={color}
-          borderColor={borderColor}
-          badge={badge}
-          onSelect={onSelect}
-          onBack={() => setFlipped(false)}
-        />
+        <div className="flip-card-back">
+          <FlipCardBack
+            pkg={pkg}
+            details={details}
+            color={color}
+            borderColor={borderColor}
+            badge={badge}
+            onSelect={onSelect}
+            onBack={() => setFlipped(false)}
+          />
+        </div>
       </div>
     </div>
   );
 };
 
 // ============================================================
-// VIP PACKAGE CARD - محسّن
+// VIP PACKAGE CARD
 // ============================================================
 const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
   const t = translations[lang];
@@ -1253,34 +1231,26 @@ const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
   const borderColor = COLORS.vip.border;
 
   const features = [
-    { icon: <Camera size={14} />, label: '15+ תמונות' },
-    { icon: <Video size={14} />, label: 'רילס + סטורי' },
-    { icon: <Calendar size={14} />, label: '60 ימים' },
-    { icon: <TrendingUp size={14} />, label: 'חשיפה מקס' }
+    { icon: <Camera size={14} />, text: '15+ תמונות' },
+    { icon: <Video size={14} />, text: 'רילס + סטורי' },
+    { icon: <Calendar size={14} />, text: '60 ימים' },
+    { icon: <TrendingUp size={14} />, text: 'חשיפה מקס' }
   ];
 
   return (
     <div className="flip-card w-full h-full">
       <div className={`flip-card-inner ${flipped ? 'flipped' : ''}`}>
-        <div 
-          className="flip-card-face flex flex-col"
-          style={{ 
-            background: 'radial-gradient(circle at 100% 0%, #2a2010 0%, #0f0c05 80%)', 
-            border: `1px solid ${borderColor}`, 
-            boxShadow: '0 20px 40px -15px rgba(212,175,55,0.35)' 
-          }}
-        >
+        <div className="flip-card-front">
           <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-amber-400 to-transparent" />
           
           <div className="p-5 space-y-4 flex-grow flex flex-col">
-            {/* Header */}
             <div className="flex items-center flex-wrap gap-2">
               <div className="flex items-center gap-1.5 bg-amber-900/40 rounded-full px-3 py-1 border border-amber-500/30">
                 <Crown size={11} className="text-amber-400" />
                 <span className="text-[9px] font-black uppercase tracking-wider text-amber-300">VIP LUXURY</span>
               </div>
-              <div className="bg-emerald-500/15 border border-emerald-500/30 rounded-full px-2 py-1">
-                <span className="text-[8px] font-black text-emerald-400">15% OFF</span>
+              <div className="badge-success rounded-full px-2 py-1">
+                <span className="text-[8px] font-black">15% OFF</span>
               </div>
               <div className="flex mr-auto gap-0.5">
                 {[...Array(5)].map((_, i) => (
@@ -1289,13 +1259,11 @@ const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
               </div>
             </div>
 
-            {/* Title */}
             <div>
               <h3 className="text-2xl font-black bg-gradient-to-l from-amber-200 via-amber-400 to-amber-300 bg-clip-text text-transparent">VIP LUXURY</h3>
               <p className="text-amber-100/35 text-[11px] mt-1">חבילת הפרסום האולטימטיבית</p>
             </div>
 
-            {/* Price */}
             <div className="flex items-baseline gap-2">
               <span className="text-3xl font-black text-amber-400">₪749</span>
               <span className="text-xs line-through text-white/20">₪882</span>
@@ -1304,21 +1272,12 @@ const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
 
             <div className="h-px bg-gradient-to-r from-transparent via-amber-500/25 to-transparent" />
 
-            {/* Features Grid - محسّن بحجم مناسب */}
             <div className="grid grid-cols-2 gap-2 flex-grow">
               {features.map((feat, i) => (
-                <div 
-                  key={i} 
-                  className="flex items-center gap-2 rounded-lg px-2 py-1.5"
-                  style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(212,175,55,0.15)' }}
-                >
-                  <span className="text-amber-400 shrink-0">{feat.icon}</span>
-                  <span className="text-[10px] font-medium text-white/80 leading-tight">{feat.label}</span>
-                </div>
+                <FeatureBox key={i} icon={feat.icon} text={feat.text} color={color} />
               ))}
             </div>
 
-            {/* Buttons */}
             <div className="flex gap-2 mt-auto">
               <button 
                 onClick={() => setFlipped(true)} 
@@ -1336,22 +1295,24 @@ const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
             </div>
           </div>
         </div>
-        <FlipCardBack 
-          pkg={pkg} 
-          details={packageDetails.vip} 
-          color={color} 
-          borderColor={borderColor} 
-          badge="👑" 
-          onSelect={onSelect} 
-          onBack={() => setFlipped(false)} 
-        />
+        <div className="flip-card-back">
+          <FlipCardBack 
+            pkg={pkg} 
+            details={packageDetails.vip} 
+            color={color} 
+            borderColor={borderColor} 
+            badge="👑" 
+            onSelect={onSelect} 
+            onBack={() => setFlipped(false)} 
+          />
+        </div>
       </div>
     </div>
   );
 };
 
 // ============================================================
-// DUO DEAL PACKAGE CARD - محسّن
+// DUO DEAL PACKAGE CARD
 // ============================================================
 const DuoDealPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Package) => void }) => {
   const [flipped, setFlipped] = useState(false);
@@ -1359,44 +1320,34 @@ const DuoDealPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pac
   const borderColor = COLORS.duo.border;
 
   const features = [
-    { icon: <Car size={14} />, label: '2 רכבים' },
-    { icon: <Camera size={14} />, label: '4 תמונות' },
-    { icon: <Instagram size={14} />, label: 'פוסטים' },
-    { icon: <Calendar size={14} />, label: '14 ימים' }
+    { icon: <Car size={14} />, text: '2 רכבים' },
+    { icon: <Camera size={14} />, text: '4 תמונות' },
+    { icon: <Instagram size={14} />, text: 'פוסטים' },
+    { icon: <Calendar size={14} />, text: '14 ימים' }
   ];
 
   return (
     <div className="flip-card w-full h-full">
       <div className={`flip-card-inner ${flipped ? 'flipped' : ''}`}>
-        <div 
-          className="flip-card-face flex flex-col"
-          style={{ 
-            background: 'radial-gradient(circle at 100% 0%, #1e1028 0%, #0b0710 100%)', 
-            border: `1px solid ${borderColor}`, 
-            boxShadow: '0 20px 40px -15px rgba(139,92,246,0.35)' 
-          }}
-        >
+        <div className="flip-card-front">
           <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-purple-400 to-transparent" />
           
           <div className="p-5 space-y-4 flex-grow flex flex-col">
-            {/* Header */}
             <div className="flex items-center flex-wrap gap-2">
               <div className="flex items-center gap-1.5 bg-purple-900/40 rounded-full px-3 py-1 border border-purple-500/30">
                 <Car size={10} className="text-purple-400" /><Car size={10} className="text-purple-400" />
                 <span className="text-[9px] font-black uppercase tracking-wider text-purple-300">DUO DEAL</span>
               </div>
-              <div className="bg-emerald-500/15 border border-emerald-500/30 rounded-full px-2 py-1">
-                <span className="text-[8px] font-black text-emerald-400">40% OFF</span>
+              <div className="badge-success rounded-full px-2 py-1">
+                <span className="text-[8px] font-black">40% OFF</span>
               </div>
             </div>
 
-            {/* Title */}
             <div>
               <h3 className="text-2xl font-black bg-gradient-to-l from-purple-200 via-purple-400 to-purple-300 bg-clip-text text-transparent">DUO DEAL</h3>
               <p className="text-purple-100/35 text-[11px] mt-1">פרסום 2 רכבים במחיר מיוחד</p>
             </div>
 
-            {/* Price */}
             <div className="flex items-baseline gap-2">
               <span className="text-3xl font-black text-purple-400">₪349</span>
               <span className="text-xs line-through text-white/20">₪598</span>
@@ -1405,21 +1356,12 @@ const DuoDealPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pac
 
             <div className="h-px bg-gradient-to-r from-transparent via-purple-500/25 to-transparent" />
 
-            {/* Features Grid - محسّن */}
             <div className="grid grid-cols-2 gap-2 flex-grow">
               {features.map((feat, i) => (
-                <div 
-                  key={i} 
-                  className="flex items-center gap-2 rounded-lg px-2 py-1.5"
-                  style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(139,92,246,0.15)' }}
-                >
-                  <span className="text-purple-400 shrink-0">{feat.icon}</span>
-                  <span className="text-[10px] font-medium text-white/80 leading-tight">{feat.label}</span>
-                </div>
+                <FeatureBox key={i} icon={feat.icon} text={feat.text} color={color} />
               ))}
             </div>
 
-            {/* Buttons */}
             <div className="flex gap-2 mt-auto">
               <button 
                 onClick={() => setFlipped(true)} 
@@ -1437,15 +1379,17 @@ const DuoDealPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pac
             </div>
           </div>
         </div>
-        <FlipCardBack 
-          pkg={pkg} 
-          details={packageDetails.duo} 
-          color={color} 
-          borderColor={borderColor} 
-          badge="🚗🚗" 
-          onSelect={onSelect} 
-          onBack={() => setFlipped(false)} 
-        />
+        <div className="flip-card-back">
+          <FlipCardBack 
+            pkg={pkg} 
+            details={packageDetails.duo} 
+            color={color} 
+            borderColor={borderColor} 
+            badge="🚗🚗" 
+            onSelect={onSelect} 
+            onBack={() => setFlipped(false)} 
+          />
+        </div>
       </div>
     </div>
   );
@@ -1464,31 +1408,19 @@ const EquipmentPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: P
   return (
     <div className="flip-card w-full h-full">
       <div className={`flip-card-inner ${flipped ? 'flipped' : ''}`}>
-        <div 
-          className="flip-card-face flex flex-col p-5"
-          style={{
-            background: isHeavy 
-              ? 'linear-gradient(135deg, rgba(234,88,12,0.12) 0%, #0f0c08 100%)' 
-              : 'linear-gradient(135deg, rgba(148,163,184,0.08) 0%, #0a0c0f 100%)',
-            border: `1px solid ${borderColor}`, 
-            boxShadow: `0 20px 40px -15px ${color}25`
-          }}
-        >
+        <div className="flip-card-front p-5">
           <div 
             className="absolute top-0 left-0 right-0 h-[3px]"
             style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} 
           />
           
           {isHeavy && (
-            <motion.div 
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="absolute -top-3 right-4 z-20 text-white text-[8px] font-black py-1 px-3 rounded-full flex items-center gap-1"
-              style={{ background: 'linear-gradient(135deg, #ea580c, #c2410c)', boxShadow: '0 4px 15px rgba(234,88,12,0.4)' }}
-            >
-              <span className="w-1 h-1 rounded-full bg-white animate-pulse" />הכי מבוקש
-            </motion.div>
+            <div className="absolute -top-3 right-4 z-20">
+              <div className="badge badge-popular">
+                <span className="w-1 h-1 rounded-full bg-white animate-pulse" />
+                הכי מבוקש
+              </div>
+            </div>
           )}
 
           <div className="flex items-center gap-2 mb-4 pb-3" style={{ borderBottom: `1px solid ${borderColor}` }}>
@@ -1557,15 +1489,17 @@ const EquipmentPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: P
             </button>
           </div>
         </div>
-        <FlipCardBack 
-          pkg={pkg} 
-          details={packageDetails[pkg.id] || { title: pkg.name, content: pkg.features.join('\n') }} 
-          color={color} 
-          borderColor={borderColor} 
-          badge={badge} 
-          onSelect={onSelect} 
-          onBack={() => setFlipped(false)} 
-        />
+        <div className="flip-card-back">
+          <FlipCardBack 
+            pkg={pkg} 
+            details={packageDetails[pkg.id] || { title: pkg.name, content: pkg.features.join('\n') }} 
+            color={color} 
+            borderColor={borderColor} 
+            badge={badge} 
+            onSelect={onSelect} 
+            onBack={() => setFlipped(false)} 
+          />
+        </div>
       </div>
     </div>
   );
@@ -1582,19 +1516,14 @@ const TransportPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: P
   return (
     <div className="flip-card w-full h-full">
       <div className={`flip-card-inner ${flipped ? 'flipped' : ''}`}>
-        <div 
-          className="flip-card-face flex flex-col p-5"
-          style={{ 
-            background: 'linear-gradient(135deg, rgba(14,165,233,0.12) 0%, #08101a 100%)', 
-            border: `1px solid ${borderColor}`, 
-            boxShadow: `0 20px 40px -15px ${color}25` 
-          }}
-        >
+        <div className="flip-card-front p-5">
           <div className="absolute top-0 left-0 right-0 h-[3px]" style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} />
           
-          <div className="absolute -top-3 left-4 z-20 text-white text-[8px] font-black py-1 px-3 rounded-full flex items-center gap-1"
-            style={{ background: 'linear-gradient(135deg, #0284c7, #0369a1)', boxShadow: '0 4px 15px rgba(14,165,233,0.4)' }}>
-            <span className="w-1.5 h-1.5 rounded-full bg-white" />חדש!
+          <div className="absolute -top-3 left-4 z-20">
+            <div className="badge badge-popular" style={{ background: 'linear-gradient(135deg, #0284c7, #0369a1)' }}>
+              <span className="w-1.5 h-1.5 rounded-full bg-white" />
+              חדש!
+            </div>
           </div>
 
           <div className="flex items-center gap-2 mb-4 pb-3 mt-1" style={{ borderBottom: `1px solid ${borderColor}` }}>
@@ -1651,22 +1580,24 @@ const TransportPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: P
             </button>
           </div>
         </div>
-        <FlipCardBack 
-          pkg={pkg} 
-          details={packageDetails.transport} 
-          color={color} 
-          borderColor={borderColor} 
-          badge="🚌" 
-          onSelect={onSelect} 
-          onBack={() => setFlipped(false)} 
-        />
+        <div className="flip-card-back">
+          <FlipCardBack 
+            pkg={pkg} 
+            details={packageDetails.transport} 
+            color={color} 
+            borderColor={borderColor} 
+            badge="🚌" 
+            onSelect={onSelect} 
+            onBack={() => setFlipped(false)} 
+          />
+        </div>
       </div>
     </div>
   );
 };
 
 // ============================================================
-// BUSINESS PACKAGE CARD - محسّن
+// BUSINESS PACKAGE CARD
 // ============================================================
 const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Package) => void }) => {
   const [flipped, setFlipped] = useState(false);
@@ -1674,21 +1605,14 @@ const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pa
   const borderColor = COLORS.business.border;
 
   const features = [
-    { icon: <Target size={14} />, title: 'חשיפה ממוקדת' },
-    { icon: <BarChart3 size={14} />, title: 'דוחות חודשיים' }
+    { icon: <Target size={14} />, text: 'חשיפה ממוקדת' },
+    { icon: <BarChart3 size={14} />, text: 'דוחות חודשיים' }
   ];
 
   return (
     <div className="flip-card w-full h-full">
       <div className={`flip-card-inner ${flipped ? 'flipped' : ''}`}>
-        <div 
-          className="flip-card-face overflow-hidden"
-          style={{ 
-            background: 'linear-gradient(135deg, #0a1828 0%, #0f2035 50%, #0a1828 100%)', 
-            boxShadow: '0 20px 40px -15px rgba(59,130,246,0.3)', 
-            border: `1px solid ${borderColor}` 
-          }}
-        >
+        <div className="flip-card-front overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-blue-400 to-transparent" />
           <div className="absolute inset-0 opacity-8" style={{ 
             backgroundImage: 'linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px)', 
@@ -1696,7 +1620,6 @@ const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pa
           }} />
           
           <div className="relative z-10 p-5 h-full flex flex-col">
-            {/* Header */}
             <div className="flex items-center justify-between gap-2 mb-4">
               <div className="flex items-center gap-2">
                 <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg shadow-blue-500/25">
@@ -1713,7 +1636,6 @@ const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pa
               </div>
             </div>
 
-            {/* Content Grid */}
             <div className="grid md:grid-cols-2 gap-4 mb-4 flex-grow">
               <div className="space-y-3">
                 <div className="flex items-baseline gap-2 flex-wrap">
@@ -1735,22 +1657,13 @@ const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pa
                 </div>
               </div>
 
-              {/* Features Grid - محسّن */}
               <div className="grid grid-cols-2 gap-2">
                 {features.map((item, i) => (
-                  <div 
-                    key={i} 
-                    className="flex items-center gap-2 rounded-lg px-2 py-1.5"
-                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(59,130,246,0.15)' }}
-                  >
-                    <span className="text-blue-400 shrink-0">{item.icon}</span>
-                    <span className="text-[9px] font-medium text-white/80 leading-tight">{item.title}</span>
-                  </div>
+                  <FeatureBox key={i} icon={item.icon} text={item.text} color={color} />
                 ))}
               </div>
             </div>
 
-            {/* Buttons */}
             <div className="flex gap-2">
               <button 
                 onClick={() => setFlipped(true)} 
@@ -1768,15 +1681,17 @@ const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pa
             </div>
           </div>
         </div>
-        <FlipCardBack 
-          pkg={pkg} 
-          details={packageDetails.business} 
-          color={color} 
-          borderColor={borderColor} 
-          badge="🏢" 
-          onSelect={onSelect} 
-          onBack={() => setFlipped(false)} 
-        />
+        <div className="flip-card-back">
+          <FlipCardBack 
+            pkg={pkg} 
+            details={packageDetails.business} 
+            color={color} 
+            borderColor={borderColor} 
+            badge="🏢" 
+            onSelect={onSelect} 
+            onBack={() => setFlipped(false)} 
+          />
+        </div>
       </div>
     </div>
   );
@@ -2779,7 +2694,6 @@ export default function App() {
         .text-brand-red { color: #c8102e !important; }
         .bg-brand-red { background-color: #c8102e !important; }
         .border-brand-red { border-color: #c8102e !important; }
-        .btn-primary { background: linear-gradient(135deg, #c8102e, #a50d25) !important; }
         
         .scrollbar-thin::-webkit-scrollbar { height: 4px; }
         .scrollbar-thin::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
@@ -2860,35 +2774,6 @@ export default function App() {
         .custom-scrollbar::-webkit-scrollbar { width: 3px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--brand-red); border-radius: 10px; }
-
-        .flip-card { perspective: 1400px; }
-        .flip-card-inner {
-          position: relative;
-          width: 100%;
-          height: 100%;
-          transform-style: preserve-3d;
-          transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .flip-card-inner.flipped { transform: rotateY(180deg); }
-        .flip-card-face {
-          position: absolute;
-          inset: 0;
-          backface-visibility: hidden;
-          -webkit-backface-visibility: hidden;
-          border-radius: 1rem;
-          overflow: hidden;
-          display: flex;
-          flex-direction: column;
-        }
-        .flip-card-back { transform: rotateY(180deg); }
-        .fcb-scroll {
-          flex: 1 1 0;
-          min-height: 0;
-          overflow-y: auto;
-          overflow-x: hidden;
-        }
-        .fcb-scroll::-webkit-scrollbar { width: 2px; }
-        .fcb-scroll::-webkit-scrollbar-thumb { background: var(--accent,#c8102e); border-radius:4px; }
       `}</style>
 
       <Navbar lang={lang} setLang={setLang} isAdmin={isAdmin} onLogout={() => { setIsAdmin(false); setView('home'); }} siteSettings={siteSettings} setView={setView} />
@@ -3588,11 +3473,10 @@ export default function App() {
                             className="flex flex-col items-center gap-2 group"
                           >
                             <div
-                              className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-200 group-hover:scale-110 group-hover:shadow-lg"
+                              className="social-icon"
                               style={{
                                 background: s.bg,
                                 border: (s as any).border ? `1px solid ${(s as any).border}` : undefined,
-                                boxShadow: '0 2px 10px rgba(0,0,0,0.25)'
                               }}
                             >
                               {s.icon}
@@ -3612,25 +3496,14 @@ export default function App() {
                         { icon: <Info size={14} />, label: 'מי אנחנו', onClick: () => setModalContent({ title: 'אודות YOUGO ISRAEL', content: `YOUGO ISRAEL – פלטפורמת השיווק הדיגיטלי המובילה בישראל למכירת רכבים.\n\nהסיפור שלנו\nYOUGO ISRAEL נוסדה מתוך חזון אחד ברור: לשנות את הדרך שבה ישראלים מוכרים רכבים. ראינו שהמוכרים מתקשים להגיע לקהל הנכון – ויצרנו את הפתרון.\n\nמה שמבדיל אותנו\n• 50,000+ עוקבים פעילים שמחפשים לקנות רכב עכשיו\n• צוות מקצועי של צלמים, מעצבים ואנשי שיווק דיגיטלי\n• ניסיון של שנים עם מאות עסקאות מוצלחות\n• 98% שביעות רצון לקוחות – מהמספרים הגבוהים בענף\n• שירות אישי, מהיר ואמין – ליווי מלא עד לסגירת העסקה\n\nהצוות שלנו\nאנחנו קבוצה של אנשי שיווק, צלמים ויועצי רכב שמאמינים שכל מכירה מגיעה עם הפרסום הנכון. אנחנו לא סתם מפרסמים – אנחנו מוכרים.` }) },
                         { icon: <LayoutDashboard size={14} />, label: 'ניהול', onClick: () => setView('admin-login') },
                       ].map((link, i) => (
-                        <motion.button key={i} whileHover={{ y: -2, scale: 1.04 }} whileTap={{ scale: 0.97 }} onClick={link.onClick}
-                          className="flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs font-bold transition-all"
-                          style={{
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            background: 'rgba(255,255,255,0.04)',
-                            color: 'rgba(255,255,255,0.55)'
-                          }}
-                          onMouseEnter={e => {
-                            (e.currentTarget as HTMLElement).style.background = 'rgba(200,16,46,0.12)';
-                            (e.currentTarget as HTMLElement).style.borderColor = 'rgba(200,16,46,0.35)';
-                            (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.85)';
-                          }}
-                          onMouseLeave={e => {
-                            (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)';
-                            (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.1)';
-                            (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.55)';
-                          }}
+                        <motion.button
+                          key={i}
+                          onClick={link.onClick}
+                          whileHover={{ y: -3, scale: 1.05 }}
+                          whileTap={{ scale: 0.97 }}
+                          className="footer-link"
                         >
-                          <span style={{ color: 'rgba(200,16,46,0.7)' }}>{link.icon}</span>
+                          <span className="footer-link-icon">{link.icon}</span>
                           <span>{link.label}</span>
                         </motion.button>
                       ))}
