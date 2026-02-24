@@ -398,7 +398,7 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose:
 };
 
 // ============================================================
-// FLIP CARD BACK – مشترك لكل الباقات
+// FLIP CARD BACK — iron-clad containment, Apple-like design
 // ============================================================
 const FlipCardBack = ({
   pkg, details, color, borderColor, badge, onSelect, onBack
@@ -411,94 +411,81 @@ const FlipCardBack = ({
   onSelect: (p: Package) => void;
   onBack: () => void;
 }) => {
-  const lines = details.content.split('\n').filter(l => l.trim());
-  const sections: { heading: string; items: string[] }[] = [];
-  let cur: { heading: string; items: string[] } = { heading: '', items: [] };
-  lines.forEach(line => {
-    const cl = line.replace(/\*\*/g, '').trim();
-    const isH = /^[✨🔥👑💎🚗🏢🚜🔧🚌📦⭐🎯💼📊🔍⚙️🏗️⏱️]/.test(cl);
-    if (isH) { if (cur.heading || cur.items.length) sections.push(cur); cur = { heading: cl, items: [] }; }
-    else if (cl.startsWith('•') || cl.startsWith('✓') || cl.startsWith('✅') || /^[📸📝📱🎯⚡👨🏷️🎥💰📞🛠️📋💫🌟]/.test(cl)) {
-      const s = cl.replace(/^[•✓✅📸📝📱🎯⚡👨🏷️🎥💰📞🛠️📋💫🌟]/g,'').trim();
-      if (s.length > 2) cur.items.push(s);
-    } else if (cl.length > 3 && !cl.includes('━') && !cl.includes('┌')) cur.items.push(cl);
+  const items: string[] = [];
+  details.content.split('\n').forEach(raw => {
+    const cl = raw.replace(/\*\*/g, '').trim();
+    if (!cl || cl.length < 3) return;
+    if (/^[✨🔥👑💎🚗🏢🚜🔧🚌📦⭐🎯💼📊🔍⚙️🏗️⏱️]/.test(cl)) return;
+    if (cl.includes('━') || cl.includes('┌') || cl.includes('─')) return;
+    const s = cl.replace(/^[•✓✅📸📝📱🎯⚡🏷️🎥💰📞🛠️📋💫🌟👨\-\s]+/, '').trim();
+    if (s.length > 2) items.push(s);
   });
-  if (cur.heading || cur.items.length) sections.push(cur);
-  const backSections = sections.filter(s => s.items.length > 0).slice(0, 3);
+  const shown = items.slice(0, 7);
+  const priceNum = parseInt(pkg.price.replace(/[₪,]/g, '')) || 0;
+  const original = priceNum ? `₪${Math.round(priceNum / 0.85).toLocaleString()}` : '';
 
   return (
-    <div className="flip-card-back flip-card-face flex flex-col"
-      style={{ background: `linear-gradient(145deg, #0e0e14, #09090f)`, border: `1px solid ${borderColor}`, boxShadow: `0 20px 45px -15px ${color}35` }}>
-      {/* Top accent */}
-      <div className="absolute top-0 left-0 right-0 h-[3px]"
-        style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} />
+    <div className="flip-card-back flip-card-face" style={{ '--accent': color } as React.CSSProperties}>
+      {/* bg */}
+      <div className="absolute inset-0" style={{ background: `linear-gradient(160deg, ${color}18 0%, #0c0c14 40%, #080810 100%)` }} />
+      {/* top stripe */}
+      <div className="absolute top-0 inset-x-0 h-[3px]" style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} />
 
-      {/* Header */}
-      <div className="px-4 pt-4 pb-3 flex items-center justify-between shrink-0"
-        style={{ borderBottom: `1px solid ${color}20` }}>
-        <button onClick={onBack}
-          className="flex items-center gap-1.5 text-[10px] font-black px-3 py-1.5 rounded-lg transition-all hover:opacity-80 active:scale-95"
-          style={{ border: `1px solid ${borderColor}`, color, background: `${color}12` }}>
-          <ArrowLeft size={10} /> חזרה
-        </button>
-        <div className="flex items-center gap-2">
-          <span className="text-base">{badge}</span>
-          <div className="text-right">
-            <p className="text-xs font-black text-white leading-none">{pkg.name}</p>
-            <p className="text-[9px] font-bold mt-0.5" style={{ color }}>מה כלול בחבילה</p>
+      {/* HEADER — shrink-0 */}
+      <div className="relative shrink-0 flex items-center justify-between gap-2 px-4 pt-3 pb-2.5"
+        style={{ borderBottom: `1px solid ${color}20`, background: `${color}0a` }}>
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-xl shrink-0">{badge}</span>
+          <div className="min-w-0">
+            <p className="text-[12px] font-black text-white truncate leading-tight">{pkg.name}</p>
+            <p className="text-[9px] font-semibold mt-[1px]" style={{ color: `${color}aa` }}>מה כלול בחבילה</p>
           </div>
+        </div>
+        <button onClick={onBack}
+          className="shrink-0 flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-black"
+          style={{ border: `1px solid ${color}30`, color, background: `${color}10` }}>
+          <ArrowLeft size={9} strokeWidth={3} /> חזרה
+        </button>
+      </div>
+
+      {/* ITEMS — fcb-scroll fills remaining height */}
+      <div className="relative fcb-scroll px-3 py-2">
+        <div className="flex flex-col gap-[3px]">
+          {shown.map((item, i) => (
+            <div key={i} className="flex items-start gap-2 px-2.5 py-[6px] rounded-xl"
+              style={{ background: i % 2 === 0 ? `${color}08` : 'transparent' }}>
+              <div className="shrink-0 mt-[3px] w-3 h-3 rounded-full flex items-center justify-center"
+                style={{ background: `${color}20`, border: `1.5px solid ${color}40` }}>
+                <Check size={6} strokeWidth={3.5} style={{ color }} />
+              </div>
+              <span className="text-[11px] leading-snug font-medium" style={{ color: 'rgba(255,255,255,0.86)' }}>
+                {item}
+              </span>
+            </div>
+          ))}
+          {items.length > 7 && (
+            <p className="text-center text-[9px] font-bold py-1" style={{ color: `${color}70` }}>
+              + {items.length - 7} פרטים נוספים
+            </p>
+          )}
         </div>
       </div>
 
-      {/* Scrollable sections */}
-      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar px-3 py-3 space-y-2.5">
-        {backSections.length > 0 ? backSections.map((sec, si) => (
-          <div key={si} className="rounded-xl overflow-hidden"
-            style={{ border: `1px solid ${color}18`, background: `${color}06` }}>
-            {sec.heading && (
-              <div className="px-3 py-2 flex items-center gap-2"
-                style={{ borderBottom: `1px solid ${color}12`, background: `${color}10` }}>
-                <span className="text-sm">{sec.heading.match(/^[✨🔥👑💎🚗🏢🚜🔧🚌📦⭐🎯💼📊🔍⚙️🏗️⏱️]/)?.[0] || '•'}</span>
-                <span className="text-[9px] font-black uppercase tracking-[0.15em] truncate" style={{ color }}>
-                  {sec.heading.replace(/^[✨🔥👑💎🚗🏢🚜🔧🚌📦⭐🎯💼📊🔍⚙️🏗️⏱️\s]/g,'').trim()}
-                </span>
-              </div>
-            )}
-            <div className="px-3 py-2.5 space-y-2">
-              {sec.items.map((item, ii) => (
-                <div key={ii} className="flex items-start gap-2">
-                  <div className="mt-0.5 w-3.5 h-3.5 rounded flex items-center justify-center shrink-0"
-                    style={{ background: `${color}20`, border: `1px solid ${color}35` }}>
-                    <Check size={7} strokeWidth={3.5} style={{ color }} />
-                  </div>
-                  <span className="text-[10px] text-white/80 leading-relaxed font-medium">{item}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )) : pkg.features.map((f, i) => (
-          <div key={i} className="flex items-start gap-2">
-            <div className="mt-0.5 w-3.5 h-3.5 rounded flex items-center justify-center shrink-0"
-              style={{ background: `${color}20`, border: `1px solid ${color}35` }}>
-              <Check size={7} strokeWidth={3.5} style={{ color }} />
-            </div>
-            <span className="text-[10px] text-white/80 leading-relaxed font-medium">{f}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* Price + CTA */}
-      <div className="px-4 py-3 shrink-0 space-y-2.5" style={{ borderTop: `1px solid ${color}20` }}>
-        <div className="flex items-center justify-between">
-          <span className="text-[9px] text-white/35 font-bold">מחיר החבילה</span>
+      {/* FOOTER — shrink-0 */}
+      <div className="relative shrink-0 px-4 pt-2.5 pb-3.5" style={{ borderTop: `1px solid ${color}20` }}>
+        <div className="flex items-center justify-between mb-2">
           <div className="flex items-baseline gap-1.5">
-            <span className="text-lg font-black text-white">{pkg.price}</span>
-            <span className="text-[9px] line-through text-white/20">₪{Math.round(parseInt(pkg.price.replace('₪','').replace(',','')) / 0.85)}</span>
+            <span className="text-[21px] font-black text-white leading-none">{pkg.price}</span>
+            {original && <span className="text-[9px] line-through" style={{ color: 'rgba(255,255,255,0.2)' }}>{original}</span>}
           </div>
+          <span className="text-[9px] font-black px-2 py-[3px] rounded-full"
+            style={{ color: '#4ade80', background: 'rgba(74,222,128,0.1)', border: '1px solid rgba(74,222,128,0.2)' }}>
+            חיסכון 15%
+          </span>
         </div>
         <button onClick={() => onSelect(pkg)}
-          className="w-full py-2.5 rounded-xl font-black text-sm text-white flex items-center justify-center gap-2 transition-all hover:opacity-90 active:scale-95"
-          style={{ background: `linear-gradient(135deg, ${color}, ${color}bb)`, boxShadow: `0 6px 20px ${color}40` }}>
+          className="w-full py-[9px] rounded-[10px] font-black text-[13px] text-white flex items-center justify-center gap-2"
+          style={{ background: `linear-gradient(135deg, ${color} 0%, ${color}cc 100%)`, boxShadow: `0 4px 16px ${color}35` }}>
           <RocketIcon size={13} /> הזמן עכשיו
         </button>
       </div>
@@ -931,24 +918,24 @@ const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
             <Zap size={7} />15% OFF
           </div>
 
-          <div className="p-6 flex flex-col h-full relative z-10 gap-4">
+          <div className="p-5 flex flex-col h-full relative z-10 gap-3">
             {/* Header */}
-            <div className="flex items-center gap-3 mt-3">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0"
-                style={{ background: `linear-gradient(135deg, ${cfg.color}28, ${cfg.color}10)`, border: `1px solid ${cfg.borderColor}`, boxShadow: `0 4px 15px ${cfg.color}20` }}>
+            <div className="flex items-center gap-3 mt-2">
+              <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl shrink-0"
+                style={{ background: `linear-gradient(135deg, ${cfg.color}28, ${cfg.color}10)`, border: `1px solid ${cfg.borderColor}`, boxShadow: `0 4px 14px ${cfg.color}1a` }}>
                 {cfg.badge}
               </div>
               <div>
-                <h3 className="text-xl font-black tracking-tight" style={{ color: isPremium || isPro ? cfg.color : '#fff' }}>{pkg.name}</h3>
-                <p className="text-[10px] font-semibold mt-0.5" style={{ color: `${cfg.color}90` }}>
+                <h3 className="text-[18px] font-black tracking-tight leading-tight" style={{ color: isPremium || isPro ? cfg.color : '#fff' }}>{pkg.name}</h3>
+                <p className="text-[10px] font-semibold mt-[2px]" style={{ color: `${cfg.color}99` }}>
                   {pkg.id === 'basic' ? '✓ פתרון מהיר ומקצועי' : pkg.id === 'pro' ? '✓ הבחירה הפופולרית ביותר' : '✓ מקסימום חשיפה ותוצאות'}
                 </p>
               </div>
             </div>
 
-            {/* Description */}
-            <div className="rounded-xl p-3" style={{ background: `${cfg.color}08`, border: `1px solid ${cfg.color}15` }}>
-              <p className="text-[10px] text-white/60 leading-relaxed">
+            {/* Description — better contrast */}
+            <div className="rounded-xl p-2.5" style={{ background: `${cfg.color}0a`, border: `1px solid ${cfg.color}18` }}>
+              <p className="text-[11px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>
                 {pkg.id === 'basic' ? 'חבילת הכניסה האידיאלית – פרסום ממוקד עם תמונות מקצועיות ותיאור משכנע לרכבך'
                 : pkg.id === 'pro' ? 'חבילת הפרו המאוזנת – יותר תמונות, חשיפה רחבה ועדיפות בתזמון הפרסום'
                 : 'חבילת הפרמיום המלאה – ריל מקצועי, פרסום VIP ממושך וחשיפה מקסימלית'}
@@ -957,33 +944,33 @@ const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
 
             {/* Price */}
             <div className="flex items-baseline gap-2">
-              <span className="text-4xl font-black text-white">{pkg.price}</span>
+              <span className="text-[34px] font-black text-white leading-none">{pkg.price}</span>
               <div className="flex flex-col">
-                <span className="text-[10px] line-through text-white/25">₪{Math.round(parseInt(pkg.price.replace('₪','')) / 0.85)}</span>
-                <span className="text-[9px] text-green-400 font-bold">חיסכון 15%</span>
+                <span className="text-[9px] line-through" style={{ color: 'rgba(255,255,255,0.22)' }}>₪{Math.round(parseInt(pkg.price.replace('₪','')) / 0.85)}</span>
+                <span className="text-[9px] font-bold" style={{ color: '#4ade80' }}>חיסכון 15%</span>
               </div>
             </div>
 
-            <div className="h-px" style={{ background: `linear-gradient(90deg, transparent, ${cfg.borderColor}, transparent)` }} />
+            <div className="h-px" style={{ background: `linear-gradient(90deg, transparent, ${cfg.borderColor}80, transparent)` }} />
 
-            {/* Features */}
-            <div className="flex flex-col gap-2 flex-grow">
+            {/* Features — improved readability */}
+            <div className="flex flex-col gap-1.5 flex-grow">
               {pkg.features.slice(0, 4).map((feat, i) => (
-                <div key={i} className="flex items-center gap-2.5">
-                  <div className="w-5 h-5 rounded-md flex items-center justify-center shrink-0"
+                <div key={i} className="flex items-start gap-2">
+                  <div className="w-4 h-4 rounded-md flex items-center justify-center shrink-0 mt-[1px]"
                     style={{ background: `${cfg.color}18`, border: `1px solid ${cfg.color}30` }}>
-                    <Check size={9} strokeWidth={3} style={{ color: cfg.color }} />
+                    <Check size={8} strokeWidth={3.5} style={{ color: cfg.color }} />
                   </div>
-                  <span className="text-[11px] font-medium text-white/75">{feat}</span>
+                  <span className="text-[11.5px] font-medium leading-snug" style={{ color: 'rgba(255,255,255,0.80)' }}>{feat}</span>
                 </div>
               ))}
               {pkg.features.length > 4 && (
-                <div className="flex items-center gap-2 mt-1">
-                  <div className="flex-1 h-px" style={{ background: `${cfg.color}20` }} />
-                  <span className="text-[9px] font-black px-2 py-0.5 rounded-full" style={{ color: cfg.color, background: `${cfg.color}15` }}>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <div className="flex-1 h-px" style={{ background: `${cfg.color}18` }} />
+                  <span className="text-[9px] font-black px-2 py-0.5 rounded-full" style={{ color: cfg.color, background: `${cfg.color}12` }}>
                     + {pkg.features.length - 4} הטבות נוספות
                   </span>
-                  <div className="flex-1 h-px" style={{ background: `${cfg.color}20` }} />
+                  <div className="flex-1 h-px" style={{ background: `${cfg.color}18` }} />
                 </div>
               )}
             </div>
@@ -2476,21 +2463,40 @@ export default function App() {
         .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--brand-red); border-radius: 10px; }
 
-        /* ── Flip Card ── */
-        .flip-card { perspective: 1200px; }
+        /* ── Flip Card — iron-clad containment ── */
+        .flip-card {
+          perspective: 1400px;
+          /* card height is controlled by the grid, never by content */
+        }
         .flip-card-inner {
-          position: relative; width: 100%; height: 100%;
+          position: relative;
+          width: 100%;
+          height: 100%;
           transform-style: preserve-3d;
-          transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+          transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .flip-card-inner.flipped { transform: rotateY(180deg); }
         .flip-card-face {
-          position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+          /* absolute: face never pushes parent height */
+          position: absolute;
+          inset: 0;
           backface-visibility: hidden;
           -webkit-backface-visibility: hidden;
           border-radius: 1rem;
+          overflow: hidden;           /* clip children, never grow */
+          display: flex;
+          flex-direction: column;
         }
         .flip-card-back { transform: rotateY(180deg); }
+        /* scroll area — takes leftover space, never overflows face */
+        .fcb-scroll {
+          flex: 1 1 0;
+          min-height: 0;
+          overflow-y: auto;
+          overflow-x: hidden;
+        }
+        .fcb-scroll::-webkit-scrollbar { width: 2px; }
+        .fcb-scroll::-webkit-scrollbar-thumb { background: var(--accent,#c8102e); border-radius:4px; }
       `}</style>
 
       <Navbar lang={lang} setLang={setLang} isAdmin={isAdmin} onLogout={() => { setIsAdmin(false); setView('home'); }} siteSettings={siteSettings} setView={setView} />
@@ -2506,94 +2512,123 @@ export default function App() {
               className="space-y-24"
             >
               {/* HERO */}
-              <section className="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
-                <div className="absolute inset-0">
-                  <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, #0a0005 0%, #060608 40%, #07000d 100%)' }} />
-                  {/* Static red glow accents */}
-                  <div className="absolute top-[-10%] right-[-5%] w-[55%] h-[55%] rounded-full pointer-events-none"
-                    style={{ background: 'radial-gradient(circle, rgba(200,16,46,0.18) 0%, transparent 70%)' }} />
-                  <div className="absolute bottom-[-15%] left-[-10%] w-[60%] h-[60%] rounded-full pointer-events-none"
-                    style={{ background: 'radial-gradient(circle, rgba(200,16,46,0.12) 0%, transparent 70%)' }} />
-                  <div className="absolute top-[30%] left-[30%] w-[40%] h-[40%] rounded-full pointer-events-none"
-                    style={{ background: 'radial-gradient(circle, rgba(255,69,96,0.07) 0%, transparent 70%)' }} />
-                  {/* Static grid */}
-                  <div className="absolute inset-0 opacity-[0.04] pointer-events-none"
-                    style={{ backgroundImage: 'linear-gradient(rgba(200,16,46,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(200,16,46,0.6) 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
-                  {/* Corner accents */}
-                  <div className="absolute top-12 right-12 w-20 h-20 pointer-events-none"
-                    style={{ borderTop: '2px solid rgba(200,16,46,0.3)', borderRight: '2px solid rgba(200,16,46,0.3)' }} />
-                  <div className="absolute bottom-12 left-12 w-20 h-20 pointer-events-none"
-                    style={{ borderBottom: '2px solid rgba(200,16,46,0.3)', borderLeft: '2px solid rgba(200,16,46,0.3)' }} />
-                  <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at center, transparent 30%, #060608 100%)' }} />
+              <section className="relative min-h-screen flex items-center justify-center overflow-hidden" style={{ background: '#06060a' }}>
+
+                {/* ── Static layered background ── */}
+                <div className="absolute inset-0 pointer-events-none">
+                  {/* Deep gradient base */}
+                  <div className="absolute inset-0" style={{
+                    background: 'radial-gradient(ellipse 80% 60% at 60% 20%, rgba(200,16,46,0.14) 0%, transparent 65%), radial-gradient(ellipse 60% 50% at 10% 80%, rgba(200,16,46,0.08) 0%, transparent 60%), #06060a'
+                  }} />
+                  {/* Subtle dot grid */}
+                  <div className="absolute inset-0" style={{
+                    backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)',
+                    backgroundSize: '32px 32px',
+                    maskImage: 'radial-gradient(ellipse 90% 70% at 50% 40%, black 30%, transparent 80%)'
+                  }} />
+                  {/* Soft vignette */}
+                  <div className="absolute inset-0" style={{
+                    background: 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, #06060a 100%)'
+                  }} />
+                  {/* Bottom fade */}
+                  <div className="absolute bottom-0 inset-x-0 h-40" style={{
+                    background: 'linear-gradient(to bottom, transparent, #06060a)'
+                  }} />
                 </div>
 
-                <motion.div
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.2 }}
-                  className="relative z-10 text-center px-4 max-w-5xl mx-auto"
-                >
-                  <div className="inline-flex items-center gap-2 bg-white/8 border border-brand-red/25 rounded-full px-6 py-3 mb-8">
-                    <span className="w-2 h-2 rounded-full bg-brand-red" />
-                    <span className="text-sm font-black tracking-wider text-white/90">הדרך המהירה ביותר למכור רכב</span>
-                  </div>
-                  
-                  <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
-                    className="text-5xl md:text-7xl lg:text-8xl font-black leading-tight text-white mb-6">
-                    מוכרים רכב? <br />
-                    <span className="text-brand-red" style={{ textShadow: '0 0 40px rgba(200,16,46,0.5)' }}>
+                {/* ── Content ── */}
+                <div className="relative z-10 w-full max-w-4xl mx-auto px-5 pt-28 pb-16 flex flex-col items-center text-center">
+
+                  {/* Eyebrow pill */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}
+                    className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full"
+                    style={{
+                      background: 'rgba(200,16,46,0.1)',
+                      border: '1px solid rgba(200,16,46,0.28)',
+                      backdropFilter: 'blur(8px)'
+                    }}>
+                    <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#c8102e' }} />
+                    <span className="text-[11px] font-bold tracking-[0.12em] uppercase" style={{ color: 'rgba(255,255,255,0.75)' }}>
+                      הדרך המהירה ביותר למכור רכב
+                    </span>
+                  </motion.div>
+
+                  {/* Main headline */}
+                  <motion.h1
+                    initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
+                    className="font-black leading-[1.05] tracking-tight mb-5"
+                    style={{ fontSize: 'clamp(2.6rem, 8vw, 5.5rem)' }}
+                  >
+                    <span className="text-white">מוכרים רכב?</span>
+                    <br />
+                    <span style={{
+                      background: 'linear-gradient(135deg, #ff3d5e 0%, #c8102e 50%, #a50d25 100%)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text'
+                    }}>
                       אנחנו מוכרים אותו מהר יותר.
                     </span>
                   </motion.h1>
-                  
-                  <motion.p initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
-                    className="text-xl md:text-2xl text-white/70 max-w-3xl mx-auto mb-10">
-                    YOUGO ISRAEL - פלטפורמת השיווק המובילה באינסטגרם למכירת רכבים.
+
+                  {/* Sub */}
+                  <motion.p
+                    initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, delay: 0.18 }}
+                    className="text-base md:text-lg leading-relaxed mb-10 max-w-xl"
+                    style={{ color: 'rgba(255,255,255,0.48)' }}
+                  >
+                    YOUGO ISRAEL — פלטפורמת השיווק המובילה באינסטגרם למכירת רכבים.
                   </motion.p>
-                  
-                  <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }}
-                    className="flex flex-wrap justify-center gap-5 mb-10">
-                    <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                      onClick={() => { const el = document.getElementById('packages'); el?.scrollIntoView({ behavior: 'smooth' }); }}
-                      className="px-10 py-5 rounded-xl font-black text-xl transition-all relative overflow-hidden group"
-                      style={{ background: 'linear-gradient(135deg, #c8102e, #a50d25)', boxShadow: '0 15px 40px -10px rgba(200,16,46,0.5)' }}>
-                      <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-                      <span className="relative flex items-center gap-3"><Sparkles size={24} />התחל הזמנה</span>
-                    </motion.button>
-                    <motion.button onClick={() => setView('check-status')} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}
-                      className="px-10 py-5 bg-white/10 backdrop-blur-md rounded-xl font-black text-xl border border-white/20 hover:bg-white/15 hover:border-white/30 transition-all flex items-center gap-3">
-                      <Search size={24} />בדוק סטטוס
-                    </motion.button>
+
+                  {/* CTAs */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, delay: 0.24 }}
+                    className="flex flex-col sm:flex-row items-center gap-3 mb-10 w-full justify-center"
+                  >
+                    <button
+                      onClick={() => { document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' }); }}
+                      className="group relative flex items-center gap-2.5 px-8 py-3.5 rounded-2xl font-black text-[15px] text-white w-full sm:w-auto justify-center overflow-hidden transition-transform hover:scale-[1.03] active:scale-[.97]"
+                      style={{ background: 'linear-gradient(135deg, #c8102e, #a50d25)', boxShadow: '0 8px 32px rgba(200,16,46,0.4)' }}
+                    >
+                      <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <Sparkles size={18} />
+                      <span className="relative">התחל הזמנה</span>
+                    </button>
+                    <button
+                      onClick={() => setView('check-status')}
+                      className="flex items-center gap-2.5 px-8 py-3.5 rounded-2xl font-black text-[15px] w-full sm:w-auto justify-center transition-all hover:bg-white/8 active:scale-[.97]"
+                      style={{ border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.7)', background: 'rgba(255,255,255,0.04)' }}
+                    >
+                      <Search size={18} />
+                      בדוק סטטוס
+                    </button>
                   </motion.div>
 
-                  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9 }}
-                    className="flex justify-center">
-                    <div className="flex flex-wrap items-center justify-center gap-3 px-6 py-4 rounded-2xl"
-                      style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(10px)' }}>
-                      {[
-                        { icon: <ShieldCheck size={16} />, label: 'תשלום מאובטח', color: '#22c55e' },
-                        { icon: <Clock size={16} />, label: 'פרסום תוך 24 שעות', color: '#3b82f6' },
-                        { icon: <Users size={16} />, label: '50K+ עוקבים', color: '#c8102e' },
-                      ].map((item, i) => (
-                        <React.Fragment key={i}>
-                          <div className="flex items-center gap-2">
-                            <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-                              style={{ background: `${item.color}18`, border: `1px solid ${item.color}30` }}>
-                              <span style={{ color: item.color }}>{item.icon}</span>
-                            </div>
-                            <span className="text-sm font-bold text-white/70">{item.label}</span>
-                          </div>
-                          {i < 2 && <div className="w-px h-5 bg-white/10 hidden sm:block" />}
-                        </React.Fragment>
-                      ))}
-                    </div>
+                  {/* Trust bar */}
+                  <motion.div
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.35 }}
+                    className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2.5"
+                  >
+                    {[
+                      { icon: <ShieldCheck size={14} />, label: 'תשלום מאובטח', c: '#22c55e' },
+                      { icon: <Clock size={14} />, label: 'פרסום תוך 24 שעות', c: '#60a5fa' },
+                      { icon: <Users size={14} />, label: '50K+ עוקבים', c: '#c8102e' },
+                    ].map((b, i) => (
+                      <div key={i} className="flex items-center gap-1.5">
+                        <span style={{ color: b.c }}>{b.icon}</span>
+                        <span className="text-[12px] font-semibold" style={{ color: 'rgba(255,255,255,0.5)' }}>{b.label}</span>
+                        {i < 2 && <span className="w-px h-3 mx-1 hidden sm:block" style={{ background: 'rgba(255,255,255,0.1)' }} />}
+                      </div>
+                    ))}
                   </motion.div>
-                </motion.div>
+                </div>
 
-                <div
-                  className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white/40 cursor-pointer hover:text-white/70 transition-colors"
+                {/* Scroll cue */}
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 cursor-pointer"
+                  style={{ color: 'rgba(255,255,255,0.2)' }}
                   onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}>
-                  <ChevronDown size={32} />
+                  <ChevronDown size={28} />
                 </div>
               </section>
 
