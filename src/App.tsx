@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   CheckCircle2, 
@@ -6,6 +6,7 @@ import {
   Users, 
   Calendar, 
   ChevronRight, 
+  ChevronLeft,
   Globe, 
   ArrowLeft,
   Upload,
@@ -441,9 +442,9 @@ const FlipCardBack = ({
             <p className="text-[9px] font-semibold mt-[1px]" style={{ color: `${color}aa` }}>מה כלול בחבילה</p>
           </div>
         </div>
-        <button onClick={onBack}
+        <button onClick={(e) => { e.stopPropagation(); onBack(); }}
           className="shrink-0 flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-black"
-          style={{ border: `1px solid ${color}30`, color, background: `${color}10` }}>
+          style={{ border: `1px solid ${color}30`, color, background: `${color}10`, position: 'relative', zIndex: 10 }}>
           <ArrowLeft size={9} strokeWidth={3} /> חזרה
         </button>
       </div>
@@ -483,7 +484,7 @@ const FlipCardBack = ({
             חיסכון 15%
           </span>
         </div>
-        <button onClick={() => onSelect(pkg)}
+        <button onClick={(e) => { e.stopPropagation(); onSelect(pkg); }}
           className="w-full py-[9px] rounded-[10px] font-black text-[13px] text-white flex items-center justify-center gap-2"
           style={{ background: `linear-gradient(135deg, ${color} 0%, ${color}cc 100%)`, boxShadow: `0 4px 16px ${color}35` }}>
           <RocketIcon size={13} /> הזמן עכשיו
@@ -586,7 +587,7 @@ const PackageDetailPanel = ({
           </div>
         </div>
         <button
-          onClick={onBack}
+          onClick={(e) => { e.stopPropagation(); onBack(); }}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black transition-colors hover:bg-white/5"
           style={{ border: `1px solid ${borderColor}`, color: accentColor }}
         >
@@ -858,6 +859,75 @@ const packageDetails: Record<string, { title: string; content: string }> = {
 • עסקים שמחליפים צי רכב מסחרי
 • יזמים שנכנסים לתחום התחבורה`
   }
+};
+
+// ============================================================
+// MOBILE PACKAGE SWIPER
+// ============================================================
+const MobilePackageSwiper = ({ packages, lang, onSelect }: { packages: Package[], lang: Language, onSelect: (p: Package) => void }) => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const startXRef = useRef(0);
+
+  const goTo = (index: number) => {
+    const clamped = Math.max(0, Math.min(packages.length - 1, index));
+    setActiveIndex(clamped);
+    if (containerRef.current) {
+      const cardWidth = containerRef.current.offsetWidth * 0.82 + 12;
+      containerRef.current.scrollTo({ left: clamped * cardWidth, behavior: 'smooth' });
+    }
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => { startXRef.current = e.touches[0].clientX; };
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const diff = startXRef.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) goTo(diff > 0 ? activeIndex + 1 : activeIndex - 1);
+  };
+
+  return (
+    <div className="relative">
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
+        className="flex items-center justify-center gap-2 mb-4 text-[11px] text-white/35 font-bold">
+        <motion.span animate={{ x: [-3, 3, -3] }} transition={{ duration: 1.4, repeat: Infinity }}>←</motion.span>
+        החלק לגילוי חבילות נוספות
+        <motion.span animate={{ x: [3, -3, 3] }} transition={{ duration: 1.4, repeat: Infinity }}>→</motion.span>
+      </motion.div>
+      <div ref={containerRef} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}
+        className="flex gap-3 overflow-x-hidden px-4"
+        style={{ scrollSnapType: 'x mandatory' }}>
+        {packages.map((pkg, i) => (
+          <motion.div key={pkg.id}
+            animate={{ scale: i === activeIndex ? 1 : 0.94, opacity: i === activeIndex ? 1 : 0.75 }}
+            transition={{ duration: 0.3 }}
+            style={{ minWidth: '82vw', height: '520px', scrollSnapAlign: 'start', flexShrink: 0 }}>
+            <PackageCard pkg={pkg} lang={lang} onSelect={onSelect} />
+          </motion.div>
+        ))}
+        <div style={{ minWidth: '8vw', flexShrink: 0 }} />
+      </div>
+      <div className="flex items-center justify-center gap-2 mt-5">
+        {packages.map((_, i) => (
+          <motion.button key={i} onClick={() => goTo(i)}
+            animate={{ width: i === activeIndex ? 24 : 8, opacity: i === activeIndex ? 1 : 0.35 }}
+            transition={{ duration: 0.3 }}
+            className="h-2 rounded-full bg-brand-red" />
+        ))}
+      </div>
+      <div className="flex items-center justify-between px-2 mt-4">
+        <motion.button onClick={() => goTo(activeIndex - 1)} disabled={activeIndex === 0}
+          whileTap={{ scale: 0.9 }}
+          className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-black border border-white/10 bg-white/5 disabled:opacity-25">
+          <ChevronRight size={14} /> הקודם
+        </motion.button>
+        <span className="text-[11px] text-white/30 font-bold">{activeIndex + 1} / {packages.length}</span>
+        <motion.button onClick={() => goTo(activeIndex + 1)} disabled={activeIndex === packages.length - 1}
+          whileTap={{ scale: 0.9 }}
+          className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-black border border-white/10 bg-white/5 disabled:opacity-25">
+          הבא <ChevronLeft size={14} />
+        </motion.button>
+      </div>
+    </div>
+  );
 };
 
 // ============================================================
@@ -2790,43 +2860,82 @@ export default function App() {
                 </motion.div>
               </section>
 
-              {/* PACKAGES */}
               <section id="packages" className="space-y-16">
                 <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
                   className="text-center space-y-3">
-                  <h2 className="text-4xl md:text-5xl font-black">{t.packages}</h2>
-                  <p className="text-white/45 text-base max-w-2xl mx-auto">בחר את המסלול המתאים ביותר עבורך</p>
+                  <motion.h2
+                    initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.1 }}
+                    className="text-4xl md:text-5xl font-black"
+                  >
+                    חבילות <span className="text-brand-red">הפרסום</span> שלנו
+                  </motion.h2>
+                  <motion.p initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                    className="text-white/45 text-base max-w-2xl mx-auto">
+                    בחר את המסלול המתאים ביותר עבורך
+                  </motion.p>
                 </motion.div>
                 
                 {/* Regular packages */}
                 <div>
-                  <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                    className="text-center space-y-3 mb-8">
-                    <div className="inline-flex items-center gap-2 bg-blue-500/15 border border-blue-500/25 px-4 py-2 rounded-full">
+                  <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                    transition={{ duration: 0.6 }} className="text-center space-y-4 mb-10">
+                    <motion.div initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.1 }}
+                      className="inline-flex items-center gap-2 bg-blue-500/15 border border-blue-500/25 px-4 py-2 rounded-full">
                       <Car size={13} className="text-blue-400" />
                       <span className="text-xs font-black tracking-wider text-blue-400">חבילות רכב פרטי</span>
-                    </div>
-                    <h3 className="text-2xl md:text-3xl font-black">מוכרים <span className="text-brand-red">רכב פרטי?</span></h3>
+                    </motion.div>
+                    <motion.h3 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.15 }}
+                      className="text-2xl md:text-3xl font-black">
+                      מוכרים <span className="text-brand-red">רכב פרטי?</span>
+                    </motion.h3>
+                    <motion.p initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.22 }}
+                      className="text-white/45 text-sm max-w-lg mx-auto leading-relaxed">
+                      ✨ פרסום מקצועי ברשתות החברתיות · חשיפה לאלפי קונים פוטנציאליים · תוצאות מוכחות תוך 24 שעות
+                    </motion.p>
                   </motion.div>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
-                    {packages.map(pkg => (
-                      <div key={pkg.id} className="h-[520px] sm:h-[500px]">
+
+                  {/* Desktop grid */}
+                  <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
+                    {packages.map((pkg, i) => (
+                      <motion.div key={pkg.id} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.12 }}
+                        className="h-[520px] sm:h-[500px]">
                         <PackageCard pkg={pkg} lang={lang} onSelect={(p) => { setSelectedPackage(p); setView('booking'); setBookingStep(1); }} />
-                      </div>
+                      </motion.div>
                     ))}
+                  </div>
+
+                  {/* Mobile swiper */}
+                  <div className="sm:hidden">
+                    <MobilePackageSwiper packages={packages} lang={lang} onSelect={(p) => { setSelectedPackage(p); setView('booking'); setBookingStep(1); }} />
                   </div>
                 </div>
 
                 {/* Premium Packages */}
                 <div>
-                  <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                    className="text-center space-y-3 mb-8">
-                    <div className="inline-flex items-center gap-2 bg-amber-500/15 border border-amber-500/25 px-4 py-2 rounded-full">
+                  <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                    transition={{ duration: 0.6 }} className="text-center space-y-4 mb-10">
+                    <motion.div initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.1 }}
+                      className="inline-flex items-center gap-2 bg-amber-500/15 border border-amber-500/25 px-4 py-2 rounded-full">
                       <Crown size={13} className="text-amber-400" />
                       <span className="text-xs font-black tracking-wider text-amber-400">חבילות פרימיום VIP</span>
-                    </div>
-                    <h3 className="text-2xl md:text-3xl font-black">מחפשים <span className="text-amber-400">יחס VIP?</span></h3>
+                    </motion.div>
+                    <motion.h3 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.15 }}
+                      className="text-2xl md:text-3xl font-black">
+                      מחפשים <span className="text-amber-400">יחס VIP?</span>
+                    </motion.h3>
+                    <motion.p initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.22 }}
+                      className="text-white/45 text-sm max-w-lg mx-auto leading-relaxed">
+                      👑 חבילות יוקרה לרכבי פרימיום · ליווי אישי מלא 24/7 · עיצוב VIP בלעדי · חשיפה מקסימלית לקהל ממוקד
+                    </motion.p>
                   </motion.div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -2841,14 +2950,24 @@ export default function App() {
 
                 {/* Business */}
                 <div className="max-w-3xl mx-auto space-y-6">
-                  <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                    className="text-center space-y-3">
-                    <div className="inline-flex items-center gap-2 bg-blue-500/15 border border-blue-500/25 px-4 py-2 rounded-full">
+                  <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                    transition={{ duration: 0.6 }} className="text-center space-y-4">
+                    <motion.div initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.1 }}
+                      className="inline-flex items-center gap-2 bg-blue-500/15 border border-blue-500/25 px-4 py-2 rounded-full">
                       <Building2 size={13} className="text-blue-400" />
                       <span className="text-xs font-black tracking-wider text-blue-400">לסוכנויות ומוכרים מקצועיים</span>
-                    </div>
-                    <h3 className="text-2xl md:text-3xl font-black">פתרון <span className="text-blue-400">לסוכנים ועסקים?</span></h3>
-                    <p className="text-white/45 text-sm max-w-lg mx-auto">חבילה מקצועית לסוכניות רכב, מוכרים מרובי כלי רכב ועסקים בתחום הרכב</p>
+                    </motion.div>
+                    <motion.h3 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.15 }}
+                      className="text-2xl md:text-3xl font-black">
+                      פתרון <span className="text-blue-400">לסוכנים ועסקים?</span>
+                    </motion.h3>
+                    <motion.p initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.22 }}
+                      className="text-white/45 text-sm max-w-lg mx-auto leading-relaxed">
+                      🏢 ניהול מלא של הפרסום · חיסכון עצום בעלויות · נציג אישי ייעודי לסוכנות שלך · עד 50 רכבים בחודש
+                    </motion.p>
                   </motion.div>
                   <div className="h-[380px]">
                     <BusinessPackageCard pkg={businessPackage} onSelect={(p) => { setSelectedPackage(p); setView('booking'); setBookingStep(1); }} />
@@ -2857,13 +2976,24 @@ export default function App() {
 
                 {/* Equipment + Transport */}
                 <div>
-                  <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                    className="text-center space-y-3 mb-8">
-                    <div className="inline-flex items-center gap-2 bg-orange-500/15 border border-orange-500/25 px-4 py-2 rounded-full">
+                  <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                    transition={{ duration: 0.6 }} className="text-center space-y-4 mb-10">
+                    <motion.div initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.1 }}
+                      className="inline-flex items-center gap-2 bg-orange-500/15 border border-orange-500/25 px-4 py-2 rounded-full">
                       <Truck size={13} className="text-orange-400" />
                       <span className="text-xs font-black tracking-wider text-orange-400">ציוד מקצועי ותחבורה</span>
-                    </div>
-                    <h3 className="text-2xl md:text-3xl font-black">מוכרים <span className="text-orange-400">ציוד מקצועי?</span></h3>
+                    </motion.div>
+                    <motion.h3 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.15 }}
+                      className="text-2xl md:text-3xl font-black">
+                      מוכרים <span className="text-orange-400">ציוד מקצועי?</span>
+                    </motion.h3>
+                    <motion.p initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.22 }}
+                      className="text-white/45 text-sm max-w-lg mx-auto leading-relaxed">
+                      🚜 ציוד כבד, ציוד קל ותחבורה · חשיפה לקהל מקצועי ממוקד · מפרט טכני מלא ומדויק לכל מודעה
+                    </motion.p>
                   </motion.div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
