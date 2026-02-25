@@ -71,7 +71,14 @@ import {
   Bus,
   ChevronLeft,
   MessageCircle,
-  DollarSign
+  DollarSign,
+  Share2,
+  HelpCircle,
+  ChevronRightIcon,
+  ArrowRight,
+  ExternalLink,
+  Percent,
+  HandshakeIcon,
 } from 'lucide-react';
 import { translations, Language } from './translations';
 
@@ -190,7 +197,7 @@ interface Order {
   created_at: string;
 }
 
-// --- Navbar (كما هو) ---
+// --- Navbar ---
 const Navbar = memo(({ lang, setLang, isAdmin, onLogout, siteSettings, setView }: { lang: Language, setLang: (l: Language) => void, isAdmin?: boolean, onLogout?: () => void, siteSettings: any, setView: (v: string) => void }) => {
   const t = translations[lang];
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -307,7 +314,7 @@ interface PackageCardProps {
 }
 
 // ============================================================
-// CARD BACK PANEL (بدون تغيير)
+// CARD BACK PANEL
 // ============================================================
 const CardBackPanel = memo(({
   pkg, details, color, badge, onSelect, onBack
@@ -407,7 +414,7 @@ const CardBackPanel = memo(({
 });
 
 // ============================================================
-// PACKAGE DETAILS DATA (ثابت مع إضافة الباقة الجديدة)
+// PACKAGE DETAILS DATA
 // ============================================================
 const packageDetails: Record<string, { title: string; content: string }> = {
   basic: {
@@ -453,7 +460,7 @@ const packageDetails: Record<string, { title: string; content: string }> = {
 };
 
 // ============================================================
-// بطاقات الباقات (نفس الكود السابق مع إضافة الباقة الجديدة)
+// PACKAGE CARDS
 // ============================================================
 const PackageCard = memo(({ pkg, lang, onSelect }: PackageCardProps) => {
   const t = translations[lang];
@@ -613,7 +620,7 @@ const PackageCard = memo(({ pkg, lang, onSelect }: PackageCardProps) => {
 });
 
 // ============================================================
-// VIP PACKAGE CARD (مع إضافة أيقونة التاج)
+// VIP PACKAGE CARD
 // ============================================================
 const VIPPackageCard = memo(({ pkg, lang, onSelect }: PackageCardProps) => {
   const [showBack, setShowBack] = useState(false);
@@ -1026,7 +1033,7 @@ const TransportPackageCard = memo(({ pkg, onSelect }: { pkg: Package, onSelect: 
 });
 
 // ============================================================
-// BUSINESS PACKAGE CARD (القديمة)
+// BUSINESS PACKAGE CARD
 // ============================================================
 const BusinessPackageCard = memo(({ pkg, onSelect }: { pkg: Package, onSelect: (p: Package) => void }) => {
   const [showBack, setShowBack] = useState(false);
@@ -1130,7 +1137,7 @@ const BusinessPackageCard = memo(({ pkg, onSelect }: { pkg: Package, onSelect: (
 });
 
 // ============================================================
-// MOBILE SWIPER (خفيف)
+// MOBILE SWIPER
 // ============================================================
 const MobileSwiper = ({ children, cardHeight = 500 }: { children: React.ReactNode[]; cardHeight?: number }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -1257,16 +1264,14 @@ const PayBoxLogo = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) => {
   );
 };
 
-// --- Modal محسّن للمحتوى الطويل ---
+// --- Modal ---
 const Modal = memo(({ isOpen, onClose, title, children }: { isOpen: boolean, onClose: () => void, title: string, children: React.ReactNode }) => {
   const content = typeof children === 'string' ? children : '';
   if (!isOpen) return null;
 
   const renderContent = () => {
-    // تقسيم المحتوى إلى أسطر
     const lines = content.split('\n').filter(line => line.trim() !== '');
     return lines.map((line, idx) => {
-      // إذا كان السطر يبدأ برقم متبوعاً بنقطة (مثل 1. ...)
       if (/^\d+\./.test(line)) {
         return (
           <div key={idx} className="flex gap-2 mt-3 first:mt-0">
@@ -1275,7 +1280,6 @@ const Modal = memo(({ isOpen, onClose, title, children }: { isOpen: boolean, onC
           </div>
         );
       }
-      // إذا كان السطر يبدأ بعلامة مثل •
       if (line.startsWith('•')) {
         return (
           <div key={idx} className="flex gap-2 mr-2">
@@ -1284,7 +1288,6 @@ const Modal = memo(({ isOpen, onClose, title, children }: { isOpen: boolean, onC
           </div>
         );
       }
-      // سطر عادي
       return <p key={idx} className="text-white/70 text-sm leading-relaxed">{line}</p>;
     });
   };
@@ -1387,7 +1390,7 @@ const OrderStatusCheck = memo(({ onClose }: { onClose: () => void }) => {
 });
 
 // ============================================================
-// CHANGE PACKAGE MODAL (بدون تغيير)
+// CHANGE PACKAGE MODAL
 // ============================================================
 const ChangePackageModal = memo(({
   isOpen, onClose, currentPackageId, packages, vipPackage, duoPackage, equipmentPackages, businessPackage, businessPackage100, transportPackage, onSelect, lang
@@ -1459,7 +1462,7 @@ const ChangePackageModal = memo(({
 });
 
 // ============================================================
-// CarDetailsForm (كما هو)
+// CarDetailsForm
 // ============================================================
 const CarDetailsForm = memo(({ formData, setFormData, onNext, selectedPackage, onChangePackage }: { 
   formData: any, setFormData: (data: any) => void, onNext: () => void, selectedPackage: Package | null, onChangePackage: () => void
@@ -1681,7 +1684,7 @@ const CarDetailsForm = memo(({ formData, setFormData, onNext, selectedPackage, o
 });
 
 // ============================================================
-// PaymentForm (بدون تغيير)
+// PaymentForm
 // ============================================================
 const PaymentForm = memo(({ formData, setFormData, selectedPackage, onSubmit, loading, onBack, onChangePackage }: { 
   formData: any, setFormData: (data: any) => void, selectedPackage: Package | null, onSubmit: () => void, loading: boolean, onBack: () => void, onChangePackage: () => void
@@ -1908,6 +1911,32 @@ function App() {
     setShowChangePackage(false);
   }, [formData.fullName, formData.phone, formData.location]);
 
+  // ============================================================
+  // FOOTER PAGE CONTENT
+  // ============================================================
+  const footerPages = {
+    terms: {
+      title: 'תקנון השימוש',
+      content: `1. כללי\nYOUGO ISRAEL היא פלטפורמת שיווק דיגיטלית המתמחה בפרסום רכבים ברשתות החברתיות בישראל. השימוש בשירותינו מהווה הסכמה לתנאים אלה.\n\n2. השירותים\nהחברה מספקת שירותי פרסום ושיווק דיגיטלי לכלי רכב. החבילות כוללות צילומים מקצועיים, עריכה, פרסום ברשתות חברתיות, וחשיפה לקהל יעד.\n\n3. אחריות\nYOUGO ISRAEL אינה אחראית לתוכן המוצג על ידי המוכרים. הלקוח אחראי לדיוק הפרטים ולחוקיות העסקה.\n\n4. תשלומים\nהתשלום מבוצע מראש בעת ביצוע ההזמנה. אין החזרים לאחר תחילת הפרסום.\n\n5. פרטיות\nאיננו מוכרים מידע אישי לצדדים שלישיים. המידע משמש אך ורק לצורך מתן השירות.`
+    },
+    privacy: {
+      title: 'מדיניות פרטיות',
+      content: `1. מידע שאנחנו אוספים\nשם מלא, מספר טלפון, פרטי הרכב, ותמונות. איננו אוספים מידע רגיש כגון מספרי זהות או פרטי כרטיס אשראי.\n\n2. שימוש במידע\nהמידע משמש אך ורק לצורך יצירת מודעות פרסום ותפעול השירות.\n\n3. שמירת מידע\nהמידע נשמר בצורה מאובטחת ואינו מועבר לגורמים חיצוניים.\n\n4. זכויות המשתמש\nיש לך זכות לדרוש מחיקת המידע שלך בכל עת. פנה אלינו בוואטסאפ.\n\n5. עוגיות\nהאתר עשוי להשתמש בעוגיות לשיפור חוויית הגלישה.`
+    },
+    about: {
+      title: 'מי אנחנו?',
+      content: `YOUGO ISRAEL היא פלטפורמת השיווק הדיגיטלי המובילה בישראל למכירת כלי רכב.\n\nהחברה נוסדה מתוך ראייה ברורה: שוק הרכב הישראלי זקוק לפתרון שיווקי מקצועי, מהיר, ומשתלם.\n\nאנחנו עובדים עם מוכרים פרטיים, סוכנויות רכב, וחברות ציוד בכל רחבי הארץ.\n\nהצוות שלנו כולל מצלמים מקצועיים, מעצבים גרפיים, וקופירייטרים המתמחים בשוק הרכב.\n\nעם מעל 50,000 עוקבים פעילים ומעל 1,000 עסקאות מוצלחות, אנחנו הבחירה הראשונה של מוכרי רכב בישראל.`
+    },
+    howItWorks: {
+      title: 'איך מפרסמים רכב?',
+      content: `שלב 1 – בחירת חבילה\nבחרו את חבילת הפרסום המתאימה לסוג הרכב ולתקציב שלכם. יש לנו חבילות לכל צורך: מחבילת הכניסה ב-₪149 ועד VIP LUXURY ב-₪749.\n\nשלב 2 – מילוי פרטים\nמלאו את פרטי הרכב בטופס המאובטח: דגם, שנה, קילומטראז', מחיר, ומיקום.\n\nשלב 3 – תשלום\nשלמו בביט או בפייבוקס למספר 054-6980606 והעלו צילום מסך של ההעברה.\n\nשלב 4 – שליחת תמונות\nלאחר אישור ההזמנה, שלחו את תמונות הרכב ישירות בוואטסאפ.\n\nשלב 5 – פרסום\nהצוות שלנו יפרסם את הרכב שלכם ברשתות החברתיות תוך 24 שעות.\n\nשלב 6 – קבלת פניות\nקונים פוטנציאליים ייצרו איתכם קשר ישירות. ממוצע הזמן לקבלת הפנייה הראשונה: 3-6 שעות.`
+    },
+    affiliate: {
+      title: 'שיווק שותפים',
+      content: `תוכנית השותפים של YOUGO ISRAEL\n\nהצטרפו לתוכנית השותפים שלנו והרוויחו עמלה על כל לקוח שתפנו!\n\nאיך זה עובד?\n• קבלו קוד שותף ייחודי\n• שתפו את הקוד עם חברים, משפחה, ומכרים\n• קבלו 15% עמלה על כל הזמנה שתיכנס דרך הקוד שלכם\n\nלמי זה מתאים?\n• סוכני נדל"ן ורכב\n• מנהלי קהילות ברשתות חברתיות\n• מי שיש לו קשרים עם מוכרי רכב\n• כל אחד שרוצה להרוויח הכנסה נוספת\n\nפרטי ההצטרפות\n• ההרשמה חינמית ואין מינימום מכירות\n• העמלה מועברת בביט תוך 7 ימי עסקים\n• ניתן לעקוב אחר הפניות בזמן אמת\n\nלהצטרפות, שלחו הודעה בוואטסאפ עם המילה שותף.`
+    }
+  };
+
   return (
     <div className="min-h-screen text-white" style={{ background: 'linear-gradient(180deg, #06060a 0%, #0a0508 40%, #06060a 100%)' }}>
       <style>{`
@@ -1959,7 +1988,7 @@ function App() {
       <main className="pt-24 px-3 max-w-7xl mx-auto">
         {view === 'home' && (
           <div className="space-y-24">
-            {/* HERO (يبقى فيه أنيميشن خفيف) */}
+            {/* HERO */}
             <section className="relative min-h-screen flex items-center justify-center overflow-hidden" style={{ background: '#06060a' }}>
               <div className="absolute inset-0 pointer-events-none">
                 <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 80% 60% at 60% 20%, rgba(200,16,46,0.14) 0%, transparent 65%), radial-gradient(ellipse 60% 50% at 10% 80%, rgba(200,16,46,0.08) 0%, transparent 60%), #06060a' }} />
@@ -2024,7 +2053,7 @@ function App() {
               </div>
             </section>
 
-            {/* HOW IT WORKS (تم حذف الأنيميشن لتسريع الأداء) */}
+            {/* HOW IT WORKS */}
             <section id="how-it-works" className="space-y-14">
               <div className="text-center space-y-4">
                 <div className="inline-flex items-center gap-2 bg-brand-red/15 border border-brand-red/25 rounded-full px-5 py-2">
@@ -2078,7 +2107,7 @@ function App() {
                     </div>
                   </div>
                   <button onClick={() => { const el = document.getElementById('packages'); el?.scrollIntoView({ behavior: 'smooth' }); }}
-                    className="px-6 py-2.5 rounded-xl font-black text-sm text-white relative overflow-hidden group"
+                    className="px-6 py-2.5 rounded-xl font-black text-sm text-white relative overflow-hidden group flex items-center gap-2"
                     style={{ background: 'linear-gradient(135deg, #c8102e, #a50d25)' }}>
                     <RocketIcon size={14} />בחר חבילה עכשיו
                   </button>
@@ -2088,7 +2117,6 @@ function App() {
 
             {/* PACKAGES SECTION */}
             <section id="packages" className="space-y-20">
-              {/* Main section header */}
               <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center space-y-4">
                 <motion.div initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.5 }}
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full"
@@ -2110,20 +2138,47 @@ function App() {
 
               {/* REGULAR PACKAGES */}
               <div className="space-y-8">
-                <SectionHeader
-                  eyebrow="רכב פרטי"
-                  eyebrowIcon={<Car size={13} />}
-                  eyebrowColor="#60a5fa"
-                  title="מוכרים"
-                  titleHighlight="רכב פרטי?"
-                  highlightColor="#c8102e"
-                  subtitle="שלוש חבילות מדורגות לכל תקציב ומטרה. מחבילת הכניסה הבסיסית ועד הפרמיום המלא – כל אחת מותאמת לסוג הרכב ולמטרת המכירה שלך."
-                  stats={[
-                    { value: '₪149', label: 'מחבילה', color: '#94a3b8' },
-                    { value: '1,000+', label: 'מכירות', color: '#c8102e' },
-                    { value: '7-30', label: 'ימי פרסום', color: '#4ade80' },
-                  ]}
-                />
+                {/* === REDESIGNED SECTION HEADER: רכב פרטי === */}
+                <div className="relative overflow-hidden rounded-3xl p-8 md:p-10"
+                  style={{ background: 'linear-gradient(135deg, rgba(200,16,46,0.08) 0%, rgba(10,10,15,0.95) 50%, rgba(6,6,10,1) 100%)', border: '1px solid rgba(200,16,46,0.18)' }}>
+                  {/* decorative glow */}
+                  <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(200,16,46,0.12) 0%, transparent 65%)' }} />
+                  <div className="absolute bottom-0 left-0 w-48 h-48 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 20% 80%, rgba(200,16,46,0.06) 0%, transparent 65%)' }} />
+
+                  <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                    <div className="flex-1 space-y-3">
+                      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full"
+                        style={{ background: 'rgba(200,16,46,0.15)', border: '1px solid rgba(200,16,46,0.3)' }}>
+                        <Car size={12} className="text-brand-red" />
+                        <span className="text-[10px] font-black tracking-wider text-brand-red uppercase">רכב פרטי</span>
+                      </div>
+                      <h3 className="text-2xl md:text-3xl font-black text-white leading-tight">
+                        מוכרים <span className="text-brand-red">רכב פרטי?</span>
+                      </h3>
+                      <p className="text-white/45 text-sm leading-relaxed max-w-lg">
+                        שלוש חבילות מדורגות לכל תקציב ומטרה. מחבילת הכניסה הבסיסית ועד הפרמיום המלא – כל אחת מותאמת לסוג הרכב ולמטרת המכירה שלך.
+                      </p>
+                    </div>
+                    <div className="flex flex-row md:flex-col gap-3 shrink-0">
+                      {[
+                        { value: '₪149', label: 'מחבילה', color: '#94a3b8', icon: <DollarSign size={13} /> },
+                        { value: '1,000+', label: 'מכירות', color: '#c8102e', icon: <Trophy size={13} /> },
+                        { value: '7-30', label: 'ימי פרסום', color: '#4ade80', icon: <Calendar size={13} /> },
+                      ].map((s, i) => (
+                        <div key={i} className="flex items-center gap-2.5 px-3 py-2 rounded-xl"
+                          style={{ background: `${s.color}10`, border: `1px solid ${s.color}25` }}>
+                          <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
+                            <span style={{ color: s.color }}>{s.icon}</span>
+                          </div>
+                          <div>
+                            <div className="text-sm font-black leading-none" style={{ color: s.color }}>{s.value}</div>
+                            <div className="text-[9px] text-white/35 font-bold mt-0.5">{s.label}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
 
                 <div className="hidden md:grid grid-cols-3 gap-5 lg:gap-6">
                   {packages.map(pkg => (
@@ -2144,20 +2199,45 @@ function App() {
 
               {/* VIP + DUO */}
               <div className="space-y-8">
-                <SectionHeader
-                  eyebrow="פרימיום VIP"
-                  eyebrowIcon={<Crown size={13} />}
-                  eyebrowColor="#d4af37"
-                  title="מחפשים"
-                  titleHighlight="יחס VIP?"
-                  highlightColor="#d4af37"
-                  subtitle="לרכבי יוקרה וכאלה שמוכרים שני רכבים בבת אחת – שתי חבילות ייחודיות עם שירות אישי, עיצוב בלעדי, וחסכון משמעותי."
-                  stats={[
-                    { value: '60 יום', label: 'פרסום VIP', color: '#d4af37' },
-                    { value: '40%', label: 'חיסכון DUO', color: '#8b5cf6' },
-                    { value: '24/7', label: 'ליווי אישי', color: '#4ade80' },
-                  ]}
-                />
+                {/* === REDESIGNED SECTION HEADER: VIP === */}
+                <div className="relative overflow-hidden rounded-3xl p-8 md:p-10"
+                  style={{ background: 'linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(10,10,15,0.95) 50%, rgba(6,6,10,1) 100%)', border: '1px solid rgba(212,175,55,0.2)' }}>
+                  <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(212,175,55,0.1) 0%, transparent 65%)' }} />
+
+                  <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                    <div className="flex-1 space-y-3">
+                      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full"
+                        style={{ background: 'rgba(212,175,55,0.12)', border: '1px solid rgba(212,175,55,0.3)' }}>
+                        <Crown size={12} className="text-amber-400" />
+                        <span className="text-[10px] font-black tracking-wider text-amber-400 uppercase">פרימיום VIP</span>
+                      </div>
+                      <h3 className="text-2xl md:text-3xl font-black text-white leading-tight">
+                        מחפשים <span className="text-amber-400">יחס VIP?</span>
+                      </h3>
+                      <p className="text-white/45 text-sm leading-relaxed max-w-lg">
+                        לרכבי יוקרה וכאלה שמוכרים שני רכבים בבת אחת – שתי חבילות ייחודיות עם שירות אישי, עיצוב בלעדי, וחסכון משמעותי.
+                      </p>
+                    </div>
+                    <div className="flex flex-row md:flex-col gap-3 shrink-0">
+                      {[
+                        { value: '60 יום', label: 'פרסום VIP', color: '#d4af37', icon: <Calendar size={13} /> },
+                        { value: '40%', label: 'חיסכון DUO', color: '#8b5cf6', icon: <Percent size={13} /> },
+                        { value: '24/7', label: 'ליווי אישי', color: '#4ade80', icon: <Headphones size={13} /> },
+                      ].map((s, i) => (
+                        <div key={i} className="flex items-center gap-2.5 px-3 py-2 rounded-xl"
+                          style={{ background: `${s.color}10`, border: `1px solid ${s.color}25` }}>
+                          <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
+                            <span style={{ color: s.color }}>{s.icon}</span>
+                          </div>
+                          <div>
+                            <div className="text-sm font-black leading-none" style={{ color: s.color }}>{s.value}</div>
+                            <div className="text-[9px] text-white/35 font-bold mt-0.5">{s.label}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
 
                 <div className="hidden md:grid grid-cols-2 gap-6">
                   <div className="h-[460px]"><VIPPackageCard pkg={vipPackage} lang={lang} onSelect={handleSelectPackage} /></div>
@@ -2172,22 +2252,49 @@ function App() {
                 </div>
               </div>
 
-              {/* BUSINESS (باقتان) */}
+              {/* BUSINESS */}
               <div className="max-w-3xl mx-auto space-y-8">
-                <SectionHeader
-                  eyebrow="לסוכנויות ועסקים"
-                  eyebrowIcon={<Building2 size={13} />}
-                  eyebrowColor="#3b82f6"
-                  title="פתרון מקצועי"
-                  titleHighlight="לעסקים?"
-                  highlightColor="#3b82f6"
-                  subtitle="חבילות מותאמות לסוכנויות רכב, עם אפשרויות גמישות לניהול מלא."
-                  stats={[
-                    { value: '50-100', label: 'רכבים/חודש', color: '#3b82f6' },
-                    { value: '40-50%', label: 'הנחה', color: '#4ade80' },
-                    { value: '24/7', label: 'תמיכה', color: '#a78bfa' },
-                  ]}
-                />
+                {/* === REDESIGNED SECTION HEADER: Business === */}
+                <div className="relative overflow-hidden rounded-3xl p-8 md:p-10"
+                  style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.08) 0%, rgba(10,10,15,0.95) 50%, rgba(6,6,10,1) 100%)', border: '1px solid rgba(59,130,246,0.2)' }}>
+                  <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(59,130,246,0.1) 0%, transparent 65%)' }} />
+                  <div className="absolute inset-0 opacity-3" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
+
+                  <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                    <div className="flex-1 space-y-3">
+                      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full"
+                        style={{ background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.3)' }}>
+                        <Building2 size={12} className="text-blue-400" />
+                        <span className="text-[10px] font-black tracking-wider text-blue-400 uppercase">לסוכנויות ועסקים</span>
+                      </div>
+                      <h3 className="text-2xl md:text-3xl font-black text-white leading-tight">
+                        פתרון מקצועי <span className="text-blue-400">לעסקים?</span>
+                      </h3>
+                      <p className="text-white/45 text-sm leading-relaxed max-w-lg">
+                        חבילות מותאמות לסוכנויות רכב, עם אפשרויות גמישות לניהול מלא. עד 100 רכבים בחודש, מנהל לקוח ייעודי ודוחות שבועיים.
+                      </p>
+                    </div>
+                    <div className="flex flex-row md:flex-col gap-3 shrink-0">
+                      {[
+                        { value: '50-100', label: 'רכבים/חודש', color: '#3b82f6', icon: <Car size={13} /> },
+                        { value: '40-50%', label: 'הנחה', color: '#4ade80', icon: <Percent size={13} /> },
+                        { value: '24/7', label: 'תמיכה', color: '#a78bfa', icon: <Headphones size={13} /> },
+                      ].map((s, i) => (
+                        <div key={i} className="flex items-center gap-2.5 px-3 py-2 rounded-xl"
+                          style={{ background: `${s.color}10`, border: `1px solid ${s.color}25` }}>
+                          <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
+                            <span style={{ color: s.color }}>{s.icon}</span>
+                          </div>
+                          <div>
+                            <div className="text-sm font-black leading-none" style={{ color: s.color }}>{s.value}</div>
+                            <div className="text-[9px] text-white/35 font-bold mt-0.5">{s.label}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="h-[460px]"><BusinessPackageCard pkg={businessPackage} onSelect={handleSelectPackage} /></div>
                   <div className="h-[460px]"><BusinessPackageCard pkg={businessPackage100} onSelect={handleSelectPackage} /></div>
@@ -2196,20 +2303,45 @@ function App() {
 
               {/* EQUIPMENT + TRANSPORT */}
               <div className="space-y-8">
-                <SectionHeader
-                  eyebrow="ציוד מקצועי ותחבורה"
-                  eyebrowIcon={<Truck size={13} />}
-                  eyebrowColor="#ea580c"
-                  title="מוכרים"
-                  titleHighlight="ציוד מקצועי?"
-                  highlightColor="#ea580c"
-                  subtitle="חבילות ייחודיות לציוד כבד, ציוד קל, ורכבים מסחריים. חשיפה ממוקדת לקהל המקצועי הנכון – קבלנים, חברות הסעות, ועסקים."
-                  stats={[
-                    { value: '85%', label: 'נמכרו תוך 14 יום', color: '#ea580c' },
-                    { value: '500+', label: 'ציודים פורסמו', color: '#0ea5e9' },
-                    { value: '3', label: 'קטגוריות', color: '#4ade80' },
-                  ]}
-                />
+                {/* === REDESIGNED SECTION HEADER: ציוד === */}
+                <div className="relative overflow-hidden rounded-3xl p-8 md:p-10"
+                  style={{ background: 'linear-gradient(135deg, rgba(234,88,12,0.08) 0%, rgba(10,10,15,0.95) 50%, rgba(6,6,10,1) 100%)', border: '1px solid rgba(234,88,12,0.2)' }}>
+                  <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(234,88,12,0.1) 0%, transparent 65%)' }} />
+
+                  <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                    <div className="flex-1 space-y-3">
+                      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full"
+                        style={{ background: 'rgba(234,88,12,0.12)', border: '1px solid rgba(234,88,12,0.3)' }}>
+                        <Truck size={12} className="text-orange-400" />
+                        <span className="text-[10px] font-black tracking-wider text-orange-400 uppercase">ציוד מקצועי ותחבורה</span>
+                      </div>
+                      <h3 className="text-2xl md:text-3xl font-black text-white leading-tight">
+                        מוכרים <span className="text-orange-400">ציוד מקצועי?</span>
+                      </h3>
+                      <p className="text-white/45 text-sm leading-relaxed max-w-lg">
+                        חבילות ייחודיות לציוד כבד, ציוד קל, ורכבים מסחריים. חשיפה ממוקדת לקהל המקצועי הנכון – קבלנים, חברות הסעות, ועסקים.
+                      </p>
+                    </div>
+                    <div className="flex flex-row md:flex-col gap-3 shrink-0">
+                      {[
+                        { value: '85%', label: 'נמכרו תוך 14 יום', color: '#ea580c', icon: <TrendingUp size={13} /> },
+                        { value: '500+', label: 'ציודים פורסמו', color: '#0ea5e9', icon: <Truck size={13} /> },
+                        { value: '3', label: 'קטגוריות', color: '#4ade80', icon: <Target size={13} /> },
+                      ].map((s, i) => (
+                        <div key={i} className="flex items-center gap-2.5 px-3 py-2 rounded-xl"
+                          style={{ background: `${s.color}10`, border: `1px solid ${s.color}25` }}>
+                          <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
+                            <span style={{ color: s.color }}>{s.icon}</span>
+                          </div>
+                          <div>
+                            <div className="text-sm font-black leading-none" style={{ color: s.color }}>{s.value}</div>
+                            <div className="text-[9px] text-white/35 font-bold mt-0.5">{s.label}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
 
                 <div className="hidden md:grid grid-cols-3 gap-6">
                   {equipmentPackages.map(pkg => (
@@ -2229,44 +2361,149 @@ function App() {
               </div>
             </section>
 
-            {/* WHY US (بدون أنيميشن) */}
-            <section id="why-us" className="space-y-10">
-              <div className="text-center space-y-3">
-                <h2 className="text-4xl md:text-5xl font-black">{t.whyUs.title}</h2>
-                <p className="text-white/45 text-base max-w-2xl mx-auto">הסיבות שאלפי מוכרים בחרו דווקא בנו</p>
+            {/* ============================================================
+                WHY US - COMPLETELY REDESIGNED
+            ============================================================ */}
+            <section id="why-us" className="space-y-14">
+              {/* Header */}
+              <div className="text-center space-y-4">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full"
+                  style={{ background: 'rgba(200,16,46,0.1)', border: '1px solid rgba(200,16,46,0.25)' }}>
+                  <Trophy size={13} className="text-brand-red" />
+                  <span className="text-[10px] font-black tracking-[0.2em] uppercase text-brand-red">ההצלחה שלנו במספרים</span>
+                </div>
+                <h2 className="text-4xl md:text-5xl font-black text-white">
+                  למה לבחור ב-<span className="text-brand-red">YOUGO?</span>
+                </h2>
+                <p className="text-white/40 text-base max-w-xl mx-auto">
+                  הסיבות שאלפי מוכרים בחרו דווקא בנו – בנתונים אמיתיים שמדברים בעד עצמם
+                </p>
               </div>
+
+              {/* Big Stats Row */}
+              <div className="grid grid-cols-3 gap-3 md:gap-6 max-w-3xl mx-auto">
+                {[
+                  { value: '50K+', label: 'עוקבים פעילים', sublabel: 'באינסטגרם', color: '#c8102e', icon: <Users size={20} /> },
+                  { value: '48h', label: 'ממוצע זמן מכירה', sublabel: 'מפרסום ועד עסקה', color: '#f59e0b', icon: <Timer size={20} /> },
+                  { value: '98%', label: 'שביעות רצון', sublabel: 'לקוחות מרוצים', color: '#22c55e', icon: <ThumbsUp size={20} /> },
+                ].map((stat, i) => (
+                  <div key={i} className="relative text-center py-6 px-4 rounded-2xl overflow-hidden"
+                    style={{ background: `linear-gradient(145deg, ${stat.color}12 0%, rgba(6,6,10,0.95) 100%)`, border: `1px solid ${stat.color}25` }}>
+                    <div className="absolute top-0 inset-x-0 h-[2px]" style={{ background: `linear-gradient(90deg, transparent, ${stat.color}, transparent)` }} />
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ background: `${stat.color}18`, border: `1px solid ${stat.color}30` }}>
+                      <span style={{ color: stat.color }}>{stat.icon}</span>
+                    </div>
+                    <div className="text-3xl md:text-4xl font-black mb-1" style={{ color: stat.color }}>{stat.value}</div>
+                    <div className="text-white text-xs font-black mb-0.5">{stat.label}</div>
+                    <div className="text-white/30 text-[10px]">{stat.sublabel}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* 3 Feature Cards - New Design */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 {[
-                  { icon: <Users size={22} className="text-white" />, title: 'קהל איכותי', desc: '50,000+ עוקבים פעילים ומעורבים שמחפשים לקנות רכב', stat: '50K+', statLabel: 'עוקבים', gradFrom: '#1d4ed8', gradTo: '#0ea5e9', glowColor: 'rgba(59,130,246,0.3)' },
-                  { icon: <Zap size={22} className="text-white" />, title: 'מהירות מכירה', desc: 'פרסום חכם וממוקד שמביא תוצאות מהירות – ממוצע 48 שעות עד עסקה', stat: '48h', statLabel: 'ממוצע מכירה', gradFrom: '#c8102e', gradTo: '#f43f5e', glowColor: 'rgba(200,16,46,0.35)' },
-                  { icon: <TrendingUp size={22} className="text-white" />, title: 'אחוזי הצלחה', desc: '98% מלקוחותינו מרוצים ומוכרים בהצלחה תוך זמן קצר', stat: '98%', statLabel: 'שביעות רצון', gradFrom: '#16a34a', gradTo: '#22c55e', glowColor: 'rgba(34,197,94,0.3)' },
+                  {
+                    icon: <Users size={22} />,
+                    title: 'קהל איכותי ומעורב',
+                    desc: 'מעל 50,000 עוקבים פעילים שמחפשים לקנות רכב. לא עוקבים רדומים – אנשים שבאמת מעוניינים לבצע עסקה.',
+                    points: ['טרגוט לפי גיל ואזור גיאוגרפי', 'קהל עם כוח קנייה מוכח', 'חשיפה אורגנית + ממומנת'],
+                    gradFrom: '#1d4ed8',
+                    gradTo: '#0ea5e9',
+                    glowColor: 'rgba(59,130,246,0.25)',
+                    stat: '50K+',
+                    statLabel: 'עוקבים'
+                  },
+                  {
+                    icon: <Zap size={22} />,
+                    title: 'מהירות מכירה יוצאת דופן',
+                    desc: 'פרסום חכם שמביא תוצאות תוך שעות. הרכב שלך מופיע בפני האנשים הנכונים ברגע הנכון.',
+                    points: ['פרסום תוך 24 שעות מאישור', 'פניות ראשונות תוך 3-6 שעות', 'ממוצע 48 שעות עד עסקה'],
+                    gradFrom: '#c8102e',
+                    gradTo: '#f43f5e',
+                    glowColor: 'rgba(200,16,46,0.3)',
+                    stat: '48h',
+                    statLabel: 'ממוצע מכירה'
+                  },
+                  {
+                    icon: <TrendingUp size={22} />,
+                    title: 'תוצאות מוכחות',
+                    desc: '98% מלקוחותינו מרוצים ומוכרים בהצלחה. אנחנו לא רק מפרסמים – אנחנו מוכרים.',
+                    points: ['מעל 1,000 עסקאות מוצלחות', 'עיצוב ותוכן מקצועיים', 'ייעוץ תמחור ללא עלות'],
+                    gradFrom: '#16a34a',
+                    gradTo: '#22c55e',
+                    glowColor: 'rgba(34,197,94,0.25)',
+                    stat: '98%',
+                    statLabel: 'הצלחה'
+                  },
                 ].map((item, i) => (
-                  <div key={i} className="relative rounded-2xl overflow-hidden flex flex-col"
-                    style={{ background: 'linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%)', border: '1px solid rgba(255,255,255,0.08)', boxShadow: `0 20px 40px -15px ${item.glowColor}` }}>
+                  <div key={i} className="relative rounded-2xl overflow-hidden flex flex-col group"
+                    style={{ background: 'linear-gradient(145deg, rgba(255,255,255,0.04) 0%, rgba(6,6,10,0.98) 100%)', border: '1px solid rgba(255,255,255,0.07)', boxShadow: `0 20px 50px -20px ${item.glowColor}` }}>
+                    {/* Top color bar */}
                     <div className="h-1 w-full" style={{ background: `linear-gradient(90deg, ${item.gradFrom}, ${item.gradTo})` }} />
+
                     <div className="p-6 flex flex-col gap-5 flex-1">
-                      <div className="flex items-center justify-between">
+                      {/* Icon + stat */}
+                      <div className="flex items-start justify-between">
                         <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg"
                           style={{ background: `linear-gradient(135deg, ${item.gradFrom}, ${item.gradTo})`, boxShadow: `0 6px 20px ${item.glowColor}` }}>
-                          {item.icon}
+                          <span className="text-white">{item.icon}</span>
                         </div>
                         <div className="text-right">
-                          <div className="text-3xl font-black" style={{ color: item.gradTo }}>{item.stat}</div>
-                          <div className="text-[10px] text-white/35 font-bold uppercase tracking-wider">{item.statLabel}</div>
+                          <div className="text-3xl font-black leading-none" style={{ color: item.gradTo }}>{item.stat}</div>
+                          <div className="text-[9px] text-white/30 font-bold uppercase tracking-wider mt-0.5">{item.statLabel}</div>
                         </div>
                       </div>
+
+                      {/* Divider */}
                       <div className="h-px w-full" style={{ background: `linear-gradient(90deg, ${item.gradFrom}30, transparent)` }} />
-                      <div>
-                        <h3 className="text-lg font-black text-white mb-2">{item.title}</h3>
-                        <p className="text-white/55 text-sm leading-relaxed">{item.desc}</p>
+
+                      {/* Text */}
+                      <div className="space-y-2">
+                        <h3 className="text-lg font-black text-white">{item.title}</h3>
+                        <p className="text-white/45 text-sm leading-relaxed">{item.desc}</p>
+                      </div>
+
+                      {/* Points */}
+                      <div className="flex flex-col gap-2 mt-auto">
+                        {item.points.map((point, pi) => (
+                          <div key={pi} className="flex items-center gap-2.5">
+                            <div className="w-4 h-4 rounded-full flex items-center justify-center shrink-0"
+                              style={{ background: `${item.gradTo}20`, border: `1px solid ${item.gradTo}40` }}>
+                              <Check size={8} strokeWidth={3} style={{ color: item.gradTo }} />
+                            </div>
+                            <span className="text-[11.5px] text-white/65 font-medium">{point}</span>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
+
+              {/* Bottom trust bar */}
+              <div className="relative overflow-hidden rounded-2xl p-6 md:p-8"
+                style={{ background: 'linear-gradient(135deg, rgba(200,16,46,0.08) 0%, rgba(6,6,10,0.99) 100%)', border: '1px solid rgba(200,16,46,0.15)' }}>
+                <div className="flex flex-wrap items-center justify-center gap-6 md:gap-12">
+                  {[
+                    { icon: <ShieldCheck size={18} />, label: 'תשלום מאובטח', color: '#22c55e' },
+                    { icon: <Clock size={18} />, label: 'פרסום תוך 24 שעות', color: '#60a5fa' },
+                    { icon: <MessageCircle size={18} />, label: 'תמיכה בוואטסאפ', color: '#25D366' },
+                    { icon: <Award size={18} />, label: 'צוות מקצועי מנוסה', color: '#f59e0b' },
+                    { icon: <BarChart3 size={18} />, label: '1,000+ עסקאות', color: '#c8102e' },
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: `${item.color}15`, border: `1px solid ${item.color}25` }}>
+                        <span style={{ color: item.color }}>{item.icon}</span>
+                      </div>
+                      <span className="text-sm font-bold text-white/60">{item.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </section>
 
-            {/* FAQ (بدون أنيميشن) */}
+            {/* FAQ */}
             <section id="faq" className="max-w-4xl mx-auto space-y-10">
               <div className="text-center space-y-3">
                 <h2 className="text-4xl md:text-5xl font-black">שאלות נפוצות</h2>
@@ -2298,75 +2535,166 @@ function App() {
               )}
             </section>
 
-            {/* FOOTER */}
+            {/* ============================================================
+                FOOTER - COMPLETELY REDESIGNED
+            ============================================================ */}
             <footer className="pb-10">
-              <div className="relative rounded-2xl overflow-hidden border border-white/8"
-                style={{ background: 'linear-gradient(145deg, rgba(200,16,46,0.08) 0%, rgba(10,10,14,0.98) 60%, rgba(5,5,8,1) 100%)' }}>
-                <div className="h-px w-full bg-gradient-to-r from-transparent via-brand-red/50 to-transparent" />
-                <div className="relative z-10 p-10 space-y-10">
-                  <div className="text-center space-y-4">
-                    <div className="flex items-center justify-center gap-4">
+              <div className="relative rounded-3xl overflow-hidden" style={{ background: 'linear-gradient(180deg, rgba(10,10,15,0.99) 0%, #06060a 100%)', border: '1px solid rgba(255,255,255,0.07)' }}>
+                {/* Top red line */}
+                <div className="h-[2px] w-full" style={{ background: 'linear-gradient(90deg, transparent 0%, rgba(200,16,46,0.8) 30%, rgba(200,16,46,0.8) 70%, transparent 100%)' }} />
+
+                {/* Main footer grid */}
+                <div className="p-8 md:p-12 grid grid-cols-1 md:grid-cols-12 gap-10">
+                  
+                  {/* Brand col */}
+                  <div className="md:col-span-4 space-y-5">
+                    <div className="flex items-center gap-3">
                       <div className="p-3 bg-gradient-to-br from-brand-red to-red-700 rounded-xl shadow-xl shadow-brand-red/25">
-                        <Car size={24} className="text-white" />
+                        <Car size={22} className="text-white" />
                       </div>
                       <div>
-                        <div className="text-3xl font-black tracking-tighter">
+                        <div className="text-2xl font-black tracking-tighter">
                           <span className="text-brand-red">YOUGO</span> <span className="text-white">ISRAEL</span>
                         </div>
-                        <div className="text-[10px] text-white/25 tracking-[0.2em] uppercase font-bold">Digital Car Marketing</div>
+                        <div className="text-[9px] text-white/25 tracking-[0.2em] uppercase font-bold">Digital Car Marketing</div>
                       </div>
                     </div>
-                    <p className="text-white/35 text-sm max-w-sm mx-auto leading-relaxed">הפלטפורמה המובילה בישראל לפרסום ומכירת רכבים ברשתות חברתיות</p>
-                  </div>
 
-                  <div>
-                    <p className="text-center text-[10px] text-white/25 font-black uppercase tracking-[0.25em] mb-6">עקבו אחרינו</p>
-                    <div className="flex items-center justify-center gap-3 flex-wrap">
-                      {[
-                        { href: 'https://instagram.com/yougo.israel', icon: <Instagram size={18} />, label: 'Instagram', color: '#E4405F' },
-                        { href: 'https://facebook.com', icon: <Facebook size={18} />, label: 'Facebook', color: '#1877F2' },
-                        { href: 'https://wa.me/972546980606', icon: <MessageCircle size={18} />, label: 'WhatsApp', color: '#25D366' },
-                        { href: 'https://t.me/yougoisrael', icon: <Send size={18} />, label: 'Telegram', color: '#0088cc' },
-                        { href: 'https://x.com/yougoisrael', icon: <Twitter size={18} />, label: 'X', color: '#000000' },
-                        { href: 'https://youtube.com/@yougoisrael', icon: <Youtube size={18} />, label: 'YouTube', color: '#FF0000' },
-                        { href: 'https://threads.net/@yougoisrael', icon: <MessageSquare size={18} />, label: 'Threads', color: '#000000' },
-                      ].map((s, i) => (
-                        <a key={i} href={s.href} target="_blank" rel="noopener noreferrer" className="relative group">
-                          <div className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 border-2 border-white/10 bg-white/5 hover:border-white/30 hover:bg-white/10"
-                            style={{ color: s.color }}>
+                    <p className="text-white/35 text-sm leading-relaxed">
+                      הפלטפורמה המובילה בישראל לפרסום ומכירת רכבים, ציוד מקצועי ורכבים מסחריים ברשתות החברתיות. מעל 50,000 עוקבים, מעל 1,000 עסקאות מוצלחות.
+                    </p>
+
+                    {/* Contact info */}
+                    <div className="space-y-2">
+                      <a href="https://wa.me/972546980606" target="_blank" rel="noopener noreferrer"
+                        className="flex items-center gap-2.5 text-sm text-white/40 hover:text-white/70 transition-colors group">
+                        <div className="w-7 h-7 rounded-lg bg-green-500/10 flex items-center justify-center border border-green-500/20 group-hover:bg-green-500/20 transition-colors">
+                          <MessageCircle size={13} className="text-green-400" />
+                        </div>
+                        054-6980606
+                      </a>
+                      <div className="flex items-center gap-2.5 text-sm text-white/40">
+                        <div className="w-7 h-7 rounded-lg bg-white/5 flex items-center justify-center border border-white/10">
+                          <MapPin size={13} className="text-white/30" />
+                        </div>
+                        ישראל · פעילים בכל הארץ
+                      </div>
+                    </div>
+
+                    {/* Social icons */}
+                    <div>
+                      <p className="text-[9px] text-white/20 font-black uppercase tracking-[0.25em] mb-3">עקבו אחרינו</p>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {[
+                          { href: 'https://instagram.com/yougo.israel', icon: <Instagram size={16} />, label: 'Instagram', color: '#E4405F', bg: 'rgba(228,64,95,0.12)' },
+                          { href: 'https://facebook.com', icon: <Facebook size={16} />, label: 'Facebook', color: '#1877F2', bg: 'rgba(24,119,242,0.12)' },
+                          { href: 'https://wa.me/972546980606', icon: <MessageCircle size={16} />, label: 'WhatsApp', color: '#25D366', bg: 'rgba(37,211,102,0.12)' },
+                          { href: 'https://t.me/yougoisrael', icon: <Send size={16} />, label: 'Telegram', color: '#0088cc', bg: 'rgba(0,136,204,0.12)' },
+                          { href: 'https://youtube.com/@yougoisrael', icon: <Youtube size={16} />, label: 'YouTube', color: '#FF0000', bg: 'rgba(255,0,0,0.12)' },
+                          { href: 'https://x.com/yougoisrael', icon: <Twitter size={16} />, label: 'X', color: '#9ca3af', bg: 'rgba(156,163,175,0.12)' },
+                        ].map((s, i) => (
+                          <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
+                            className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
+                            style={{ background: s.bg, border: `1px solid ${s.color}25`, color: s.color }}
+                            title={s.label}>
                             {s.icon}
-                          </div>
-                          <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[8px] font-black text-white/30 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                            {s.label}
-                          </span>
-                        </a>
-                      ))}
+                          </a>
+                        ))}
+                      </div>
                     </div>
                   </div>
 
-                  <div className="h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
-
-                  <div className="flex flex-wrap justify-center gap-3">
-                    {[
-                      { icon: <FileText size={14} />, label: 'תקנון', content: t.pages.terms.content },
-                      { icon: <Lock size={14} />, label: 'פרטיות', content: t.pages.privacy.content },
-                      { icon: <Info size={14} />, label: 'מי אנחנו', content: t.pages.about.content },
-                      { icon: <LayoutDashboard size={14} />, label: 'ניהול', onClick: () => setView('admin-login'), content: '' },
-                    ].map((link, i) => (
-                      <button key={i} onClick={link.onClick ? link.onClick : () => setModalContent({ title: link.label, content: link.content })}
-                        className="relative group px-5 py-2.5 rounded-xl text-xs font-bold transition-all border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20">
-                        <span className="flex items-center gap-2">
-                          <span className="text-brand-red/70">{link.icon}</span>
-                          <span className="text-white/70 group-hover:text-white">{link.label}</span>
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-
-                  <div className="text-center space-y-1 pt-4 border-t border-white/8">
-                    <div className="text-white/15 text-[10px] font-bold tracking-wider">
-                      © {new Date().getFullYear()} YOUGO ISRAEL LTD · כל הזכויות שמורות
+                  {/* Links cols */}
+                  <div className="md:col-span-8 grid grid-cols-1 sm:grid-cols-3 gap-8">
+                    
+                    {/* מידע */}
+                    <div className="space-y-4">
+                      <h4 className="text-xs font-black text-white/50 uppercase tracking-[0.2em]">מידע</h4>
+                      <div className="space-y-1">
+                        {[
+                          { icon: <HelpCircle size={14} />, label: 'מי אנחנו?', onClick: () => setModalContent({ title: footerPages.about.title, content: footerPages.about.content }), color: '#c8102e' },
+                          { icon: <PlayCircle size={14} />, label: 'איך מפרסמים רכב?', onClick: () => setModalContent({ title: footerPages.howItWorks.title, content: footerPages.howItWorks.content }), color: '#3b82f6' },
+                          { icon: <Share2 size={14} />, label: 'שיווק שותפים', onClick: () => setModalContent({ title: footerPages.affiliate.title, content: footerPages.affiliate.content }), color: '#22c55e' },
+                        ].map((link, i) => (
+                          <button key={i} onClick={link.onClick}
+                            className="flex items-center gap-2.5 py-2 px-3 rounded-xl w-full text-right group hover:bg-white/5 transition-all">
+                            <div className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0 transition-colors" style={{ background: `${link.color}12`, color: link.color }}>
+                              {link.icon}
+                            </div>
+                            <span className="text-sm text-white/45 group-hover:text-white/70 font-medium transition-colors">{link.label}</span>
+                          </button>
+                        ))}
+                      </div>
                     </div>
+
+                    {/* חבילות */}
+                    <div className="space-y-4">
+                      <h4 className="text-xs font-black text-white/50 uppercase tracking-[0.2em]">חבילות</h4>
+                      <div className="space-y-1">
+                        {[
+                          { label: 'רכב פרטי', color: '#c8102e', icon: <Car size={14} /> },
+                          { label: 'VIP LUXURY', color: '#d4af37', icon: <Crown size={14} /> },
+                          { label: 'DUO DEAL', color: '#8b5cf6', icon: <Car size={14} /> },
+                          { label: 'עסקים וסוכנויות', color: '#3b82f6', icon: <Building2 size={14} /> },
+                          { label: 'ציוד ותחבורה', color: '#ea580c', icon: <Truck size={14} /> },
+                        ].map((item, i) => (
+                          <button key={i} onClick={() => { document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' }); }}
+                            className="flex items-center gap-2.5 py-2 px-3 rounded-xl w-full text-right group hover:bg-white/5 transition-all">
+                            <div className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${item.color}12`, color: item.color }}>
+                              {item.icon}
+                            </div>
+                            <span className="text-sm text-white/45 group-hover:text-white/70 font-medium transition-colors">{item.label}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* משפטי */}
+                    <div className="space-y-4">
+                      <h4 className="text-xs font-black text-white/50 uppercase tracking-[0.2em]">משפטי ואחר</h4>
+                      <div className="space-y-1">
+                        {[
+                          { icon: <FileText size={14} />, label: 'תקנון השימוש', onClick: () => setModalContent({ title: footerPages.terms.title, content: footerPages.terms.content }), color: '#94a3b8' },
+                          { icon: <Lock size={14} />, label: 'מדיניות פרטיות', onClick: () => setModalContent({ title: footerPages.privacy.title, content: footerPages.privacy.content }), color: '#94a3b8' },
+                          { icon: <Search size={14} />, label: 'בדיקת סטטוס', onClick: () => setView('check-status'), color: '#60a5fa' },
+                          { icon: <LayoutDashboard size={14} />, label: 'פאנל ניהול', onClick: () => setView('admin-login'), color: '#f59e0b' },
+                        ].map((link, i) => (
+                          <button key={i} onClick={link.onClick}
+                            className="flex items-center gap-2.5 py-2 px-3 rounded-xl w-full text-right group hover:bg-white/5 transition-all">
+                            <div className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0 transition-colors" style={{ background: `${link.color}12`, color: link.color }}>
+                              {link.icon}
+                            </div>
+                            <span className="text-sm text-white/45 group-hover:text-white/70 font-medium transition-colors">{link.label}</span>
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* CTA */}
+                      <div className="mt-4 p-4 rounded-xl space-y-3"
+                        style={{ background: 'linear-gradient(135deg, rgba(200,16,46,0.1), rgba(200,16,46,0.04))', border: '1px solid rgba(200,16,46,0.2)' }}>
+                        <p className="text-xs font-black text-white/60">מוכן למכור את הרכב?</p>
+                        <button onClick={() => document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' })}
+                          className="w-full py-2.5 rounded-xl font-black text-xs text-white flex items-center justify-center gap-2"
+                          style={{ background: 'linear-gradient(135deg, #c8102e, #a50d25)' }}>
+                          <Rocket size={12} />בחר חבילה עכשיו
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom bar */}
+                <div className="px-8 md:px-12 py-5 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-3">
+                  <div className="text-[11px] text-white/18 font-bold">
+                    © {new Date().getFullYear()} YOUGO ISRAEL LTD · כל הזכויות שמורות
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                      <span className="text-[10px] text-white/25 font-bold">מערכת פעילה</span>
+                    </div>
+                    <div className="text-white/10 text-xs">·</div>
+                    <span className="text-[10px] text-white/20 font-bold">Made in Israel 🇮🇱</span>
                   </div>
                 </div>
               </div>
