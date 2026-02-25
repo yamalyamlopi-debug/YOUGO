@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, memo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   CheckCircle2, 
@@ -353,51 +353,37 @@ interface PackageCardProps {
   key?: string;
 }
 
-// --- Modal ---
+// --- Modal محسّن (أخف وأسرع) ---
 const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose: () => void, title: string, children: React.ReactNode }) => {
   const content = typeof children === 'string' ? children : '';
+  if (!isOpen) return null;
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-            className="relative w-full max-w-2xl max-h-[80vh] overflow-y-auto p-8 space-y-6"
-            style={{ background: 'linear-gradient(145deg, #0f0f14 0%, #0a0a0e 100%)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '20px', boxShadow: '0 40px 80px -20px rgba(0,0,0,0.8)' }}
-          >
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
-              <motion.h3 initial={{ x: -20 }} animate={{ x: 0 }} className="text-xl font-black text-brand-red">{title}</motion.h3>
-              <motion.button whileHover={{ rotate: 90, scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={onClose} className="p-2 hover:bg-white/5 rounded-lg transition-colors">
-                <X size={20} className="text-white/60" />
-              </motion.button>
-            </div>
-            <div className="text-white/75 leading-relaxed space-y-3 text-sm">
-              {content.split('\n').map((line, i) => {
-                if (!line.trim()) return <div key={i} className="h-1" />;
-                if (/^\d+\./.test(line)) return (
-                  <motion.h4 key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.02 }} className="text-white font-black text-base mt-4 mb-1 first:mt-0">{line}</motion.h4>
-                );
-                return (
-                  <motion.p key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.01 }} className="text-white/70 leading-relaxed">{line}</motion.p>
-                );
-              })}
-            </div>
-            <div className="pt-4 flex justify-end border-t border-white/8">
-              <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }} onClick={onClose} 
-                className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-sm relative overflow-hidden group"
-                style={{ background: 'linear-gradient(135deg, #c8102e, #a50d25)' }}>
-                <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-                <span className="relative flex items-center gap-2"><X size={14} />סגור</span>
-              </motion.button>
-            </div>
-          </motion.div>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" onClick={onClose}>
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.9 }}
+        transition={{ duration: 0.2 }}
+        className="relative w-full max-w-2xl max-h-[80vh] overflow-y-auto p-6 space-y-4 rounded-2xl"
+        style={{ background: 'linear-gradient(145deg, #0f0f14 0%, #0a0a0e 100%)', border: '1px solid rgba(255,255,255,0.08)' }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between border-b border-white/10 pb-3">
+          <h3 className="text-lg font-black text-brand-red">{title}</h3>
+          <motion.button whileHover={{ rotate: 90, scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={onClose} className="p-1 hover:bg-white/5 rounded-lg">
+            <X size={18} className="text-white/60" />
+          </motion.button>
         </div>
-      )}
-    </AnimatePresence>
+        <div className="text-white/80 text-sm whitespace-pre-line leading-relaxed">
+          {content.split('\n').map((line, i) => {
+            if (!line.trim()) return <div key={i} className="h-2" />;
+            if (/^\d+\./.test(line)) return <h4 key={i} className="text-white font-black text-base mt-3 first:mt-0">{line}</h4>;
+            return <p key={i} className="text-white/70">{line}</p>;
+          })}
+        </div>
+      </motion.div>
+    </div>
   );
 };
 
@@ -1361,7 +1347,7 @@ const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pa
 };
 
 // ============================================================
-// MOBILE SWIPER - اتجاه RTL طبيعي
+// MOBILE SWIPER
 // ============================================================
 const MobileSwiper = ({ children, cardHeight = 500 }: { children: React.ReactNode[]; cardHeight?: number }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -1408,7 +1394,7 @@ const MobileSwiper = ({ children, cardHeight = 500 }: { children: React.ReactNod
           paddingLeft: '12px',
           paddingRight: '12px',
           scrollSnapType: 'x mandatory',
-          direction: 'rtl', // اتجاه RTL طبيعي
+          direction: 'rtl',
         }}
       >
         {React.Children.map(children, (child, i) => (
@@ -1418,7 +1404,7 @@ const MobileSwiper = ({ children, cardHeight = 500 }: { children: React.ReactNod
             style={{
               width: '85%',
               height: cardHeight,
-              direction: 'rtl', // المحتوى يبقى RTL
+              direction: 'rtl',
             }}
           >
             {child}
@@ -1572,9 +1558,9 @@ const OrderStatusCheck = ({ onClose }: { onClose: () => void }) => {
 };
 
 // ============================================================
-// CHANGE PACKAGE MODAL
+// CHANGE PACKAGE MODAL (محسّن للأداء)
 // ============================================================
-const ChangePackageModal = ({
+const ChangePackageModal = memo(({
   isOpen, onClose, currentPackageId, packages, vipPackage, duoPackage, equipmentPackages, businessPackage, transportPackage, onSelect, lang
 }: {
   isOpen: boolean; onClose: () => void; currentPackageId: string; packages: Package[]; vipPackage: Package;
@@ -1595,58 +1581,59 @@ const ChangePackageModal = ({
     return { border: 'border-white/10', bg: 'bg-white/5', badge: <Rocket size={16} />, color: 'text-white/60', activeBorder: 'border-white/40' };
   };
 
-  return (
-    <AnimatePresence>
-      {isOpen && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} onClick={onClose} className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
-          <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} transition={{ duration: 0.18 }}
-            className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl"
-            style={{ background: 'linear-gradient(145deg, #111116 0%, #0a0a0e 100%)', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 40px 80px -20px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05)' }}>
-            <div className="sticky top-0 z-10 px-5 py-4 border-b border-white/8 flex items-center justify-between"
-              style={{ background: 'rgba(11,11,16,0.97)', backdropFilter: 'blur(8px)' }}>
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-brand-red/10 border border-brand-red/20 flex items-center justify-center">
-                  <RefreshCw size={15} className="text-brand-red" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-black text-white">החלפת חבילה</h3>
-                  <p className="text-[10px] text-white/40 mt-0.5">בחר חבילה אחרת להזמנה</p>
-                </div>
-              </div>
-              <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-lg transition-colors"><X size={16} className="text-white/50" /></button>
-            </div>
-            <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {allPackages.map((pkg) => {
-                const style = getPackageStyle(pkg);
-                const isActive = pkg.id === currentPackageId;
-                return (
-                  <button key={pkg.id} onClick={() => { onSelect(pkg); onClose(); }}
-                    className={`flex items-center gap-3 p-3.5 rounded-xl border-2 transition-all text-right hover:scale-[1.02] active:scale-[0.98] ${isActive ? `${style.activeBorder} ${style.bg}` : `${style.border} bg-white/2 hover:bg-white/4`}`}>
-                    <div className={`w-10 h-10 rounded-xl ${style.bg} border ${style.border} flex items-center justify-center text-lg shrink-0`}>
-                      <span style={{ color: style.color }}>{style.badge}</span>
-                    </div>
-                    <div className="flex-1 min-w-0 text-right">
-                      <div className="flex items-center gap-2 justify-end">
-                        {isActive && <span className="text-[8px] font-black px-1.5 py-0.5 rounded-full bg-white/10 text-white/60">נוכחית</span>}
-                        <span className={`text-sm font-black ${isActive ? style.color : 'text-white'}`}>{pkg.name}</span>
-                      </div>
-                      <p className="text-[9px] text-white/40 mt-0.5 truncate">{pkg.features[0] || ''}</p>
-                    </div>
-                    <div className={`text-base font-black shrink-0 ${isActive ? style.color : 'text-white'}`}>{pkg.price}</div>
-                  </button>
-                );
-              })}
-            </div>
-          </motion.div>
-        </div>
-      )}
-    </AnimatePresence>
-  );
-};
+  if (!isOpen) return null;
 
-// --- Step 1: Car Details Form ---
-const CarDetailsForm = ({ formData, setFormData, onNext, selectedPackage, onChangePackage }: { 
+  return (
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} onClick={onClose} className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+      <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} transition={{ duration: 0.18 }}
+        className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl"
+        style={{ background: 'linear-gradient(145deg, #111116 0%, #0a0a0e 100%)', border: '1px solid rgba(255,255,255,0.1)' }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="sticky top-0 z-10 px-5 py-4 border-b border-white/8 flex items-center justify-between bg-dark-bg/95 backdrop-blur-sm">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-brand-red/10 border border-brand-red/20 flex items-center justify-center">
+              <RefreshCw size={15} className="text-brand-red" />
+            </div>
+            <div>
+              <h3 className="text-sm font-black text-white">החלפת חבילה</h3>
+              <p className="text-[10px] text-white/40 mt-0.5">בחר חבילה אחרת להזמנה</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-lg"><X size={16} className="text-white/50" /></button>
+        </div>
+        <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {allPackages.map((pkg) => {
+            const style = getPackageStyle(pkg);
+            const isActive = pkg.id === currentPackageId;
+            return (
+              <button key={pkg.id} onClick={() => { onSelect(pkg); onClose(); }}
+                className={`flex items-center gap-3 p-3.5 rounded-xl border-2 transition-all text-right hover:scale-[1.02] active:scale-[0.98] ${isActive ? `${style.activeBorder} ${style.bg}` : `${style.border} bg-white/2 hover:bg-white/4`}`}>
+                <div className={`w-10 h-10 rounded-xl ${style.bg} border ${style.border} flex items-center justify-center text-lg shrink-0`}>
+                  <span style={{ color: style.color }}>{style.badge}</span>
+                </div>
+                <div className="flex-1 min-w-0 text-right">
+                  <div className="flex items-center gap-2 justify-end">
+                    {isActive && <span className="text-[8px] font-black px-1.5 py-0.5 rounded-full bg-white/10 text-white/60">נוכחית</span>}
+                    <span className={`text-sm font-black ${isActive ? style.color : 'text-white'}`}>{pkg.name}</span>
+                  </div>
+                  <p className="text-[9px] text-white/40 mt-0.5 truncate">{pkg.features[0] || ''}</p>
+                </div>
+                <div className={`text-base font-black shrink-0 ${isActive ? style.color : 'text-white'}`}>{pkg.price}</div>
+              </button>
+            );
+          })}
+        </div>
+      </motion.div>
+    </div>
+  );
+});
+
+// ============================================================
+// CarDetailsForm محسّن (memo)
+// ============================================================
+const CarDetailsForm = memo(({ formData, setFormData, onNext, selectedPackage, onChangePackage }: { 
   formData: any, setFormData: (data: any) => void, onNext: () => void, selectedPackage: Package | null, onChangePackage: () => void
 }) => {
   const isDuo = selectedPackage?.id === 'duo';
@@ -1874,10 +1861,12 @@ const CarDetailsForm = ({ formData, setFormData, onNext, selectedPackage, onChan
       </motion.button>
     </motion.div>
   );
-};
+});
 
-// --- Step 2: Payment Form ---
-const PaymentForm = ({ formData, setFormData, selectedPackage, onSubmit, loading, onBack, onChangePackage }: { 
+// ============================================================
+// PaymentForm محسّن (memo)
+// ============================================================
+const PaymentForm = memo(({ formData, setFormData, selectedPackage, onSubmit, loading, onBack, onChangePackage }: { 
   formData: any, setFormData: (data: any) => void, selectedPackage: Package | null, onSubmit: () => void, loading: boolean, onBack: () => void, onChangePackage: () => void
 }) => {
   const [paymentMethod, setPaymentMethod] = useState<'bit' | 'paybox' | null>(null);
@@ -1998,7 +1987,7 @@ const PaymentForm = ({ formData, setFormData, selectedPackage, onSubmit, loading
       </div>
     </motion.div>
   );
-};
+});
 
 // ============================================================
 // MAIN APP COMPONENT
@@ -2890,22 +2879,24 @@ export default function App() {
 
       <Modal isOpen={!!modalContent} onClose={() => setModalContent(null)} title={modalContent?.title || ''}>{modalContent?.content}</Modal>
 
-      <ChangePackageModal
-        isOpen={showChangePackage}
-        onClose={() => setShowChangePackage(false)}
-        currentPackageId={selectedPackage?.id || ''}
-        packages={packages}
-        vipPackage={vipPackage}
-        duoPackage={duoPackage}
-        equipmentPackages={equipmentPackages}
-        businessPackage={businessPackage}
-        transportPackage={transportPackage}
-        onSelect={(p) => {
-          setSelectedPackage(p);
-          setFormData({ fullName: formData.fullName, phone: formData.phone, model: '', year: '', mileage: '', price: '', registration: '', testUntil: '', location: formData.location, paymentProof: '', carImages: [], model2: '', year2: '', mileage2: '', price2: '', registration2: '', testUntil2: '', agencyName: '', monthlyCars: '', agencyDetails: '', seats: '' });
-        }}
-        lang={lang}
-      />
+      {showChangePackage && (
+        <ChangePackageModal
+          isOpen={showChangePackage}
+          onClose={() => setShowChangePackage(false)}
+          currentPackageId={selectedPackage?.id || ''}
+          packages={packages}
+          vipPackage={vipPackage}
+          duoPackage={duoPackage}
+          equipmentPackages={equipmentPackages}
+          businessPackage={businessPackage}
+          transportPackage={transportPackage}
+          onSelect={(p) => {
+            setSelectedPackage(p);
+            setFormData({ fullName: formData.fullName, phone: formData.phone, model: '', year: '', mileage: '', price: '', registration: '', testUntil: '', location: formData.location, paymentProof: '', carImages: [], model2: '', year2: '', mileage2: '', price2: '', registration2: '', testUntil2: '', agencyName: '', monthlyCars: '', agencyDetails: '', seats: '' });
+          }}
+          lang={lang}
+        />
+      )}
     </div>
   );
 }
