@@ -204,133 +204,199 @@ const Navbar = memo(({ lang, setLang, isAdmin, onLogout, siteSettings, setView }
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
-  
-  return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
-      scrolled 
-        ? 'bg-dark-bg/95 backdrop-blur-xl border-b border-white/10 py-2' 
-        : 'bg-transparent py-4'
-    }`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center">
-          <div 
-            className="flex items-center gap-3 cursor-pointer"
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          >
-            <div className="p-2.5 bg-gradient-to-br from-brand-red to-red-700 rounded-xl shadow-lg shadow-brand-red/20">
-              <Car size={26} className="text-white" />
-            </div>
-            <div>
-              <div className="text-2xl font-black tracking-tighter">
-                <span className="text-brand-red">YOUGO</span> <span className="text-white">ISRAEL</span>
-              </div>
-              <div className="text-[9px] text-white/40 font-bold tracking-wider">
-                {siteSettings.positioning_line_he || t.positioningLine}
-              </div>
-            </div>
-          </div>
 
-          {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-6">
-            {['how-it-works', 'packages', 'faq'].map((item) => (
+  const navLinks = [
+    { href: '#how-it-works', label: 'איך זה עובד' },
+    { href: '#packages',     label: 'חבילות'      },
+    { href: '#faq',          label: 'שאלות'        },
+  ];
+
+  return (
+    <nav
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+      style={{
+        background: scrolled
+          ? 'rgba(6,6,10,0.96)'
+          : 'transparent',
+        backdropFilter: scrolled ? 'blur(20px)' : 'none',
+        borderBottom: scrolled ? '1px solid rgba(255,255,255,0.07)' : 'none',
+        padding: scrolled ? '10px 0' : '16px 0',
+      }}
+    >
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="flex items-center justify-between">
+
+          {/* ── LOGO ── */}
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="flex items-center gap-2 shrink-0"
+          >
+            <div
+              className="flex items-center justify-center rounded-xl shrink-0"
+              style={{
+                width: 38, height: 38,
+                background: 'linear-gradient(135deg, #c8102e, #a50d25)',
+                boxShadow: '0 4px 14px rgba(200,16,46,0.35)',
+              }}
+            >
+              <Car size={20} className="text-white" />
+            </div>
+            <div className="leading-none">
+              <div className="text-[18px] font-black tracking-tight leading-none">
+                <span className="text-brand-red">YOUGO</span>
+                <span className="text-white"> ISRAEL</span>
+              </div>
+              <div className="text-[8px] text-white/35 font-bold tracking-widest mt-[2px] hidden xs:block">
+                {siteSettings?.positioning_line_he || t.positioningLine || 'פרסום רכבים מקצועי'}
+              </div>
+            </div>
+          </button>
+
+          {/* ── DESKTOP LINKS ── */}
+          <div className="hidden md:flex items-center gap-1">
+            {navLinks.map(l => (
               <a
-                key={item}
-                href={`#${item}`}
-                className="text-sm font-bold text-white/70 hover:text-brand-red transition-colors relative group"
+                key={l.href}
+                href={l.href}
+                className="px-3 py-2 rounded-xl text-[13px] font-bold text-white/60 hover:text-white hover:bg-white/6 transition-all"
               >
-                {item === 'how-it-works' ? 'איך זה עובד' : 
-                 item === 'packages' ? 'חבילות' : 'שאלות'}
-                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-brand-red rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-200" />
+                {l.label}
               </a>
             ))}
-            
-            <button 
+            <button
               onClick={() => setView('check-status')}
-              className="text-sm font-bold text-white/70 hover:text-brand-red transition-colors"
+              className="px-3 py-2 rounded-xl text-[13px] font-bold text-white/60 hover:text-white hover:bg-white/6 transition-all"
             >
-              בדיקת סטטוס
+              סטטוס הזמנה
             </button>
+          </div>
 
-            {/* Instagram button */}
+          {/* ── DESKTOP RIGHT ACTIONS ── */}
+          <div className="hidden md:flex items-center gap-2">
+            {/* Instagram */}
             <a
               href="https://instagram.com/yougo.israel"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-black transition-all hover:scale-105 active:scale-95"
-              style={{ background: 'linear-gradient(135deg, rgba(228,64,95,0.15), rgba(193,53,132,0.1))', border: '1px solid rgba(228,64,95,0.3)', color: '#f472b6' }}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl font-black text-[12px] transition-all hover:scale-105"
+              style={{
+                background: 'linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%)',
+                color: 'white',
+                boxShadow: '0 2px 12px rgba(200,30,90,0.3)',
+              }}
             >
-              <Instagram size={15} />
-              <span className="text-xs">Instagram</span>
+              <Instagram size={14} />
+              @yougo.israel
             </a>
-            
-            {/* Language switcher */}
-            <button 
+
+            {/* Language pill */}
+            <button
               onClick={() => setLang(lang === 'he' ? 'ar' : 'he')}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl border border-white/10 text-sm font-black hover:bg-white/10 transition-all"
-              style={{ background: 'rgba(255,255,255,0.05)' }}
+              className="flex items-center gap-2 px-3 py-2 rounded-xl text-[12px] font-black transition-all hover:bg-white/10"
+              style={{ border: '1px solid rgba(255,255,255,0.12)', background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.8)' }}
             >
-              <Globe size={15} className="text-white/60" />
-              <span className="text-white/80">{lang === 'he' ? 'عربي' : 'עברית'}</span>
+              <Globe size={13} style={{ color: '#c8102e' }} />
+              {lang === 'he' ? 'عربي' : 'עברית'}
             </button>
 
             {isAdmin && (
-              <button 
-                onClick={onLogout} 
-                className="text-sm font-bold text-white/40 hover:text-white transition-colors"
-              >
-                <LogOut size={18} />
+              <button onClick={onLogout} className="p-2 rounded-xl text-white/30 hover:text-white transition-colors">
+                <LogOut size={16} />
               </button>
             )}
           </div>
 
-          {/* Mobile: language + instagram + menu */}
-          <div className="md:hidden flex items-center gap-2">
+          {/* ── MOBILE RIGHT ── */}
+          <div className="md:hidden flex items-center gap-1.5">
+            {/* Instagram icon */}
             <a
               href="https://instagram.com/yougo.israel"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 rounded-lg flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, rgba(228,64,95,0.15), rgba(193,53,132,0.1))', border: '1px solid rgba(228,64,95,0.25)', color: '#f472b6' }}
+              className="flex items-center justify-center rounded-xl"
+              style={{
+                width: 36, height: 36,
+                background: 'linear-gradient(135deg, #833ab4 0%, #fd1d1d 60%, #fcb045 100%)',
+                boxShadow: '0 2px 10px rgba(200,30,90,0.35)',
+              }}
             >
-              <Instagram size={18} />
+              <Instagram size={16} className="text-white" />
             </a>
-            <button 
+
+            {/* Language toggle pill */}
+            <button
               onClick={() => setLang(lang === 'he' ? 'ar' : 'he')}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-white/10 text-xs font-black"
-              style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.8)' }}
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[11px] font-black"
+              style={{
+                border: '1px solid rgba(200,16,46,0.4)',
+                background: 'rgba(200,16,46,0.08)',
+                color: '#c8102e',
+                minWidth: 52,
+              }}
             >
-              <Globe size={13} />
-              {lang === 'he' ? 'عربي' : 'עב'}
+              <Globe size={11} />
+              {lang === 'he' ? 'عربي' : 'עב׳'}
             </button>
-            <button 
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg bg-white/5 border border-white/10"
+
+            {/* Hamburger */}
+            <button
+              onClick={() => setMobileMenuOpen(v => !v)}
+              className="flex items-center justify-center rounded-xl transition-all"
+              style={{
+                width: 36, height: 36,
+                background: mobileMenuOpen ? 'rgba(200,16,46,0.15)' : 'rgba(255,255,255,0.06)',
+                border: mobileMenuOpen ? '1px solid rgba(200,16,46,0.35)' : '1px solid rgba(255,255,255,0.1)',
+              }}
             >
-              {mobileMenuOpen ? <X size={22} className="text-white" /> : <Menu size={22} className="text-white" />}
+              {mobileMenuOpen
+                ? <X size={18} className="text-brand-red" />
+                : <Menu size={18} className="text-white" />}
             </button>
           </div>
         </div>
 
+        {/* ── MOBILE DROPDOWN MENU ── */}
         {mobileMenuOpen && (
-          <div className="md:hidden py-4 space-y-1 border-t border-white/5 mt-4">
-            {[
-              { href: '#how-it-works', label: 'איך זה עובד' },
-              { href: '#packages', label: 'חבילות' },
-              { href: '#faq', label: 'שאלות' }
-            ].map((item) => (
-              <a key={item.href} href={item.href} onClick={() => setMobileMenuOpen(false)} className="block py-3 px-4 text-white/70 hover:bg-white/5 rounded-xl font-bold">
-                {item.label}
+          <div
+            className="md:hidden mt-3 rounded-2xl overflow-hidden"
+            style={{ background: 'rgba(10,10,18,0.97)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(20px)' }}
+          >
+            <div className="p-3 space-y-1">
+              {navLinks.map(l => (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-white/70 hover:text-white hover:bg-white/6 transition-all"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-brand-red shrink-0" />
+                  {l.label}
+                </a>
+              ))}
+              <button
+                onClick={() => { setView('check-status'); setMobileMenuOpen(false); }}
+                className="flex items-center gap-3 w-full text-right px-4 py-3 rounded-xl text-sm font-bold text-white/70 hover:text-white hover:bg-white/6 transition-all"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-brand-red shrink-0" />
+                סטטוס הזמנה
+              </button>
+            </div>
+            <div className="px-3 pb-3">
+              <a
+                href="https://instagram.com/yougo.israel"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-black text-sm text-white"
+                style={{ background: 'linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%)' }}
+              >
+                <Instagram size={16} />
+                עקבו על אינסטגרם ← @yougo.israel
               </a>
-            ))}
-            <button onClick={() => { setView('check-status'); setMobileMenuOpen(false); }} className="block w-full text-right py-3 px-4 text-white/70 hover:bg-white/5 rounded-xl font-bold">
-              בדיקת סטטוס
-            </button>
+            </div>
           </div>
         )}
       </div>
@@ -2279,13 +2345,13 @@ function App() {
               {/* REGULAR PACKAGES */}
               <div className="space-y-8">
                 {/* === SECTION HEADER: רכב פרטי === */}
-                <div className="relative overflow-hidden rounded-3xl p-8 md:p-10 mx-0"
+                <div className="relative rounded-3xl p-6 md:p-10"
                   style={{ background: 'linear-gradient(135deg, rgba(200,16,46,0.08) 0%, rgba(10,10,15,0.95) 50%, rgba(6,6,10,1) 100%)', border: '1px solid rgba(200,16,46,0.18)', borderRadius: '1.5rem' }}>
                   <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(200,16,46,0.12) 0%, transparent 65%)' }} />
                   <div className="absolute bottom-0 left-0 w-48 h-48 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 20% 80%, rgba(200,16,46,0.06) 0%, transparent 65%)' }} />
 
-                  <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                    <div className="flex-1 space-y-3">
+                  <div className="relative z-10 space-y-5">
+                    <div className="space-y-3">
                       <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full"
                         style={{ background: 'rgba(200,16,46,0.15)', border: '1px solid rgba(200,16,46,0.3)' }}>
                         <Car size={12} className="text-brand-red" />
@@ -2298,20 +2364,20 @@ function App() {
                         שלוש חבילות מדורגות לכל תקציב ומטרה. מחבילת הכניסה הבסיסית ועד הפרמיום המלא – כל אחת מותאמת לסוג הרכב ולמטרת המכירה שלך.
                       </p>
                     </div>
-                    <div className="flex flex-row md:flex-col gap-2 shrink-0">
+                    <div className="flex flex-wrap gap-2">
                       {[
                         { value: '₪199', label: 'מחבילה', color: '#94a3b8', icon: <DollarSign size={12} /> },
                         { value: '1,000+', label: 'מכירות', color: '#c8102e', icon: <Trophy size={12} /> },
-                        { value: '7-30', label: 'ימי פרסום', color: '#4ade80', icon: <Calendar size={12} /> },
+                        { value: '7-30 ימים', label: 'פרסום', color: '#4ade80', icon: <Calendar size={12} /> },
                       ].map((s, i) => (
-                        <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-xl min-w-[110px]"
+                        <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-xl"
                           style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
                           <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
                             <span style={{ color: s.color }}>{s.icon}</span>
                           </div>
-                          <div className="min-w-0">
-                            <div className="text-xs font-black leading-tight whitespace-nowrap" style={{ color: s.color }}>{s.value}</div>
-                            <div className="text-[9px] text-white/30 font-bold whitespace-nowrap">{s.label}</div>
+                          <div>
+                            <div className="text-xs font-black leading-tight" style={{ color: s.color }}>{s.value}</div>
+                            <div className="text-[9px] text-white/30 font-bold">{s.label}</div>
                           </div>
                         </div>
                       ))}
@@ -2339,12 +2405,12 @@ function App() {
               {/* VIP + DUO */}
               <div className="space-y-8">
                 {/* === SECTION HEADER: VIP === */}
-                <div className="relative overflow-hidden rounded-3xl p-8 md:p-10"
+                <div className="relative rounded-3xl p-6 md:p-10"
                   style={{ background: 'linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(10,10,15,0.95) 50%, rgba(6,6,10,1) 100%)', border: '1px solid rgba(212,175,55,0.2)', borderRadius: '1.5rem' }}>
                   <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(212,175,55,0.1) 0%, transparent 65%)' }} />
 
-                  <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                    <div className="flex-1 space-y-3">
+                  <div className="relative z-10 space-y-5">
+                    <div className="space-y-3">
                       <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full"
                         style={{ background: 'rgba(212,175,55,0.12)', border: '1px solid rgba(212,175,55,0.3)' }}>
                         <Crown size={12} className="text-amber-400" />
@@ -2357,20 +2423,20 @@ function App() {
                         לרכבי יוקרה וכאלה שמוכרים שני רכבים בבת אחת – שתי חבילות ייחודיות עם שירות אישי, עיצוב בלעדי, וחסכון משמעותי.
                       </p>
                     </div>
-                    <div className="flex flex-row md:flex-col gap-2 shrink-0">
+                    <div className="flex flex-wrap gap-2">
                       {[
                         { value: '60 יום', label: 'פרסום VIP', color: '#d4af37', icon: <Calendar size={12} /> },
                         { value: '40%', label: 'חיסכון DUO', color: '#8b5cf6', icon: <Percent size={12} /> },
                         { value: '24/7', label: 'ליווי אישי', color: '#4ade80', icon: <Headphones size={12} /> },
                       ].map((s, i) => (
-                        <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-xl min-w-[110px]"
+                        <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-xl"
                           style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
                           <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
                             <span style={{ color: s.color }}>{s.icon}</span>
                           </div>
-                          <div className="min-w-0">
-                            <div className="text-xs font-black leading-tight whitespace-nowrap" style={{ color: s.color }}>{s.value}</div>
-                            <div className="text-[9px] text-white/30 font-bold whitespace-nowrap">{s.label}</div>
+                          <div>
+                            <div className="text-xs font-black leading-tight" style={{ color: s.color }}>{s.value}</div>
+                            <div className="text-[9px] text-white/30 font-bold">{s.label}</div>
                           </div>
                         </div>
                       ))}
@@ -2394,13 +2460,13 @@ function App() {
               {/* BUSINESS */}
               <div className="max-w-3xl mx-auto space-y-8">
                 {/* === SECTION HEADER: Business === */}
-                <div className="relative overflow-hidden rounded-3xl p-8 md:p-10"
+                <div className="relative rounded-3xl p-6 md:p-10"
                   style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.08) 0%, rgba(10,10,15,0.95) 50%, rgba(6,6,10,1) 100%)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: '1.5rem' }}>
                   <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(59,130,246,0.1) 0%, transparent 65%)' }} />
                   <div className="absolute inset-0 opacity-3" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
 
-                  <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                    <div className="flex-1 space-y-3">
+                  <div className="relative z-10 space-y-5">
+                    <div className="space-y-3">
                       <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full"
                         style={{ background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.3)' }}>
                         <Building2 size={12} className="text-blue-400" />
@@ -2413,20 +2479,20 @@ function App() {
                         חבילות מותאמות לסוכנויות רכב, עם אפשרויות גמישות לניהול מלא. עד 100 רכבים בחודש, מנהל לקוח ייעודי ודוחות שבועיים.
                       </p>
                     </div>
-                    <div className="flex flex-row md:flex-col gap-2 shrink-0">
+                    <div className="flex flex-wrap gap-2">
                       {[
                         { value: '50-100', label: 'רכבים/חודש', color: '#3b82f6', icon: <Car size={12} /> },
                         { value: '40-50%', label: 'הנחה', color: '#4ade80', icon: <Percent size={12} /> },
                         { value: '24/7', label: 'תמיכה', color: '#a78bfa', icon: <Headphones size={12} /> },
                       ].map((s, i) => (
-                        <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-xl min-w-[120px]"
+                        <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-xl"
                           style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
                           <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
                             <span style={{ color: s.color }}>{s.icon}</span>
                           </div>
-                          <div className="min-w-0">
-                            <div className="text-xs font-black leading-tight whitespace-nowrap" style={{ color: s.color }}>{s.value}</div>
-                            <div className="text-[9px] text-white/30 font-bold whitespace-nowrap">{s.label}</div>
+                          <div>
+                            <div className="text-xs font-black leading-tight" style={{ color: s.color }}>{s.value}</div>
+                            <div className="text-[9px] text-white/30 font-bold">{s.label}</div>
                           </div>
                         </div>
                       ))}
@@ -2540,12 +2606,12 @@ function App() {
               {/* EQUIPMENT + TRANSPORT */}
               <div className="space-y-8">
                 {/* === SECTION HEADER: ציוד === */}
-                <div className="relative overflow-hidden rounded-3xl p-8 md:p-10"
+                <div className="relative rounded-3xl p-6 md:p-10"
                   style={{ background: 'linear-gradient(135deg, rgba(234,88,12,0.08) 0%, rgba(10,10,15,0.95) 50%, rgba(6,6,10,1) 100%)', border: '1px solid rgba(234,88,12,0.2)', borderRadius: '1.5rem' }}>
                   <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(234,88,12,0.1) 0%, transparent 65%)' }} />
 
-                  <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                    <div className="flex-1 space-y-3">
+                  <div className="relative z-10 space-y-5">
+                    <div className="space-y-3">
                       <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full"
                         style={{ background: 'rgba(234,88,12,0.12)', border: '1px solid rgba(234,88,12,0.3)' }}>
                         <Truck size={12} className="text-orange-400" />
@@ -2558,20 +2624,20 @@ function App() {
                         חבילות ייחודיות לציוד כבד, ציוד קל, ורכבים מסחריים. חשיפה ממוקדת לקהל המקצועי הנכון – קבלנים, חברות הסעות, ועסקים.
                       </p>
                     </div>
-                    <div className="flex flex-row md:flex-col gap-2 shrink-0">
+                    <div className="flex flex-wrap gap-2">
                       {[
                         { value: '85%', label: 'נמכרו תוך 14 יום', color: '#ea580c', icon: <TrendingUp size={12} /> },
                         { value: '500+', label: 'ציודים פורסמו', color: '#0ea5e9', icon: <Truck size={12} /> },
                         { value: '3', label: 'קטגוריות', color: '#4ade80', icon: <Target size={12} /> },
                       ].map((s, i) => (
-                        <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-xl min-w-[120px]"
+                        <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-xl"
                           style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
                           <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
                             <span style={{ color: s.color }}>{s.icon}</span>
                           </div>
-                          <div className="min-w-0">
-                            <div className="text-xs font-black leading-tight whitespace-nowrap" style={{ color: s.color }}>{s.value}</div>
-                            <div className="text-[9px] text-white/30 font-bold whitespace-nowrap">{s.label}</div>
+                          <div>
+                            <div className="text-xs font-black leading-tight" style={{ color: s.color }}>{s.value}</div>
+                            <div className="text-[9px] text-white/30 font-bold">{s.label}</div>
                           </div>
                         </div>
                       ))}
