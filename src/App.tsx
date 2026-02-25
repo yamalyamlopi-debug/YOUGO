@@ -1690,6 +1690,43 @@ const PaymentForm = memo(({ formData, setFormData, selectedPackage, onSubmit, lo
   formData: any, setFormData: (data: any) => void, selectedPackage: Package | null, onSubmit: () => void, loading: boolean, onBack: () => void, onChangePackage: () => void
 }) => {
   const [paymentMethod, setPaymentMethod] = useState<'bit' | 'paybox' | null>(null);
+  const [couponCode, setCouponCode] = useState('');
+  const [couponStatus, setCouponStatus] = useState<'idle' | 'checking' | 'valid' | 'invalid'>('idle');
+  const [discount, setDiscount] = useState(0);
+  const [couponLabel, setCouponLabel] = useState('');
+
+  const VALID_COUPONS: Record<string, { discount: number; label: string }> = {
+    'YOUGO10': { discount: 10, label: '10% הנחה - קוד מיוחד' },
+    'FRIEND15': { discount: 15, label: '15% הנחה - שיווק שותפים' },
+    'VIP20': { discount: 20, label: '20% הנחה - לקוח VIP' },
+    'FIRST50': { discount: 50, label: '50 ₪ הנחה - לקוח חדש' },
+    'SALE25': { discount: 25, label: '25% הנחה - מבצע מיוחד' },
+  };
+
+  const handleCheckCoupon = useCallback(() => {
+    if (!couponCode.trim()) return;
+    setCouponStatus('checking');
+    setTimeout(() => {
+      const code = couponCode.trim().toUpperCase();
+      const found = VALID_COUPONS[code];
+      if (found) {
+        setCouponStatus('valid');
+        setDiscount(found.discount);
+        setCouponLabel(found.label);
+      } else {
+        setCouponStatus('invalid');
+        setDiscount(0);
+        setCouponLabel('');
+      }
+    }, 800);
+  }, [couponCode]);
+
+  const basePrice = parseInt((selectedPackage?.price || '₪0').replace(/[₪,]/g, '')) || 0;
+  const discountAmount = discount > 50
+    ? discount
+    : Math.round(basePrice * discount / 100);
+  const finalPrice = Math.max(0, basePrice - discountAmount);
+
   const isBusiness = selectedPackage?.id === 'business' || selectedPackage?.id === 'business100';
   const isDuo = selectedPackage?.id === 'duo';
   const isTransport = selectedPackage?.id === 'transport';
@@ -1719,21 +1756,92 @@ const PaymentForm = memo(({ formData, setFormData, selectedPackage, onSubmit, lo
 
       <div className={`p-3 rounded-xl bg-gradient-to-r ${accentBg} to-transparent border ${accentBorder}`}>
         <div className="flex items-center justify-between">
-          <div>
+          <div className="flex-1">
             <div className="flex items-center justify-between text-sm">
               <span className="text-white/60">חבילה נבחרת:</span>
               <span className="font-black mr-2" style={{ color: accentColor }}>{selectedPackage?.name}</span>
             </div>
             <div className="flex items-center justify-between mt-1">
               <span className="text-white/60">מחיר:</span>
-              <span className="font-black text-white text-base mr-2">{selectedPackage?.price}</span>
+              <div className="flex items-center gap-2 mr-2">
+                {couponStatus === 'valid' && (
+                  <span className="text-xs line-through text-white/30">₪{basePrice.toLocaleString()}</span>
+                )}
+                <span className="font-black text-white text-base">₪{finalPrice.toLocaleString()}</span>
+              </div>
             </div>
+            {couponStatus === 'valid' && (
+              <div className="flex items-center justify-between mt-1">
+                <span className="text-[10px] text-green-400/80">קוד קופון:</span>
+                <span className="text-[10px] font-black text-green-400 mr-2">-₪{discountAmount} · {couponLabel}</span>
+              </div>
+            )}
           </div>
           <button onClick={onChangePackage}
             className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all shrink-0 mr-1">
             <RefreshCw size={12} style={{ color: accentColor }} />
             <span className="text-[8px] font-black text-white/50">החלף</span>
           </button>
+        </div>
+      </div>
+
+      {/* COUPON CODE */}
+      <div className="rounded-xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.02)' }}>
+        <button
+          type="button"
+          onClick={() => document.getElementById('coupon-section')?.classList.toggle('hidden')}
+          className="w-full px-4 py-3 flex items-center justify-between text-right hover:bg-white/3 transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ background: 'rgba(251,191,36,0.12)', border: '1px solid rgba(251,191,36,0.2)' }}>
+              <Percent size={12} className="text-amber-400" />
+            </div>
+            <span className="text-sm font-bold text-white/70">יש לך קוד קופון?</span>
+          </div>
+          <ChevronDown size={14} className="text-white/30" />
+        </button>
+        <div id="coupon-section" className="hidden px-4 pb-4">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              placeholder="הכנס קוד קופון..."
+              value={couponCode}
+              onChange={e => { setCouponCode(e.target.value.toUpperCase()); setCouponStatus('idle'); }}
+              className="flex-1 px-3 py-2.5 rounded-xl text-sm font-bold tracking-widest text-center transition-all focus:outline-none"
+              style={{
+                background: couponStatus === 'valid' ? 'rgba(34,197,94,0.08)' : couponStatus === 'invalid' ? 'rgba(239,68,68,0.08)' : 'rgba(255,255,255,0.05)',
+                border: couponStatus === 'valid' ? '1.5px solid rgba(34,197,94,0.4)' : couponStatus === 'invalid' ? '1.5px solid rgba(239,68,68,0.3)' : '1.5px solid rgba(255,255,255,0.1)',
+                color: 'white',
+              }}
+              onKeyDown={e => e.key === 'Enter' && handleCheckCoupon()}
+            />
+            <button
+              type="button"
+              onClick={handleCheckCoupon}
+              disabled={!couponCode || couponStatus === 'checking'}
+              className="px-4 py-2.5 rounded-xl font-black text-xs transition-all disabled:opacity-40"
+              style={{ background: 'rgba(251,191,36,0.15)', border: '1px solid rgba(251,191,36,0.25)', color: '#fbbf24' }}
+            >
+              {couponStatus === 'checking' ? (
+                <div className="w-4 h-4 border-2 border-amber-400 border-t-transparent rounded-full animate-spin" />
+              ) : 'אמת'}
+            </button>
+          </div>
+          {couponStatus === 'valid' && (
+            <div className="mt-2 flex items-center gap-2 px-3 py-2 rounded-lg" style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)' }}>
+              <CheckCircle2 size={14} className="text-green-400 shrink-0" />
+              <div>
+                <p className="text-xs font-black text-green-400">קוד תקין! {couponLabel}</p>
+                <p className="text-[10px] text-green-300/60">חיסכון של ₪{discountAmount} · מחיר סופי: ₪{finalPrice}</p>
+              </div>
+            </div>
+          )}
+          {couponStatus === 'invalid' && (
+            <div className="mt-2 flex items-center gap-2 px-3 py-2 rounded-lg" style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}>
+              <X size={14} className="text-red-400 shrink-0" />
+              <p className="text-xs font-bold text-red-400">קוד לא תקין. נסה שוב</p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -1796,7 +1904,7 @@ const PaymentForm = memo(({ formData, setFormData, selectedPackage, onSubmit, lo
             <span className="flex items-center justify-center gap-2">
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />שולח...
             </span>
-          ) : 'שלח הזמנה'}
+          ) : couponStatus === 'valid' ? `שלח הזמנה · ₪${finalPrice}` : 'שלח הזמנה'}
         </button>
       </div>
     </div>
@@ -1819,6 +1927,7 @@ function App() {
   const [orderId, setOrderId] = useState('');
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [showAllFaqs, setShowAllFaqs] = useState(false);
+  const [showAllReviews, setShowAllReviews] = useState(false);
   const [modalContent, setModalContent] = useState<{ title: string; content: string } | null>(null);
   const [showChangePackage, setShowChangePackage] = useState(false);
   const [siteSettings, setSiteSettings] = useState<any>({
@@ -2159,20 +2268,20 @@ function App() {
                         שלוש חבילות מדורגות לכל תקציב ומטרה. מחבילת הכניסה הבסיסית ועד הפרמיום המלא – כל אחת מותאמת לסוג הרכב ולמטרת המכירה שלך.
                       </p>
                     </div>
-                    <div className="flex flex-row md:flex-col gap-3 shrink-0">
+                    <div className="flex flex-row md:flex-col gap-2 shrink-0">
                       {[
-                        { value: '₪149', label: 'מחבילה', color: '#94a3b8', icon: <DollarSign size={13} /> },
-                        { value: '1,000+', label: 'מכירות', color: '#c8102e', icon: <Trophy size={13} /> },
-                        { value: '7-30', label: 'ימי פרסום', color: '#4ade80', icon: <Calendar size={13} /> },
+                        { value: '₪149', label: 'מחבילה', color: '#94a3b8', icon: <DollarSign size={12} /> },
+                        { value: '1,000+', label: 'מכירות', color: '#c8102e', icon: <Trophy size={12} /> },
+                        { value: '7-30', label: 'ימי פרסום', color: '#4ade80', icon: <Calendar size={12} /> },
                       ].map((s, i) => (
-                        <div key={i} className="flex items-center gap-2.5 px-3 py-2 rounded-xl"
-                          style={{ background: `${s.color}10`, border: `1px solid ${s.color}25` }}>
-                          <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
+                        <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-xl min-w-[110px]"
+                          style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
+                          <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
                             <span style={{ color: s.color }}>{s.icon}</span>
                           </div>
-                          <div>
-                            <div className="text-sm font-black leading-none" style={{ color: s.color }}>{s.value}</div>
-                            <div className="text-[9px] text-white/35 font-bold mt-0.5">{s.label}</div>
+                          <div className="min-w-0">
+                            <div className="text-xs font-black leading-tight whitespace-nowrap" style={{ color: s.color }}>{s.value}</div>
+                            <div className="text-[9px] text-white/30 font-bold whitespace-nowrap">{s.label}</div>
                           </div>
                         </div>
                       ))}
@@ -2218,20 +2327,20 @@ function App() {
                         לרכבי יוקרה וכאלה שמוכרים שני רכבים בבת אחת – שתי חבילות ייחודיות עם שירות אישי, עיצוב בלעדי, וחסכון משמעותי.
                       </p>
                     </div>
-                    <div className="flex flex-row md:flex-col gap-3 shrink-0">
+                    <div className="flex flex-row md:flex-col gap-2 shrink-0">
                       {[
-                        { value: '60 יום', label: 'פרסום VIP', color: '#d4af37', icon: <Calendar size={13} /> },
-                        { value: '40%', label: 'חיסכון DUO', color: '#8b5cf6', icon: <Percent size={13} /> },
-                        { value: '24/7', label: 'ליווי אישי', color: '#4ade80', icon: <Headphones size={13} /> },
+                        { value: '60 יום', label: 'פרסום VIP', color: '#d4af37', icon: <Calendar size={12} /> },
+                        { value: '40%', label: 'חיסכון DUO', color: '#8b5cf6', icon: <Percent size={12} /> },
+                        { value: '24/7', label: 'ליווי אישי', color: '#4ade80', icon: <Headphones size={12} /> },
                       ].map((s, i) => (
-                        <div key={i} className="flex items-center gap-2.5 px-3 py-2 rounded-xl"
-                          style={{ background: `${s.color}10`, border: `1px solid ${s.color}25` }}>
-                          <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
+                        <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-xl min-w-[110px]"
+                          style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
+                          <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
                             <span style={{ color: s.color }}>{s.icon}</span>
                           </div>
-                          <div>
-                            <div className="text-sm font-black leading-none" style={{ color: s.color }}>{s.value}</div>
-                            <div className="text-[9px] text-white/35 font-bold mt-0.5">{s.label}</div>
+                          <div className="min-w-0">
+                            <div className="text-xs font-black leading-tight whitespace-nowrap" style={{ color: s.color }}>{s.value}</div>
+                            <div className="text-[9px] text-white/30 font-bold whitespace-nowrap">{s.label}</div>
                           </div>
                         </div>
                       ))}
@@ -2274,20 +2383,20 @@ function App() {
                         חבילות מותאמות לסוכנויות רכב, עם אפשרויות גמישות לניהול מלא. עד 100 רכבים בחודש, מנהל לקוח ייעודי ודוחות שבועיים.
                       </p>
                     </div>
-                    <div className="flex flex-row md:flex-col gap-3 shrink-0">
+                    <div className="flex flex-row md:flex-col gap-2 shrink-0">
                       {[
-                        { value: '50-100', label: 'רכבים/חודש', color: '#3b82f6', icon: <Car size={13} /> },
-                        { value: '40-50%', label: 'הנחה', color: '#4ade80', icon: <Percent size={13} /> },
-                        { value: '24/7', label: 'תמיכה', color: '#a78bfa', icon: <Headphones size={13} /> },
+                        { value: '50-100', label: 'רכבים/חודש', color: '#3b82f6', icon: <Car size={12} /> },
+                        { value: '40-50%', label: 'הנחה', color: '#4ade80', icon: <Percent size={12} /> },
+                        { value: '24/7', label: 'תמיכה', color: '#a78bfa', icon: <Headphones size={12} /> },
                       ].map((s, i) => (
-                        <div key={i} className="flex items-center gap-2.5 px-3 py-2 rounded-xl"
-                          style={{ background: `${s.color}10`, border: `1px solid ${s.color}25` }}>
-                          <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
+                        <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-xl min-w-[120px]"
+                          style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
+                          <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
                             <span style={{ color: s.color }}>{s.icon}</span>
                           </div>
-                          <div>
-                            <div className="text-sm font-black leading-none" style={{ color: s.color }}>{s.value}</div>
-                            <div className="text-[9px] text-white/35 font-bold mt-0.5">{s.label}</div>
+                          <div className="min-w-0">
+                            <div className="text-xs font-black leading-tight whitespace-nowrap" style={{ color: s.color }}>{s.value}</div>
+                            <div className="text-[9px] text-white/30 font-bold whitespace-nowrap">{s.label}</div>
                           </div>
                         </div>
                       ))}
@@ -2322,20 +2431,20 @@ function App() {
                         חבילות ייחודיות לציוד כבד, ציוד קל, ורכבים מסחריים. חשיפה ממוקדת לקהל המקצועי הנכון – קבלנים, חברות הסעות, ועסקים.
                       </p>
                     </div>
-                    <div className="flex flex-row md:flex-col gap-3 shrink-0">
+                    <div className="flex flex-row md:flex-col gap-2 shrink-0">
                       {[
-                        { value: '85%', label: 'נמכרו תוך 14 יום', color: '#ea580c', icon: <TrendingUp size={13} /> },
-                        { value: '500+', label: 'ציודים פורסמו', color: '#0ea5e9', icon: <Truck size={13} /> },
-                        { value: '3', label: 'קטגוריות', color: '#4ade80', icon: <Target size={13} /> },
+                        { value: '85%', label: 'נמכרו תוך 14 יום', color: '#ea580c', icon: <TrendingUp size={12} /> },
+                        { value: '500+', label: 'ציודים פורסמו', color: '#0ea5e9', icon: <Truck size={12} /> },
+                        { value: '3', label: 'קטגוריות', color: '#4ade80', icon: <Target size={12} /> },
                       ].map((s, i) => (
-                        <div key={i} className="flex items-center gap-2.5 px-3 py-2 rounded-xl"
-                          style={{ background: `${s.color}10`, border: `1px solid ${s.color}25` }}>
-                          <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
+                        <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-xl min-w-[120px]"
+                          style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
+                          <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
                             <span style={{ color: s.color }}>{s.icon}</span>
                           </div>
-                          <div>
-                            <div className="text-sm font-black leading-none" style={{ color: s.color }}>{s.value}</div>
-                            <div className="text-[9px] text-white/35 font-bold mt-0.5">{s.label}</div>
+                          <div className="min-w-0">
+                            <div className="text-xs font-black leading-tight whitespace-nowrap" style={{ color: s.color }}>{s.value}</div>
+                            <div className="text-[9px] text-white/30 font-bold whitespace-nowrap">{s.label}</div>
                           </div>
                         </div>
                       ))}
@@ -2503,33 +2612,219 @@ function App() {
               </div>
             </section>
 
-            {/* FAQ */}
-            <section id="faq" className="max-w-4xl mx-auto space-y-10">
-              <div className="text-center space-y-3">
-                <h2 className="text-4xl md:text-5xl font-black">שאלות נפוצות</h2>
-                <p className="text-white/45 text-base">כל מה שצריך לדעת על תהליך הפרסום והמכירה</p>
+            {/* ============================================================
+                REVIEWS SECTION
+            ============================================================ */}
+            <section id="reviews" className="space-y-12">
+              <div className="text-center space-y-4">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full"
+                  style={{ background: 'rgba(251,191,36,0.1)', border: '1px solid rgba(251,191,36,0.25)' }}>
+                  <Star size={13} className="text-amber-400 fill-amber-400" />
+                  <span className="text-[10px] font-black tracking-[0.2em] uppercase text-amber-400">לקוחות מרוצים</span>
+                </div>
+                <h2 className="text-4xl md:text-5xl font-black text-white">
+                  מה אומרים <span className="text-amber-400">הלקוחות?</span>
+                </h2>
+                <p className="text-white/40 text-base">ביקורות אמיתיות מלקוחות שמכרו דרכנו</p>
+                <div className="flex items-center justify-center gap-3">
+                  <div className="flex">
+                    {[...Array(5)].map((_, i) => <Star key={i} size={18} className="text-amber-400 fill-amber-400" />)}
+                  </div>
+                  <span className="text-white font-black text-lg">4.9</span>
+                  <span className="text-white/40 text-sm">מתוך 5 · 1,000+ ביקורות</span>
+                </div>
               </div>
-              <div className="space-y-3">
-                {t.faqs.slice(0, showAllFaqs ? t.faqs.length : 3).map((item, i) => (
-                  <div key={i} className="rounded-xl overflow-hidden border border-white/8 bg-white/4">
-                    <button onClick={() => setActiveFaq(activeFaq === i ? null : i)}
-                      className="w-full px-5 py-4 flex items-center justify-between text-right gap-3 hover:bg-white/8 transition-colors">
-                      <div className="flex items-center gap-3 flex-1">
-                        <div className="w-8 h-8 rounded-lg bg-brand-red/15 flex items-center justify-center text-brand-red font-black text-sm">{i + 1}</div>
-                        <span className="font-bold text-base">{item.q}</span>
+
+              {(() => {
+                const allReviews = [
+                  { name: 'יוסף אבו חמד', location: 'נצרת', pkg: 'PRO', lang: 'ar', text: 'والله شي ما توقعته، نشروا السيارة وبعد 6 ساعات اتصل فيني واحد وعمل الصفقة. الصور طلعت كثير احترافية وكلام التسويق كان ممتاز. رح ارسل كمان سيارة الشهر الجاي', stars: 5, time: 'לפני 3 ימים', avatar: 'ي' },
+                  { name: 'דני לוי', location: 'תל אביב', pkg: 'PREMIUM', lang: 'he', text: 'מכרתי BMW 3 סיריס תוך יומיים מהפרסום. ממש לא האמנתי שזה יקרה כל כך מהר. התמונות יצאו מקצועיות ברמה גבוהה, וראיתי שהאינסטגרם שלהם עם קהל ממש איכותי', stars: 5, time: 'לפני 5 ימים', avatar: 'ד' },
+                  { name: 'מוחמד ח׳ורי', location: 'חיפה', pkg: 'VIP', lang: 'ar', text: 'بعت مرسيدس E-Class بـ 750 الف شيكل بعد 3 أيام بس! الخدمة VIP كانت تستاهل كل شيكل. المدير الشخصي كان متاح كل وقت وساعدني بكل شي', stars: 5, time: 'לפני שבוע', avatar: 'م' },
+                  { name: 'שרה כהן', location: 'ירושלים', pkg: 'BASIC', lang: 'he', text: 'הזמנתי חבילה בסיסית ולא ציפיתי ליותר מדי, אבל קיבלתי שירות מעולה. הרכב שלי נמכר תוך 10 ימים במחיר שביקשתי. שווה כל שקל', stars: 5, time: 'לפני 10 ימים', avatar: 'ש' },
+                  { name: 'אחמד נאסר', location: 'טירה', pkg: 'DUO DEAL', lang: 'ar', text: 'عندي سيارتين بدهم يروحوا، جربت الـ DUO DEAL وكانت صفقة ممتازة. الأولى اتباعت بعد يوم، والثانية بعد 4 أيام. توفرت فلوس كثيرة مقارنة لو دفعت لكل واحدة لحالها', stars: 5, time: 'לפני שבועיים', avatar: 'أ' },
+                  { name: 'רוני אברהם', location: 'באר שבע', pkg: 'PRO', lang: 'he', text: 'ניסיתי קודם יד2 ולא קיבלתי שום פניות. עברתי ל-YOUGO ותוך 48 שעות היו לי 4 פניות רציניות. בסוף מכרתי מעל המחיר שרציתי כי היו כמה מתעניינים במקביל', stars: 5, time: 'לפני 3 שבועות', avatar: 'ר' },
+                  { name: 'פאטמה עלי', location: 'אום אל פחם', pkg: 'PRO', lang: 'ar', text: 'كنت خايفة بالأول لأني ما جربت هالنوع من الإعلانات. بس الشباب شرحولي كل شي وساعدوني. السيارة تباعت بـ 48 ساعة! الصور كانوا يجننوا الناس', stars: 5, time: 'לפני חודש', avatar: 'ف' },
+                  { name: 'אייל גולן', location: 'רמת גן', pkg: 'PREMIUM', lang: 'he', text: 'שלחתי פורשה קאיין ל-YOUGO ואחרי 24 שעות כבר היו 7 פניות. מכרתי ב-580 אלף שקל. הצוות שלהם עשה עבודת צילום ועיצוב ברמה של מגזין', stars: 5, time: 'לפני חודש', avatar: 'א' },
+                  { name: 'ח׳אלד מחמוד', location: 'בקה אל גרבייה', pkg: 'BASIC', lang: 'ar', text: 'بدي قول الحقيقة - توقعتها تاخد وقت أكثر. بعت السيارة بـ 7 أيام بالضبط. الخدمة سريعة وما حسيت بأي مشكلة. يستاهلوا النجوم', stars: 5, time: 'לפני 5 שבועות', avatar: 'خ' },
+                  { name: 'מיכל שפירא', location: 'פתח תקווה', pkg: 'PRO', lang: 'he', text: 'בעלי ואני מכרנו את שני הרכבים שלנו בחודש האחרון דרך YOUGO. שניהם נמכרו תוך שבוע. ממליצה בחום לכל מי שמחפש תוצאות אמיתיות ולא רק הבטחות', stars: 5, time: 'לפני 6 שבועות', avatar: 'מ' },
+                  { name: 'סאמר זועבי', location: 'שפרעם', pkg: 'VIP', lang: 'ar', text: 'عندي رنج روفر فيل موديل 2023 بعته بـ 1.2 مليون شيكل! الـ VIP كان يستاهل. الصور كانت كأنها من مجلة سيارات وكلام التسويق كان ذكي جداً', stars: 5, time: 'לפני 2 חודשים', avatar: 'س' },
+                  { name: 'ניר ביטון', location: 'נתניה', pkg: 'BASIC', lang: 'he', text: 'פשוט עובד. שילמתי 149 שקל, קיבלתי פרסום מקצועי, ומכרתי סוזוקי מרוטי תמורת המחיר המלא. לא צריך יותר מזה', stars: 5, time: 'לפני 2 חודשים', avatar: 'נ' },
+                  { name: 'ריאן אבו ריא', location: 'כפר כנא', pkg: 'PRO', lang: 'ar', text: 'ابعت صور السيارة على الواتساب وبعد ساعتين كانت الصور منشورة وكلام التسويق. الأسلوب عندهم عالمستوى. بعت هيونداي توسان بـ 3 أيام', stars: 5, time: 'לפני 2 חודשים', avatar: 'ر' },
+                  { name: 'אסף מזרחי', location: 'אשדוד', pkg: 'PREMIUM', lang: 'he', text: 'הרכב שלי עמד חודשיים ב-yad2 בלי שום פניות רציניות. עברתי ל-YOUGO ותוך 5 ימים מכרתי. ההבדל הוא הקהל - אנשים שמחפשים לקנות באמת', stars: 5, time: 'לפני 3 חודשים', avatar: 'א' },
+                  { name: 'לינא חסן', location: 'עכו', pkg: 'DUO DEAL', lang: 'ar', text: 'انا وجوزي عندنا سيارتين بدنا نبيعهم. جربنا الـ DUO وبالله اتباعوا الاثنتين بأسبوع. وفرنا 250 شيكل وحصلنا على نفس الجودة. شكراً جزيلاً', stars: 5, time: 'לפני 3 חודשים', avatar: 'ل' },
+                  { name: 'תומר לוינשטיין', location: 'חולון', pkg: 'PRO', lang: 'he', text: 'מוכר רכבים מדי שנה כי אני מחליף הרבה. YOUGO הפך להיות הדרך היחידה שאני מפרסם. מהיר, מקצועי, ותמיד מביא תוצאות. כבר 4 עסקאות דרכם', stars: 5, time: 'לפני 3 חודשים', avatar: 'ת' },
+                  { name: 'ג׳ואד מחאמיד', location: 'ג׳לג׳וליה', pkg: 'PRO', lang: 'ar', text: 'ما حسبتش راح يجي واحد بجد بهالسرعة. بعد 30 ساعة من النشر جالي 3 تلفونات وبعت السيارة لأول واحد. خدمة ممتازة وناس محترمين', stars: 5, time: 'לפני 4 חודשים', avatar: 'ج' },
+                  { name: 'הדס פרץ', location: 'ראשון לציון', pkg: 'PREMIUM', lang: 'he', text: 'לא האמנתי שאינסטגרם יכול למכור רכב. YOUGO הוכיח לי שטעיתי. מכרתי הונדה HR-V תוך 4 ימים ב-98 אלף שקל. הצילומים שלהם שינו הכל', stars: 5, time: 'לפני 4 חודשים', avatar: 'ה' },
+                  { name: 'עמאד כבהה', location: 'רהט', pkg: 'BASIC', lang: 'ar', text: 'حتى مع الباقة الأرخص الخدمة كانت ممتازة. نشروا الإعلان بسرعة والصور كانت ظبط. بعت السيارة بـ 9 أيام وأنا مبسوط جداً', stars: 5, time: 'לפני 5 חודשים', avatar: 'ع' },
+                  { name: 'ליאור דהן', location: 'מודיעין', pkg: 'VIP', lang: 'he', text: 'מכרתי לקסוס IS350 ב-VIP LUXURY. השירות האישי היה ברמה אחרת - מנהל לקוח שענה בכל שעה, עיצוב שנראה כמו פרסומת טלוויזיה. מכרתי ב-3 ימים', stars: 5, time: 'לפני 6 חודשים', avatar: 'ל' },
+                ];
+
+                return (
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {allReviews.slice(0, showAllReviews ? allReviews.length : 3).map((rev, i) => (
+                        <motion.div key={i}
+                          initial={{ opacity: 0, y: 20 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: i * 0.08 }}
+                          className="relative rounded-2xl p-5 flex flex-col gap-4"
+                          style={{ background: 'linear-gradient(145deg, rgba(255,255,255,0.04) 0%, rgba(6,6,10,0.98) 100%)', border: '1px solid rgba(255,255,255,0.07)' }}>
+                          {/* Top bar */}
+                          <div className="absolute top-0 inset-x-0 h-[2px] rounded-t-2xl"
+                            style={{ background: 'linear-gradient(90deg, transparent, rgba(251,191,36,0.6), transparent)' }} />
+                          
+                          {/* Quote icon */}
+                          <div className="absolute top-4 left-4 text-4xl font-black leading-none opacity-10 text-amber-400">"</div>
+
+                          {/* Stars */}
+                          <div className="flex gap-0.5">
+                            {[...Array(rev.stars)].map((_, si) => (
+                              <Star key={si} size={12} className="text-amber-400 fill-amber-400" />
+                            ))}
+                          </div>
+
+                          {/* Text */}
+                          <p className="text-white/75 text-sm leading-relaxed flex-1" dir={rev.lang === 'ar' ? 'rtl' : 'rtl'}>
+                            "{rev.text}"
+                          </p>
+
+                          {/* Bottom */}
+                          <div className="flex items-center justify-between pt-3 border-t border-white/6">
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm shrink-0"
+                                style={{ background: 'linear-gradient(135deg, #c8102e, #a50d25)', color: 'white' }}>
+                                {rev.avatar}
+                              </div>
+                              <div>
+                                <div className="text-xs font-black text-white">{rev.name}</div>
+                                <div className="text-[9px] text-white/35 flex items-center gap-1">
+                                  <MapPin size={8} />{rev.location}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="text-left">
+                              <div className="text-[8px] font-black px-2 py-0.5 rounded-full"
+                                style={{ background: 'rgba(200,16,46,0.12)', color: '#c8102e', border: '1px solid rgba(200,16,46,0.2)' }}>
+                                {rev.pkg}
+                              </div>
+                              <div className="text-[8px] text-white/25 text-left mt-1">{rev.time}</div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+
+                    {allReviews.length > 3 && (
+                      <div className="text-center">
+                        <button onClick={() => setShowAllReviews(prev => !prev)}
+                          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-black text-sm border border-white/12 bg-white/5 hover:bg-white/10 transition-all"
+                          style={{ color: 'rgba(255,255,255,0.6)' }}>
+                          {showAllReviews ? (
+                            <><ChevronUp size={16} /> הסתר ביקורות</>
+                          ) : (
+                            <><ChevronDown size={16} /> הצג עוד {allReviews.length - 3} ביקורות</>
+                          )}
+                        </button>
                       </div>
-                      {activeFaq === i ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-                    </button>
-                    {activeFaq === i && (
-                      <div className="px-5 pb-4 pr-16 text-white/55 text-sm leading-relaxed">{item.a}</div>
                     )}
                   </div>
-                ))}
+                );
+              })()}
+            </section>
+
+            {/* FAQ */}
+            <section id="faq" className="max-w-4xl mx-auto space-y-10">
+              <div className="text-center space-y-4">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full"
+                  style={{ background: 'rgba(200,16,46,0.1)', border: '1px solid rgba(200,16,46,0.25)' }}>
+                  <HelpCircle size={13} className="text-brand-red" />
+                  <span className="text-[10px] font-black tracking-[0.2em] uppercase text-brand-red">שאלות נפוצות</span>
+                </div>
+                <h2 className="text-4xl md:text-5xl font-black text-white">שאלות <span className="text-brand-red">נפוצות</span></h2>
+                <p className="text-white/45 text-base">כל מה שצריך לדעת על תהליך הפרסום והמכירה</p>
               </div>
-              {!showAllFaqs && t.faqs.length > 3 && (
+
+              <div className="space-y-2.5">
+                {t.faqs.slice(0, showAllReviews ? t.faqs.length : 4).map((item, i) => {
+                  const isOpen = activeFaq === i;
+                  return (
+                    <div key={i}
+                      className="rounded-2xl overflow-hidden transition-all duration-200"
+                      style={{
+                        background: isOpen
+                          ? 'linear-gradient(135deg, rgba(200,16,46,0.08) 0%, rgba(10,10,14,0.98) 100%)'
+                          : 'rgba(255,255,255,0.03)',
+                        border: isOpen
+                          ? '1px solid rgba(200,16,46,0.25)'
+                          : '1px solid rgba(255,255,255,0.07)',
+                      }}>
+                      <button
+                        onClick={() => setActiveFaq(isOpen ? null : i)}
+                        className="w-full px-5 py-4 flex items-center gap-4 text-right transition-colors hover:bg-white/3"
+                      >
+                        <div className="w-8 h-8 rounded-xl flex items-center justify-center font-black text-xs shrink-0 transition-all"
+                          style={{
+                            background: isOpen ? 'linear-gradient(135deg, #c8102e, #a50d25)' : 'rgba(255,255,255,0.06)',
+                            color: isOpen ? 'white' : 'rgba(255,255,255,0.4)',
+                            border: isOpen ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                          }}>
+                          {i + 1}
+                        </div>
+                        <span className="flex-1 font-bold text-sm md:text-base text-right"
+                          style={{ color: isOpen ? 'white' : 'rgba(255,255,255,0.8)' }}>
+                          {item.q}
+                        </span>
+                        <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-all"
+                          style={{
+                            background: isOpen ? 'rgba(200,16,46,0.15)' : 'rgba(255,255,255,0.05)',
+                            border: isOpen ? '1px solid rgba(200,16,46,0.3)' : '1px solid rgba(255,255,255,0.08)',
+                          }}>
+                          <motion.div
+                            animate={{ rotate: isOpen ? 180 : 0 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <ChevronDown size={14} style={{ color: isOpen ? '#c8102e' : 'rgba(255,255,255,0.4)' }} />
+                          </motion.div>
+                        </div>
+                      </button>
+
+                      <AnimatePresence initial={false}>
+                        {isOpen && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.22 }}
+                            className="overflow-hidden"
+                          >
+                            <div className="px-5 pb-5 pr-[68px]">
+                              <div className="h-px mb-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(200,16,46,0.2), transparent)' }} />
+                              <p className="text-white/55 text-sm leading-relaxed">{item.a}</p>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {t.faqs.length > 4 && (
                 <div className="text-center">
-                  <button onClick={() => setShowAllFaqs(true)} className="px-6 py-3 bg-white/8 rounded-xl font-black text-sm border border-white/15 hover:bg-white/12 transition-all">
-                    הצג את כל השאלות
+                  <button
+                    onClick={() => setShowAllReviews(v => !v)}
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-black text-sm border transition-all"
+                    style={{
+                      background: showAllReviews ? 'rgba(200,16,46,0.1)' : 'rgba(255,255,255,0.05)',
+                      border: showAllReviews ? '1px solid rgba(200,16,46,0.3)' : '1px solid rgba(255,255,255,0.1)',
+                      color: showAllReviews ? '#c8102e' : 'rgba(255,255,255,0.6)',
+                    }}
+                  >
+                    {showAllReviews
+                      ? <><ChevronUp size={15} /> הסתר שאלות</>
+                      : <><ChevronDown size={15} /> הצג את כל {t.faqs.length} השאלות</>
+                    }
                   </button>
                 </div>
               )}
