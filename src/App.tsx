@@ -68,7 +68,11 @@ import {
   Zap as ZapIcon,
   Rocket as RocketIcon,
   Bus,
-  ChevronLeft
+  ChevronLeft,
+  Github,
+  MessageCircle,
+  Music,
+  ThumbsUp as ThumbsUpIcon
 } from 'lucide-react';
 import { translations, Language } from './translations';
 
@@ -405,7 +409,7 @@ const CardBackPanel = ({
   pkg: Package;
   details: { title: string; content: string };
   color: string;
-  badge: string;
+  badge: React.ReactNode;
   onSelect: (p: Package) => void;
   onBack: () => void;
 }) => {
@@ -442,7 +446,7 @@ const CardBackPanel = ({
       <div className="shrink-0 flex items-center justify-between gap-2 px-4 pt-4 pb-3"
         style={{ borderBottom: `1px solid ${color}20`, background: `${color}0a` }}>
         <div className="flex items-center gap-2 min-w-0">
-          <span className="text-2xl shrink-0">{badge}</span>
+          <span className="text-2xl shrink-0" style={{ color }}>{badge}</span>
           <div className="min-w-0">
             <p className="text-[13px] font-black text-white truncate leading-tight">{pkg.name}</p>
             <p className="text-[9px] font-bold mt-[1px]" style={{ color: `${color}aa` }}>מה כלול בחבילה</p>
@@ -656,16 +660,16 @@ const packageDetails: Record<string, { title: string; content: string }> = {
 };
 
 // ============================================================
-// PACKAGE CARD (Basic, Pro, Premium)
+// PACKAGE CARD (Basic, Pro, Premium) مع أيقونات محسنة
 // ============================================================
 const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
   const t = translations[lang];
   const [showBack, setShowBack] = useState(false);
 
   const tierConfig = {
-    basic:   { color: '#94a3b8', badge: '🚀', gradient: 'linear-gradient(145deg, #13151b 0%, #0e1014 100%)', glow: 'rgba(148,163,184,0.12)' },
-    pro:     { color: '#c8102e', badge: '🔥', gradient: 'linear-gradient(145deg, #1a0a0d 0%, #110508 100%)', glow: 'rgba(200,16,46,0.2)' },
-    premium: { color: '#c8102e', badge: '💎', gradient: 'linear-gradient(145deg, #1a0a0d 0%, #0f0406 100%)', glow: 'rgba(200,16,46,0.25)' },
+    basic:   { color: '#94a3b8', badge: <Rocket size={20} />, gradient: 'linear-gradient(145deg, #13151b 0%, #0e1014 100%)', glow: 'rgba(148,163,184,0.12)' },
+    pro:     { color: '#c8102e', badge: <Flame size={20} />, gradient: 'linear-gradient(145deg, #1a0a0d 0%, #110508 100%)', glow: 'rgba(200,16,46,0.2)' },
+    premium: { color: '#c8102e', badge: <Gem size={20} />, gradient: 'linear-gradient(145deg, #1a0a0d 0%, #0f0406 100%)', glow: 'rgba(200,16,46,0.25)' },
   };
   const cfg = tierConfig[pkg.id as keyof typeof tierConfig] || tierConfig.basic;
   const isPro = pkg.id === 'pro';
@@ -723,7 +727,7 @@ const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
                     border: `1.5px solid ${cfg.color}35`,
                     boxShadow: `0 6px 20px ${cfg.color}20`,
                   }}>
-                  {cfg.badge}
+                  <span style={{ color: cfg.color }}>{cfg.badge}</span>
                 </div>
                 <div>
                   <h3 className="text-[20px] font-black tracking-tight leading-none"
@@ -821,7 +825,7 @@ const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
             pkg={pkg}
             details={packageDetails[pkg.id] || { title: pkg.name, content: pkg.features.join('\n') }}
             color={tierConfig[pkg.id as keyof typeof tierConfig]?.color || '#94a3b8'}
-            badge={tierConfig[pkg.id as keyof typeof tierConfig]?.badge || '🚀'}
+            badge={tierConfig[pkg.id as keyof typeof tierConfig]?.badge || <Rocket size={20} />}
             onSelect={onSelect}
             onBack={() => setShowBack(false)}
           />
@@ -874,7 +878,7 @@ const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
               <div className="flex items-center gap-3">
                 <div className="w-14 h-14 rounded-xl flex items-center justify-center text-3xl shrink-0"
                   style={{ background: 'linear-gradient(135deg, rgba(212,175,55,0.25), rgba(212,175,55,0.08))', border: '1.5px solid rgba(212,175,55,0.4)', boxShadow: '0 6px 20px rgba(212,175,55,0.2)' }}>
-                  👑
+                  <Crown size={28} className="text-amber-400" />
                 </div>
                 <div>
                   <h3 className="text-[22px] font-black leading-none"
@@ -935,7 +939,7 @@ const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
             </div>
           </motion.div>
         ) : (
-          <CardBackPanel pkg={pkg} details={packageDetails.vip} color={color} badge="👑" onSelect={onSelect} onBack={() => setShowBack(false)} />
+          <CardBackPanel pkg={pkg} details={packageDetails.vip} color={color} badge={<Crown size={20} />} onSelect={onSelect} onBack={() => setShowBack(false)} />
         )}
       </AnimatePresence>
     </div>
@@ -974,7 +978,8 @@ const DuoDealPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pac
             <div className="relative z-10 p-5 flex flex-col h-full gap-3.5 pt-5">
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <div className="flex items-center gap-1.5 bg-purple-900/40 rounded-full px-3 py-1.5 border border-purple-500/30">
-                  <span className="text-sm">🚗🚗</span>
+                  <Car size={12} className="text-purple-400" />
+                  <Car size={12} className="text-purple-400" />
                   <span className="text-[9px] font-black uppercase tracking-wider text-purple-300">DUO DEAL</span>
                 </div>
                 <div className="bg-emerald-500/15 border border-emerald-500/30 rounded-full px-2.5 py-1">
@@ -985,7 +990,7 @@ const DuoDealPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pac
               <div className="flex items-center gap-3">
                 <div className="w-14 h-14 rounded-xl flex items-center justify-center text-3xl shrink-0"
                   style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.25), rgba(139,92,246,0.08))', border: '1.5px solid rgba(139,92,246,0.4)', boxShadow: '0 6px 20px rgba(139,92,246,0.2)' }}>
-                  🚗
+                  <Car size={28} className="text-purple-400" />
                 </div>
                 <div>
                   <h3 className="text-[22px] font-black leading-none"
@@ -1046,7 +1051,7 @@ const DuoDealPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pac
             </div>
           </motion.div>
         ) : (
-          <CardBackPanel pkg={pkg} details={packageDetails.duo} color={color} badge="🚗🚗" onSelect={onSelect} onBack={() => setShowBack(false)} />
+          <CardBackPanel pkg={pkg} details={packageDetails.duo} color={color} badge={<Car size={20} />} onSelect={onSelect} onBack={() => setShowBack(false)} />
         )}
       </AnimatePresence>
     </div>
@@ -1060,7 +1065,7 @@ const EquipmentPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: P
   const [showBack, setShowBack] = useState(false);
   const isHeavy = pkg.id === 'equipment-heavy';
   const color = isHeavy ? '#ea580c' : '#94a3b8';
-  const badge = isHeavy ? '🚜' : '🔧';
+  const badge = isHeavy ? <Truck size={20} /> : <Wrench size={20} />;
 
   return (
     <div className="relative w-full h-full" style={{ borderRadius: '1.25rem' }}>
@@ -1100,7 +1105,7 @@ const EquipmentPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: P
                   border: `1.5px solid ${color}35`,
                   boxShadow: `0 6px 20px ${color}20`,
                 }}>
-                {badge}
+                <span style={{ color }}>{badge}</span>
               </div>
               <div>
                 <div className="text-[9px] font-black uppercase tracking-[0.15em]" style={{ color }}>{isHeavy ? 'ציוד כבד' : 'ציוד קל'}</div>
@@ -1196,10 +1201,10 @@ const TransportPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: P
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0"
                 style={{ background: 'linear-gradient(135deg, rgba(14,165,233,0.25), rgba(14,165,233,0.08))', border: '1.5px solid rgba(14,165,233,0.4)', boxShadow: '0 6px 20px rgba(14,165,233,0.2)' }}>
-                🚌
+                <Bus size={28} style={{ color }} />
               </div>
               <div>
-                <div className="text-[9px] font-black uppercase tracking-[0.15em] text-sky-400">תחבורה והסעות</div>
+                <div className="text-[9px] font-black uppercase tracking-[0.15em]" style={{ color }}>תחבורה והסעות</div>
                 <h3 className="text-[16px] font-black text-white leading-tight mt-0.5">{pkg.name}</h3>
               </div>
               <div className="mr-auto text-right shrink-0">
@@ -1244,7 +1249,7 @@ const TransportPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: P
             </div>
           </motion.div>
         ) : (
-          <CardBackPanel pkg={pkg} details={packageDetails.transport} color={color} badge="🚌" onSelect={onSelect} onBack={() => setShowBack(false)} />
+          <CardBackPanel pkg={pkg} details={packageDetails.transport} color={color} badge={<Bus size={20} />} onSelect={onSelect} onBack={() => setShowBack(false)} />
         )}
       </AnimatePresence>
     </div>
@@ -1347,7 +1352,7 @@ const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pa
             </div>
           </motion.div>
         ) : (
-          <CardBackPanel pkg={pkg} details={packageDetails.business} color={color} badge="🏢" onSelect={onSelect} onBack={() => setShowBack(false)} />
+          <CardBackPanel pkg={pkg} details={packageDetails.business} color={color} badge={<Building2 size={20} />} onSelect={onSelect} onBack={() => setShowBack(false)} />
         )}
       </AnimatePresence>
     </div>
@@ -1355,14 +1360,13 @@ const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pa
 };
 
 // ============================================================
-// MOBILE SWIPER - نسخة محسّنة باستخدام CSS Scroll Snap
+// MOBILE SWIPER - اتجاه RTL طبيعي
 // ============================================================
 const MobileSwiper = ({ children, cardHeight = 500 }: { children: React.ReactNode[]; cardHeight?: number }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const count = React.Children.count(children);
 
-  // التمرير إلى شريحة محددة
   const scrollTo = (index: number) => {
     if (!scrollRef.current) return;
     const container = scrollRef.current;
@@ -1374,7 +1378,6 @@ const MobileSwiper = ({ children, cardHeight = 500 }: { children: React.ReactNod
     container.scrollTo({ left: scrollPosition, behavior: 'smooth' });
   };
 
-  // تحديث المؤشر عند التمرير
   const handleScroll = () => {
     if (!scrollRef.current) return;
     const container = scrollRef.current;
@@ -1397,7 +1400,6 @@ const MobileSwiper = ({ children, cardHeight = 500 }: { children: React.ReactNod
 
   return (
     <div className="relative">
-      {/* حاوية التمرير - اتجاه LTR لضمان عمل scrollLeft بشكل صحيح */}
       <div
         ref={scrollRef}
         className="flex gap-3 overflow-x-auto snap-x snap-mandatory no-scrollbar"
@@ -1405,7 +1407,7 @@ const MobileSwiper = ({ children, cardHeight = 500 }: { children: React.ReactNod
           paddingLeft: '12px',
           paddingRight: '12px',
           scrollSnapType: 'x mandatory',
-          direction: 'ltr', // إجبار الاتجاه على LTR
+          direction: 'rtl', // اتجاه RTL طبيعي
         }}
       >
         {React.Children.map(children, (child, i) => (
@@ -1415,15 +1417,13 @@ const MobileSwiper = ({ children, cardHeight = 500 }: { children: React.ReactNod
             style={{
               width: '85%',
               height: cardHeight,
-              direction: 'rtl', // إعادة RTL للمحتوى
+              direction: 'rtl', // المحتوى يبقى RTL
             }}
           >
             {child}
           </div>
         ))}
       </div>
-
-      {/* النقاط الدالة */}
       <div className="flex items-center justify-center gap-2 mt-5">
         {Array.from({ length: count }).map((_, i) => (
           <button
@@ -1437,8 +1437,6 @@ const MobileSwiper = ({ children, cardHeight = 500 }: { children: React.ReactNod
           />
         ))}
       </div>
-
-      {/* تلميح التمرير (يختفي بعد فترة) */}
       <motion.div
         initial={{ opacity: 1 }}
         animate={{ opacity: 0 }}
@@ -1471,7 +1469,6 @@ const BitLogo = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) => {
   );
 };
 
-// --- PayBox Logo ---
 const PayBoxLogo = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) => {
   const h = size === 'sm' ? 24 : size === 'lg' ? 36 : 28;
   const fontSize = size === 'sm' ? 10 : size === 'lg' ? 14 : 12;
@@ -1586,15 +1583,15 @@ const ChangePackageModal = ({
   const allPackages = [...packages, vipPackage, duoPackage, ...equipmentPackages, transportPackage, businessPackage];
 
   const getPackageStyle = (pkg: Package) => {
-    if (pkg.id === 'vip') return { border: 'border-amber-500/40', bg: 'bg-amber-500/10', badge: '👑', color: 'text-amber-400', activeBorder: 'border-amber-400' };
-    if (pkg.id === 'duo') return { border: 'border-purple-500/40', bg: 'bg-purple-500/10', badge: '🚗🚗', color: 'text-purple-400', activeBorder: 'border-purple-400' };
-    if (pkg.id === 'business') return { border: 'border-blue-500/40', bg: 'bg-blue-500/10', badge: '🏢', color: 'text-blue-400', activeBorder: 'border-blue-400' };
-    if (pkg.id === 'equipment-heavy') return { border: 'border-orange-500/40', bg: 'bg-orange-500/10', badge: '🚜', color: 'text-orange-400', activeBorder: 'border-orange-400' };
-    if (pkg.id === 'equipment-light') return { border: 'border-slate-500/40', bg: 'bg-slate-500/10', badge: '🔧', color: 'text-slate-400', activeBorder: 'border-slate-400' };
-    if (pkg.id === 'transport') return { border: 'border-sky-500/40', bg: 'bg-sky-500/10', badge: '🚌', color: 'text-sky-400', activeBorder: 'border-sky-400' };
-    if (pkg.id === 'premium') return { border: 'border-brand-red/40', bg: 'bg-brand-red/10', badge: '💎', color: 'text-brand-red', activeBorder: 'border-brand-red' };
-    if (pkg.id === 'pro') return { border: 'border-brand-red/30', bg: 'bg-brand-red/5', badge: '⭐', color: 'text-brand-red', activeBorder: 'border-brand-red' };
-    return { border: 'border-white/10', bg: 'bg-white/5', badge: '🚀', color: 'text-white/60', activeBorder: 'border-white/40' };
+    if (pkg.id === 'vip') return { border: 'border-amber-500/40', bg: 'bg-amber-500/10', badge: <Crown size={16} />, color: 'text-amber-400', activeBorder: 'border-amber-400' };
+    if (pkg.id === 'duo') return { border: 'border-purple-500/40', bg: 'bg-purple-500/10', badge: <Car size={16} />, color: 'text-purple-400', activeBorder: 'border-purple-400' };
+    if (pkg.id === 'business') return { border: 'border-blue-500/40', bg: 'bg-blue-500/10', badge: <Building2 size={16} />, color: 'text-blue-400', activeBorder: 'border-blue-400' };
+    if (pkg.id === 'equipment-heavy') return { border: 'border-orange-500/40', bg: 'bg-orange-500/10', badge: <Truck size={16} />, color: 'text-orange-400', activeBorder: 'border-orange-400' };
+    if (pkg.id === 'equipment-light') return { border: 'border-slate-500/40', bg: 'bg-slate-500/10', badge: <Wrench size={16} />, color: 'text-slate-400', activeBorder: 'border-slate-400' };
+    if (pkg.id === 'transport') return { border: 'border-sky-500/40', bg: 'bg-sky-500/10', badge: <Bus size={16} />, color: 'text-sky-400', activeBorder: 'border-sky-400' };
+    if (pkg.id === 'premium') return { border: 'border-brand-red/40', bg: 'bg-brand-red/10', badge: <Gem size={16} />, color: 'text-brand-red', activeBorder: 'border-brand-red' };
+    if (pkg.id === 'pro') return { border: 'border-brand-red/30', bg: 'bg-brand-red/5', badge: <Flame size={16} />, color: 'text-brand-red', activeBorder: 'border-brand-red' };
+    return { border: 'border-white/10', bg: 'bg-white/5', badge: <Rocket size={16} />, color: 'text-white/60', activeBorder: 'border-white/40' };
   };
 
   return (
@@ -1625,7 +1622,9 @@ const ChangePackageModal = ({
                 return (
                   <button key={pkg.id} onClick={() => { onSelect(pkg); onClose(); }}
                     className={`flex items-center gap-3 p-3.5 rounded-xl border-2 transition-all text-right hover:scale-[1.02] active:scale-[0.98] ${isActive ? `${style.activeBorder} ${style.bg}` : `${style.border} bg-white/2 hover:bg-white/4`}`}>
-                    <div className={`w-10 h-10 rounded-xl ${style.bg} border ${style.border} flex items-center justify-center text-lg shrink-0`}>{style.badge}</div>
+                    <div className={`w-10 h-10 rounded-xl ${style.bg} border ${style.border} flex items-center justify-center text-lg shrink-0`}>
+                      <span style={{ color: style.color }}>{style.badge}</span>
+                    </div>
                     <div className="flex-1 min-w-0 text-right">
                       <div className="flex items-center gap-2 justify-end">
                         {isActive && <span className="text-[8px] font-black px-1.5 py-0.5 rounded-full bg-white/10 text-white/60">נוכחית</span>}
@@ -1655,23 +1654,39 @@ const CarDetailsForm = ({ formData, setFormData, onNext, selectedPackage, onChan
 
   return (
     <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ type: 'spring', stiffness: 300 }} className="space-y-5">
-      <motion.div className="flex items-center justify-between p-3 rounded-xl border border-white/8 bg-white/3" whileHover={{ scale: 1.02 }}>
-        <div className="flex items-center gap-2">
-          <motion.div className="w-8 h-8 rounded-lg bg-brand-red/10 flex items-center justify-center" animate={{ rotate: [0, 10, -10, 0] }} transition={{ duration: 5, repeat: Infinity }}>
-            {selectedPackage?.id === 'vip' ? <Crown size={14} className="text-amber-400" /> :
-             selectedPackage?.id === 'duo' ? <Car size={14} className="text-purple-400" /> :
-             selectedPackage?.id === 'business' ? <Building2 size={14} className="text-blue-400" /> :
-             selectedPackage?.id === 'transport' ? <Bus size={14} className="text-sky-400" /> :
-             <Car size={14} className="text-brand-red" />}
+      <motion.div 
+        className="flex items-center justify-between p-4 rounded-xl border border-white/8 bg-white/3 hover:bg-white/5 transition-colors"
+        whileHover={{ scale: 1.02 }}
+      >
+        <div className="flex items-center gap-3">
+          <motion.div 
+            className="w-10 h-10 rounded-lg bg-brand-red/10 flex items-center justify-center"
+            animate={{ rotate: [0, 10, -10, 0] }} 
+            transition={{ duration: 5, repeat: Infinity }}
+          >
+            {selectedPackage?.id === 'vip' ? <Crown size={16} className="text-amber-400" /> :
+             selectedPackage?.id === 'duo' ? <Car size={16} className="text-purple-400" /> :
+             selectedPackage?.id === 'business' ? <Building2 size={16} className="text-blue-400" /> :
+             selectedPackage?.id === 'transport' ? <Bus size={16} className="text-sky-400" /> :
+             selectedPackage?.id === 'equipment-heavy' ? <Truck size={16} className="text-orange-400" /> :
+             selectedPackage?.id === 'equipment-light' ? <Wrench size={16} className="text-slate-400" /> :
+             selectedPackage?.id === 'premium' ? <Gem size={16} className="text-brand-red" /> :
+             selectedPackage?.id === 'pro' ? <Flame size={16} className="text-brand-red" /> :
+             <Rocket size={16} className="text-brand-red" />}
           </motion.div>
           <div>
             <div className="text-[9px] text-white/40">חבילה נבחרת</div>
-            <div className="text-xs font-black text-white">{selectedPackage?.name}</div>
+            <div className="text-sm font-black text-white">{selectedPackage?.name}</div>
           </div>
         </div>
-        <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={onChangePackage}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black border border-white/10 text-white/50 hover:text-white hover:border-white/25 hover:bg-white/5 transition-all">
-          <RefreshCw size={10} />החלף חבילה
+        <motion.button 
+          whileHover={{ scale: 1.05 }} 
+          whileTap={{ scale: 0.95 }} 
+          onClick={onChangePackage}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] font-black border border-white/10 text-white/70 hover:text-white hover:border-white/25 hover:bg-white/5 transition-all"
+        >
+          <RefreshCw size={12} className="text-brand-red" />
+          החלף חבילה
         </motion.button>
       </motion.div>
 
@@ -2281,28 +2296,51 @@ export default function App() {
               {/* PACKAGES SECTION */}
               <section id="packages" className="space-y-20">
                 {/* Main section header */}
-                <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center space-y-4">
+                <motion.div 
+                  initial={{ opacity: 0, y: 30 }} 
+                  whileInView={{ opacity: 1, y: 0 }} 
+                  viewport={{ once: true }} 
+                  transition={{ duration: 0.6 }}
+                  className="text-center space-y-4"
+                >
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.5 }}
+                    initial={{ opacity: 0, scale: 0.8 }} 
+                    whileInView={{ opacity: 1, scale: 1 }} 
+                    viewport={{ once: true }} 
+                    transition={{ duration: 0.5 }}
                     className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full"
-                    style={{ background: 'linear-gradient(135deg, rgba(200,16,46,0.15), rgba(200,16,46,0.05))', border: '1px solid rgba(200,16,46,0.3)', backdropFilter: 'blur(8px)' }}>
+                    style={{ background: 'linear-gradient(135deg, rgba(200,16,46,0.15), rgba(200,16,46,0.05))', border: '1px solid rgba(200,16,46,0.3)', backdropFilter: 'blur(8px)' }}
+                  >
                     <Sparkles size={14} className="text-brand-red" />
                     <span className="text-xs font-black tracking-[0.2em] uppercase text-brand-red">חבילות הפרסום שלנו</span>
                     <Sparkles size={14} className="text-brand-red" />
                   </motion.div>
                   <motion.h2
-                    initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }}
-                    className="text-4xl md:text-5xl font-black text-white">
+                    initial={{ opacity: 0, y: 15 }} 
+                    whileInView={{ opacity: 1, y: 0 }} 
+                    viewport={{ once: true }} 
+                    transition={{ delay: 0.1 }}
+                    className="text-4xl md:text-5xl font-black text-white"
+                  >
                     חבילות הפרסום שלנו
                   </motion.h2>
                   <motion.p
-                    initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.2 }}
-                    className="text-white/45 text-base max-w-2xl mx-auto">
+                    initial={{ opacity: 0 }} 
+                    whileInView={{ opacity: 1 }} 
+                    viewport={{ once: true }} 
+                    transition={{ delay: 0.2 }}
+                    className="text-white/45 text-base max-w-2xl mx-auto"
+                  >
                     בחר את המסלול המתאים ביותר עבורך
                   </motion.p>
                   <motion.div
-                    initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.3 }}
-                    className="mx-auto h-px w-32" style={{ background: 'linear-gradient(90deg, transparent, #c8102e, transparent)' }} />
+                    initial={{ scaleX: 0 }} 
+                    whileInView={{ scaleX: 1 }} 
+                    viewport={{ once: true }} 
+                    transition={{ duration: 0.8, delay: 0.3 }}
+                    className="mx-auto h-px w-32" 
+                    style={{ background: 'linear-gradient(90deg, transparent, #c8102e, transparent)' }} 
+                  />
                 </motion.div>
 
                 {/* ── REGULAR PACKAGES ── */}
@@ -2507,14 +2545,22 @@ export default function App() {
 
               {/* FOOTER */}
               <footer className="pb-10">
-                <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                <motion.div 
+                  initial={{ opacity: 0, y: 50 }} 
+                  whileInView={{ opacity: 1, y: 0 }} 
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
                   className="relative rounded-2xl overflow-hidden border border-white/8"
-                  style={{ background: 'linear-gradient(145deg, rgba(200,16,46,0.08) 0%, rgba(10,10,14,0.98) 60%, rgba(5,5,8,1) 100%)' }}>
+                  style={{ background: 'linear-gradient(145deg, rgba(200,16,46,0.08) 0%, rgba(10,10,14,0.98) 60%, rgba(5,5,8,1) 100%)' }}
+                >
                   <div className="h-px w-full bg-gradient-to-r from-transparent via-brand-red/50 to-transparent" />
                   <div className="relative z-10 p-10 space-y-10">
                     <div className="text-center space-y-4">
                       <div className="flex items-center justify-center gap-4">
-                        <motion.div className="p-3 bg-gradient-to-br from-brand-red to-red-700 rounded-xl shadow-xl shadow-brand-red/25" whileHover={{ rotate: 10, scale: 1.1 }}>
+                        <motion.div 
+                          whileHover={{ rotate: 10, scale: 1.1 }}
+                          className="p-3 bg-gradient-to-br from-brand-red to-red-700 rounded-xl shadow-xl shadow-brand-red/25"
+                        >
                           <Car size={24} className="text-white" />
                         </motion.div>
                         <div>
@@ -2529,21 +2575,35 @@ export default function App() {
 
                     <div>
                       <p className="text-center text-[10px] text-white/25 font-black uppercase tracking-[0.25em] mb-6">עקבו אחרינו</p>
-                      <div className="flex items-center justify-center gap-4 flex-wrap">
+                      <div className="flex items-center justify-center gap-3 flex-wrap">
                         {[
-                          { href: 'https://instagram.com/yougo.israel', label: 'Instagram', bg: 'linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045)', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke="white" strokeWidth="2"/><circle cx="12" cy="12" r="5" stroke="white" strokeWidth="2"/><circle cx="17.5" cy="6.5" r="1.5" fill="white"/></svg> },
-                          { href: 'https://facebook.com', label: 'Facebook', bg: 'linear-gradient(135deg, #1877f2, #1a6ee1)', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg> },
-                          { href: 'https://wa.me/972546980606', label: 'WhatsApp', bg: 'linear-gradient(135deg, #25d366, #128c7e)', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg> },
-                          { href: 'https://t.me/yougoisrael', label: 'Telegram', bg: 'linear-gradient(135deg, #0088cc, #006aaa)', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M22 2L15 22l-4-9-9-4 20-7z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg> },
-                          { href: 'mailto:contact@yougoisrael.com', label: 'Email', bg: 'linear-gradient(135deg, #c8102e, #a00d24)', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><polyline points="22,6 12,13 2,6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg> },
+                          { href: 'https://instagram.com/yougo.israel', icon: <Instagram size={18} />, label: 'Instagram', color: '#E4405F' },
+                          { href: 'https://facebook.com', icon: <Facebook size={18} />, label: 'Facebook', color: '#1877F2' },
+                          { href: 'https://wa.me/972546980606', icon: <MessageCircle size={18} />, label: 'WhatsApp', color: '#25D366' },
+                          { href: 'https://t.me/yougoisrael', icon: <Send size={18} />, label: 'Telegram', color: '#0088cc' },
+                          { href: 'https://x.com/yougoisrael', icon: <Twitter size={18} />, label: 'X', color: '#000000' },
+                          { href: 'https://youtube.com/@yougoisrael', icon: <Youtube size={18} />, label: 'YouTube', color: '#FF0000' },
+                          { href: 'https://threads.net/@yougoisrael', icon: <MessageSquare size={18} />, label: 'Threads', color: '#000000' },
                         ].map((s, i) => (
-                          <a key={i} href={s.href} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2 group">
-                            <div className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-200 group-hover:scale-110 group-hover:shadow-lg"
-                              style={{ background: s.bg, boxShadow: '0 2px 10px rgba(0,0,0,0.25)' }}>
+                          <motion.a
+                            key={i}
+                            href={s.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            whileHover={{ scale: 1.15, y: -3 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="relative group"
+                          >
+                            <div 
+                              className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 border-2 border-white/10 bg-white/5 backdrop-blur-sm hover:border-white/30 hover:bg-white/10"
+                              style={{ color: s.color }}
+                            >
                               {s.icon}
                             </div>
-                            <span className="text-[9px] font-black text-white/30 group-hover:text-white/60 transition-colors">{s.label}</span>
-                          </a>
+                            <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[8px] font-black text-white/30 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                              {s.label}
+                            </span>
+                          </motion.a>
                         ))}
                       </div>
                     </div>
@@ -2552,24 +2612,30 @@ export default function App() {
 
                     <div className="flex flex-wrap justify-center gap-3">
                       {[
-                        { icon: <FileText size={14} />, label: 'תקנון', onClick: () => setModalContent({ title: 'תקנון שימוש – YOUGO ISRAEL', content: `1. כללי\nYOUGO ISRAEL הינה פלטפורמת שיווק דיגיטלי המתמחה בפרסום רכבים.\n\n2. השירות\nהחברה מספקת שירותי פרסום ברשתות חברתיות. החברה אינה צד לעסקת המכירה.\n\n3. תשלום\nהתשלום מבוצע מראש. לאחר אישור התשלום יחל תהליך הפרסום תוך 24-48 שעות.\n\n4. אחריות הלקוח\nהלקוח מצהיר כי כל המידע שמסר הוא נכון ומדויק.\n\n5. קניין רוחני\nכל התוכן שיוצר על ידי YOUGO ISRAEL שייך לחברה.` }) },
-                        { icon: <Lock size={14} />, label: 'פרטיות', onClick: () => setModalContent({ title: 'מדיניות פרטיות – YOUGO ISRAEL', content: `1. איסוף מידע\nYOUGO ISRAEL אוספת מידע אישי אך ורק לצורך מתן השירות המבוקש.\n\n2. שימוש במידע\nהמידע משמש אך ורק לצורך יצירת המודעה הפרסומית.\n\n3. אבטחת מידע\nהחברה נוקטת בצעדי אבטחה מתקדמים להגנה על המידע.` }) },
-                        { icon: <Info size={14} />, label: 'מי אנחנו', onClick: () => setModalContent({ title: 'אודות YOUGO ISRAEL', content: `YOUGO ISRAEL – פלטפורמת השיווק הדיגיטלי המובילה בישראל למכירת רכבים.\n\nהסיפור שלנו\nYOUGO ISRAEL נוסדה מתוך חזון אחד פשוט: לשנות את הדרך שבה ישראלים מוכרים רכבים.\n\nמה שמבדיל אותנו\n• 50,000+ עוקבים פעילים ומעורבים\n• צוות מקצועי של צלמים, מעצבים ואנשי שיווק\n• 98% שביעות רצון לקוחות` }) },
-                        { icon: <LayoutDashboard size={14} />, label: 'ניהול', onClick: () => setView('admin-login') },
+                        { icon: <FileText size={14} />, label: 'תקנון', content: `1. כללי\nYOUGO ISRAEL הינה פלטפורמת שיווק דיגיטלי המתמחה בפרסום רכבים.\n\n2. השירות\nהחברה מספקת שירותי פרסום ברשתות חברתיות. החברה אינה צד לעסקת המכירה.\n\n3. תשלום\nהתשלום מבוצע מראש. לאחר אישור התשלום יחל תהליך הפרסום תוך 24-48 שעות.\n\n4. אחריות הלקוח\nהלקוח מצהיר כי כל המידע שמסר הוא נכון ומדויק.\n\n5. קניין רוחני\nכל התוכן שיוצר על ידי YOUGO ISRAEL שייך לחברה.` },
+                        { icon: <Lock size={14} />, label: 'פרטיות', content: `1. איסוף מידע\nYOUGO ISRAEL אוספת מידע אישי אך ורק לצורך מתן השירות המבוקש.\n\n2. שימוש במידע\nהמידע משמש אך ורק לצורך יצירת המודעה הפרסומית.\n\n3. אבטחת מידע\nהחברה נוקטת בצעדי אבטחה מתקדמים להגנה על המידע.` },
+                        { icon: <Info size={14} />, label: 'מי אנחנו', content: `YOUGO ISRAEL – פלטפורמת השיווק הדיגיטלי המובילה בישראל למכירת רכבים.\n\nהסיפור שלנו\nYOUGO ISRAEL נוסדה מתוך חזון אחד פשוט: לשנות את הדרך שבה ישראלים מוכרים רכבים.\n\nמה שמבדיל אותנו\n• 50,000+ עוקבים פעילים ומעורבים\n• צוות מקצועי של צלמים, מעצבים ואנשי שיווק\n• 98% שביעות רצון לקוחות` },
+                        { icon: <LayoutDashboard size={14} />, label: 'ניהול', onClick: () => setView('admin-login'), content: '' },
                       ].map((link, i) => (
-                        <motion.button key={i} whileHover={{ y: -2, scale: 1.04 }} whileTap={{ scale: 0.97 }} onClick={link.onClick}
-                          className="flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs font-bold transition-all"
-                          style={{ border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.55)' }}
-                          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(200,16,46,0.12)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(200,16,46,0.35)'; (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.85)'; }}
-                          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.1)'; (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.55)'; }}>
-                          <span style={{ color: 'rgba(200,16,46,0.7)' }}>{link.icon}</span>
-                          <span>{link.label}</span>
+                        <motion.button
+                          key={i}
+                          whileHover={{ y: -3, scale: 1.05 }}
+                          whileTap={{ scale: 0.97 }}
+                          onClick={link.onClick ? link.onClick : () => setModalContent({ title: link.label, content: link.content })}
+                          className="relative group px-5 py-2.5 rounded-xl text-xs font-bold transition-all border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20"
+                        >
+                          <span className="flex items-center gap-2">
+                            <span className="text-brand-red/70">{link.icon}</span>
+                            <span className="text-white/70 group-hover:text-white">{link.label}</span>
+                          </span>
                         </motion.button>
                       ))}
                     </div>
 
                     <div className="text-center space-y-1 pt-4 border-t border-white/8">
-                      <div className="text-white/15 text-[10px] font-bold tracking-wider">© {new Date().getFullYear()} YOUGO ISRAEL LTD · כל הזכויות שמורות</div>
+                      <div className="text-white/15 text-[10px] font-bold tracking-wider">
+                        © {new Date().getFullYear()} YOUGO ISRAEL LTD · כל הזכויות שמורות
+                      </div>
                     </div>
                   </div>
                 </motion.div>
@@ -2579,10 +2645,20 @@ export default function App() {
 
           {/* Booking */}
           {view === 'booking' && (
-            <motion.div initial={{ opacity: 0, y: -60 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -30 }} transition={{ type: 'spring', stiffness: 200 }} className="max-w-2xl mx-auto space-y-6">
+            <motion.div 
+              initial={{ opacity: 0, y: -60 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              exit={{ opacity: 0, y: -30 }} 
+              transition={{ type: 'spring', stiffness: 200 }} 
+              className="max-w-2xl mx-auto space-y-6"
+            >
               <div className="flex items-center gap-3">
-                <motion.button whileHover={{ x: -5, scale: 1.05 }} whileTap={{ scale: 0.96 }} onClick={() => setView('home')}
-                  className="flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-black border border-brand-red/30 bg-brand-red/10 hover:bg-brand-red hover:border-brand-red transition-all text-brand-red hover:text-white">
+                <motion.button 
+                  whileHover={{ x: -5, scale: 1.05 }} 
+                  whileTap={{ scale: 0.96 }} 
+                  onClick={() => setView('home')}
+                  className="flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-black border border-brand-red/30 bg-brand-red/10 hover:bg-brand-red hover:border-brand-red transition-all text-brand-red hover:text-white"
+                >
                   <ArrowLeft size={16} /><span>חזרה לחבילות</span>
                 </motion.button>
                 <div className="h-5 w-px bg-white/20" />
@@ -2592,9 +2668,14 @@ export default function App() {
               <div className="flex items-center justify-center gap-3 mb-4">
                 {[1, 2].map((step) => (
                   <React.Fragment key={step}>
-                    <motion.div className={`flex items-center gap-2 ${bookingStep >= step ? 'text-brand-red' : 'text-white/30'}`}
-                      animate={bookingStep >= step ? { scale: [1, 1.1, 1] } : {}} transition={{ duration: 0.5 }}>
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm border-2 ${bookingStep >= step ? 'border-brand-red bg-brand-red/20' : 'border-white/20'}`}>{step}</div>
+                    <motion.div 
+                      className={`flex items-center gap-2 ${bookingStep >= step ? 'text-brand-red' : 'text-white/30'}`}
+                      animate={bookingStep >= step ? { scale: [1, 1.1, 1] } : {}} 
+                      transition={{ duration: 0.5 }}
+                    >
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm border-2 ${bookingStep >= step ? 'border-brand-red bg-brand-red/20' : 'border-white/20'}`}>
+                        {step}
+                      </div>
                       <span className="text-sm font-black">{step === 1 ? 'פרטי רכב' : 'תשלום'}</span>
                     </motion.div>
                     {step === 1 && <div className={`w-16 h-px ${bookingStep >= 2 ? 'bg-brand-red' : 'bg-white/20'}`} />}
