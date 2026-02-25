@@ -6,7 +6,7 @@ import {
   Users, 
   Calendar, 
   ChevronRight, 
-  Globe, 
+  facebook, 
   ArrowLeft,
   Upload,
   Camera,
