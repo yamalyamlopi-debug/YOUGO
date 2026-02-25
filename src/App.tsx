@@ -72,7 +72,9 @@ import {
 } from 'lucide-react';
 import { translations, Language } from './translations';
 
-// تعريف مكون SectionHeader المفقود
+// ============================================================
+// SECTION HEADER COMPONENT (كان مفقوداً)
+// ============================================================
 const SectionHeader = ({ 
   eyebrow, 
   eyebrowIcon, 
@@ -177,8 +179,7 @@ interface Order {
   created_at: string;
 }
 
-// --- Components ---
-
+// --- Navbar ---
 const Navbar = ({ lang, setLang, isAdmin, onLogout, siteSettings, setView }: { lang: Language, setLang: (l: Language) => void, isAdmin?: boolean, onLogout?: () => void, siteSettings: any, setView: (v: string) => void }) => {
   const t = translations[lang];
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -347,6 +348,7 @@ interface PackageCardProps {
   key?: string;
 }
 
+// --- Modal ---
 const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose: () => void, title: string, children: React.ReactNode }) => {
   const content = typeof children === 'string' ? children : '';
   return (
@@ -395,11 +397,7 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose:
 };
 
 // ============================================================
-// FLIP CARD BACK — FIXED back button, iron-clad containment
-// ============================================================
-
-// ============================================================
-// CARD BACK PANEL — shown via AnimatePresence (no CSS 3D flip)
+// CARD BACK PANEL
 // ============================================================
 const CardBackPanel = ({
   pkg, details, color, badge, onSelect, onBack
@@ -658,7 +656,7 @@ const packageDetails: Record<string, { title: string; content: string }> = {
 };
 
 // ============================================================
-// PACKAGE CARD – AnimatePresence based flip (works inside swiper)
+// PACKAGE CARD (Basic, Pro, Premium)
 // ============================================================
 const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
   const t = translations[lang];
@@ -1357,7 +1355,7 @@ const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pa
 };
 
 // ============================================================
-// MOBILE SWIPER — smooth, professional drag/swipe using framer-motion
+// MOBILE SWIPER (Professional, smooth)
 // ============================================================
 const MobileSwiper = ({ children, cardHeight = 500 }: { children: React.ReactNode[]; cardHeight?: number }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -1419,7 +1417,7 @@ const MobileSwiper = ({ children, cardHeight = 500 }: { children: React.ReactNod
       <div ref={containerRef} style={{ overflow: 'hidden', paddingLeft: '12px', paddingRight: '12px' }}>
         <motion.div
           drag="x"
-          dragConstraints={containerRef} // automatically constrain to container bounds
+          dragConstraints={containerRef}
           dragElastic={0.1}
           dragMomentum={false}
           animate={controls}
@@ -1478,7 +1476,7 @@ const MobileSwiper = ({ children, cardHeight = 500 }: { children: React.ReactNod
   );
 };
 
-// --- Bit / PayBox Logo ---
+// --- Bit Logo ---
 const BitLogo = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) => {
   const h = size === 'sm' ? 24 : size === 'lg' ? 36 : 28;
   const fontSize = size === 'sm' ? 11 : size === 'lg' ? 16 : 13;
@@ -1495,6 +1493,7 @@ const BitLogo = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) => {
   );
 };
 
+// --- PayBox Logo ---
 const PayBoxLogo = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) => {
   const h = size === 'sm' ? 24 : size === 'lg' ? 36 : 28;
   const fontSize = size === 'sm' ? 10 : size === 'lg' ? 14 : 12;
@@ -2007,6 +2006,9 @@ const PaymentForm = ({ formData, setFormData, selectedPackage, onSubmit, loading
   );
 };
 
+// ============================================================
+// MAIN APP COMPONENT
+// ============================================================
 export default function App() {
   const [lang, setLang] = useState<Language>('he');
   const [view, setView] = useState<'home' | 'booking' | 'success' | 'admin-login' | 'admin-dashboard' | 'check-status'>('home');
@@ -2298,9 +2300,7 @@ export default function App() {
                 </motion.div>
               </section>
 
-              {/* ============================================================
-                  PACKAGES SECTION
-              ============================================================ */}
+              {/* PACKAGES SECTION */}
               <section id="packages" className="space-y-20">
                 {/* Main section header */}
                 <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center space-y-4">
