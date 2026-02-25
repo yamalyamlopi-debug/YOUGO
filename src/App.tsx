@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useMotionValue, useTransform, PanInfo, useAnimation } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
   CheckCircle2, 
   Instagram,
@@ -2613,9 +2613,9 @@ export default function App() {
 
                     <div className="flex flex-wrap justify-center gap-3">
                       {[
-                        { icon: <FileText size={14} />, label: 'תקנון', content: `1. כללי\nYOUGO ISRAEL הינה פלטפורמת שיווק דיגיטלי המתמחה בפרסום רכבים.\n\n2. השירות\nהחברה מספקת שירותי פרסום ברשתות חברתיות. החברה אינה צד לעסקת המכירה.\n\n3. תשלום\nהתשלום מבוצע מראש. לאחר אישור התשלום יחל תהליך הפרסום תוך 24-48 שעות.\n\n4. אחריות הלקוח\nהלקוח מצהיר כי כל המידע שמסר הוא נכון ומדויק.\n\n5. קניין רוחני\nכל התוכן שיוצר על ידי YOUGO ISRAEL שייך לחברה.` },
-                        { icon: <Lock size={14} />, label: 'פרטיות', content: `1. איסוף מידע\nYOUGO ISRAEL אוספת מידע אישי אך ורק לצורך מתן השירות המבוקש.\n\n2. שימוש במידע\nהמידע משמש אך ורק לצורך יצירת המודעה הפרסומית.\n\n3. אבטחת מידע\nהחברה נוקטת בצעדי אבטחה מתקדמים להגנה על המידע.` },
-                        { icon: <Info size={14} />, label: 'מי אנחנו', content: `YOUGO ISRAEL – פלטפורמת השיווק הדיגיטלי המובילה בישראל למכירת רכבים.\n\nהסיפור שלנו\nYOUGO ISRAEL נוסדה מתוך חזון אחד פשוט: לשנות את הדרך שבה ישראלים מוכרים רכבים.\n\nמה שמבדיל אותנו\n• 50,000+ עוקבים פעילים ומעורבים\n• צוות מקצועי של צלמים, מעצבים ואנשי שיווק\n• 98% שביעות רצון לקוחות` },
+                        { icon: <FileText size={14} />, label: 'תקנון', content: t.pages.terms.content },
+                        { icon: <Lock size={14} />, label: 'פרטיות', content: t.pages.privacy.content },
+                        { icon: <Info size={14} />, label: 'מי אנחנו', content: t.pages.about.content },
                         { icon: <LayoutDashboard size={14} />, label: 'ניהול', onClick: () => setView('admin-login'), content: '' },
                       ].map((link, i) => (
                         <motion.button
