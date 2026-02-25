@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   CheckCircle2, 
@@ -6,7 +6,6 @@ import {
   Users, 
   Calendar, 
   ChevronRight, 
-  ChevronLeft,
   Globe, 
   ArrowLeft,
   Upload,
@@ -104,84 +103,6 @@ interface Order {
   status: string;
   created_at: string;
 }
-
-// --- Constants ---
-const COLORS = {
-  brand: '#c8102e',
-  brandLight: 'rgba(200,16,46,0.1)',
-  brandBorder: 'rgba(200,16,46,0.25)',
-  vip: { primary: '#d4af37', border: 'rgba(212,175,55,0.45)', light: 'rgba(212,175,55,0.1)' },
-  duo: { primary: '#8b5cf6', border: 'rgba(139,92,246,0.45)', light: 'rgba(139,92,246,0.1)' },
-  business: { primary: '#3b82f6', border: 'rgba(59,130,246,0.4)', light: 'rgba(59,130,246,0.1)' },
-  transport: { primary: '#0ea5e9', border: 'rgba(14,165,233,0.4)', light: 'rgba(14,165,233,0.1)' },
-  equipmentHeavy: { primary: '#ea580c', border: 'rgba(234,88,12,0.4)', light: 'rgba(234,88,12,0.1)' },
-  equipmentLight: { primary: '#94a3b8', border: 'rgba(148,163,184,0.35)', light: 'rgba(148,163,184,0.1)' },
-  basic: { primary: '#94a3b8', border: 'rgba(148,163,184,0.45)' },
-  pro: { primary: '#c8102e', border: 'rgba(200,16,46,0.55)' },
-  premium: { primary: '#c8102e', border: 'rgba(200,16,46,0.65)' }
-};
-
-const CARD_HEIGHTS = {
-  basic: '520px',
-  pro: '520px',
-  premium: '520px',
-  vip: '460px',
-  duo: '460px',
-  business: '380px',
-  'equipment-heavy': '440px',
-  'equipment-light': '440px',
-  transport: '440px'
-};
-
-// --- Helper Functions ---
-const getPackageEmoji = (pkgId: string): string => {
-  const map: Record<string, string> = {
-    vip: '👑',
-    premium: '💎',
-    pro: '⭐',
-    'equipment-heavy': '🚜',
-    'equipment-light': '🔧',
-    business: '🏢',
-    duo: '🚗🚗',
-    transport: '🚌',
-    basic: '🚀'
-  };
-  return map[pkgId] || '✅';
-};
-
-const getPackageColor = (pkgId: string): string => {
-  const map: Record<string, string> = {
-    vip: COLORS.vip.primary,
-    duo: COLORS.duo.primary,
-    business: COLORS.business.primary,
-    transport: COLORS.transport.primary,
-    'equipment-heavy': COLORS.equipmentHeavy.primary,
-    'equipment-light': COLORS.equipmentLight.primary,
-    premium: COLORS.premium.primary,
-    pro: COLORS.pro.primary,
-    basic: COLORS.basic.primary
-  };
-  return map[pkgId] || COLORS.brand;
-};
-
-const getPackageBorder = (pkgId: string): string => {
-  const map: Record<string, string> = {
-    vip: COLORS.vip.border,
-    duo: COLORS.duo.border,
-    business: COLORS.business.border,
-    transport: COLORS.transport.border,
-    'equipment-heavy': COLORS.equipmentHeavy.border,
-    'equipment-light': COLORS.equipmentLight.border,
-    premium: COLORS.premium.border,
-    pro: COLORS.pro.border,
-    basic: COLORS.basic.border
-  };
-  return map[pkgId] || COLORS.brandBorder;
-};
-
-const getCardHeight = (pkgId: string): string => {
-  return CARD_HEIGHTS[pkgId as keyof typeof CARD_HEIGHTS] || '500px';
-};
 
 // --- Components ---
 
@@ -385,6 +306,7 @@ interface PackageCardProps {
 }
 
 const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose: () => void, title: string, children: React.ReactNode }) => {
+  const content = typeof children === 'string' ? children : '';
   return (
     <AnimatePresence>
       {isOpen && (
@@ -427,34 +349,31 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose:
               </motion.button>
             </div>
             <div className="text-white/75 leading-relaxed space-y-3 text-sm">
-              {typeof children === 'string' 
-                ? children.split('\n').map((line, i) => {
-                    if (!line.trim()) return <div key={i} className="h-1" />;
-                    if (/^\d+\./.test(line)) return (
-                      <motion.h4 
-                        key={i}
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.02 }}
-                        className="text-white font-black text-base mt-4 mb-1 first:mt-0"
-                      >
-                        {line}
-                      </motion.h4>
-                    );
-                    return (
-                      <motion.p 
-                        key={i}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: i * 0.01 }}
-                        className="text-white/70 leading-relaxed"
-                      >
-                        {line}
-                      </motion.p>
-                    );
-                  })
-                : children
-              }
+              {content.split('\n').map((line, i) => {
+                if (!line.trim()) return <div key={i} className="h-1" />;
+                if (/^\d+\./.test(line)) return (
+                  <motion.h4 
+                    key={i}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.02 }}
+                    className="text-white font-black text-base mt-4 mb-1 first:mt-0"
+                  >
+                    {line}
+                  </motion.h4>
+                );
+                return (
+                  <motion.p 
+                    key={i}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: i * 0.01 }}
+                    className="text-white/70 leading-relaxed"
+                  >
+                    {line}
+                  </motion.p>
+                );
+              })}
             </div>
             <div className="pt-4 flex justify-end border-t border-white/8">
               <motion.button 
@@ -479,22 +398,7 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose:
 };
 
 // ============================================================
-// FEATURE BOX COMPONENT
-// ============================================================
-const FeatureBox = ({ icon, text, color }: { icon: React.ReactNode; text: string; color: string }) => {
-  return (
-    <div 
-      className="feature-box"
-      style={{ '--feature-color': color } as React.CSSProperties}
-    >
-      <span className="feature-box-icon">{icon}</span>
-      <span className="feature-box-text">{text}</span>
-    </div>
-  );
-};
-
-// ============================================================
-// FLIP CARD BACK
+// FLIP CARD BACK — iron-clad containment, Apple-like design
 // ============================================================
 const FlipCardBack = ({
   pkg, details, color, borderColor, badge, onSelect, onBack
@@ -521,10 +425,13 @@ const FlipCardBack = ({
   const original = priceNum ? `₪${Math.round(priceNum / 0.85).toLocaleString()}` : '';
 
   return (
-    <div className="flip-card-back" style={{ position: 'relative', width: '100%', height: '100%' }}>
+    <div className="flip-card-back flip-card-face" style={{ '--accent': color } as React.CSSProperties}>
+      {/* bg */}
       <div className="absolute inset-0" style={{ background: `linear-gradient(160deg, ${color}18 0%, #0c0c14 40%, #080810 100%)` }} />
+      {/* top stripe */}
       <div className="absolute top-0 inset-x-0 h-[3px]" style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} />
 
+      {/* HEADER — shrink-0 */}
       <div className="relative shrink-0 flex items-center justify-between gap-2 px-4 pt-3 pb-2.5"
         style={{ borderBottom: `1px solid ${color}20`, background: `${color}0a` }}>
         <div className="flex items-center gap-2 min-w-0">
@@ -534,19 +441,15 @@ const FlipCardBack = ({
             <p className="text-[9px] font-semibold mt-[1px]" style={{ color: `${color}aa` }}>מה כלול בחבילה</p>
           </div>
         </div>
-        <button 
-          onClick={(e) => { 
-            e.stopPropagation(); 
-            onBack();  // هذا هو الزر الذي يعيد البطاقة
-          }}
+        <button onClick={onBack}
           className="shrink-0 flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-black"
-          style={{ border: `1px solid ${color}30`, color, background: `${color}10`, position: 'relative', zIndex: 10 }}
-        >
+          style={{ border: `1px solid ${color}30`, color, background: `${color}10` }}>
           <ArrowLeft size={9} strokeWidth={3} /> חזרה
         </button>
       </div>
 
-      <div className="relative flex-1 overflow-y-auto px-3 py-2" style={{ minHeight: 0 }}>
+      {/* ITEMS — fcb-scroll fills remaining height */}
+      <div className="relative fcb-scroll px-3 py-2">
         <div className="flex flex-col gap-[3px]">
           {shown.map((item, i) => (
             <div key={i} className="flex items-start gap-2 px-2.5 py-[6px] rounded-xl"
@@ -568,6 +471,7 @@ const FlipCardBack = ({
         </div>
       </div>
 
+      {/* FOOTER — shrink-0 */}
       <div className="relative shrink-0 px-4 pt-2.5 pb-3.5" style={{ borderTop: `1px solid ${color}20` }}>
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-baseline gap-1.5">
@@ -579,10 +483,173 @@ const FlipCardBack = ({
             חיסכון 15%
           </span>
         </div>
-        <button onClick={(e) => { e.stopPropagation(); onSelect(pkg); }}
+        <button onClick={() => onSelect(pkg)}
           className="w-full py-[9px] rounded-[10px] font-black text-[13px] text-white flex items-center justify-center gap-2"
           style={{ background: `linear-gradient(135deg, ${color} 0%, ${color}cc 100%)`, boxShadow: `0 4px 16px ${color}35` }}>
           <RocketIcon size={13} /> הזמן עכשיו
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// ============================================================
+// PACKAGE DETAIL PANEL - شرح احترافي ثابت من الخلف
+// ============================================================
+const PackageDetailPanel = ({
+  pkg,
+  details,
+  accentColor,
+  borderColor,
+  badge,
+  onSelect,
+  onBack,
+  lang
+}: {
+  pkg: Package;
+  details: { title: string; content: string };
+  accentColor: string;
+  borderColor: string;
+  badge: string;
+  onSelect: (p: Package) => void;
+  onBack: () => void;
+  lang: Language;
+}) => {
+  // Parse content into structured sections - clean & professional
+  const lines = details.content.split('\n').filter(l => l.trim());
+  const sections: { heading: string; icon: string; items: string[] }[] = [];
+  let current: { heading: string; icon: string; items: string[] } = { heading: '', icon: '', items: [] };
+
+  const SECTION_ICONS: Record<string, string> = {
+    'מה כוללת': '📦',
+    'מה מקבלים': '📦',
+    'למה בוחרים': '⭐',
+    'למה זה': '⭐',
+    'למי זה': '🎯',
+    'מתאים במיוחד': '🎯',
+    'יתרונות': '💼',
+    'הצלחות': '📊',
+    'התמחות': '🔍',
+    'פרטים טכניים': '⚙️',
+    'מה אנחנו': '🔍',
+  };
+
+  lines.forEach(line => {
+    const clean = line.replace(/\*\*/g, '').trim();
+    // Detect section headers (lines with emoji at start)
+    const isHeader = /^[✨🔥👑💎🚗🏢🚜🔧🚌📦⭐🎯💼📊🔍⚙️🏗️]/.test(clean) ||
+      Object.keys(SECTION_ICONS).some(k => clean.includes(k));
+
+    if (isHeader) {
+      if (current.heading || current.items.length > 0) sections.push(current);
+      const heading = clean.replace(/^[✨🔥👑💎🚗🏢🚜🔧🚌📦⭐🎯💼📊🔍⚙️🏗️]/g, '').trim();
+      const matchedKey = Object.keys(SECTION_ICONS).find(k => heading.includes(k));
+      current = { heading, icon: matchedKey ? SECTION_ICONS[matchedKey] : '•', items: [] };
+    } else if (
+      clean.startsWith('•') || clean.startsWith('✓') || clean.startsWith('✅') ||
+      /^[📸📝📱🎯⚡👨🏷️🎥📊💰📞🏗️🛠️📋⏱️💫🌟]/.test(clean)
+    ) {
+      const stripped = clean.replace(/^[•✓✅📸📝📱🎯⚡👨🏷️🎥📊💰📞🏗️🛠️📋⏱️💫🌟]/g, '').replace(/\*\*/g, '').trim();
+      if (stripped && stripped.length > 2) current.items.push(stripped);
+    } else if (clean.length > 3 && !clean.includes('━━━') && !clean.includes('┌') && !clean.includes('└') && !clean.includes('─')) {
+      current.items.push(clean.replace(/\*\*/g, '').trim());
+    }
+  });
+  if (current.heading || current.items.length > 0) sections.push(current);
+
+  return (
+    <div
+      className="w-full h-full rounded-2xl flex flex-col overflow-hidden"
+      style={{
+        background: `linear-gradient(160deg, ${accentColor}0e 0%, #09090f 50%, #07070c 100%)`,
+        border: `1px solid ${borderColor}`,
+        boxShadow: `0 4px 30px ${accentColor}14`
+      }}
+    >
+      {/* ── Header Bar ── */}
+      <div
+        className="px-5 py-3.5 flex items-center justify-between shrink-0"
+        style={{ borderBottom: `1px solid ${borderColor}`, background: `${accentColor}09` }}
+      >
+        <div className="flex items-center gap-3">
+          <div
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-base"
+            style={{ background: `${accentColor}18`, border: `1px solid ${borderColor}` }}
+          >
+            {badge}
+          </div>
+          <div>
+            <p className="text-[8px] font-black uppercase tracking-[0.25em] opacity-70" style={{ color: accentColor }}>
+              מה כלול בחבילה
+            </p>
+            <h3 className="text-sm font-black text-white leading-none mt-0.5">{pkg.name}</h3>
+          </div>
+        </div>
+        <button
+          onClick={onBack}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black transition-colors hover:bg-white/5"
+          style={{ border: `1px solid ${borderColor}`, color: accentColor }}
+        >
+          <ArrowLeft size={9} />
+          חזרה
+        </button>
+      </div>
+
+      {/* ── Sections ── */}
+      <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4">
+        {sections.filter(s => s.items.length > 0).map((section, si) => (
+          <div key={si} className="rounded-xl overflow-hidden"
+            style={{ border: `1px solid ${accentColor}1a`, background: `${accentColor}07` }}>
+            {/* Section header */}
+            {section.heading && (
+              <div className="px-4 py-2.5 flex items-center gap-2"
+                style={{ borderBottom: `1px solid ${accentColor}18`, background: `${accentColor}10` }}>
+                <span className="text-sm">{section.icon}</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.18em]" style={{ color: accentColor }}>
+                  {section.heading}
+                </span>
+              </div>
+            )}
+            {/* Items */}
+            <div className="p-4 space-y-2.5">
+              {section.items.map((item, ii) => (
+                <div key={ii} className="flex items-start gap-3">
+                  <div
+                    className="mt-0.5 w-4 h-4 rounded flex items-center justify-center shrink-0"
+                    style={{ background: `${accentColor}20`, border: `1px solid ${accentColor}35` }}
+                  >
+                    <Check size={8} strokeWidth={3.5} style={{ color: accentColor }} />
+                  </div>
+                  <span className="text-[11px] text-white/80 leading-relaxed font-medium">{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Price + CTA ── */}
+      <div className="px-4 py-4 shrink-0 space-y-3"
+        style={{ borderTop: `1px solid ${borderColor}` }}>
+        <div className="flex items-center justify-between px-1">
+          <span className="text-[10px] text-white/35 font-bold">מחיר החבילה</span>
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-xl font-black text-white">{pkg.price}</span>
+            <span className="text-[10px] line-through text-white/20">
+              ₪{Math.round(parseInt(pkg.price.replace('₪','').replace(',','')) / 0.85)}
+            </span>
+          </div>
+        </div>
+        <button
+          onClick={() => onSelect(pkg)}
+          className="w-full py-3 rounded-xl font-black text-sm text-white transition-all relative overflow-hidden group"
+          style={{ background: `linear-gradient(135deg, ${accentColor}, ${accentColor}cc)` }}
+        >
+          <span className="absolute inset-0 bg-white/15 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+          <span className="relative flex items-center justify-center gap-2">
+            <RocketIcon size={14} />
+            הזמן עכשיו
+          </span>
         </button>
       </div>
     </div>
@@ -794,345 +861,80 @@ const packageDetails: Record<string, { title: string; content: string }> = {
 };
 
 // ============================================================
-// SECTION DESCRIPTION COMPONENT
-// ============================================================
-interface SectionDescriptionProps {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  tags: string[];
-  color: string;
-  animate?: 'y' | 'rotate' | 'scale' | 'x';
-}
-
-const SectionDescription: React.FC<SectionDescriptionProps> = ({ 
-  icon, 
-  title, 
-  description, 
-  tags, 
-  color,
-  animate = 'y'
-}) => {
-  const getAnimation = () => {
-    switch(animate) {
-      case 'rotate': return { rotate: [0, 8, -8, 0] };
-      case 'scale': return { scale: [1, 1.08, 1] };
-      case 'x': return { x: [0, 4, 0] };
-      default: return { y: [0, -4, 0] };
-    }
-  };
-
-  const animationDuration = animate === 'rotate' ? 4 : animate === 'scale' ? 3 : 2.5;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5 }}
-      className="relative rounded-2xl overflow-hidden p-5"
-      style={{
-        background: `linear-gradient(135deg, ${color}08 0%, rgba(10,10,18,0.95) 60%)`,
-        border: `1px solid ${color}18`,
-      }}
-    >
-      <div 
-        className="absolute right-0 top-4 bottom-4 w-[3px] rounded-full"
-        style={{ background: `linear-gradient(180deg, ${color}, transparent)` }} 
-      />
-      <div className="flex items-start gap-4">
-        <motion.div 
-          animate={getAnimation()}
-          transition={{ duration: animationDuration, repeat: Infinity, ease: 'easeInOut' }}
-          className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 text-xl"
-          style={{ 
-            background: `${color}12`, 
-            border: `1px solid ${color}25` 
-          }}
-        >
-          {icon}
-        </motion.div>
-        <div>
-          <h3 className="text-lg font-black text-white mb-1">{title}</h3>
-          <p className="text-white/50 text-sm leading-relaxed">
-            {description}
-          </p>
-          <div className="flex flex-wrap gap-2 mt-3">
-            {tags.map((tag, i) => (
-              <span 
-                key={i} 
-                className="text-[10px] font-black px-2.5 py-1 rounded-full"
-                style={{ 
-                  background: `${color}0a`, 
-                  border: `1px solid ${color}20`, 
-                  color: color 
-                }}
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
-};
-
-// ============================================================
-// MOBILE PACKAGE SWIPER — FIXED
-// ============================================================
-const MobilePackageSwiper = ({ packages, lang, onSelect }: { packages: Package[], lang: Language, onSelect: (p: Package) => void }) => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const startXRef = useRef(0);
-  const isScrollingRef = useRef(false);
-
-  const getCardWidth = (): number => {
-    if (!containerRef.current) return 0;
-    const containerWidth = containerRef.current.offsetWidth;
-    return containerWidth * 0.82 + 12;
-  };
-
-  const scrollToIndex = (index: number) => {
-    const clamped = Math.max(0, Math.min(packages.length - 1, index));
-    setActiveIndex(clamped);
-    if (containerRef.current) {
-      isScrollingRef.current = true;
-      containerRef.current.scrollTo({
-        left: clamped * getCardWidth(),
-        behavior: 'smooth',
-      });
-      setTimeout(() => {
-        isScrollingRef.current = false;
-      }, 500);
-    }
-  };
-
-  const handleScroll = () => {
-    if (!containerRef.current || isScrollingRef.current) return;
-    const cardW = getCardWidth();
-    if (cardW === 0) return;
-    const scrollLeft = containerRef.current.scrollLeft;
-    const idx = Math.round(scrollLeft / cardW);
-    const clampedIdx = Math.max(0, Math.min(packages.length - 1, idx));
-    if (clampedIdx !== activeIndex) {
-      setActiveIndex(clampedIdx);
-    }
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    startXRef.current = e.touches[0].clientX;
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (!containerRef.current) return;
-    const diff = startXRef.current - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 40) {
-      scrollToIndex(diff > 0 ? activeIndex + 1 : activeIndex - 1);
-    }
-  };
-
-  const isRTL = lang === 'he' || lang === 'ar';
-  const leftArrow = isRTL ? '→' : '←';
-  const rightArrow = isRTL ? '←' : '→';
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (container) {
-      container.addEventListener('scroll', handleScroll);
-      return () => container.removeEventListener('scroll', handleScroll);
-    }
-  }, [activeIndex]);
-
-  return (
-    <div className="relative">
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5 }}
-        className="flex items-center justify-center gap-2 mb-4 text-[11px] text-white/35 font-bold"
-      >
-        <motion.span animate={{ x: [-3, 3, -3] }} transition={{ duration: 1.4, repeat: Infinity }}>
-          {leftArrow}
-        </motion.span>
-        החלק לגילוי חבילות נוספות
-        <motion.span animate={{ x: [3, -3, 3] }} transition={{ duration: 1.4, repeat: Infinity }}>
-          {rightArrow}
-        </motion.span>
-      </motion.div>
-
-      <div
-        ref={containerRef}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        className="flex gap-3 px-4 pb-1 overflow-x-auto scrollbar-thin scrollbar-thumb-brand-red/50 scrollbar-track-transparent"
-        style={{
-          scrollSnapType: 'x mandatory',
-          WebkitOverflowScrolling: 'touch',
-          scrollbarWidth: 'thin',
-        }}
-      >
-        {packages.map((pkg, i) => (
-          <motion.div
-            key={pkg.id}
-            animate={{
-              scale: i === activeIndex ? 1 : 0.94,
-              opacity: i === activeIndex ? 1 : 0.70,
-            }}
-            transition={{ duration: 0.3 }}
-            style={{
-              minWidth: '82vw',
-              maxWidth: '82vw',
-              height: getCardHeight(pkg.id),
-              scrollSnapAlign: 'start',
-              flexShrink: 0,
-            }}
-          >
-            <PackageCard pkg={pkg} lang={lang} onSelect={onSelect} />
-          </motion.div>
-        ))}
-        <div style={{ minWidth: 'calc(18vw - 12px)', flexShrink: 0 }} />
-      </div>
-
-      {activeIndex > 0 && (
-        <div 
-          className="absolute top-8 bottom-12 left-0 w-8 pointer-events-none"
-          style={{ background: 'linear-gradient(90deg, rgba(6,6,10,0.7), transparent)' }}
-        />
-      )}
-      {activeIndex < packages.length - 1 && (
-        <div 
-          className="absolute top-8 bottom-12 right-0 w-12 pointer-events-none"
-          style={{ background: 'linear-gradient(270deg, rgba(6,6,10,0.75), transparent)' }}
-        />
-      )}
-
-      <div className="flex items-center justify-center gap-2 mt-5">
-        {packages.map((_, i) => (
-          <motion.button
-            key={i}
-            onClick={() => scrollToIndex(i)}
-            animate={{ 
-              width: i === activeIndex ? 24 : 8, 
-              opacity: i === activeIndex ? 1 : 0.35 
-            }}
-            transition={{ duration: 0.3 }}
-            className="h-2 rounded-full bg-brand-red"
-          />
-        ))}
-      </div>
-
-      <div className="flex items-center justify-between px-2 mt-4">
-        <motion.button
-          onClick={() => scrollToIndex(activeIndex - 1)}
-          disabled={activeIndex === 0}
-          whileTap={{ scale: 0.9 }}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-black border border-white/10 bg-white/5 disabled:opacity-25"
-        >
-          <ChevronRight size={14} /> הקודם
-        </motion.button>
-        <span className="text-[11px] text-white/30 font-bold">
-          {activeIndex + 1} / {packages.length}
-        </span>
-        <motion.button
-          onClick={() => scrollToIndex(activeIndex + 1)}
-          disabled={activeIndex === packages.length - 1}
-          whileTap={{ scale: 0.9 }}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-black border border-white/10 bg-white/5 disabled:opacity-25"
-        >
-          הבא <ChevronLeft size={14} />
-        </motion.button>
-      </div>
-    </div>
-  );
-};
-
-// ============================================================
-// PACKAGE CARD - FIXED
+// PACKAGE CARD – כרטיס ראשי עם כפתור "פרטים נוספים" שפותח Panel
 // ============================================================
 const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
   const t = translations[lang];
   const [flipped, setFlipped] = useState(false);
 
-  const color = getPackageColor(pkg.id);
-  const borderColor = getPackageBorder(pkg.id);
-  const badge = getPackageEmoji(pkg.id);
-  
+  const tierConfig = {
+    basic:   { color: '#94a3b8', badge: '🚀', borderColor: 'rgba(148,163,184,0.45)', gradient: 'linear-gradient(145deg, #1a1d24, #111316)', backGrad: 'linear-gradient(145deg, #1e2230, #131620)' },
+    pro:     { color: '#c8102e', badge: '⭐', borderColor: 'rgba(200,16,46,0.55)',    gradient: 'linear-gradient(145deg, #1c0c10, #110609)', backGrad: 'linear-gradient(145deg, #221015, #14080c)' },
+    premium: { color: '#c8102e', badge: '💎', borderColor: 'rgba(200,16,46,0.65)',    gradient: 'linear-gradient(145deg, #1c0c10, #110609)', backGrad: 'linear-gradient(145deg, #221015, #14080c)' },
+  };
+  const cfg = tierConfig[pkg.id as keyof typeof tierConfig] || tierConfig.basic;
   const isPro = pkg.id === 'pro';
   const isPremium = pkg.premium;
 
+  // Parse back-side content from packageDetails
   const details = packageDetails[pkg.id] || { title: pkg.name, content: pkg.features.join('\n') };
+  const lines = details.content.split('\n').filter(l => l.trim());
+  const sections: { heading: string; items: string[] }[] = [];
+  let cur: { heading: string; items: string[] } = { heading: '', items: [] };
+  lines.forEach(line => {
+    const cl = line.replace(/\*\*/g, '').trim();
+    const isH = /^[✨🔥👑💎🚗🏢🚜🔧🚌📦⭐🎯💼📊🔍⚙️🏗️⏱️]/.test(cl);
+    if (isH) { if (cur.heading || cur.items.length) sections.push(cur); cur = { heading: cl, items: [] }; }
+    else if (cl.startsWith('•') || cl.startsWith('✓') || cl.startsWith('✅') || /^[📸📝📱🎯⚡👨🏷️🎥💰📞🛠️📋💫🌟]/.test(cl)) {
+      const s = cl.replace(/^[•✓✅📸📝📱🎯⚡👨🏷️🎥💰📞🛠️📋💫🌟]/g,'').trim();
+      if (s.length > 2) cur.items.push(s);
+    } else if (cl.length > 3) cur.items.push(cl);
+  });
+  if (cur.heading || cur.items.length) sections.push(cur);
+  const backSections = sections.filter(s => s.items.length > 0).slice(0, 3);
 
   return (
-    <div className="flip-card">
+    <div className="flip-card w-full h-full">
       <div className={`flip-card-inner ${flipped ? 'flipped' : ''}`}>
 
-        {/* FRONT */}
-        <div className="flip-card-front">
-          <div className="absolute top-0 left-0 right-0 h-[3px] z-10"
-            style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} 
-          />
-          
-          <div className="absolute inset-0 pointer-events-none"
-            style={{ background: `radial-gradient(ellipse at 50% 0%, ${color}10 0%, transparent 70%)` }} 
-          />
+        {/* ── FRONT FACE ── */}
+        <div className="flip-card-face"
+          style={{ background: cfg.gradient, border: `1px solid ${cfg.borderColor}`, boxShadow: `0 20px 45px -15px ${cfg.color}25, inset 0 1px 0 rgba(255,255,255,0.05)` }}>
 
-          {/* Popular Badge - FIXED */}
-          {(pkg.popular || pkg.id === 'pro') && (
-            <div className="absolute top-3 right-3 z-20">
-              <div className="badge-popular">
-                <Trophy size={9} />
-                <span>{t.mostPopular || 'הכי נבחר'}</span>
-              </div>
+          {/* Top accent */}
+          <div className="absolute top-0 left-0 right-0 h-[3px]"
+            style={{ background: `linear-gradient(90deg, transparent, ${cfg.color}, transparent)` }} />
+          <div className="absolute top-0 left-0 right-0 h-28 pointer-events-none"
+            style={{ background: `radial-gradient(ellipse at 50% 0%, ${cfg.color}10 0%, transparent 70%)` }} />
+
+          {pkg.popular && (
+            <div className="absolute top-3 right-3 z-10 text-white text-[8px] font-black py-1.5 px-3 rounded-full flex items-center gap-1.5"
+              style={{ background: `linear-gradient(135deg, ${cfg.color}, #a00d23)`, boxShadow: `0 4px 12px ${cfg.color}50` }}>
+              <Trophy size={9} />{t.mostPopular}
             </div>
           )}
-
-          {/* Equipment Heavy Badge */}
-          {pkg.id === 'equipment-heavy' && (
-            <div className="absolute -top-3 right-4 z-20">
-              <div className="badge-popular">
-                <span className="w-1 h-1 rounded-full bg-white animate-pulse" />
-                הכי מבוקש
-              </div>
-            </div>
-          )}
-
-          {/* Discount Badge */}
-          <div className="absolute top-3 left-3 z-20">
-            <div className="badge-success">
-              <Zap size={7} />
-              <span>15% OFF</span>
-            </div>
+          <div className="absolute top-3 left-3 text-[8px] font-black py-1 px-2.5 rounded-full flex items-center gap-1"
+            style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.25)', color: '#4ade80' }}>
+            <Zap size={7} />15% OFF
           </div>
 
           <div className="p-5 flex flex-col h-full relative z-10 gap-3">
             {/* Header */}
             <div className="flex items-center gap-3 mt-2">
-              <div 
-                className="w-11 h-11 rounded-xl flex items-center justify-center text-xl shrink-0"
-                style={{ 
-                  background: `linear-gradient(135deg, ${color}28, ${color}10)`, 
-                  border: `1px solid ${borderColor}`, 
-                  boxShadow: `0 4px 14px ${color}1a` 
-                }}
-              >
-                {badge}
+              <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl shrink-0"
+                style={{ background: `linear-gradient(135deg, ${cfg.color}28, ${cfg.color}10)`, border: `1px solid ${cfg.borderColor}`, boxShadow: `0 4px 14px ${cfg.color}1a` }}>
+                {cfg.badge}
               </div>
               <div>
-                <h3 className="text-[18px] font-black tracking-tight leading-tight" 
-                    style={{ color: isPremium || isPro ? color : '#fff' }}>
-                  {pkg.name}
-                </h3>
-                <p className="text-[10px] font-semibold mt-[2px]" style={{ color: `${color}99` }}>
-                  {pkg.id === 'basic' ? '✓ פתרון מהיר ומקצועי' : 
-                   pkg.id === 'pro' ? '✓ הבחירה הפופולרית ביותר' : 
-                   '✓ מקסימום חשיפה ותוצאות'}
+                <h3 className="text-[18px] font-black tracking-tight leading-tight" style={{ color: isPremium || isPro ? cfg.color : '#fff' }}>{pkg.name}</h3>
+                <p className="text-[10px] font-semibold mt-[2px]" style={{ color: `${cfg.color}99` }}>
+                  {pkg.id === 'basic' ? '✓ פתרון מהיר ומקצועי' : pkg.id === 'pro' ? '✓ הבחירה הפופולרית ביותר' : '✓ מקסימום חשיפה ותוצאות'}
                 </p>
               </div>
             </div>
 
-            {/* Description */}
-            <div className="rounded-xl p-2.5" style={{ background: `${color}0a`, border: `1px solid ${color}18` }}>
+            {/* Description — better contrast */}
+            <div className="rounded-xl p-2.5" style={{ background: `${cfg.color}0a`, border: `1px solid ${cfg.color}18` }}>
               <p className="text-[11px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>
                 {pkg.id === 'basic' ? 'חבילת הכניסה האידיאלית – פרסום ממוקד עם תמונות מקצועיות ותיאור משכנע לרכבך'
                 : pkg.id === 'pro' ? 'חבילת הפרו המאוזנת – יותר תמונות, חשיפה רחבה ועדיפות בתזמון הפרסום'
@@ -1144,84 +946,70 @@ const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
             <div className="flex items-baseline gap-2">
               <span className="text-[34px] font-black text-white leading-none">{pkg.price}</span>
               <div className="flex flex-col">
-                <span className="text-[9px] line-through" style={{ color: 'rgba(255,255,255,0.22)' }}>
-                  ₪{Math.round(parseInt(pkg.price.replace('₪','')) / 0.85)}
-                </span>
+                <span className="text-[9px] line-through" style={{ color: 'rgba(255,255,255,0.22)' }}>₪{Math.round(parseInt(pkg.price.replace('₪','')) / 0.85)}</span>
                 <span className="text-[9px] font-bold" style={{ color: '#4ade80' }}>חיסכון 15%</span>
               </div>
             </div>
 
-            <div className="h-px" style={{ background: `linear-gradient(90deg, transparent, ${borderColor}80, transparent)` }} />
+            <div className="h-px" style={{ background: `linear-gradient(90deg, transparent, ${cfg.borderColor}80, transparent)` }} />
 
-            {/* Features */}
+            {/* Features — improved readability */}
             <div className="flex flex-col gap-1.5 flex-grow">
               {pkg.features.slice(0, 4).map((feat, i) => (
                 <div key={i} className="flex items-start gap-2">
-                  <div 
-                    className="w-4 h-4 rounded-md flex items-center justify-center shrink-0 mt-[1px]"
-                    style={{ background: `${color}18`, border: `1px solid ${color}30` }}
-                  >
-                    <Check size={8} strokeWidth={3.5} style={{ color }} />
+                  <div className="w-4 h-4 rounded-md flex items-center justify-center shrink-0 mt-[1px]"
+                    style={{ background: `${cfg.color}18`, border: `1px solid ${cfg.color}30` }}>
+                    <Check size={8} strokeWidth={3.5} style={{ color: cfg.color }} />
                   </div>
-                  <span className="text-[11.5px] font-medium leading-snug" style={{ color: 'rgba(255,255,255,0.80)' }}>
-                    {feat}
-                  </span>
+                  <span className="text-[11.5px] font-medium leading-snug" style={{ color: 'rgba(255,255,255,0.80)' }}>{feat}</span>
                 </div>
               ))}
               {pkg.features.length > 4 && (
                 <div className="flex items-center gap-2 mt-0.5">
-                  <div className="flex-1 h-px" style={{ background: `${color}18` }} />
-                  <span className="text-[9px] font-black px-2 py-0.5 rounded-full" style={{ color, background: `${color}12` }}>
+                  <div className="flex-1 h-px" style={{ background: `${cfg.color}18` }} />
+                  <span className="text-[9px] font-black px-2 py-0.5 rounded-full" style={{ color: cfg.color, background: `${cfg.color}12` }}>
                     + {pkg.features.length - 4} הטבות נוספות
                   </span>
-                  <div className="flex-1 h-px" style={{ background: `${color}18` }} />
+                  <div className="flex-1 h-px" style={{ background: `${cfg.color}18` }} />
                 </div>
               )}
             </div>
 
             {/* Buttons */}
             <div className="flex gap-2 mt-auto">
-              <motion.button
+              <button
                 onClick={() => setFlipped(true)}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
                 className="flex-1 py-3 rounded-xl font-black text-xs transition-all hover:opacity-80"
-                style={{ border: `1px solid ${borderColor}`, color, background: `${color}10` }}
+                style={{ border: `1px solid ${cfg.borderColor}`, color: cfg.color, background: `${cfg.color}10` }}
               >
                 פרטים נוספים
-              </motion.button>
-              <motion.button
+              </button>
+              <button
                 onClick={() => onSelect(pkg)}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
                 className="flex-1 py-3 rounded-xl font-black text-xs text-white transition-all"
                 style={{
-                  background: isPremium || isPro ? `linear-gradient(135deg, ${color}, ${color}bb)` : 'rgba(255,255,255,0.1)',
+                  background: isPremium || isPro ? `linear-gradient(135deg, ${cfg.color}, ${cfg.color}bb)` : 'rgba(255,255,255,0.1)',
                   border: isPremium || isPro ? 'none' : '1px solid rgba(255,255,255,0.15)',
-                  boxShadow: isPremium || isPro ? `0 4px 15px ${color}40` : 'none'
+                  boxShadow: isPremium || isPro ? `0 4px 15px ${cfg.color}40` : 'none'
                 }}
               >
-                <span className="flex items-center justify-center gap-1.5">
-                  <RocketIcon size={11} />
-                  {t.startOrder}
-                </span>
-              </motion.button>
+                <span className="flex items-center justify-center gap-1.5"><RocketIcon size={11} />{t.startOrder}</span>
+              </button>
             </div>
           </div>
         </div>
 
-        {/* BACK */}
-        <div className="flip-card-back">
-          <FlipCardBack
-            pkg={pkg}
-            details={details}
-            color={color}
-            borderColor={borderColor}
-            badge={badge}
-            onSelect={onSelect}
-            onBack={() => setFlipped(false)}  // تم التأكد من أن هذه الدالة تغير الحالة
-          />
-        </div>
+        {/* ── BACK FACE ── */}
+        <FlipCardBack
+          pkg={pkg}
+          details={packageDetails[pkg.id] || { title: pkg.name, content: pkg.features.join('\n') }}
+          color={cfg.color}
+          borderColor={cfg.borderColor}
+          badge={cfg.badge}
+          onSelect={onSelect}
+          onBack={() => setFlipped(false)}
+        />
+
       </div>
     </div>
   );
@@ -1233,85 +1021,59 @@ const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
 const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
   const t = translations[lang];
   const [flipped, setFlipped] = useState(false);
-  const color = COLORS.vip.primary;
-  const borderColor = COLORS.vip.border;
-
-  const features = [
-    { icon: <Camera size={14} />, text: '15+ תמונות' },
-    { icon: <Video size={14} />, text: 'רילס + סטורי' },
-    { icon: <Calendar size={14} />, text: '60 ימים' },
-    { icon: <TrendingUp size={14} />, text: 'חשיפה מקס' }
-  ];
+  const color = '#d4af37';
+  const borderColor = 'rgba(212,175,55,0.45)';
 
   return (
     <div className="flip-card w-full h-full">
       <div className={`flip-card-inner ${flipped ? 'flipped' : ''}`}>
-        <div className="flip-card-front">
+        {/* FRONT */}
+        <div className="flip-card-face flex flex-col"
+          style={{ background: 'radial-gradient(circle at 100% 0%, #2a2010 0%, #0f0c05 80%)', border: `1px solid ${borderColor}`, boxShadow: '0 20px 40px -15px rgba(212,175,55,0.35)' }}>
           <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-amber-400 to-transparent" />
-          
           <div className="p-5 space-y-4 flex-grow flex flex-col">
             <div className="flex items-center flex-wrap gap-2">
               <div className="flex items-center gap-1.5 bg-amber-900/40 rounded-full px-3 py-1 border border-amber-500/30">
                 <Crown size={11} className="text-amber-400" />
                 <span className="text-[9px] font-black uppercase tracking-wider text-amber-300">VIP LUXURY</span>
               </div>
-              <div className="badge-success rounded-full px-2 py-1">
-                <span className="text-[8px] font-black">15% OFF</span>
+              <div className="bg-emerald-500/15 border border-emerald-500/30 rounded-full px-2 py-1">
+                <span className="text-[8px] font-black text-emerald-400">15% OFF</span>
               </div>
               <div className="flex mr-auto gap-0.5">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} size={10} className="text-amber-400 fill-amber-400" />
-                ))}
+                {[...Array(5)].map((_, i) => <Star key={i} size={10} className="text-amber-400 fill-amber-400" />)}
               </div>
             </div>
-
             <div>
               <h3 className="text-2xl font-black bg-gradient-to-l from-amber-200 via-amber-400 to-amber-300 bg-clip-text text-transparent">VIP LUXURY</h3>
               <p className="text-amber-100/35 text-[11px] mt-1">חבילת הפרסום האולטימטיבית</p>
             </div>
-
             <div className="flex items-baseline gap-2">
               <span className="text-3xl font-black text-amber-400">₪749</span>
               <span className="text-xs line-through text-white/20">₪882</span>
               <span className="text-[9px] font-black bg-amber-500/15 text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/25">חיסכון ₪133</span>
             </div>
-
             <div className="h-px bg-gradient-to-r from-transparent via-amber-500/25 to-transparent" />
-
             <div className="grid grid-cols-2 gap-2 flex-grow">
-              {features.map((feat, i) => (
-                <FeatureBox key={i} icon={feat.icon} text={feat.text} color={color} />
+              {[{ icon: <Camera size={12} />, label: '15+ תמונות' }, { icon: <Video size={12} />, label: 'רילס + סטורי' }, { icon: <Calendar size={12} />, label: '60 ימים' }, { icon: <TrendingUp size={12} />, label: 'חשיפה מקס' }].map((feat, i) => (
+                <div key={i} className="flex items-center gap-1.5 bg-white/8 rounded-lg px-2 py-1.5 border border-white/8">
+                  <span className="text-amber-400">{feat.icon}</span>
+                  <span className="text-[9px] font-medium text-white/75">{feat.label}</span>
+                </div>
               ))}
             </div>
-
             <div className="flex gap-2 mt-auto">
-              <button 
-                onClick={() => setFlipped(true)} 
-                className="flex-1 py-2.5 rounded-xl font-black text-xs transition-all hover:opacity-80"
-                style={{ border: `1px solid ${borderColor}`, color, background: 'rgba(212,175,55,0.08)' }}
-              >
-                פרטים נוספים
-              </button>
-              <button 
-                onClick={() => onSelect(pkg)}
-                className="flex-1 py-2.5 rounded-xl font-black text-xs bg-gradient-to-l from-amber-500 to-amber-600 text-black flex items-center justify-center gap-1.5 hover:opacity-90 active:scale-95"
-              >
+              <button onClick={() => setFlipped(true)} className="flex-1 py-2.5 rounded-xl font-black text-xs transition-all hover:opacity-80"
+                style={{ border: `1px solid ${borderColor}`, color, background: 'rgba(212,175,55,0.08)' }}>פרטים נוספים</button>
+              <button onClick={() => onSelect(pkg)}
+                className="flex-1 py-2.5 rounded-xl font-black text-xs bg-gradient-to-l from-amber-500 to-amber-600 text-black flex items-center justify-center gap-1.5 hover:opacity-90 active:scale-95">
                 <Crown size={12} /> הזמן VIP
               </button>
             </div>
           </div>
         </div>
-        <div className="flip-card-back">
-          <FlipCardBack 
-            pkg={pkg} 
-            details={packageDetails.vip} 
-            color={color} 
-            borderColor={borderColor} 
-            badge="👑" 
-            onSelect={onSelect} 
-            onBack={() => setFlipped(false)} 
-          />
-        </div>
+        {/* BACK */}
+        <FlipCardBack pkg={pkg} details={packageDetails.vip} color={color} borderColor={borderColor} badge="👑" onSelect={onSelect} onBack={() => setFlipped(false)} />
       </div>
     </div>
   );
@@ -1322,80 +1084,56 @@ const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
 // ============================================================
 const DuoDealPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Package) => void }) => {
   const [flipped, setFlipped] = useState(false);
-  const color = COLORS.duo.primary;
-  const borderColor = COLORS.duo.border;
-
-  const features = [
-    { icon: <Car size={14} />, text: '2 רכבים' },
-    { icon: <Camera size={14} />, text: '4 תמונות' },
-    { icon: <Instagram size={14} />, text: 'פוסטים' },
-    { icon: <Calendar size={14} />, text: '14 ימים' }
-  ];
+  const color = '#8b5cf6';
+  const borderColor = 'rgba(139,92,246,0.45)';
 
   return (
     <div className="flip-card w-full h-full">
       <div className={`flip-card-inner ${flipped ? 'flipped' : ''}`}>
-        <div className="flip-card-front">
+        {/* FRONT */}
+        <div className="flip-card-face flex flex-col"
+          style={{ background: 'radial-gradient(circle at 100% 0%, #1e1028 0%, #0b0710 100%)', border: `1px solid ${borderColor}`, boxShadow: '0 20px 40px -15px rgba(139,92,246,0.35)' }}>
           <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-purple-400 to-transparent" />
-          
           <div className="p-5 space-y-4 flex-grow flex flex-col">
             <div className="flex items-center flex-wrap gap-2">
               <div className="flex items-center gap-1.5 bg-purple-900/40 rounded-full px-3 py-1 border border-purple-500/30">
                 <Car size={10} className="text-purple-400" /><Car size={10} className="text-purple-400" />
                 <span className="text-[9px] font-black uppercase tracking-wider text-purple-300">DUO DEAL</span>
               </div>
-              <div className="badge-success rounded-full px-2 py-1">
-                <span className="text-[8px] font-black">40% OFF</span>
+              <div className="bg-emerald-500/15 border border-emerald-500/30 rounded-full px-2 py-1">
+                <span className="text-[8px] font-black text-emerald-400">40% OFF</span>
               </div>
             </div>
-
             <div>
               <h3 className="text-2xl font-black bg-gradient-to-l from-purple-200 via-purple-400 to-purple-300 bg-clip-text text-transparent">DUO DEAL</h3>
               <p className="text-purple-100/35 text-[11px] mt-1">פרסום 2 רכבים במחיר מיוחד</p>
             </div>
-
             <div className="flex items-baseline gap-2">
               <span className="text-3xl font-black text-purple-400">₪349</span>
               <span className="text-xs line-through text-white/20">₪598</span>
               <span className="text-[9px] font-black bg-purple-500/15 text-purple-300 px-2 py-0.5 rounded-full border border-purple-500/25">חיסכון ₪249</span>
             </div>
-
             <div className="h-px bg-gradient-to-r from-transparent via-purple-500/25 to-transparent" />
-
             <div className="grid grid-cols-2 gap-2 flex-grow">
-              {features.map((feat, i) => (
-                <FeatureBox key={i} icon={feat.icon} text={feat.text} color={color} />
+              {[{ icon: <Car size={12} />, label: '2 רכבים' }, { icon: <Camera size={12} />, label: '4 תמונות' }, { icon: <Instagram size={12} />, label: 'פוסטים' }, { icon: <Calendar size={12} />, label: '14 ימים' }].map((feat, i) => (
+                <div key={i} className="flex items-center gap-1.5 bg-white/8 rounded-lg px-2 py-1.5 border border-white/8">
+                  <span className="text-purple-400">{feat.icon}</span>
+                  <span className="text-[9px] font-medium text-white/75">{feat.label}</span>
+                </div>
               ))}
             </div>
-
             <div className="flex gap-2 mt-auto">
-              <button 
-                onClick={() => setFlipped(true)} 
-                className="flex-1 py-2.5 rounded-xl font-black text-xs transition-all hover:opacity-80"
-                style={{ border: `1px solid ${borderColor}`, color, background: 'rgba(139,92,246,0.08)' }}
-              >
-                פרטים נוספים
-              </button>
-              <button 
-                onClick={() => onSelect(pkg)}
-                className="flex-1 py-2.5 rounded-xl font-black text-xs bg-gradient-to-l from-purple-500 to-purple-600 text-white flex items-center justify-center gap-1.5 hover:opacity-90 active:scale-95"
-              >
+              <button onClick={() => setFlipped(true)} className="flex-1 py-2.5 rounded-xl font-black text-xs transition-all hover:opacity-80"
+                style={{ border: `1px solid ${borderColor}`, color, background: 'rgba(139,92,246,0.08)' }}>פרטים נוספים</button>
+              <button onClick={() => onSelect(pkg)}
+                className="flex-1 py-2.5 rounded-xl font-black text-xs bg-gradient-to-l from-purple-500 to-purple-600 text-white flex items-center justify-center gap-1.5 hover:opacity-90 active:scale-95">
                 <Car size={12} /> הזמן DUO
               </button>
             </div>
           </div>
         </div>
-        <div className="flip-card-back">
-          <FlipCardBack 
-            pkg={pkg} 
-            details={packageDetails.duo} 
-            color={color} 
-            borderColor={borderColor} 
-            badge="🚗🚗" 
-            onSelect={onSelect} 
-            onBack={() => setFlipped(false)} 
-          />
-        </div>
+        {/* BACK */}
+        <FlipCardBack pkg={pkg} details={packageDetails.duo} color={color} borderColor={borderColor} badge="🚗🚗" onSelect={onSelect} onBack={() => setFlipped(false)} />
       </div>
     </div>
   );
@@ -1407,36 +1145,30 @@ const DuoDealPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pac
 const EquipmentPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Package) => void }) => {
   const [flipped, setFlipped] = useState(false);
   const isHeavy = pkg.id === 'equipment-heavy';
-  const color = isHeavy ? COLORS.equipmentHeavy.primary : COLORS.equipmentLight.primary;
-  const borderColor = isHeavy ? COLORS.equipmentHeavy.border : COLORS.equipmentLight.border;
+  const color = isHeavy ? '#ea580c' : '#94a3b8';
+  const borderColor = isHeavy ? 'rgba(234,88,12,0.4)' : 'rgba(148,163,184,0.35)';
   const badge = isHeavy ? '🚜' : '🔧';
 
   return (
     <div className="flip-card w-full h-full">
       <div className={`flip-card-inner ${flipped ? 'flipped' : ''}`}>
-        <div className="flip-card-front p-5">
-          <div 
-            className="absolute top-0 left-0 right-0 h-[3px]"
-            style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} 
-          />
-          
+        {/* FRONT */}
+        <div className="flip-card-face flex flex-col p-5"
+          style={{
+            background: isHeavy ? 'linear-gradient(135deg, rgba(234,88,12,0.12) 0%, #0f0c08 100%)' : 'linear-gradient(135deg, rgba(148,163,184,0.08) 0%, #0a0c0f 100%)',
+            border: `1px solid ${borderColor}`, boxShadow: `0 20px 40px -15px ${color}25`
+          }}>
+          <div className="absolute top-0 left-0 right-0 h-[3px]"
+            style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} />
           {isHeavy && (
-            <div className="absolute -top-3 right-4 z-20">
-              <div className="badge-popular">
-                <span className="w-1 h-1 rounded-full bg-white animate-pulse" />
-                הכי מבוקש
-              </div>
+            <div className="absolute -top-3 right-4 z-20 text-white text-[8px] font-black py-1 px-3 rounded-full flex items-center gap-1"
+              style={{ background: 'linear-gradient(135deg, #ea580c, #c2410c)', boxShadow: '0 4px 15px rgba(234,88,12,0.4)' }}>
+              <span className="w-1 h-1 rounded-full bg-white" />הכי מבוקש
             </div>
           )}
-
           <div className="flex items-center gap-2 mb-4 pb-3" style={{ borderBottom: `1px solid ${borderColor}` }}>
-            <div 
-              className="w-10 h-10 rounded-xl flex items-center justify-center"
-              style={{ 
-                background: isHeavy ? 'rgba(234,88,12,0.15)' : 'rgba(148,163,184,0.1)', 
-                border: `1px solid ${borderColor}` 
-              }}
-            >
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+              style={{ background: isHeavy ? 'rgba(234,88,12,0.15)' : 'rgba(148,163,184,0.1)', border: `1px solid ${borderColor}` }}>
               {isHeavy ? <Truck size={20} style={{ color }} /> : <Wrench size={20} style={{ color }} />}
             </div>
             <div>
@@ -1448,90 +1180,58 @@ const EquipmentPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: P
               <div className="text-[9px] text-white/25 line-through">₪{Math.round(parseInt(pkg.price.replace('₪','')) / 0.85)}</div>
             </div>
           </div>
-
           <div className="flex flex-wrap gap-1 mb-4">
             {(isHeavy ? ['באגר', 'מחפרון', 'מיני באגר'] : ['פופקט', 'מלגזה', 'סקיד סטיר']).map((item, i) => (
-              <span 
-                key={i} 
-                className="text-[9px] font-black px-2 py-1 rounded-full border"
-                style={{ color: isHeavy ? '#fb923c' : '#94a3b8', borderColor, background: `${color}10` }}
-              >
-                {item}
-              </span>
+              <span key={i} className="text-[9px] font-black px-2 py-1 rounded-full border"
+                style={{ color: isHeavy ? '#fb923c' : '#94a3b8', borderColor, background: `${color}10` }}>{item}</span>
             ))}
           </div>
-
           <div className="space-y-2 mb-4 flex-grow">
             {pkg.features.slice(0, 3).map((f, i) => (
               <div key={i} className="flex items-start gap-1.5 text-[10px] font-medium">
-                <div 
-                  className="mt-0.5 p-0.5 rounded-full shrink-0" 
-                  style={{ background: isHeavy ? 'rgba(234,88,12,0.7)' : 'rgba(148,163,184,0.5)' }}
-                >
+                <div className="mt-0.5 p-0.5 rounded-full shrink-0" style={{ background: isHeavy ? 'rgba(234,88,12,0.7)' : 'rgba(148,163,184,0.5)' }}>
                   <Check size={6} className="text-dark-bg" strokeWidth={5} />
                 </div>
                 <span className="text-white/75">{f}</span>
               </div>
             ))}
           </div>
-
           <div className="flex gap-2 mt-auto">
-            <button 
-              onClick={() => setFlipped(true)} 
-              className="flex-1 py-2.5 rounded-xl font-black text-xs transition-all hover:opacity-80"
-              style={{ border: `1px solid ${borderColor}`, color, background: `${color}10` }}
-            >
-              פרטים נוספים
-            </button>
-            <button 
-              onClick={() => onSelect(pkg)}
+            <button onClick={() => setFlipped(true)} className="flex-1 py-2.5 rounded-xl font-black text-xs transition-all hover:opacity-80"
+              style={{ border: `1px solid ${borderColor}`, color, background: `${color}10` }}>פרטים נוספים</button>
+            <button onClick={() => onSelect(pkg)}
               className="flex-1 py-2.5 rounded-xl font-black text-xs text-white flex items-center justify-center gap-1.5 hover:opacity-90 active:scale-95"
-              style={{ 
-                background: isHeavy ? 'linear-gradient(135deg, #ea580c, #c2410c)' : `${color}40`, 
-                border: isHeavy ? 'none' : `1px solid ${borderColor}` 
-              }}
-            >
+              style={{ background: isHeavy ? 'linear-gradient(135deg, #ea580c, #c2410c)' : `${color}40`, border: isHeavy ? 'none' : `1px solid ${borderColor}` }}>
               הזמן עכשיו
             </button>
           </div>
         </div>
-        <div className="flip-card-back">
-          <FlipCardBack 
-            pkg={pkg} 
-            details={packageDetails[pkg.id] || { title: pkg.name, content: pkg.features.join('\n') }} 
-            color={color} 
-            borderColor={borderColor} 
-            badge={badge} 
-            onSelect={onSelect} 
-            onBack={() => setFlipped(false)} 
-          />
-        </div>
+        {/* BACK */}
+        <FlipCardBack pkg={pkg} details={packageDetails[pkg.id] || { title: pkg.name, content: pkg.features.join('\n') }} color={color} borderColor={borderColor} badge={badge} onSelect={onSelect} onBack={() => setFlipped(false)} />
       </div>
     </div>
   );
 };
 
 // ============================================================
-// TRANSPORT PACKAGE CARD
+// TRANSPORT PACKAGE CARD – חדש!
 // ============================================================
 const TransportPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Package) => void }) => {
   const [flipped, setFlipped] = useState(false);
-  const color = COLORS.transport.primary;
-  const borderColor = COLORS.transport.border;
+  const color = '#0ea5e9';
+  const borderColor = 'rgba(14,165,233,0.4)';
 
   return (
     <div className="flip-card w-full h-full">
       <div className={`flip-card-inner ${flipped ? 'flipped' : ''}`}>
-        <div className="flip-card-front p-5">
+        {/* FRONT */}
+        <div className="flip-card-face flex flex-col p-5"
+          style={{ background: 'linear-gradient(135deg, rgba(14,165,233,0.12) 0%, #08101a 100%)', border: `1px solid ${borderColor}`, boxShadow: `0 20px 40px -15px ${color}25` }}>
           <div className="absolute top-0 left-0 right-0 h-[3px]" style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} />
-          
-          <div className="absolute -top-3 left-4 z-20">
-            <div className="badge-popular" style={{ background: 'linear-gradient(135deg, #0284c7, #0369a1)' }}>
-              <span className="w-1.5 h-1.5 rounded-full bg-white" />
-              חדש!
-            </div>
+          <div className="absolute -top-3 left-4 z-20 text-white text-[8px] font-black py-1 px-3 rounded-full flex items-center gap-1"
+            style={{ background: 'linear-gradient(135deg, #0284c7, #0369a1)', boxShadow: '0 4px 15px rgba(14,165,233,0.4)' }}>
+            <span className="w-1.5 h-1.5 rounded-full bg-white" />חדש!
           </div>
-
           <div className="flex items-center gap-2 mb-4 pb-3 mt-1" style={{ borderBottom: `1px solid ${borderColor}` }}>
             <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(14,165,233,0.15)', border: `1px solid ${borderColor}` }}>
               <Bus size={20} style={{ color }} />
@@ -1545,58 +1245,31 @@ const TransportPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: P
               <div className="text-[9px] text-white/25 line-through">₪{Math.round(parseInt(pkg.price.replace('₪','')) / 0.85)}</div>
             </div>
           </div>
-
           <div className="flex flex-wrap gap-1 mb-4">
             {['אוטובוס', 'מיניבוס', 'וואן', 'משאית'].map((item, i) => (
-              <span 
-                key={i} 
-                className="text-[9px] font-black px-2 py-1 rounded-full border" 
-                style={{ color: '#38bdf8', borderColor, background: 'rgba(14,165,233,0.1)' }}
-              >
-                {item}
-              </span>
+              <span key={i} className="text-[9px] font-black px-2 py-1 rounded-full border" style={{ color: '#38bdf8', borderColor, background: 'rgba(14,165,233,0.1)' }}>{item}</span>
             ))}
           </div>
-
           <div className="space-y-2 mb-4 flex-grow">
             {pkg.features.slice(0, 4).map((f, i) => (
               <div key={i} className="flex items-start gap-1.5 text-[10px] font-medium">
-                <div className="mt-0.5 p-0.5 rounded-full shrink-0 bg-sky-500/60">
-                  <Check size={6} className="text-dark-bg" strokeWidth={5} />
-                </div>
+                <div className="mt-0.5 p-0.5 rounded-full shrink-0 bg-sky-500/60"><Check size={6} className="text-dark-bg" strokeWidth={5} /></div>
                 <span className="text-white/75">{f}</span>
               </div>
             ))}
           </div>
-
           <div className="flex gap-2 mt-auto">
-            <button 
-              onClick={() => setFlipped(true)} 
-              className="flex-1 py-2.5 rounded-xl font-black text-xs transition-all hover:opacity-80"
-              style={{ border: `1px solid ${borderColor}`, color, background: 'rgba(14,165,233,0.08)' }}
-            >
-              פרטים נוספים
-            </button>
-            <button 
-              onClick={() => onSelect(pkg)}
+            <button onClick={() => setFlipped(true)} className="flex-1 py-2.5 rounded-xl font-black text-xs transition-all hover:opacity-80"
+              style={{ border: `1px solid ${borderColor}`, color, background: 'rgba(14,165,233,0.08)' }}>פרטים נוספים</button>
+            <button onClick={() => onSelect(pkg)}
               className="flex-1 py-2.5 rounded-xl font-black text-xs text-white flex items-center justify-center gap-1.5 hover:opacity-90 active:scale-95"
-              style={{ background: 'linear-gradient(135deg, #0284c7, #0369a1)' }}
-            >
+              style={{ background: 'linear-gradient(135deg, #0284c7, #0369a1)' }}>
               <Bus size={11} />הזמן עכשיו
             </button>
           </div>
         </div>
-        <div className="flip-card-back">
-          <FlipCardBack 
-            pkg={pkg} 
-            details={packageDetails.transport} 
-            color={color} 
-            borderColor={borderColor} 
-            badge="🚌" 
-            onSelect={onSelect} 
-            onBack={() => setFlipped(false)} 
-          />
-        </div>
+        {/* BACK */}
+        <FlipCardBack pkg={pkg} details={packageDetails.transport} color={color} borderColor={borderColor} badge="🚌" onSelect={onSelect} onBack={() => setFlipped(false)} />
       </div>
     </div>
   );
@@ -1607,24 +1280,17 @@ const TransportPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: P
 // ============================================================
 const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Package) => void }) => {
   const [flipped, setFlipped] = useState(false);
-  const color = COLORS.business.primary;
-  const borderColor = COLORS.business.border;
-
-  const features = [
-    { icon: <Target size={14} />, text: 'חשיפה ממוקדת' },
-    { icon: <BarChart3 size={14} />, text: 'דוחות חודשיים' }
-  ];
+  const color = '#3b82f6';
+  const borderColor = 'rgba(59,130,246,0.4)';
 
   return (
     <div className="flip-card w-full h-full">
       <div className={`flip-card-inner ${flipped ? 'flipped' : ''}`}>
-        <div className="flip-card-front overflow-hidden">
+        {/* FRONT */}
+        <div className="flip-card-face overflow-hidden"
+          style={{ background: 'linear-gradient(135deg, #0a1828 0%, #0f2035 50%, #0a1828 100%)', boxShadow: '0 20px 40px -15px rgba(59,130,246,0.3)', border: `1px solid ${borderColor}` }}>
           <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-blue-400 to-transparent" />
-          <div className="absolute inset-0 opacity-8" style={{ 
-            backgroundImage: 'linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px)', 
-            backgroundSize: '30px 30px' 
-          }} />
-          
+          <div className="absolute inset-0 opacity-8" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
           <div className="relative z-10 p-5 h-full flex flex-col">
             <div className="flex items-center justify-between gap-2 mb-4">
               <div className="flex items-center gap-2">
@@ -1641,7 +1307,6 @@ const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pa
                 <span className="text-[8px] font-black text-blue-400">מומלץ</span>
               </div>
             </div>
-
             <div className="grid md:grid-cols-2 gap-4 mb-4 flex-grow">
               <div className="space-y-3">
                 <div className="flex items-baseline gap-2 flex-wrap">
@@ -1650,66 +1315,48 @@ const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pa
                   <span className="text-xs line-through text-white/25">₪2,499</span>
                   <span className="text-[8px] font-black bg-green-500/15 text-green-400 px-1.5 py-0.5 rounded-full border border-green-500/25">40% OFF</span>
                 </div>
-
                 <div className="space-y-2">
                   {['עד 50 רכבים בחודש', 'צילומים מקצועיים', 'דפי נחיתה מותאמים', 'מנהל לקוח ייעודי'].map((text, i) => (
                     <div key={i} className="flex items-center gap-2 text-white/75 text-[10px]">
-                      <div className="w-4 h-4 rounded-full bg-blue-500/15 flex items-center justify-center">
-                        <Check size={8} className="text-blue-400" />
-                      </div>
+                      <div className="w-4 h-4 rounded-full bg-blue-500/15 flex items-center justify-center"><Check size={8} className="text-blue-400" /></div>
                       <span>{text}</span>
                     </div>
                   ))}
                 </div>
               </div>
-
               <div className="grid grid-cols-2 gap-2">
-                {features.map((item, i) => (
-                  <FeatureBox key={i} icon={item.icon} text={item.text} color={color} />
+                {[{ icon: <Target size={15} />, title: 'חשיפה ממוקדת' }, { icon: <BarChart3 size={15} />, title: 'דוחות חודשיים' }].map((item, i) => (
+                  <div key={i} className="p-2.5 rounded-xl bg-white/8 border border-white/10">
+                    <div className="text-blue-400 mb-1">{item.icon}</div>
+                    <div className="text-[9px] font-black text-white/75">{item.title}</div>
+                  </div>
                 ))}
               </div>
             </div>
-
             <div className="flex gap-2">
-              <button 
-                onClick={() => setFlipped(true)} 
-                className="flex-1 py-2.5 rounded-xl font-black text-xs transition-all hover:opacity-80"
-                style={{ border: `1px solid ${borderColor}`, color, background: 'rgba(59,130,246,0.08)' }}
-              >
-                פרטים נוספים
-              </button>
-              <button 
-                onClick={() => onSelect(pkg)}
-                className="flex-1 py-2.5 rounded-xl font-black text-xs bg-gradient-to-r from-blue-500 to-purple-600 text-white flex items-center justify-center gap-1.5 hover:opacity-90 active:scale-95"
-              >
+              <button onClick={() => setFlipped(true)} className="flex-1 py-2.5 rounded-xl font-black text-xs transition-all hover:opacity-80"
+                style={{ border: `1px solid ${borderColor}`, color, background: 'rgba(59,130,246,0.08)' }}>פרטים נוספים</button>
+              <button onClick={() => onSelect(pkg)}
+                className="flex-1 py-2.5 rounded-xl font-black text-xs bg-gradient-to-r from-blue-500 to-purple-600 text-white flex items-center justify-center gap-1.5 hover:opacity-90 active:scale-95">
                 <Briefcase size={12} />התחל עכשיו
               </button>
             </div>
           </div>
         </div>
-        <div className="flip-card-back">
-          <FlipCardBack 
-            pkg={pkg} 
-            details={packageDetails.business} 
-            color={color} 
-            borderColor={borderColor} 
-            badge="🏢" 
-            onSelect={onSelect} 
-            onBack={() => setFlipped(false)} 
-          />
-        </div>
+        {/* BACK */}
+        <FlipCardBack pkg={pkg} details={packageDetails.business} color={color} borderColor={borderColor} badge="🏢" onSelect={onSelect} onBack={() => setFlipped(false)} />
       </div>
     </div>
   );
 };
 
-// --- Bit Logo ---
+// --- Bit / PayBox Logo ---
 const BitLogo = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) => {
   const h = size === 'sm' ? 24 : size === 'lg' ? 36 : 28;
   const fontSize = size === 'sm' ? 11 : size === 'lg' ? 16 : 13;
   const px = size === 'sm' ? 8 : 12;
   return (
-    <div 
+    <div
       className="inline-flex items-center justify-center rounded-lg overflow-hidden shrink-0"
       style={{ background: '#0D3D3D', height: h, paddingLeft: px, paddingRight: px, gap: 4 }}
     >
@@ -1717,16 +1364,14 @@ const BitLogo = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) => {
         <circle cx="4.5" cy="2" r="2" fill="#00E5CC"/>
         <rect x="2.5" y="6" width="4" height="10" rx="2" fill="#00E5CC"/>
       </svg>
-      <span style={{ 
-        fontFamily: '"Nunito", Arial Rounded MT Bold, Arial, sans-serif', 
-        fontWeight: 800, 
-        fontSize, 
-        color: '#00E5CC', 
-        letterSpacing: '-0.5px', 
-        lineHeight: 1 
-      }}>
-        bit
-      </span>
+      <span style={{
+        fontFamily: '"Nunito", "Varela Round", Arial Rounded MT Bold, Arial, sans-serif',
+        fontWeight: 800,
+        fontSize,
+        color: '#00E5CC',
+        letterSpacing: '-0.5px',
+        lineHeight: 1
+      }}>bit</span>
     </div>
   );
 };
@@ -1737,7 +1382,7 @@ const PayBoxLogo = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) => {
   const iconSize = size === 'sm' ? 12 : size === 'lg' ? 18 : 14;
   const px = size === 'sm' ? 8 : 12;
   return (
-    <div 
+    <div
       className="inline-flex items-center justify-center rounded-lg overflow-hidden shrink-0"
       style={{ background: '#29ABE2', height: h, paddingLeft: px, paddingRight: px, gap: 4 }}
     >
@@ -1745,21 +1390,19 @@ const PayBoxLogo = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) => {
         <circle cx="12" cy="6" r="3" stroke="white" strokeWidth="2" fill="none"/>
         <path d="M5 10 L9 14 L9 20 L15 20 L15 14 L19 10" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
       </svg>
-      <span style={{ 
-        fontFamily: 'Arial, Helvetica, sans-serif', 
-        fontWeight: 700, 
-        fontSize, 
-        color: '#ffffff', 
-        letterSpacing: '0.2px', 
-        lineHeight: 1 
-      }}>
-        PayBox
-      </span>
+      <span style={{
+        fontFamily: 'Arial, Helvetica, sans-serif',
+        fontWeight: 700,
+        fontSize,
+        color: '#ffffff',
+        letterSpacing: '0.2px',
+        lineHeight: 1
+      }}>PayBox</span>
     </div>
   );
 };
 
-// --- Order Status Check ---
+// --- Order Status Check Component ---
 const OrderStatusCheck = ({ onClose }: { onClose: () => void }) => {
   const [orderNumber, setOrderNumber] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'found' | 'notfound'>('idle');
@@ -1771,12 +1414,12 @@ const OrderStatusCheck = ({ onClose }: { onClose: () => void }) => {
     setTimeout(() => {
       if (orderNumber.length > 3) {
         setStatus('found');
-        setOrderDetails({ 
-          id: orderNumber, 
-          date: '2024-02-23', 
-          package: 'VIP LUXURY', 
-          status: 'בתהליך', 
-          car: 'מזדה 3 2020' 
+        setOrderDetails({
+          id: orderNumber,
+          date: '2024-02-23',
+          package: 'VIP LUXURY',
+          status: 'בתהליך',
+          car: 'מזדה 3 2020'
         });
       } else {
         setStatus('notfound');
@@ -1785,16 +1428,16 @@ const OrderStatusCheck = ({ onClose }: { onClose: () => void }) => {
   };
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }} 
-      animate={{ opacity: 1, y: 0 }} 
-      transition={{ type: 'spring', stiffness: 300 }} 
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: 'spring', stiffness: 300 }}
       className="glass-card p-6 space-y-5"
     >
       <div className="text-center space-y-2">
         <motion.div 
           className="w-16 h-16 bg-gradient-to-br from-brand-red to-red-600 rounded-xl flex items-center justify-center mx-auto shadow-xl shadow-brand-red/30"
-          animate={{ scale: [1, 1.1, 1] }} 
+          animate={{ scale: [1, 1.1, 1] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
           <Search size={28} className="text-white" />
@@ -1802,19 +1445,20 @@ const OrderStatusCheck = ({ onClose }: { onClose: () => void }) => {
         <h3 className="text-xl font-black">בדיקת סטטוס הזמנה</h3>
         <p className="text-white/50 text-xs">הכנס את מספר ההזמנה שקיבלת בוואטסאפ</p>
       </div>
+
       <div className="space-y-3">
         <div className="relative">
-          <input 
-            type="text" 
-            placeholder="לדוגמה: #12345" 
-            value={orderNumber} 
+          <input
+            type="text"
+            placeholder="לדוגמה: #12345"
+            value={orderNumber}
             onChange={(e) => setOrderNumber(e.target.value)}
-            className="w-full px-4 py-3 bg-white/5 border-2 border-white/10 rounded-xl text-center text-base font-black tracking-widest focus:border-brand-red focus:outline-none transition-all" 
+            className="w-full px-4 py-3 bg-white/5 border-2 border-white/10 rounded-xl text-center text-base font-black tracking-widest focus:border-brand-red focus:outline-none transition-all"
           />
           {orderNumber && (
-            <motion.button 
-              onClick={() => setOrderNumber('')} 
-              whileHover={{ scale: 1.1 }} 
+            <motion.button
+              onClick={() => setOrderNumber('')}
+              whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60"
             >
@@ -1822,10 +1466,11 @@ const OrderStatusCheck = ({ onClose }: { onClose: () => void }) => {
             </motion.button>
           )}
         </div>
-        <motion.button 
-          onClick={checkOrder} 
-          disabled={status === 'loading'} 
-          whileHover={{ scale: 1.05 }} 
+
+        <motion.button
+          onClick={checkOrder}
+          disabled={status === 'loading'}
+          whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           className="w-full py-3 bg-gradient-to-r from-brand-red to-red-600 rounded-xl font-black text-sm shadow-xl shadow-brand-red/30 hover:shadow-brand-red/40 transition-all disabled:opacity-50 relative overflow-hidden group"
         >
@@ -1833,16 +1478,18 @@ const OrderStatusCheck = ({ onClose }: { onClose: () => void }) => {
           <span className="relative">
             {status === 'loading' ? (
               <span className="flex items-center justify-center gap-2">
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />בודק...
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                בודק...
               </span>
             ) : 'בדוק סטטוס'}
           </span>
         </motion.button>
+
         <AnimatePresence>
           {status === 'found' && orderDetails && (
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: -10 }} 
-              animate={{ opacity: 1, scale: 1, y: 0 }} 
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: -10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
               className="p-4 rounded-xl bg-gradient-to-br from-green-500/10 to-emerald-500/5 border border-green-500/20 space-y-3"
             >
@@ -1872,10 +1519,11 @@ const OrderStatusCheck = ({ onClose }: { onClose: () => void }) => {
               </div>
             </motion.div>
           )}
+
           {status === 'notfound' && (
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: -10 }} 
-              animate={{ opacity: 1, scale: 1, y: 0 }} 
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: -10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
               className="p-4 rounded-xl bg-gradient-to-br from-red-500/10 to-orange-500/5 border border-red-500/20 text-center"
             >
@@ -1886,13 +1534,15 @@ const OrderStatusCheck = ({ onClose }: { onClose: () => void }) => {
           )}
         </AnimatePresence>
       </div>
-      <motion.button 
-        whileHover={{ scale: 1.05 }} 
-        whileTap={{ scale: 0.96 }} 
+
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.96 }}
         onClick={onClose}
         className="w-full py-2.5 rounded-xl text-xs font-bold border border-brand-red/30 bg-brand-red/10 hover:bg-brand-red hover:border-brand-red text-brand-red hover:text-white transition-all flex items-center justify-center gap-2"
       >
-        <ArrowLeft size={12} />חזור לדף הבית
+        <ArrowLeft size={12} />
+        חזור לדף הבית
       </motion.button>
     </motion.div>
   );
@@ -1902,12 +1552,29 @@ const OrderStatusCheck = ({ onClose }: { onClose: () => void }) => {
 // CHANGE PACKAGE MODAL
 // ============================================================
 const ChangePackageModal = ({
-  isOpen, onClose, currentPackageId, packages, vipPackage, duoPackage,
-  equipmentPackages, businessPackage, transportPackage, onSelect, lang
+  isOpen,
+  onClose,
+  currentPackageId,
+  packages,
+  vipPackage,
+  duoPackage,
+  equipmentPackages,
+  businessPackage,
+  transportPackage,
+  onSelect,
+  lang
 }: {
-  isOpen: boolean; onClose: () => void; currentPackageId: string; packages: Package[];
-  vipPackage: Package; duoPackage: Package; equipmentPackages: Package[];
-  businessPackage: Package; transportPackage: Package; onSelect: (p: Package) => void; lang: Language;
+  isOpen: boolean;
+  onClose: () => void;
+  currentPackageId: string;
+  packages: Package[];
+  vipPackage: Package;
+  duoPackage: Package;
+  equipmentPackages: Package[];
+  businessPackage: Package;
+  transportPackage: Package;
+  onSelect: (p: Package) => void;
+  lang: Language;
 }) => {
   const allPackages = [...packages, vipPackage, duoPackage, ...equipmentPackages, transportPackage, businessPackage];
 
@@ -1927,30 +1594,29 @@ const ChangePackageModal = ({
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-          <motion.div 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
-            exit={{ opacity: 0 }} 
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
-            onClick={onClose} 
-            className="absolute inset-0 bg-black/80 backdrop-blur-sm" 
+            onClick={onClose}
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
           />
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95, y: 20 }} 
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }} 
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.18 }}
             className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl"
-            style={{ 
-              background: 'linear-gradient(145deg, #111116 0%, #0a0a0e 100%)', 
-              border: '1px solid rgba(255,255,255,0.1)', 
-              boxShadow: '0 40px 80px -20px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05)' 
+            style={{
+              background: 'linear-gradient(145deg, #111116 0%, #0a0a0e 100%)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              boxShadow: '0 40px 80px -20px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05)'
             }}
           >
-            <div 
-              className="sticky top-0 z-10 px-5 py-4 border-b border-white/8 flex items-center justify-between"
-              style={{ background: 'rgba(11,11,16,0.97)', backdropFilter: 'blur(8px)' }}
-            >
+            {/* Header */}
+            <div className="sticky top-0 z-10 px-5 py-4 border-b border-white/8 flex items-center justify-between"
+              style={{ background: 'rgba(11,11,16,0.97)', backdropFilter: 'blur(8px)' }}>
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl bg-brand-red/10 border border-brand-red/20 flex items-center justify-center">
                   <RefreshCw size={15} className="text-brand-red" />
@@ -1960,21 +1626,26 @@ const ChangePackageModal = ({
                   <p className="text-[10px] text-white/40 mt-0.5">בחר חבילה אחרת להזמנה</p>
                 </div>
               </div>
-              <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-lg transition-colors">
+              <button
+                onClick={onClose}
+                className="p-2 hover:bg-white/5 rounded-lg transition-colors"
+              >
                 <X size={16} className="text-white/50" />
               </button>
             </div>
+
+            {/* Package Grid */}
             <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
               {allPackages.map((pkg) => {
                 const style = getPackageStyle(pkg);
                 const isActive = pkg.id === currentPackageId;
                 return (
-                  <button 
-                    key={pkg.id} 
+                  <button
+                    key={pkg.id}
                     onClick={() => { onSelect(pkg); onClose(); }}
                     className={`flex items-center gap-3 p-3.5 rounded-xl border-2 transition-all text-right hover:scale-[1.02] active:scale-[0.98] ${
-                      isActive 
-                        ? `${style.activeBorder} ${style.bg}` 
+                      isActive
+                        ? `${style.activeBorder} ${style.bg}`
                         : `${style.border} bg-white/2 hover:bg-white/4`
                     }`}
                   >
@@ -1984,19 +1655,13 @@ const ChangePackageModal = ({
                     <div className="flex-1 min-w-0 text-right">
                       <div className="flex items-center gap-2 justify-end">
                         {isActive && (
-                          <span className="text-[8px] font-black px-1.5 py-0.5 rounded-full bg-white/10 text-white/60">
-                            נוכחית
-                          </span>
+                          <span className="text-[8px] font-black px-1.5 py-0.5 rounded-full bg-white/10 text-white/60">נוכחית</span>
                         )}
-                        <span className={`text-sm font-black ${isActive ? style.color : 'text-white'}`}>
-                          {pkg.name}
-                        </span>
+                        <span className={`text-sm font-black ${isActive ? style.color : 'text-white'}`}>{pkg.name}</span>
                       </div>
                       <p className="text-[9px] text-white/40 mt-0.5 truncate">{pkg.features[0] || ''}</p>
                     </div>
-                    <div className={`text-base font-black shrink-0 ${isActive ? style.color : 'text-white'}`}>
-                      {pkg.price}
-                    </div>
+                    <div className={`text-base font-black shrink-0 ${isActive ? style.color : 'text-white'}`}>{pkg.price}</div>
                   </button>
                 );
               })}
@@ -2009,31 +1674,40 @@ const ChangePackageModal = ({
 };
 
 // --- Step 1: Car Details Form ---
-const CarDetailsForm = ({ formData, setFormData, onNext, selectedPackage, onChangePackage }: {
-  formData: any, setFormData: (data: any) => void, onNext: () => void, selectedPackage: Package | null, onChangePackage: () => void
+const CarDetailsForm = ({ 
+  formData, 
+  setFormData, 
+  onNext,
+  selectedPackage,
+  onChangePackage
+}: { 
+  formData: any, 
+  setFormData: (data: any) => void, 
+  onNext: () => void,
+  selectedPackage: Package | null,
+  onChangePackage: () => void
 }) => {
   const isDuo = selectedPackage?.id === 'duo';
   const isBusiness = selectedPackage?.id === 'business';
   const isTransport = selectedPackage?.id === 'transport';
 
-  const accentColor = isBusiness ? COLORS.business.primary : isDuo ? COLORS.duo.primary : isTransport ? COLORS.transport.primary : COLORS.brand;
-
   return (
-    <motion.div 
-      initial={{ opacity: 0, x: -20 }} 
-      animate={{ opacity: 1, x: 0 }} 
-      exit={{ opacity: 0, x: 20 }} 
-      transition={{ type: 'spring', stiffness: 300 }} 
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 20 }}
+      transition={{ type: 'spring', stiffness: 300 }}
       className="space-y-5"
     >
+      {/* Package Badge + Change Option */}
       <motion.div 
-        className="flex items-center justify-between p-3 rounded-xl border border-white/8 bg-white/3" 
+        className="flex items-center justify-between p-3 rounded-xl border border-white/8 bg-white/3"
         whileHover={{ scale: 1.02 }}
       >
         <div className="flex items-center gap-2">
           <motion.div 
             className="w-8 h-8 rounded-lg bg-brand-red/10 flex items-center justify-center"
-            animate={{ rotate: [0, 10, -10, 0] }} 
+            animate={{ rotate: [0, 10, -10, 0] }}
             transition={{ duration: 5, repeat: Infinity }}
           >
             {selectedPackage?.id === 'vip' ? <Crown size={14} className="text-amber-400" /> :
@@ -2047,22 +1721,24 @@ const CarDetailsForm = ({ formData, setFormData, onNext, selectedPackage, onChan
             <div className="text-xs font-black text-white">{selectedPackage?.name}</div>
           </div>
         </div>
-        <motion.button 
-          whileHover={{ scale: 1.05 }} 
-          whileTap={{ scale: 0.95 }} 
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
           onClick={onChangePackage}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black border border-white/10 text-white/50 hover:text-white hover:border-white/25 hover:bg-white/5 transition-all"
         >
-          <RefreshCw size={10} />החלף חבילה
+          <RefreshCw size={10} />
+          החלף חבילה
         </motion.button>
       </motion.div>
 
+      {/* Business-specific form */}
       {isBusiness ? (
         <>
           <div className="text-center space-y-2">
             <motion.div 
               className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto shadow-xl shadow-blue-500/30"
-              animate={{ scale: [1, 1.1, 1] }} 
+              animate={{ scale: [1, 1.1, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
               <Building2 size={28} className="text-white" />
@@ -2070,72 +1746,40 @@ const CarDetailsForm = ({ formData, setFormData, onNext, selectedPackage, onChan
             <h3 className="text-xl font-black">פרטי הסוכנות</h3>
             <p className="text-white/50 text-xs">הכנס את פרטי הסוכנות שלך</p>
           </div>
+
           <div className="grid md:grid-cols-2 gap-3">
             <div className="space-y-1 md:col-span-2">
               <label className="text-xs font-black text-blue-400/70">שם הסוכנות *</label>
-              <input 
-                type="text" 
-                placeholder="סוכנות הרכב שלי" 
-                value={formData.agencyName || ''} 
-                onChange={(e) => setFormData({...formData, agencyName: e.target.value})}
-                className="w-full px-3 py-2 bg-blue-500/5 border border-blue-500/20 rounded-lg text-sm focus:border-blue-400 focus:outline-none transition-all" 
-              />
+              <input type="text" placeholder="סוכנות הרכב שלי" value={formData.agencyName || ''} onChange={(e) => setFormData({...formData, agencyName: e.target.value})}
+                className="w-full px-3 py-2 bg-blue-500/5 border border-blue-500/20 rounded-lg text-sm focus:border-blue-400 focus:outline-none transition-all" required />
             </div>
             <div className="space-y-1">
               <label className="text-xs font-black text-blue-400/70">שם איש קשר *</label>
-              <input 
-                type="text" 
-                placeholder="ישראל ישראלי" 
-                value={formData.fullName} 
-                onChange={(e) => setFormData({...formData, fullName: e.target.value})}
-                className="w-full px-3 py-2 bg-blue-500/5 border border-blue-500/20 rounded-lg text-sm focus:border-blue-400 focus:outline-none transition-all" 
-              />
+              <input type="text" placeholder="ישראל ישראלי" value={formData.fullName} onChange={(e) => setFormData({...formData, fullName: e.target.value})}
+                className="w-full px-3 py-2 bg-blue-500/5 border border-blue-500/20 rounded-lg text-sm focus:border-blue-400 focus:outline-none transition-all" required />
             </div>
             <div className="space-y-1">
               <label className="text-xs font-black text-blue-400/70">טלפון *</label>
-              <input 
-                type="tel" 
-                placeholder="050-1234567" 
-                value={formData.phone} 
-                onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                className="w-full px-3 py-2 bg-blue-500/5 border border-blue-500/20 rounded-lg text-sm focus:border-blue-400 focus:outline-none transition-all" 
-              />
+              <input type="tel" placeholder="050-1234567" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                className="w-full px-3 py-2 bg-blue-500/5 border border-blue-500/20 rounded-lg text-sm focus:border-blue-400 focus:outline-none transition-all" required />
             </div>
             <div className="space-y-1">
               <label className="text-xs font-black text-blue-400/70">מיקום הסוכנות *</label>
-              <input 
-                type="text" 
-                placeholder="תל אביב" 
-                value={formData.location} 
-                onChange={(e) => setFormData({...formData, location: e.target.value})}
-                className="w-full px-3 py-2 bg-blue-500/5 border border-blue-500/20 rounded-lg text-sm focus:border-blue-400 focus:outline-none transition-all" 
-              />
+              <input type="text" placeholder="תל אביב" value={formData.location} onChange={(e) => setFormData({...formData, location: e.target.value})}
+                className="w-full px-3 py-2 bg-blue-500/5 border border-blue-500/20 rounded-lg text-sm focus:border-blue-400 focus:outline-none transition-all" required />
             </div>
             <div className="space-y-1">
               <label className="text-xs font-black text-blue-400/70">כמות רכבים בחודש *</label>
-              <input 
-                type="text" 
-                placeholder="10-20 רכבים" 
-                value={formData.monthlyCars || ''} 
-                onChange={(e) => setFormData({...formData, monthlyCars: e.target.value})}
-                className="w-full px-3 py-2 bg-blue-500/5 border border-blue-500/20 rounded-lg text-sm focus:border-blue-400 focus:outline-none transition-all" 
-              />
+              <input type="text" placeholder="10-20 רכבים" value={formData.monthlyCars || ''} onChange={(e) => setFormData({...formData, monthlyCars: e.target.value})}
+                className="w-full px-3 py-2 bg-blue-500/5 border border-blue-500/20 rounded-lg text-sm focus:border-blue-400 focus:outline-none transition-all" required />
             </div>
             <div className="space-y-1 md:col-span-2">
               <label className="text-xs font-black text-blue-400/70">פרטים נוספים</label>
-              <textarea 
-                placeholder="ספר לנו על הסוכנות שלך..." 
-                value={formData.agencyDetails || ''} 
-                onChange={(e) => setFormData({...formData, agencyDetails: e.target.value})}
-                rows={3} 
-                className="w-full px-3 py-2 bg-blue-500/5 border border-blue-500/20 rounded-lg text-sm focus:border-blue-400 focus:outline-none transition-all resize-none" 
-              />
+              <textarea placeholder="ספר לנו על הסוכנות שלך..." value={formData.agencyDetails || ''} onChange={(e) => setFormData({...formData, agencyDetails: e.target.value})}
+                rows={3} className="w-full px-3 py-2 bg-blue-500/5 border border-blue-500/20 rounded-lg text-sm focus:border-blue-400 focus:outline-none transition-all resize-none" />
             </div>
           </div>
-          <motion.div 
-            className="p-3 rounded-xl bg-blue-500/5 border border-blue-500/20 flex items-start gap-2" 
-            whileHover={{ scale: 1.02 }}
-          >
+          <motion.div className="p-3 rounded-xl bg-blue-500/5 border border-blue-500/20 flex items-start gap-2" whileHover={{ scale: 1.02 }}>
             <Building2 size={14} className="text-blue-400 mt-0.5 shrink-0" />
             <p className="text-[9px] text-blue-300/70 leading-relaxed">לאחר השליחה, נציג יצור איתך קשר תוך 2 שעות לתיאום פרטים.</p>
           </motion.div>
@@ -2143,54 +1787,34 @@ const CarDetailsForm = ({ formData, setFormData, onNext, selectedPackage, onChan
       ) : isDuo ? (
         <>
           <div className="text-center space-y-2">
-            <motion.div 
-              className="w-16 h-16 bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl flex items-center justify-center mx-auto shadow-xl shadow-purple-500/30"
-              animate={{ scale: [1, 1.1, 1] }} 
-              transition={{ duration: 2, repeat: Infinity }}
-            >
+            <motion.div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl flex items-center justify-center mx-auto shadow-xl shadow-purple-500/30"
+              animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity }}>
               <Car size={28} className="text-white" />
             </motion.div>
             <h3 className="text-xl font-black">פרטי שני הרכבים</h3>
             <p className="text-white/50 text-xs">מלא פרטים עבור כל אחד מהרכבים</p>
           </div>
+
           <div className="grid md:grid-cols-2 gap-3">
             <div className="space-y-1">
               <label className="text-xs font-black text-white/60">שם מלא *</label>
-              <input 
-                type="text" 
-                placeholder="ישראל ישראלי" 
-                value={formData.fullName} 
-                onChange={(e) => setFormData({...formData, fullName: e.target.value})}
-                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm focus:border-purple-400 focus:outline-none transition-all" 
-              />
+              <input type="text" placeholder="ישראל ישראלי" value={formData.fullName} onChange={(e) => setFormData({...formData, fullName: e.target.value})}
+                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm focus:border-purple-400 focus:outline-none transition-all" required />
             </div>
             <div className="space-y-1">
               <label className="text-xs font-black text-white/60">טלפון *</label>
-              <input 
-                type="tel" 
-                placeholder="050-1234567" 
-                value={formData.phone} 
-                onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm focus:border-purple-400 focus:outline-none transition-all" 
-              />
+              <input type="tel" placeholder="050-1234567" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm focus:border-purple-400 focus:outline-none transition-all" required />
             </div>
             <div className="space-y-1 md:col-span-2">
               <label className="text-xs font-black text-white/60">מיקום *</label>
-              <input 
-                type="text" 
-                placeholder="תל אביב" 
-                value={formData.location} 
-                onChange={(e) => setFormData({...formData, location: e.target.value})}
-                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm focus:border-purple-400 focus:outline-none transition-all" 
-              />
+              <input type="text" placeholder="תל אביב" value={formData.location} onChange={(e) => setFormData({...formData, location: e.target.value})}
+                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm focus:border-purple-400 focus:outline-none transition-all" required />
             </div>
           </div>
+
           {[1, 2].map(carNum => (
-            <motion.div 
-              key={carNum} 
-              className="rounded-xl border border-purple-500/25 overflow-hidden" 
-              whileHover={{ scale: 1.01 }}
-            >
+            <motion.div key={carNum} className="rounded-xl border border-purple-500/25 overflow-hidden" whileHover={{ scale: 1.01 }}>
               <div className="px-4 py-2.5 bg-purple-500/10 border-b border-purple-500/20 flex items-center gap-2">
                 <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center">
                   <span className="text-[10px] font-black text-purple-400">{carNum}</span>
@@ -2208,13 +1832,8 @@ const CarDetailsForm = ({ formData, setFormData, onNext, selectedPackage, onChan
                 ].map(f => (
                   <div key={f.field} className="space-y-1">
                     <label className="text-xs font-black text-white/50">{f.label} *</label>
-                    <input 
-                      type="text" 
-                      placeholder={f.placeholder} 
-                      value={(formData as any)[f.field] || ''} 
-                      onChange={(e) => setFormData({...formData, [f.field]: e.target.value})}
-                      className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm focus:border-purple-400 focus:outline-none transition-all" 
-                    />
+                    <input type="text" placeholder={f.placeholder} value={(formData as any)[f.field] || ''} onChange={(e) => setFormData({...formData, [f.field]: e.target.value})}
+                      className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm focus:border-purple-400 focus:outline-none transition-all" required />
                   </div>
                 ))}
               </div>
@@ -2224,47 +1843,59 @@ const CarDetailsForm = ({ formData, setFormData, onNext, selectedPackage, onChan
       ) : isTransport ? (
         <>
           <div className="text-center space-y-2">
-            <motion.div 
-              className="w-16 h-16 bg-gradient-to-br from-sky-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto shadow-xl shadow-sky-500/30"
-              animate={{ scale: [1, 1.1, 1] }} 
-              transition={{ duration: 2, repeat: Infinity }}
-            >
+            <motion.div className="w-16 h-16 bg-gradient-to-br from-sky-500 to-blue-600 rounded-xl flex items-center justify-center mx-auto shadow-xl shadow-sky-500/30"
+              animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity }}>
               <Bus size={28} className="text-white" />
             </motion.div>
             <h3 className="text-xl font-black">פרטי כלי הרכב המסחרי</h3>
             <p className="text-white/50 text-xs">הכנס פרטים מלאים לקבלת פרסום מקסימלי</p>
           </div>
+
           <div className="grid md:grid-cols-2 gap-3">
-            {[
-              { label: 'סוג הרכב *', placeholder: 'אוטובוס / מיניבוס / וואן', field: 'model', className: 'border-sky-500/20 bg-sky-500/5 focus:border-sky-400' },
-              { label: 'שנת ייצור *', placeholder: '2018', field: 'year', className: 'border-sky-500/20 bg-sky-500/5 focus:border-sky-400' },
-              { label: "קילומטראז' *", placeholder: '250,000', field: 'mileage', className: 'border-sky-500/20 bg-sky-500/5 focus:border-sky-400' },
-              { label: 'מחיר מבוקש *', placeholder: '180,000 ₪', field: 'price', className: 'border-sky-500/20 bg-sky-500/5 focus:border-sky-400' },
-              { label: 'מספר מושבים', placeholder: '50 / 25 / 9', field: 'seats', className: 'border-sky-500/20 bg-sky-500/5 focus:border-sky-400' },
-              { label: 'טסט עד *', placeholder: '06/2026', field: 'testUntil', className: 'border-sky-500/20 bg-sky-500/5 focus:border-sky-400' },
-              { label: 'שם מלא *', placeholder: 'ישראל ישראלי', field: 'fullName', className: 'border-sky-500/20 bg-sky-500/5 focus:border-sky-400' },
-              { label: 'טלפון *', placeholder: '050-1234567', field: 'phone', className: 'border-sky-500/20 bg-sky-500/5 focus:border-sky-400', type: 'tel' },
-            ].map(f => (
-              <div key={f.field} className="space-y-1">
-                <label className="text-xs font-black text-sky-400/70">{f.label}</label>
-                <input 
-                  type={(f as any).type || 'text'} 
-                  placeholder={f.placeholder} 
-                  value={(formData as any)[f.field] || ''}
-                  onChange={(e) => setFormData({...formData, [f.field]: e.target.value})}
-                  className={`w-full px-3 py-2 border rounded-lg text-sm focus:outline-none transition-all ${f.className}`} 
-                />
-              </div>
-            ))}
+            <div className="space-y-1">
+              <label className="text-xs font-black text-sky-400/70">סוג הרכב *</label>
+              <input type="text" placeholder="אוטובוס / מיניבוס / וואן" value={formData.model} onChange={(e) => setFormData({...formData, model: e.target.value})}
+                className="w-full px-3 py-2 bg-sky-500/5 border border-sky-500/20 rounded-lg text-sm focus:border-sky-400 focus:outline-none transition-all" required />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs font-black text-sky-400/70">שנת ייצור *</label>
+              <input type="text" placeholder="2018" value={formData.year} onChange={(e) => setFormData({...formData, year: e.target.value})}
+                className="w-full px-3 py-2 bg-sky-500/5 border border-sky-500/20 rounded-lg text-sm focus:border-sky-400 focus:outline-none transition-all" required />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs font-black text-sky-400/70">קילומטראז' *</label>
+              <input type="text" placeholder="250,000" value={formData.mileage} onChange={(e) => setFormData({...formData, mileage: e.target.value})}
+                className="w-full px-3 py-2 bg-sky-500/5 border border-sky-500/20 rounded-lg text-sm focus:border-sky-400 focus:outline-none transition-all" required />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs font-black text-sky-400/70">מחיר מבוקש *</label>
+              <input type="text" placeholder="180,000 ₪" value={formData.price} onChange={(e) => setFormData({...formData, price: e.target.value})}
+                className="w-full px-3 py-2 bg-sky-500/5 border border-sky-500/20 rounded-lg text-sm focus:border-sky-400 focus:outline-none transition-all" required />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs font-black text-sky-400/70">מספר מושבים</label>
+              <input type="text" placeholder="50 / 25 / 9" value={formData.seats || ''} onChange={(e) => setFormData({...formData, seats: e.target.value})}
+                className="w-full px-3 py-2 bg-sky-500/5 border border-sky-500/20 rounded-lg text-sm focus:border-sky-400 focus:outline-none transition-all" />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs font-black text-sky-400/70">טסט עד *</label>
+              <input type="text" placeholder="06/2026" value={formData.testUntil} onChange={(e) => setFormData({...formData, testUntil: e.target.value})}
+                className="w-full px-3 py-2 bg-sky-500/5 border border-sky-500/20 rounded-lg text-sm focus:border-sky-400 focus:outline-none transition-all" required />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs font-black text-sky-400/70">שם מלא *</label>
+              <input type="text" placeholder="ישראל ישראלי" value={formData.fullName} onChange={(e) => setFormData({...formData, fullName: e.target.value})}
+                className="w-full px-3 py-2 bg-sky-500/5 border border-sky-500/20 rounded-lg text-sm focus:border-sky-400 focus:outline-none transition-all" required />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs font-black text-sky-400/70">טלפון *</label>
+              <input type="tel" placeholder="050-1234567" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                className="w-full px-3 py-2 bg-sky-500/5 border border-sky-500/20 rounded-lg text-sm focus:border-sky-400 focus:outline-none transition-all" required />
+            </div>
             <div className="space-y-1 md:col-span-2">
               <label className="text-xs font-black text-sky-400/70">מיקום *</label>
-              <input 
-                type="text" 
-                placeholder="תל אביב" 
-                value={formData.location} 
-                onChange={(e) => setFormData({...formData, location: e.target.value})}
-                className="w-full px-3 py-2 bg-sky-500/5 border border-sky-500/20 rounded-lg text-sm focus:border-sky-400 focus:outline-none transition-all" 
-              />
+              <input type="text" placeholder="תל אביב" value={formData.location} onChange={(e) => setFormData({...formData, location: e.target.value})}
+                className="w-full px-3 py-2 bg-sky-500/5 border border-sky-500/20 rounded-lg text-sm focus:border-sky-400 focus:outline-none transition-all" required />
             </div>
           </div>
         </>
@@ -2273,14 +1904,13 @@ const CarDetailsForm = ({ formData, setFormData, onNext, selectedPackage, onChan
           <div className="text-center space-y-2">
             <motion.div 
               className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mx-auto shadow-xl shadow-blue-500/30"
-              animate={{ scale: [1, 1.1, 1] }} 
-              transition={{ duration: 2, repeat: Infinity }}
-            >
+              animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity }}>
               <Car size={28} className="text-white" />
             </motion.div>
             <h3 className="text-xl font-black">פרטי הרכב</h3>
             <p className="text-white/50 text-xs">הכנס את פרטי הרכב שברצונך לפרסם</p>
           </div>
+
           <div className="grid md:grid-cols-2 gap-3">
             {[
               { label: 'דגם רכב', placeholder: 'מאזדה 3', field: 'model' },
@@ -2292,54 +1922,35 @@ const CarDetailsForm = ({ formData, setFormData, onNext, selectedPackage, onChan
             ].map(f => (
               <div key={f.field} className="space-y-1">
                 <label className="text-xs font-black text-white/60">{f.label} *</label>
-                <input 
-                  type="text" 
-                  placeholder={f.placeholder} 
-                  value={(formData as any)[f.field] || ''} 
-                  onChange={(e) => setFormData({...formData, [f.field]: e.target.value})}
-                  className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm focus:border-brand-red focus:outline-none transition-all" 
-                />
+                <input type="text" placeholder={f.placeholder} value={(formData as any)[f.field] || ''} onChange={(e) => setFormData({...formData, [f.field]: e.target.value})}
+                  className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm focus:border-brand-red focus:outline-none transition-all" required />
               </div>
             ))}
             <div className="md:col-span-2 space-y-1">
               <label className="text-xs font-black text-white/60">מיקום בארץ *</label>
-              <input 
-                type="text" 
-                placeholder="תל אביב" 
-                value={formData.location} 
-                onChange={(e) => setFormData({...formData, location: e.target.value})}
-                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm focus:border-brand-red focus:outline-none transition-all" 
-              />
+              <input type="text" placeholder="תל אביב" value={formData.location} onChange={(e) => setFormData({...formData, location: e.target.value})}
+                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm focus:border-brand-red focus:outline-none transition-all" required />
             </div>
           </div>
+
           <div className="space-y-3">
             <div className="space-y-1">
               <label className="text-xs font-black text-white/60">שם מלא *</label>
-              <input 
-                type="text" 
-                placeholder="ישראל ישראלי" 
-                value={formData.fullName} 
-                onChange={(e) => setFormData({...formData, fullName: e.target.value})}
-                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm focus:border-brand-red focus:outline-none transition-all" 
-              />
+              <input type="text" placeholder="ישראל ישראלי" value={formData.fullName} onChange={(e) => setFormData({...formData, fullName: e.target.value})}
+                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm focus:border-brand-red focus:outline-none transition-all" required />
             </div>
             <div className="space-y-1">
               <label className="text-xs font-black text-white/60">טלפון *</label>
-              <input 
-                type="tel" 
-                placeholder="050-1234567" 
-                value={formData.phone} 
-                onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm focus:border-brand-red focus:outline-none transition-all" 
-              />
+              <input type="tel" placeholder="050-1234567" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm focus:border-brand-red focus:outline-none transition-all" required />
             </div>
           </div>
         </>
       )}
 
-      <motion.button 
-        onClick={onNext} 
-        whileHover={{ scale: 1.05 }} 
+      <motion.button
+        onClick={onNext}
+        whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         className="w-full py-3 rounded-xl font-black text-sm shadow-xl transition-all mt-2 relative overflow-hidden group"
         style={{
@@ -2357,8 +1968,22 @@ const CarDetailsForm = ({ formData, setFormData, onNext, selectedPackage, onChan
 };
 
 // --- Step 2: Payment Form ---
-const PaymentForm = ({ formData, setFormData, selectedPackage, onSubmit, loading, onBack, onChangePackage }: {
-  formData: any, setFormData: (data: any) => void, selectedPackage: Package | null, onSubmit: () => void, loading: boolean, onBack: () => void, onChangePackage: () => void
+const PaymentForm = ({ 
+  formData, 
+  setFormData, 
+  selectedPackage, 
+  onSubmit, 
+  loading,
+  onBack,
+  onChangePackage
+}: { 
+  formData: any, 
+  setFormData: (data: any) => void, 
+  selectedPackage: Package | null, 
+  onSubmit: () => void, 
+  loading: boolean,
+  onBack: () => void,
+  onChangePackage: () => void
 }) => {
   const [paymentMethod, setPaymentMethod] = useState<'bit' | 'paybox' | null>(null);
 
@@ -2366,26 +1991,23 @@ const PaymentForm = ({ formData, setFormData, selectedPackage, onSubmit, loading
   const isDuo = selectedPackage?.id === 'duo';
   const isTransport = selectedPackage?.id === 'transport';
 
-  const accentColor = isBusiness ? COLORS.business.primary : isDuo ? COLORS.duo.primary : isTransport ? COLORS.transport.primary : COLORS.brand;
+  const accentColor = isBusiness ? '#3b82f6' : isDuo ? '#8b5cf6' : isTransport ? '#0ea5e9' : '#c8102e';
   const accentBorder = isBusiness ? 'border-blue-500/30' : isDuo ? 'border-purple-500/30' : isTransport ? 'border-sky-500/30' : 'border-brand-red/20';
   const accentBg = isBusiness ? 'from-blue-500/10' : isDuo ? 'from-purple-500/10' : isTransport ? 'from-sky-500/10' : 'from-brand-red/10';
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, x: 20 }} 
-      animate={{ opacity: 1, x: 0 }} 
-      exit={{ opacity: 0, x: -20 }} 
-      transition={{ type: 'spring', stiffness: 300 }} 
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      transition={{ type: 'spring', stiffness: 300 }}
       className="space-y-5"
     >
       <div className="text-center space-y-2">
         <motion.div 
           className="w-16 h-16 rounded-xl flex items-center justify-center mx-auto shadow-xl"
-          style={{ 
-            background: `linear-gradient(135deg, ${accentColor}, ${accentColor}aa)`, 
-            boxShadow: `0 20px 40px -15px ${accentColor}50` 
-          }}
-          animate={{ scale: [1, 1.1, 1] }} 
+          style={{ background: `linear-gradient(135deg, ${accentColor}, ${accentColor}aa)`, boxShadow: `0 20px 40px -15px ${accentColor}50` }}
+          animate={{ scale: [1, 1.1, 1] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
           <CreditCard size={28} className="text-white" />
@@ -2395,7 +2017,7 @@ const PaymentForm = ({ formData, setFormData, selectedPackage, onSubmit, loading
       </div>
 
       <motion.div 
-        className={`p-3 rounded-xl bg-gradient-to-r ${accentBg} to-transparent border ${accentBorder}`} 
+        className={`p-3 rounded-xl bg-gradient-to-r ${accentBg} to-transparent border ${accentBorder}`}
         whileHover={{ scale: 1.02 }}
       >
         <div className="flex items-center justify-between">
@@ -2409,9 +2031,9 @@ const PaymentForm = ({ formData, setFormData, selectedPackage, onSubmit, loading
               <span className="font-black text-white text-base mr-2">{selectedPackage?.price}</span>
             </div>
           </div>
-          <motion.button 
-            whileHover={{ scale: 1.05 }} 
-            whileTap={{ scale: 0.95 }} 
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={onChangePackage}
             className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all shrink-0 mr-1"
           >
@@ -2424,29 +2046,21 @@ const PaymentForm = ({ formData, setFormData, selectedPackage, onSubmit, loading
       <div className="space-y-2">
         <label className="text-xs font-black text-white/60">אמצעי תשלום *</label>
         <div className="grid grid-cols-2 gap-2">
-          <motion.button 
-            type="button" 
-            onClick={() => setPaymentMethod('bit')} 
-            whileHover={{ scale: 1.05 }} 
+          <motion.button
+            type="button"
+            onClick={() => setPaymentMethod('bit')}
+            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className={`p-3 rounded-xl border-2 transition-all ${
-              paymentMethod === 'bit' 
-                ? 'border-[#00E5CC] bg-[#00E5CC]/10' 
-                : 'border-white/10 bg-white/5 hover:bg-white/10'
-            }`}
+            className={`p-3 rounded-xl border-2 transition-all ${paymentMethod === 'bit' ? 'border-[#00E5CC] bg-[#00E5CC]/10' : 'border-white/10 bg-white/5 hover:bg-white/10'}`}
           >
             <BitLogo size="md" />
           </motion.button>
-          <motion.button 
-            type="button" 
-            onClick={() => setPaymentMethod('paybox')} 
-            whileHover={{ scale: 1.05 }} 
+          <motion.button
+            type="button"
+            onClick={() => setPaymentMethod('paybox')}
+            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className={`p-3 rounded-xl border-2 transition-all ${
-              paymentMethod === 'paybox' 
-                ? 'border-[#29ABE2] bg-[#29ABE2]/10' 
-                : 'border-white/10 bg-white/5 hover:bg-white/10'
-            }`}
+            className={`p-3 rounded-xl border-2 transition-all ${paymentMethod === 'paybox' ? 'border-[#29ABE2] bg-[#29ABE2]/10' : 'border-white/10 bg-white/5 hover:bg-white/10'}`}
           >
             <PayBoxLogo size="md" />
           </motion.button>
@@ -2455,9 +2069,9 @@ const PaymentForm = ({ formData, setFormData, selectedPackage, onSubmit, loading
 
       <AnimatePresence>
         {paymentMethod && (
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }} 
-            animate={{ opacity: 1, y: 0 }} 
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             className="p-4 rounded-xl bg-gradient-to-br from-white/5 to-transparent border border-white/10 space-y-3"
           >
@@ -2465,39 +2079,40 @@ const PaymentForm = ({ formData, setFormData, selectedPackage, onSubmit, loading
               <p className="text-white/60 text-xs">העבר את הסכום למספר:</p>
               <p className="text-xl font-black tracking-wider text-white">054-6980606</p>
             </div>
-            <motion.button 
-              onClick={() => navigator.clipboard.writeText('0546980606')} 
-              whileHover={{ scale: 1.05 }} 
+
+            <motion.button
+              onClick={() => navigator.clipboard.writeText('0546980606')}
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="w-full py-2 bg-white/5 rounded-lg border border-white/10 text-xs font-black hover:bg-white/10 transition-all flex items-center justify-center gap-2"
             >
-              <FileText size={12} />העתק מספר
+              <FileText size={12} />
+              העתק מספר
             </motion.button>
+
             <div className="space-y-1">
               <label className="text-xs font-black text-white/60">העלה צילום מסך של ההעברה *</label>
               <div className="relative">
-                <input 
-                  type="file" 
-                  accept="image/*" 
+                <input
+                  type="file"
+                  accept="image/*"
                   required
                   onChange={(e) => {
                     const files = e.target.files;
                     if (files && files[0]) {
                       const reader = new FileReader();
-                      reader.onloadend = () => { 
-                        setFormData({...formData, paymentProof: reader.result}); 
+                      reader.onloadend = () => {
+                        setFormData({...formData, paymentProof: reader.result});
                       };
                       reader.readAsDataURL(files[0]);
                     }
                   }}
-                  className="absolute inset-0 opacity-0 cursor-pointer z-10" 
+                  className="absolute inset-0 opacity-0 cursor-pointer z-10"
                 />
                 <motion.div 
                   className={`rounded-lg border-2 border-dashed py-3 px-3 flex flex-col items-center gap-1 transition-colors ${
-                    formData.paymentProof 
-                      ? 'border-green-500/50 bg-green-500/5' 
-                      : 'border-white/10 bg-white/5'
-                  }`} 
+                    formData.paymentProof ? 'border-green-500/50 bg-green-500/5' : 'border-white/10 bg-white/5'
+                  }`}
                   whileHover={{ scale: 1.02 }}
                 >
                   {formData.paymentProof ? (
@@ -2522,31 +2137,35 @@ const PaymentForm = ({ formData, setFormData, selectedPackage, onSubmit, loading
       </AnimatePresence>
 
       <div className="flex gap-2">
-        <motion.button 
-          whileHover={{ scale: 1.05 }} 
-          whileTap={{ scale: 0.96 }} 
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.96 }}
           onClick={onBack}
           className="flex-1 py-2.5 rounded-xl font-black text-sm border border-brand-red/30 bg-brand-red/10 hover:bg-brand-red hover:border-brand-red transition-all flex items-center justify-center gap-2 text-brand-red hover:text-white relative overflow-hidden group"
         >
           <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-          <span className="relative flex items-center gap-2"><ArrowLeft size={14} />חזור</span>
+          <span className="relative flex items-center gap-2">
+            <ArrowLeft size={14} />
+            חזור
+          </span>
         </motion.button>
-        <motion.button 
-          onClick={onSubmit} 
+        <motion.button
+          onClick={onSubmit}
           disabled={!paymentMethod || !formData.paymentProof || loading}
-          whileHover={{ scale: loading ? 1 : 1.05 }} 
+          whileHover={{ scale: loading ? 1 : 1.05 }}
           whileTap={{ scale: loading ? 1 : 0.95 }}
           className="flex-1 py-2.5 rounded-xl font-black text-sm shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
-          style={{ 
-            background: `linear-gradient(135deg, ${accentColor}, ${accentColor}bb)`, 
-            boxShadow: `0 10px 30px -10px ${accentColor}50` 
+          style={{
+            background: `linear-gradient(135deg, ${accentColor}, ${accentColor}bb)`,
+            boxShadow: `0 10px 30px -10px ${accentColor}50`
           }}
         >
           <span className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
           <span className="relative">
             {loading ? (
               <span className="flex items-center justify-center gap-2">
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />שולח...
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                שולח...
               </span>
             ) : 'שלח הזמנה'}
           </span>
@@ -2556,9 +2175,6 @@ const PaymentForm = ({ formData, setFormData, selectedPackage, onSubmit, loading
   );
 };
 
-// ============================================================
-// MAIN APP
-// ============================================================
 export default function App() {
   const [lang, setLang] = useState<Language>('he');
   const [view, setView] = useState<'home' | 'booking' | 'success' | 'admin-login' | 'admin-dashboard' | 'check-status'>('home');
@@ -2585,7 +2201,10 @@ export default function App() {
   const t = translations[lang];
 
   useEffect(() => {
-    fetch('/api/settings').then(res => res.json()).then(data => setSiteSettings(data)).catch(() => {});
+    fetch('/api/settings')
+      .then(res => res.json())
+      .then(data => setSiteSettings(data))
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -2597,49 +2216,97 @@ export default function App() {
   }, [view, bookingStep]);
 
   const packages: Package[] = [
-    { id: 'basic', name: t.basic, price: '₪149', features: [t.features.images2, t.features.post1, t.features.story7, t.features.exposureBasic] },
-    { id: 'pro', name: t.pro, price: '₪249', popular: true, features: [t.features.images4, t.features.postPro, t.features.story14, t.features.priorityPro, t.features.exposurePro] },
-    { id: 'premium', name: t.premium, price: '₪449', premium: true, features: [t.features.imagesPremium, t.features.postPremium, t.features.story30, t.features.priorityFull, t.features.exposureMax, t.features.guidance, t.features.video] }
+    {
+      id: 'basic',
+      name: t.basic,
+      price: '₪149',
+      features: [t.features.images2, t.features.post1, t.features.story7, t.features.exposureBasic]
+    },
+    {
+      id: 'pro',
+      name: t.pro,
+      price: '₪249',
+      popular: true,
+      features: [t.features.images4, t.features.postPro, t.features.story14, t.features.priorityPro, t.features.exposurePro]
+    },
+    {
+      id: 'premium',
+      name: t.premium,
+      price: '₪449',
+      premium: true,
+      features: [t.features.imagesPremium, t.features.postPremium, t.features.story30, t.features.priorityFull, t.features.exposureMax, t.features.guidance, t.features.video]
+    }
   ];
 
   const vipPackage: Package = {
-    id: 'vip', name: 'VIP LUXURY', price: '₪749', vip: true,
+    id: 'vip',
+    name: 'VIP LUXURY',
+    price: '₪749',
+    vip: true,
     features: ['15+ תמונות מקצועיות', 'רילס + סטורי VIP', '60 ימי פרסום פרמיום', 'חשיפה מקסימלית', 'ליווי אישי 24/7', 'עיצוב VIP בלעדי', 'טרגוט מתקדם', 'עדיפות ראשונה תמיד']
   };
 
   const duoPackage: Package = {
-    id: 'duo', name: 'DUO DEAL', price: '₪349',
+    id: 'duo',
+    name: 'DUO DEAL',
+    price: '₪349',
     features: ['פרסום 2 רכבים במחיר מיוחד', '4 תמונות לכל רכב', 'פוסט נפרד לכל רכב', 'סטורי 14 יום לכל אחד', 'חשיפה כפולה לקהל מעוניין', 'חיסכון של 40% לעומת 2 חבילות']
   };
 
   const businessPackage: Package = {
-    id: 'business', name: 'BUSINESS', price: '₪1,499', business: true,
+    id: 'business',
+    name: 'BUSINESS',
+    price: '₪1,499',
+    business: true,
     features: ['עד 50 רכבים בחודש', 'מנהל לקוח ייעודי', 'דוחות ביצועים חודשיים', 'קידום ממומן', 'עיצוב מקצועי לכל מודעה']
   };
 
   const transportPackage: Package = {
-    id: 'transport', name: 'תחבורה והסעות', price: '₪299',
-    features: ['10 תמונות מקצועיות מבפנים ומבחוץ', 'פוסט עם מפרט טכני מלא ומדויק', 'סטורי 21 ימים לחשיפה רחבה', 'חשיפה ייעודית לחברות הסעות ותחבורה', 'טרגוט מדויק לרוכשי רכב מסחרי', 'ייעוץ תמחור מקצועי', 'מאפיין לאוטובוסים, מיניבוסים, וואנים ומשאיות']
+    id: 'transport',
+    name: 'תחבורה והסעות',
+    price: '₪299',
+    features: [
+      '10 תמונות מקצועיות מבפנים ומבחוץ',
+      'פוסט עם מפרט טכני מלא ומדויק',
+      'סטורי 21 ימים לחשיפה רחבה',
+      'חשיפה ייעודית לחברות הסעות ותחבורה',
+      'טרגוט מדויק לרוכשי רכב מסחרי',
+      'ייעוץ תמחור מקצועי',
+      'מאפיין לאוטובוסים, מיניבוסים, וואנים ומשאיות'
+    ]
   };
 
   const equipmentPackages: Package[] = [
-    { id: 'equipment-heavy', name: 'חבילת ציוד כבד', price: '₪349', equipment: true, features: ['10 תמונות מקצועיות של הציוד', 'פוסט ייעודי עם מפרט טכני', 'סטורי 21 יום', 'חשיפה לקהל קבלנים ומגזר הבנייה', 'עדיפות בתוצאות חיפוש', 'ייעוץ תמחור מקצועי'] },
-    { id: 'equipment-light', name: 'חבילת ציוד קל', price: '₪199', equipment: true, features: ['6 תמונות מקצועיות', 'פוסט מותאם לציוד קל', 'סטורי 14 יום', 'חשיפה לקהל מקצועי רלוונטי', 'תיאור טכני מפורט', 'תמיכה ב-WhatsApp'] }
+    {
+      id: 'equipment-heavy',
+      name: 'חבילת ציוד כבד',
+      price: '₪349',
+      equipment: true,
+      features: ['10 תמונות מקצועיות של הציוד', 'פוסט ייעודי עם מפרט טכני', 'סטורי 21 יום', 'חשיפה לקהל קבלנים ומגזר הבנייה', 'עדיפות בתוצאות חיפוש', 'ייעוץ תמחור מקצועי']
+    },
+    {
+      id: 'equipment-light',
+      name: 'חבילת ציוד קל',
+      price: '₪199',
+      equipment: true,
+      features: ['6 תמונות מקצועיות', 'פוסט מותאם לציוד קל', 'סטורי 14 יום', 'חשיפה לקהל מקצועי רלוונטי', 'תיאור טכני מפורט', 'תמיכה ב-WhatsApp']
+    }
   ];
 
   const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await fetch('/api/admin/login', { 
-      method: 'POST', 
-      headers: { 'Content-Type': 'application/json' }, 
-      body: JSON.stringify({ password: adminPassword }) 
+    const res = await fetch('/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: adminPassword })
     });
-    if (res.ok) { 
-      setIsAdmin(true); 
-      setView('admin-dashboard'); 
-      fetchOrders(); 
+    if (res.ok) {
+      setIsAdmin(true);
+      setView('admin-dashboard');
+      fetchOrders();
+    } else {
+      alert('סיסמה שגויה');
     }
-    else alert('סיסמה שגויה');
   };
 
   const fetchOrders = async () => {
@@ -2649,29 +2316,48 @@ export default function App() {
   };
 
   const updateOrderStatus = async (id: string, status: string) => {
-    await fetch(`/api/admin/orders/${id}/status`, { 
-      method: 'PATCH', 
-      headers: { 'Content-Type': 'application/json' }, 
-      body: JSON.stringify({ status }) 
+    await fetch(`/api/admin/orders/${id}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status })
     });
     fetchOrders();
   };
 
   const [formData, setFormData] = useState({
-    fullName: '', phone: '', model: '', year: '', mileage: '', price: '', registration: '', testUntil: '',
-    location: '', paymentProof: '', carImages: [] as string[], model2: '', year2: '', mileage2: '',
-    price2: '', registration2: '', testUntil2: '', agencyName: '', monthlyCars: '', agencyDetails: '', seats: ''
+    fullName: '',
+    phone: '',
+    model: '',
+    year: '',
+    mileage: '',
+    price: '',
+    registration: '',
+    testUntil: '',
+    location: '',
+    paymentProof: '',
+    carImages: [] as string[],
+    model2: '',
+    year2: '',
+    mileage2: '',
+    price2: '',
+    registration2: '',
+    testUntil2: '',
+    agencyName: '',
+    monthlyCars: '',
+    agencyDetails: '',
+    seats: ''
   });
 
   const handleSubmitOrder = async () => {
     setLoading(true);
     try {
       const pkgId = selectedPackage?.id || '';
-      const pkgEmoji = getPackageEmoji(pkgId);
+      const pkgEmoji = pkgId === 'vip' ? '👑' : pkgId === 'premium' ? '💎' : pkgId === 'pro' ? '⭐' : pkgId.includes('equipment') ? '🚜' : pkgId === 'business' ? '🏢' : pkgId === 'duo' ? '🚗🚗' : pkgId === 'transport' ? '🚌' : '✅';
       const randomId = Math.floor(10000 + Math.random() * 90000);
       const orderNum = String(randomId).slice(0, 5);
 
       let message = '';
+
       if (pkgId === 'business') {
         message = `*YOUGO ISRAEL | הזמנת BUSINESS חדשה* 🏢\n---------------------------------------\n*מספר הזמנה:* #${orderNum}\n*חבילה:* BUSINESS ${pkgEmoji}\n---------------------------------------\n\n🏢 *פרטי הסוכנות:*\n• שם הסוכנות: ${formData.agencyName}\n• איש קשר: ${formData.fullName}\n• טלפון: ${formData.phone}\n• מיקום: ${formData.location}\n• כמות רכבים: ${formData.monthlyCars}\n• פרטים: ${formData.agencyDetails || 'לא צוין'}\n\n---------------------------------------\n✅ *אישור תשלום הועלה בהצלחה.*\n📞 *נציגנו יצור קשר תוך 2 שעות לתיאום.*\n---------------------------------------\n_נשלח אוטומטית ממערכת YOUGO_`;
       } else if (pkgId === 'duo') {
@@ -2700,12 +2386,8 @@ export default function App() {
         .text-brand-red { color: #c8102e !important; }
         .bg-brand-red { background-color: #c8102e !important; }
         .border-brand-red { border-color: #c8102e !important; }
+        .btn-primary { background: linear-gradient(135deg, #c8102e, #a50d25) !important; }
         
-        .scrollbar-thin::-webkit-scrollbar { height: 4px; }
-        .scrollbar-thin::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
-        .scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(200,16,46,0.5); border-radius: 10px; }
-        .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: rgba(200,16,46,0.8); }
-
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
@@ -2781,65 +2463,40 @@ export default function App() {
         .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--brand-red); border-radius: 10px; }
 
-        /* Badge styles */
-        .badge-popular {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.25rem;
-          padding: 0.25rem 0.75rem;
-          background: linear-gradient(135deg, #c8102e, #a50d25);
-          color: white;
-          border-radius: 9999px;
-          font-size: 0.65rem;
-          font-weight: 700;
-          box-shadow: 0 4px 12px rgba(200, 16, 46, 0.3);
+        /* ── Flip Card — iron-clad containment ── */
+        .flip-card {
+          perspective: 1400px;
+          /* card height is controlled by the grid, never by content */
         }
-
-        .badge-success {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.25rem;
-          padding: 0.25rem 0.6rem;
-          background: rgba(34, 197, 94, 0.12);
-          border: 1px solid rgba(34, 197, 94, 0.25);
-          color: #4ade80;
-          border-radius: 9999px;
-          font-size: 0.6rem;
-          font-weight: 700;
+        .flip-card-inner {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          transform-style: preserve-3d;
+          transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
-        .feature-box {
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 10px;
-          padding: 0.4rem 0.6rem;
+        .flip-card-inner.flipped { transform: rotateY(180deg); }
+        .flip-card-face {
+          /* absolute: face never pushes parent height */
+          position: absolute;
+          inset: 0;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+          border-radius: 1rem;
+          overflow: hidden;           /* clip children, never grow */
           display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          transition: all 0.2s ease;
+          flex-direction: column;
         }
-
-        .feature-box:hover {
-          background: rgba(255, 255, 255, 0.08);
-          border-color: rgba(255, 255, 255, 0.15);
-          transform: translateY(-2px);
+        .flip-card-back { transform: rotateY(180deg); }
+        /* scroll area — takes leftover space, never overflows face */
+        .fcb-scroll {
+          flex: 1 1 0;
+          min-height: 0;
+          overflow-y: auto;
+          overflow-x: hidden;
         }
-
-        .feature-box-icon {
-          color: var(--feature-color, #c8102e);
-          width: 16px;
-          height: 16px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .feature-box-text {
-          font-size: 0.65rem;
-          font-weight: 600;
-          color: rgba(255, 255, 255, 0.8);
-          line-height: 1.2;
-        }
+        .fcb-scroll::-webkit-scrollbar { width: 2px; }
+        .fcb-scroll::-webkit-scrollbar-thumb { background: var(--accent,#c8102e); border-radius:4px; }
       `}</style>
 
       <Navbar lang={lang} setLang={setLang} isAdmin={isAdmin} onLogout={() => { setIsAdmin(false); setView('home'); }} siteSettings={siteSettings} setView={setView} />
@@ -2856,24 +2513,33 @@ export default function App() {
             >
               {/* HERO */}
               <section className="relative min-h-screen flex items-center justify-center overflow-hidden" style={{ background: '#06060a' }}>
+
+                {/* ── Static layered background ── */}
                 <div className="absolute inset-0 pointer-events-none">
+                  {/* Deep gradient base */}
                   <div className="absolute inset-0" style={{
                     background: 'radial-gradient(ellipse 80% 60% at 60% 20%, rgba(200,16,46,0.14) 0%, transparent 65%), radial-gradient(ellipse 60% 50% at 10% 80%, rgba(200,16,46,0.08) 0%, transparent 60%), #06060a'
                   }} />
+                  {/* Subtle dot grid */}
                   <div className="absolute inset-0" style={{
                     backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)',
                     backgroundSize: '32px 32px',
                     maskImage: 'radial-gradient(ellipse 90% 70% at 50% 40%, black 30%, transparent 80%)'
                   }} />
+                  {/* Soft vignette */}
                   <div className="absolute inset-0" style={{
                     background: 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, #06060a 100%)'
                   }} />
+                  {/* Bottom fade */}
                   <div className="absolute bottom-0 inset-x-0 h-40" style={{
                     background: 'linear-gradient(to bottom, transparent, #06060a)'
                   }} />
                 </div>
 
+                {/* ── Content ── */}
                 <div className="relative z-10 w-full max-w-4xl mx-auto px-5 pt-28 pb-16 flex flex-col items-center text-center">
+
+                  {/* Eyebrow pill */}
                   <motion.div
                     initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}
                     className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full"
@@ -2888,6 +2554,7 @@ export default function App() {
                     </span>
                   </motion.div>
 
+                  {/* Main headline */}
                   <motion.h1
                     initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
                     className="font-black leading-[1.05] tracking-tight mb-5"
@@ -2905,6 +2572,7 @@ export default function App() {
                     </span>
                   </motion.h1>
 
+                  {/* Sub */}
                   <motion.p
                     initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, delay: 0.18 }}
                     className="text-base md:text-lg leading-relaxed mb-10 max-w-xl"
@@ -2913,6 +2581,7 @@ export default function App() {
                     YOUGO ISRAEL — פלטפורמת השיווק המובילה באינסטגרם למכירת רכבים.
                   </motion.p>
 
+                  {/* CTAs */}
                   <motion.div
                     initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, delay: 0.24 }}
                     className="flex flex-col sm:flex-row items-center gap-3 mb-10 w-full justify-center"
@@ -2936,6 +2605,7 @@ export default function App() {
                     </button>
                   </motion.div>
 
+                  {/* Trust bar */}
                   <motion.div
                     initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.35 }}
                     className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2.5"
@@ -2954,6 +2624,7 @@ export default function App() {
                   </motion.div>
                 </div>
 
+                {/* Scroll cue */}
                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 cursor-pointer"
                   style={{ color: 'rgba(255,255,255,0.2)' }}
                   onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}>
@@ -2961,7 +2632,9 @@ export default function App() {
                 </div>
               </section>
 
-              {/* HOW IT WORKS */}
+              {/* ============================================================
+                  HOW IT WORKS – تصميم شركات احترافي جداً، ثابت وواضح
+                  ============================================================ */}
               <section id="how-it-works" className="space-y-14">
                 <motion.div 
                   initial={{ opacity: 0, y: 30 }}
@@ -2978,6 +2651,7 @@ export default function App() {
                   <p className="text-white/45 text-base">3 שלבים פשוטים והרכב שלך באוויר</p>
                 </motion.div>
 
+                {/* Steps – Premium Corporate Grid */}
                 <div className="relative max-w-5xl mx-auto">
                   
                   {/* Connecting dashed line – desktop only */}
@@ -3030,6 +2704,7 @@ export default function App() {
                         transition={{ delay: i * 0.12, duration: 0.5 }}
                         className="flex flex-col items-center text-center gap-5"
                       >
+                        {/* Icon block */}
                         <div className="relative">
                           <div
                             className="w-[104px] h-[104px] rounded-2xl flex flex-col items-center justify-center gap-2"
@@ -3044,13 +2719,24 @@ export default function App() {
                               שלב {item.step}
                             </span>
                           </div>
+                          {/* Connection dot on line - desktop */}
+                          {i < 2 && (
+                            <div className="hidden md:block absolute top-[50%] -translate-y-1/2 -left-4 w-2.5 h-2.5 rounded-full"
+                              style={{ background: item.color, boxShadow: `0 0 8px ${item.color}` }} />
+                          )}
+                          {i > 0 && (
+                            <div className="hidden md:block absolute top-[50%] -translate-y-1/2 -right-4 w-2.5 h-2.5 rounded-full"
+                              style={{ background: item.color, boxShadow: `0 0 8px ${item.color}` }} />
+                          )}
                         </div>
 
+                        {/* Text */}
                         <div className="space-y-2.5">
                           <h3 className="text-xl font-black text-white">{item.title}</h3>
                           <p className="text-white/50 text-sm leading-relaxed max-w-[250px] mx-auto">{item.desc}</p>
                         </div>
 
+                        {/* Tag */}
                         <div
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-black"
                           style={{ background: item.bg, border: `1px solid ${item.border}`, color: item.color }}
@@ -3063,6 +2749,7 @@ export default function App() {
                   </div>
                 </div>
 
+                {/* Bottom CTA strip */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -3103,155 +2790,45 @@ export default function App() {
                 </motion.div>
               </section>
 
+              {/* PACKAGES */}
               <section id="packages" className="space-y-16">
-                {/* ANIMATED HEADING */}
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  className="text-center space-y-4"
-                >
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: 0.05 }}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full"
-                    style={{ background: 'linear-gradient(135deg, rgba(200,16,46,0.15), rgba(200,16,46,0.05))', border: '1px solid rgba(200,16,46,0.3)', backdropFilter: 'blur(8px)' }}
-                  >
-                    <motion.span animate={{ rotate: [0, 15, -15, 0] }} transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }} className="text-base">✨</motion.span>
-                    <span className="text-xs font-black tracking-[0.2em] uppercase text-brand-red">חבילות הפרסום שלנו</span>
-                  </motion.div>
-
-                  <div className="relative">
-                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight">
-                      <motion.span initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-                        transition={{ duration: 0.5, delay: 0.15 }} className="inline-block text-white ml-3">
-                        בחר
-                      </motion.span>
-                      <motion.span initial={{ opacity: 0, scale: 0.7 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
-                        transition={{ duration: 0.5, delay: 0.25, type: 'spring', stiffness: 200 }}
-                        className="inline-block ml-3"
-                        style={{ background: 'linear-gradient(135deg, #ff3d5e 0%, #c8102e 50%, #ff6b35 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-                        את המסלול
-                      </motion.span>
-                      <motion.span initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                        transition={{ duration: 0.5, delay: 0.35 }} className="inline-block text-white">
-                        שלך
-                      </motion.span>
-                    </h2>
-                    <motion.div
-                      initial={{ scaleX: 0, originX: 1 }}
-                      whileInView={{ scaleX: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.7, delay: 0.55, ease: [0.22, 1, 0.36, 1] }}
-                      className="absolute -bottom-2 left-1/2 -translate-x-1/2 h-[3px] w-48 rounded-full"
-                      style={{ background: 'linear-gradient(90deg, transparent, #c8102e, transparent)' }}
-                    />
-                  </div>
-
-                  <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: 0.45 }}
-                    className="text-white/45 text-base max-w-2xl mx-auto pt-2">
-                    פרסום מקצועי • חשיפה מקסימלית • תוצאות מוכחות
-                  </motion.p>
-
-                  <motion.div initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: 0.55 }}
-                    className="flex items-center justify-center gap-6 pt-2">
-                    {[
-                      { val: '50K+', label: 'עוקבים', color: '#c8102e' },
-                      { val: '98%', label: 'הצלחה', color: '#22c55e' },
-                      { val: '24h', label: 'פרסום', color: '#60a5fa' },
-                    ].map((stat, i) => (
-                      <motion.div key={i} initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
-                        transition={{ delay: 0.6 + i * 0.08, type: 'spring', stiffness: 250 }}
-                        className="flex items-center gap-2">
-                        {i > 0 && <div className="w-px h-4 bg-white/10" />}
-                        <div className="text-center">
-                          <div className="text-sm font-black" style={{ color: stat.color }}>{stat.val}</div>
-                          <div className="text-[9px] text-white/30 font-bold">{stat.label}</div>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </motion.div>
+                <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                  className="text-center space-y-3">
+                  <h2 className="text-4xl md:text-5xl font-black">{t.packages}</h2>
+                  <p className="text-white/45 text-base max-w-2xl mx-auto">בחר את המסלול המתאים ביותר עבורך</p>
                 </motion.div>
-
-                {/* PRIVATE CAR PACKAGES */}
+                
+                {/* Regular packages */}
                 <div>
-                  <div className="mb-8">
-                    <SectionDescription
-                      icon="🚗"
-                      title="חבילות לרכב פרטי"
-                      description="שלוש רמות פרסום מותאמות לכל תקציב ומטרה — מחבילת הכניסה המהירה ועד פרמיום מלא עם ריל וידאו מקצועי. כל חבילה כוללת עריכה, פוסט שיווקי ממוקד וחשיפה לעשרות אלפי קונים פוטנציאליים."
-                      tags={['✓ פרסום תוך 24 שעות', '✓ עריכה מקצועית', '✓ קהל ממוקד ואיכותי']}
-                      color={COLORS.brand}
-                      animate="y"
-                    />
-                  </div>
-
-                  <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}
-                    className="text-center space-y-4 mb-10">
-                    <motion.div initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }}
-                      className="inline-flex items-center gap-2 bg-blue-500/15 border border-blue-500/25 px-4 py-2 rounded-full">
+                  <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                    className="text-center space-y-3 mb-8">
+                    <div className="inline-flex items-center gap-2 bg-blue-500/15 border border-blue-500/25 px-4 py-2 rounded-full">
                       <Car size={13} className="text-blue-400" />
                       <span className="text-xs font-black tracking-wider text-blue-400">חבילות רכב פרטי</span>
-                    </motion.div>
-                    <motion.h3 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.15 }}
-                      className="text-2xl md:text-3xl font-black">
-                      מוכרים <span className="text-brand-red">רכב פרטי?</span>
-                    </motion.h3>
-                    <motion.p initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.22 }}
-                      className="text-white/45 text-sm max-w-lg mx-auto leading-relaxed">
-                      ✨ פרסום מקצועי ברשתות החברתיות · חשיפה לאלפי קונים פוטנציאליים · תוצאות מוכחות תוך 24 שעות
-                    </motion.p>
+                    </div>
+                    <h3 className="text-2xl md:text-3xl font-black">מוכרים <span className="text-brand-red">רכב פרטי?</span></h3>
                   </motion.div>
-
-                  <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6" style={{ alignItems: 'start' }}>
-                    {packages.map((pkg, i) => (
-                      <motion.div key={pkg.id} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.12 }}
-                        style={{ height: getCardHeight(pkg.id) }}>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
+                    {packages.map(pkg => (
+                      <div key={pkg.id} className="h-[520px] sm:h-[500px]">
                         <PackageCard pkg={pkg} lang={lang} onSelect={(p) => { setSelectedPackage(p); setView('booking'); setBookingStep(1); }} />
-                      </motion.div>
+                      </div>
                     ))}
-                  </div>
-
-                  <div className="sm:hidden">
-                    <MobilePackageSwiper packages={packages} lang={lang} onSelect={(p) => { setSelectedPackage(p); setView('booking'); setBookingStep(1); }} />
                   </div>
                 </div>
 
-                {/* VIP + DUO */}
+                {/* Premium Packages */}
                 <div>
-                  <div className="mb-8">
-                    <SectionDescription
-                      icon="👑"
-                      title="חבילות VIP ו-DUO"
-                      description="לרכבי פרימיום ולמוכרים שמבינים ששיווק נכון שווה כסף. VIP LUXURY מציעה חשיפה של 60 יום עם ריל קולנועי וליווי אישי, ו-DUO DEAL מאפשרת פרסום שני רכבים עם חיסכון של 40%."
-                      tags={['👑 ליווי אישי 24/7', '🎬 ריל וידאו VIP', '🚗🚗 חיסכון 40%']}
-                      color={COLORS.vip.primary}
-                      animate="rotate"
-                    />
-                  </div>
-
-                  <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}
-                    className="text-center space-y-4 mb-10">
-                    <motion.div initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }}
-                      className="inline-flex items-center gap-2 bg-amber-500/15 border border-amber-500/25 px-4 py-2 rounded-full">
+                  <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                    className="text-center space-y-3 mb-8">
+                    <div className="inline-flex items-center gap-2 bg-amber-500/15 border border-amber-500/25 px-4 py-2 rounded-full">
                       <Crown size={13} className="text-amber-400" />
                       <span className="text-xs font-black tracking-wider text-amber-400">חבילות פרימיום VIP</span>
-                    </motion.div>
-                    <motion.h3 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.15 }}
-                      className="text-2xl md:text-3xl font-black">
-                      מחפשים <span className="text-amber-400">יחס VIP?</span>
-                    </motion.h3>
-                    <motion.p initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.22 }}
-                      className="text-white/45 text-sm max-w-lg mx-auto leading-relaxed">
-                      👑 חבילות יוקרה לרכבי פרימיום · ליווי אישי מלא 24/7 · עיצוב VIP בלעדי · חשיפה מקסימלית לקהל ממוקד
-                    </motion.p>
+                    </div>
+                    <h3 className="text-2xl md:text-3xl font-black">מחפשים <span className="text-amber-400">יחס VIP?</span></h3>
                   </motion.div>
-
+                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="h-[460px]">
                       <VIPPackageCard pkg={vipPackage} lang={lang} onSelect={(p) => { setSelectedPackage(p); setView('booking'); setBookingStep(1); }} />
@@ -3262,68 +2839,31 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* BUSINESS */}
+                {/* Business */}
                 <div className="max-w-3xl mx-auto space-y-6">
-                  <div className="mb-8">
-                    <SectionDescription
-                      icon="🏢"
-                      title="חבילת BUSINESS לסוכנויות"
-                      description="פתרון שיווקי חודשי מקיף לסוכנויות רכב ומוכרים מקצועיים. עד 50 רכבים בחודש, מנהל לקוח ייעודי, דוחות ביצועים מפורטים וחיסכון של 40% — הכל בניהול מלא ומקצועי."
-                      tags={['📊 עד 50 רכב/חודש', '👤 נציג אישי', '📈 דוחות חודשיים']}
-                      color={COLORS.business.primary}
-                      animate="scale"
-                    />
-                  </div>
-
-                  <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}
-                    className="text-center space-y-4">
-                    <motion.div initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }}
-                      className="inline-flex items-center gap-2 bg-blue-500/15 border border-blue-500/25 px-4 py-2 rounded-full">
+                  <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                    className="text-center space-y-3">
+                    <div className="inline-flex items-center gap-2 bg-blue-500/15 border border-blue-500/25 px-4 py-2 rounded-full">
                       <Building2 size={13} className="text-blue-400" />
                       <span className="text-xs font-black tracking-wider text-blue-400">לסוכנויות ומוכרים מקצועיים</span>
-                    </motion.div>
-                    <motion.h3 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.15 }}
-                      className="text-2xl md:text-3xl font-black">
-                      פתרון <span className="text-blue-400">לסוכנים ועסקים?</span>
-                    </motion.h3>
-                    <motion.p initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.22 }}
-                      className="text-white/45 text-sm max-w-lg mx-auto leading-relaxed">
-                      🏢 ניהול מלא של הפרסום · חיסכון עצום בעלויות · נציג אישי ייעודי לסוכנות שלך · עד 50 רכבים בחודש
-                    </motion.p>
+                    </div>
+                    <h3 className="text-2xl md:text-3xl font-black">פתרון <span className="text-blue-400">לסוכנים ועסקים?</span></h3>
+                    <p className="text-white/45 text-sm max-w-lg mx-auto">חבילה מקצועית לסוכניות רכב, מוכרים מרובי כלי רכב ועסקים בתחום הרכב</p>
                   </motion.div>
                   <div className="h-[380px]">
                     <BusinessPackageCard pkg={businessPackage} onSelect={(p) => { setSelectedPackage(p); setView('booking'); setBookingStep(1); }} />
                   </div>
                 </div>
 
-                {/* EQUIPMENT + TRANSPORT */}
+                {/* Equipment + Transport */}
                 <div>
-                  <div className="mb-8">
-                    <SectionDescription
-                      icon="🚜"
-                      title="ציוד כבד, ציוד קל ותחבורה"
-                      description="חבילות ייעודיות לעולם הציוד המקצועי: מחפרונים, מלגזות, אוטובוסים ומשאיות. פרסום עם מפרט טכני מלא, חשיפה ממוקדת לקהל קבלנים ואנשי מקצוע, וייעוץ תמחור מקצועי בכל חבילה."
-                      tags={['⚙️ מפרט טכני מלא', '🎯 קהל מקצועי', '💰 ייעוץ תמחור']}
-                      color={COLORS.equipmentHeavy.primary}
-                      animate="x"
-                    />
-                  </div>
-
-                  <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}
-                    className="text-center space-y-4 mb-10">
-                    <motion.div initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }}
-                      className="inline-flex items-center gap-2 bg-orange-500/15 border border-orange-500/25 px-4 py-2 rounded-full">
+                  <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                    className="text-center space-y-3 mb-8">
+                    <div className="inline-flex items-center gap-2 bg-orange-500/15 border border-orange-500/25 px-4 py-2 rounded-full">
                       <Truck size={13} className="text-orange-400" />
                       <span className="text-xs font-black tracking-wider text-orange-400">ציוד מקצועי ותחבורה</span>
-                    </motion.div>
-                    <motion.h3 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.15 }}
-                      className="text-2xl md:text-3xl font-black">
-                      מוכרים <span className="text-orange-400">ציוד מקצועי?</span>
-                    </motion.h3>
-                    <motion.p initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.22 }}
-                      className="text-white/45 text-sm max-w-lg mx-auto leading-relaxed">
-                      🚜 ציוד כבד, ציוד קל ותחבורה · חשיפה לקהל מקצועי ממוקד · מפרט טכני מלא ומדויק לכל מודעה
-                    </motion.p>
+                    </div>
+                    <h3 className="text-2xl md:text-3xl font-black">מוכרים <span className="text-orange-400">ציוד מקצועי?</span></h3>
                   </motion.div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -3390,9 +2930,11 @@ export default function App() {
                         boxShadow: `0 20px 40px -15px ${item.glowColor}`
                       }}
                     >
+                      {/* Top color bar */}
                       <div className="h-1 w-full" style={{ background: `linear-gradient(90deg, ${item.gradFrom}, ${item.gradTo})` }} />
 
                       <div className="p-6 flex flex-col gap-5 flex-1">
+                        {/* Icon + Stat row */}
                         <div className="flex items-center justify-between">
                           <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg"
                             style={{ background: `linear-gradient(135deg, ${item.gradFrom}, ${item.gradTo})`, boxShadow: `0 6px 20px ${item.glowColor}` }}>
@@ -3404,8 +2946,10 @@ export default function App() {
                           </div>
                         </div>
 
+                        {/* Divider */}
                         <div className="h-px w-full" style={{ background: `linear-gradient(90deg, ${item.gradFrom}30, transparent)` }} />
 
+                        {/* Text */}
                         <div>
                           <h3 className="text-lg font-black text-white mb-2">{item.title}</h3>
                           <p className="text-white/55 text-sm leading-relaxed">{item.desc}</p>
@@ -3484,6 +3028,7 @@ export default function App() {
                       </p>
                     </div>
 
+                    {/* Social Icons – ثابتة ومنظمة */}
                     <div>
                       <p className="text-center text-[10px] text-white/25 font-black uppercase tracking-[0.25em] mb-6">עקבו אחרינו</p>
                       <div className="flex items-center justify-center gap-4 flex-wrap">
@@ -3558,16 +3103,12 @@ export default function App() {
 
                     <div className="flex flex-wrap justify-center gap-3">
                       {[
-                        { icon: <FileText size={14} />, label: 'תקנון', onClick: () => setModalContent({ title: 'תקנון שימוש – YOUGO ISRAEL', content: `1. כללי\nYOUGO ISRAEL הינה פלטפורמת שיווק דיגיטלי המתמחה בפרסום רכבים, ציוד כבד ושירותים עסקיים ברשתות חברתיות. השימוש בשירות מהווה הסכמה מלאה לתנאים המפורטים להלן.\n\n2. השירות המוצע\nהחברה מספקת שירותי פרסום ממוקדים באינסטגרם ורשתות נוספות, הכוללים: עיצוב מקצועי, צילום, כתיבת תוכן שיווקי וחשיפה לקהל יעד מאומת. החברה אינה צד לעסקת המכירה בין הלקוח לקונה הסופי.\n\n3. תשלום ומדיניות ביטול\nהתשלום מבוצע מראש באמצעות Bit, PayBox או העברה בנקאית. לאחר פרסום המודעה לא יינתן החזר כספי. ביטול לפני פרסום – יוחזרו 80% מהסכום ששולם.\n\n4. אחריות הלקוח\nהלקוח מצהיר כי כל המידע שמסר הוא נכון, מדויק ומלא, וכי הרכב המפורסם בבעלותו החוקית ורשום כדין.\n\n5. קניין רוחני\nכל תוכן שיוצר על ידי YOUGO ISRAEL – כולל עיצובים, וידאו וטקסט – שייך לחברה. הלקוח רשאי לעשות שימוש בתוכן למטרות המכירה בלבד.\n\n6. סמכות שיפוט\nכל סכסוך יידון בבית המשפט המוסמך במחוז תל אביב-יפו, בהתאם לדין הישראלי.` }) },
-                        { icon: <Lock size={14} />, label: 'פרטיות', onClick: () => setModalContent({ title: 'מדיניות פרטיות – YOUGO ISRAEL', content: `1. מידע שנאסף\nYOUGO ISRAEL אוספת מידע אישי הכולל שם, טלפון, מיקום ופרטי הרכב – אך ורק לצורך מתן השירות המבוקש ועל-פי הסכמתך המפורשת.\n\n2. שימוש במידע\nהמידע משמש אך ורק ל: יצירת מודעה פרסומית, תיאום ביצוע השירות, ושליחת עדכונים הנוגעים להזמנה. לא נמכור, נשכור או נשתף את פרטיך עם גורמים שלישיים ללא רשותך.\n\n3. אבטחת מידע\nהחברה מיישמת אמצעי אבטחה מתקדמים להגנה על המידע האישי, כולל הצפנה ואבטחה פיזית של השרתים.\n\n4. זכויותיך\nיש לך הזכות לעיין במידע הקיים עליך, לתקנו או לבקש את מחיקתו בכל עת – על-ידי פנייה אלינו ישירות.\n\n5. קובצי Cookie\nהאתר עושה שימוש מוגבל בקובצי Cookie לשיפור חוויית המשתמש בלבד.\n\n6. יצירת קשר\nלכל שאלה בנושא פרטיות: contact@yougoisrael.com` }) },
-                        { icon: <Info size={14} />, label: 'מי אנחנו', onClick: () => setModalContent({ title: 'אודות YOUGO ISRAEL', content: `YOUGO ISRAEL – פלטפורמת השיווק הדיגיטלי המובילה בישראל למכירת רכבים.\n\nהסיפור שלנו\nYOUGO ISRAEL נוסדה מתוך חזון אחד ברור: לשנות את הדרך שבה ישראלים מוכרים רכבים. ראינו שהמוכרים מתקשים להגיע לקהל הנכון – ויצרנו את הפתרון.\n\nמה שמבדיל אותנו\n• 50,000+ עוקבים פעילים שמחפשים לקנות רכב עכשיו\n• צוות מקצועי של צלמים, מעצבים ואנשי שיווק דיגיטלי\n• ניסיון של שנים עם מאות עסקאות מוצלחות\n• 98% שביעות רצון לקוחות – מהמספרים הגבוהים בענף\n• שירות אישי, מהיר ואמין – ליווי מלא עד לסגירת העסקה\n\nהצוות שלנו\nאנחנו קבוצה של אנשי שיווק, צלמים ויועצי רכב שמאמינים שכל מכירה מגיעה עם הפרסום הנכון. אנחנו לא סתם מפרסמים – אנחנו מוכרים.` }) },
+                        { icon: <FileText size={14} />, label: 'תקנון', onClick: () => setModalContent({ title: 'תקנון שימוש – YOUGO ISRAEL', content: `1. כללי\nYOUGO ISRAEL הינה פלטפורמת שיווק דיגיטלי המתמחה בפרסום רכבים, ציוד כבד ושירותים עסקיים ברשתות חברתיות. השימוש בשירות מהווה הסכמה מלאה לתנאים אלו.\n\n2. השירות\nהחברה מספקת שירותי פרסום ברשתות חברתיות (Instagram, TikTok ועוד). החברה אינה צד לעסקת המכירה בין הלקוח לקונה הסופי ואינה אחראית לתוצאות מכירה.\n\n3. תשלום\nהתשלום מבוצע מראש בהעברה בנקאית, Bit או PayBox. לאחר אישור התשלום יחל תהליך הפרסום תוך 24-48 שעות עסקיות. לא יינתן החזר כספי לאחר שהמודעה פורסמה.\n\n4. אחריות הלקוח\nהלקוח מצהיר כי כל המידע שמסר הוא נכון ומדויק. הלקוח אחראי לחוקיות הרכב המפורסם.\n\n5. קניין רוחני\nכל התוכן שיוצר על ידי YOUGO ISRAEL שייך לחברה. הלקוח רשאי לעשות שימוש בתוכן לצרכי המכירה בלבד.` }) },
+                        { icon: <Lock size={14} />, label: 'פרטיות', onClick: () => setModalContent({ title: 'מדיניות פרטיות – YOUGO ISRAEL', content: `1. איסוף מידע\nYOUGO ISRAEL אוספת מידע אישי הכולל: שם, טלפון, מיקום ופרטי הרכב, אך ורק לצורך מתן השירות המבוקש.\n\n2. שימוש במידע\nהמידע משמש אך ורק לצורך: יצירת המודעה הפרסומית, תיאום ביצוע השירות, ושליחת עדכונים הקשורים להזמנה.\n\n3. אבטחת מידע\nהחברה נוקטת בצעדי אבטחה מתקדמים להגנה על המידע.` }) },
+                        { icon: <Info size={14} />, label: 'מי אנחנו', onClick: () => setModalContent({ title: 'אודות YOUGO ISRAEL', content: `YOUGO ISRAEL – פלטפורמת השיווק הדיגיטלי המובילה בישראל למכירת רכבים.\n\nהסיפור שלנו\nYOUGO ISRAEL נוסדה מתוך חזון אחד פשוט: לשנות את הדרך שבה ישראלים מוכרים רכבים.\n\nמה שמבדיל אותנו\n• 50,000+ עוקבים פעילים ומעורבים\n• צוות מקצועי של צלמים, מעצבים ואנשי שיווק\n• ניסיון של שנים בשוק הרכב הישראלי\n• 98% שביעות רצון לקוחות` }) },
                         { icon: <LayoutDashboard size={14} />, label: 'ניהול', onClick: () => setView('admin-login') },
                       ].map((link, i) => (
-                        <motion.button
-                          key={i}
-                          onClick={link.onClick}
-                          whileHover={{ y: -3, scale: 1.05 }}
-                          whileTap={{ scale: 0.97 }}
+                        <motion.button key={i} whileHover={{ y: -2, scale: 1.04 }} whileTap={{ scale: 0.97 }} onClick={link.onClick}
                           className="flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs font-bold transition-all"
                           style={{
                             border: '1px solid rgba(255,255,255,0.1)',
