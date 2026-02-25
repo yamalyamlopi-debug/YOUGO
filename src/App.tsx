@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useMotionValue, useTransform, PanInfo, useAnimation } from 'motion/react';
+import { motion, AnimatePresence, useMotionValue, useTransform, PanInfo } from 'motion/react';
 import { 
   CheckCircle2, 
   Instagram, 
@@ -1285,89 +1285,91 @@ const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pa
 };
 
 // ============================================================
-// MOBILE SWIPER — smooth, professional drag/swipe using framer-motion
+// MOBILE SWIPER — pure touch/mouse drag, no overflow conflict
 // ============================================================
-const MobileSwiper = ({ children, cardHeight = 500 }: { children: React.ReactNode[]; cardHeight?: number }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = useState(0);
+const MobileSwiper = ({ children, cardHeight = 500 }: { children: React.ReactNode[], cardHeight?: number }) => {
   const [current, setCurrent] = useState(0);
-  const controls = useAnimation();
-  const dragX = useMotionValue(0);
+  const [dragging, setDragging] = useState(false);
+  const [dragX, setDragX] = useState(0);
+  const startX = useRef(0);
+  const startTime = useRef(0);
   const count = React.Children.count(children);
 
-  // Observe container width
-  useEffect(() => {
-    if (!containerRef.current) return;
-    const resizeObserver = new ResizeObserver(entries => {
-      for (let entry of entries) {
-        if (entry.target === containerRef.current) {
-          setContainerWidth(entry.contentRect.width);
-        }
-      }
-    });
-    resizeObserver.observe(containerRef.current);
-    return () => resizeObserver.disconnect();
-  }, []);
+  const goTo = (idx: number) => setCurrent(Math.max(0, Math.min(idx, count - 1)));
 
-  // Calculate slide width based on current container width
-  const slideWidth = containerWidth * 0.85 + 12; // card width (85%) + gap
-
-  // Snap to a specific index
-  const snapTo = (index: number) => {
-    const targetX = -index * slideWidth;
-    controls.start({ x: targetX, transition: { type: 'spring', stiffness: 300, damping: 30 } });
-    setCurrent(index);
+  const onDragStart = (clientX: number) => {
+    startX.current = clientX;
+    startTime.current = Date.now();
+    setDragging(true);
+    setDragX(0);
   };
-
-  // Handle drag end with velocity-based snapping
-  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    const dragOffset = dragX.get(); // current x position
-    const velocity = info.velocity.x;
-    // Estimate final position based on drag offset and velocity
-    const estimatedX = dragOffset + velocity * 0.3; // simple flick factor
-    const newIndex = Math.round(-estimatedX / slideWidth);
-    const clampedIndex = Math.max(0, Math.min(newIndex, count - 1));
-    snapTo(clampedIndex);
+  const onDragMove = (clientX: number) => {
+    if (!dragging) return;
+    setDragX(clientX - startX.current);
   };
-
-  // Update dragX when current changes (e.g., from dot click)
-  useEffect(() => {
-    dragX.set(-current * slideWidth);
-  }, [current, slideWidth, dragX]);
-
-  // Initial snap to first slide when container width is known
-  useEffect(() => {
-    if (containerWidth > 0) {
-      snapTo(0);
+  const onDragEnd = () => {
+    if (!dragging) return;
+    setDragging(false);
+    const elapsed = Date.now() - startTime.current;
+    const velocity = Math.abs(dragX) / elapsed; // px/ms
+    const threshold = Math.abs(dragX) > 50 || velocity > 0.3;
+    if (threshold) {
+      if (dragX < 0) goTo(current + 1);
+      else goTo(current - 1);
     }
-  }, [containerWidth]);
+    setDragX(0);
+  };
+
+  // Touch handlers
+  const onTouchStart = (e: React.TouchEvent) => onDragStart(e.touches[0].clientX);
+  const onTouchMove = (e: React.TouchEvent) => {
+    const dx = Math.abs(e.touches[0].clientX - startX.current);
+    const dy = Math.abs(e.touches[0].clientY - startX.current);
+    if (dx > dy) e.stopPropagation(); // horizontal drag
+    onDragMove(e.touches[0].clientX);
+  };
+  const onTouchEnd = (e: React.TouchEvent) => onDragEnd();
 
   return (
     <div className="relative" style={{ userSelect: 'none' }}>
-      <div ref={containerRef} style={{ overflow: 'hidden', paddingLeft: '12px', paddingRight: '12px' }}>
-        <motion.div
-          drag="x"
-          dragConstraints={containerRef} // automatically constrain to container bounds
-          dragElastic={0.1}
-          dragMomentum={false}
-          animate={controls}
-          style={{ x: dragX, display: 'flex', gap: '12px', willChange: 'transform' }}
-          onDragEnd={handleDragEnd}
+      {/* Viewport — clips peeked cards */}
+      <div style={{ overflow: 'hidden', paddingLeft: '12px', paddingRight: '12px' }}>
+        {/* Track */}
+        <div
+          style={{
+            display: 'flex',
+            gap: '12px',
+            // Animate slide offset
+            transform: `translateX(calc(${-current * (88 + 3.3)}% + ${dragging ? dragX : 0}px))`,
+            transition: dragging ? 'none' : 'transform 0.38s cubic-bezier(0.4, 0, 0.2, 1)',
+            willChange: 'transform',
+          }}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+          onMouseDown={(e) => onDragStart(e.clientX)}
+          onMouseMove={(e) => { if (dragging) onDragMove(e.clientX); }}
+          onMouseUp={onDragEnd}
+          onMouseLeave={onDragEnd}
         >
           {React.Children.map(children, (child, i) => (
-            <motion.div
+            <div
               key={i}
               style={{
                 minWidth: '85%',
                 flexShrink: 0,
-                height: cardHeight,
+                height: `${cardHeight}px`,
                 borderRadius: '1.25rem',
+                transition: dragging ? 'none' : 'opacity 0.3s, transform 0.3s',
+                opacity: i === current ? 1 : 0.55,
+                transform: i === current ? 'scale(1)' : 'scale(0.94)',
+                pointerEvents: i === current ? 'auto' : 'none',
               }}
             >
               {child}
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
 
       {/* Dots */}
@@ -1376,7 +1378,7 @@ const MobileSwiper = ({ children, cardHeight = 500 }: { children: React.ReactNod
           <button
             key={i}
             type="button"
-            onClick={() => snapTo(i)}
+            onClick={() => goTo(i)}
             style={{
               width: i === current ? '26px' : '7px',
               height: '7px',
