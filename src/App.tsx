@@ -198,208 +198,171 @@ interface Order {
 }
 
 // --- Navbar ---
-const Navbar = memo(({ lang, setLang, isAdmin, onLogout, siteSettings, setView }: { lang: Language, setLang: (l: Language) => void, isAdmin?: boolean, onLogout?: () => void, siteSettings: any, setView: (v: string) => void }) => {
-  const t = translations[lang];
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+const Navbar = memo(({ lang, setLang, isAdmin, onLogout, siteSettings, setView }: {
+  lang: Language; setLang: (l: Language) => void;
+  isAdmin?: boolean; onLogout?: () => void;
+  siteSettings: any; setView: (v: string) => void;
+}) => {
+  const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const tagline = lang === 'he' ? '50K+ עוקבים · מוכרים מהר יותר' : '50K+ متابع · نبيع أسرع';
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
+    const fn = () => setScrolled(window.scrollY > 30);
+    window.addEventListener('scroll', fn);
+    return () => window.removeEventListener('scroll', fn);
   }, []);
 
-  const navLinks = [
-    { href: '#how-it-works', label: 'איך זה עובד' },
-    { href: '#packages',     label: 'חבילות'      },
-    { href: '#faq',          label: 'שאלות'        },
+  const links = [
+    { href: '#how-it-works', label: lang === 'he' ? 'איך זה עובד' : 'كيف يعمل' },
+    { href: '#packages',     label: lang === 'he' ? 'חבילות' : 'الباقات'   },
+    { href: '#reviews',      label: lang === 'he' ? 'ביקורות' : 'آراء العملاء' },
+    { href: '#faq',          label: lang === 'he' ? 'שאלות' : 'الأسئلة'   },
   ];
 
   return (
     <nav
-      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+      dir="rtl"
+      className="fixed top-0 inset-x-0 z-50 transition-all duration-300"
       style={{
-        background: scrolled
-          ? 'rgba(6,6,10,0.96)'
-          : 'transparent',
-        backdropFilter: scrolled ? 'blur(20px)' : 'none',
-        borderBottom: scrolled ? '1px solid rgba(255,255,255,0.07)' : 'none',
-        padding: scrolled ? '10px 0' : '16px 0',
+        background: scrolled ? 'rgba(6,6,10,0.94)' : 'transparent',
+        backdropFilter: scrolled ? 'blur(24px) saturate(160%)' : 'none',
+        WebkitBackdropFilter: scrolled ? 'blur(24px) saturate(160%)' : 'none',
+        borderBottom: scrolled ? '1px solid rgba(255,255,255,0.06)' : 'none',
+        padding: scrolled ? '8px 0' : '14px 0',
       }}
     >
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between gap-3">
 
-          {/* ── LOGO ── */}
-          <button
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="flex items-center gap-2 shrink-0"
-          >
-            <div
-              className="flex items-center justify-center rounded-xl shrink-0"
-              style={{
-                width: 38, height: 38,
-                background: 'linear-gradient(135deg, #c8102e, #a50d25)',
-                boxShadow: '0 4px 14px rgba(200,16,46,0.35)',
-              }}
-            >
-              <Car size={20} className="text-white" />
+        {/* ── LOGO ── */}
+        <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="flex items-center gap-2.5 shrink-0 group">
+          <div className="relative flex items-center justify-center rounded-[12px] shrink-0 transition-transform group-hover:scale-105"
+            style={{ width: 40, height: 40, background: 'linear-gradient(135deg,#c8102e,#a50d25)', boxShadow: '0 4px 18px rgba(200,16,46,0.4)' }}>
+            <Car size={21} className="text-white" />
+          </div>
+          <div className="leading-none text-right">
+            <div className="font-black tracking-tight text-[17px] md:text-[19px] leading-none">
+              <span className="text-brand-red">YOUGO</span>
+              <span className="text-white"> ISRAEL</span>
             </div>
-            <div className="leading-none">
-              <div className="text-[18px] font-black tracking-tight leading-none">
-                <span className="text-brand-red">YOUGO</span>
-                <span className="text-white"> ISRAEL</span>
-              </div>
-              <div className="text-[8px] text-white/35 font-bold tracking-widest mt-[2px] hidden xs:block">
-                {siteSettings?.positioning_line_he || t.positioningLine || 'פרסום רכבים מקצועי'}
-              </div>
+            <div className="text-[8px] font-semibold tracking-widest mt-[3px]" style={{ color: 'rgba(255,255,255,0.28)' }}>
+              {tagline}
             </div>
+          </div>
+        </button>
+
+        {/* ── DESKTOP CENTER LINKS ── */}
+        <div className="hidden md:flex items-center gap-0.5 rounded-2xl px-2 py-1.5"
+          style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+          {links.map(l => (
+            <a key={l.href} href={l.href}
+              className="px-3.5 py-1.5 rounded-xl text-[13px] font-semibold transition-all hover:text-white hover:bg-white/8"
+              style={{ color: 'rgba(255,255,255,0.55)' }}>
+              {l.label}
+            </a>
+          ))}
+          <button onClick={() => setView('check-status')}
+            className="px-3.5 py-1.5 rounded-xl text-[13px] font-semibold transition-all hover:text-white hover:bg-white/8"
+            style={{ color: 'rgba(255,255,255,0.55)' }}>
+            {lang === 'he' ? 'סטטוס הזמנה' : 'حالة الطلب'}
           </button>
-
-          {/* ── DESKTOP LINKS ── */}
-          <div className="hidden md:flex items-center gap-1">
-            {navLinks.map(l => (
-              <a
-                key={l.href}
-                href={l.href}
-                className="px-3 py-2 rounded-xl text-[13px] font-bold text-white/60 hover:text-white hover:bg-white/6 transition-all"
-              >
-                {l.label}
-              </a>
-            ))}
-            <button
-              onClick={() => setView('check-status')}
-              className="px-3 py-2 rounded-xl text-[13px] font-bold text-white/60 hover:text-white hover:bg-white/6 transition-all"
-            >
-              סטטוס הזמנה
-            </button>
-          </div>
-
-          {/* ── DESKTOP RIGHT ACTIONS ── */}
-          <div className="hidden md:flex items-center gap-2">
-            {/* Instagram */}
-            <a
-              href="https://instagram.com/yougo.israel"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl font-black text-[12px] transition-all hover:scale-105"
-              style={{
-                background: 'linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%)',
-                color: 'white',
-                boxShadow: '0 2px 12px rgba(200,30,90,0.3)',
-              }}
-            >
-              <Instagram size={14} />
-              @yougo.israel
-            </a>
-
-            {/* Language pill */}
-            <button
-              onClick={() => setLang(lang === 'he' ? 'ar' : 'he')}
-              className="flex items-center gap-2 px-3 py-2 rounded-xl text-[12px] font-black transition-all hover:bg-white/10"
-              style={{ border: '1px solid rgba(255,255,255,0.12)', background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.8)' }}
-            >
-              <Globe size={13} style={{ color: '#c8102e' }} />
-              {lang === 'he' ? 'عربي' : 'עברית'}
-            </button>
-
-            {isAdmin && (
-              <button onClick={onLogout} className="p-2 rounded-xl text-white/30 hover:text-white transition-colors">
-                <LogOut size={16} />
-              </button>
-            )}
-          </div>
-
-          {/* ── MOBILE RIGHT ── */}
-          <div className="md:hidden flex items-center gap-1.5">
-            {/* Instagram icon */}
-            <a
-              href="https://instagram.com/yougo.israel"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center rounded-xl"
-              style={{
-                width: 36, height: 36,
-                background: 'linear-gradient(135deg, #833ab4 0%, #fd1d1d 60%, #fcb045 100%)',
-                boxShadow: '0 2px 10px rgba(200,30,90,0.35)',
-              }}
-            >
-              <Instagram size={16} className="text-white" />
-            </a>
-
-            {/* Language toggle pill */}
-            <button
-              onClick={() => setLang(lang === 'he' ? 'ar' : 'he')}
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[11px] font-black"
-              style={{
-                border: '1px solid rgba(200,16,46,0.4)',
-                background: 'rgba(200,16,46,0.08)',
-                color: '#c8102e',
-                minWidth: 52,
-              }}
-            >
-              <Globe size={11} />
-              {lang === 'he' ? 'عربي' : 'עב׳'}
-            </button>
-
-            {/* Hamburger */}
-            <button
-              onClick={() => setMobileMenuOpen(v => !v)}
-              className="flex items-center justify-center rounded-xl transition-all"
-              style={{
-                width: 36, height: 36,
-                background: mobileMenuOpen ? 'rgba(200,16,46,0.15)' : 'rgba(255,255,255,0.06)',
-                border: mobileMenuOpen ? '1px solid rgba(200,16,46,0.35)' : '1px solid rgba(255,255,255,0.1)',
-              }}
-            >
-              {mobileMenuOpen
-                ? <X size={18} className="text-brand-red" />
-                : <Menu size={18} className="text-white" />}
-            </button>
-          </div>
         </div>
 
-        {/* ── MOBILE DROPDOWN MENU ── */}
-        {mobileMenuOpen && (
-          <div
-            className="md:hidden mt-3 rounded-2xl overflow-hidden"
-            style={{ background: 'rgba(10,10,18,0.97)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(20px)' }}
+        {/* ── DESKTOP RIGHT ── */}
+        <div className="hidden md:flex items-center gap-2">
+          {/* Instagram CTA */}
+          <a href="https://instagram.com/yougo.israel" target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl font-black text-[12px] text-white transition-all hover:scale-[1.03] active:scale-95"
+            style={{ background: 'linear-gradient(135deg,#833ab4 0%,#e1306c 55%,#f77737 100%)', boxShadow: '0 3px 14px rgba(225,48,108,0.35)' }}>
+            <Instagram size={14} />
+            @yougo.israel
+          </a>
+
+          {/* Language toggle */}
+          <button onClick={() => setLang(lang === 'he' ? 'ar' : 'he')}
+            className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-[12px] font-bold transition-all hover:bg-white/10"
+            style={{ border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.75)' }}>
+            <Globe size={13} style={{ color: '#c8102e' }} />
+            {lang === 'he' ? 'عربي' : 'עברית'}
+          </button>
+
+          {isAdmin && (
+            <button onClick={onLogout} className="p-2 rounded-xl transition-colors" style={{ color: 'rgba(255,255,255,0.3)' }}>
+              <LogOut size={16} />
+            </button>
+          )}
+        </div>
+
+        {/* ── MOBILE RIGHT ── */}
+        <div className="md:hidden flex items-center gap-2">
+          {/* Instagram icon */}
+          <a href="https://instagram.com/yougo.israel" target="_blank" rel="noopener noreferrer"
+            className="flex items-center justify-center rounded-xl"
+            style={{ width: 36, height: 36, background: 'linear-gradient(135deg,#833ab4 0%,#e1306c 55%,#f77737 100%)', boxShadow: '0 2px 10px rgba(225,48,108,0.4)' }}>
+            <Instagram size={17} className="text-white" />
+          </a>
+
+          {/* Language toggle */}
+          <button onClick={() => setLang(lang === 'he' ? 'ar' : 'he')}
+            className="flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-xl text-[11px] font-black"
+            style={{ border: '1px solid rgba(200,16,46,0.4)', background: 'rgba(200,16,46,0.08)', color: '#e55' }}>
+            <Globe size={11} />
+            {lang === 'he' ? 'عربي' : 'עברית'}
+          </button>
+
+          {/* Hamburger */}
+          <button onClick={() => setOpen(v => !v)}
+            className="flex items-center justify-center rounded-xl transition-all"
+            style={{ width: 36, height: 36, background: open ? 'rgba(200,16,46,0.15)' : 'rgba(255,255,255,0.06)', border: open ? '1px solid rgba(200,16,46,0.4)' : '1px solid rgba(255,255,255,0.1)' }}>
+            <AnimatePresence mode="wait" initial={false}>
+              {open
+                ? <motion.div key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}><X size={18} className="text-brand-red" /></motion.div>
+                : <motion.div key="m" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.15 }}><Menu size={18} className="text-white" /></motion.div>}
+            </AnimatePresence>
+          </button>
+        </div>
+      </div>
+
+      {/* ── MOBILE DROPDOWN ── */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.18 }}
+            className="md:hidden mx-4 mt-2 rounded-2xl overflow-hidden"
+            style={{ background: 'rgba(8,8,16,0.97)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(24px)' }}
           >
-            <div className="p-3 space-y-1">
-              {navLinks.map(l => (
-                <a
-                  key={l.href}
-                  href={l.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-white/70 hover:text-white hover:bg-white/6 transition-all"
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-brand-red shrink-0" />
+            <div className="p-3 space-y-0.5">
+              {links.map(l => (
+                <a key={l.href} href={l.href} onClick={() => setOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-semibold transition-all hover:text-white hover:bg-white/6"
+                  style={{ color: 'rgba(255,255,255,0.7)' }}>
+                  <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: '#c8102e' }} />
                   {l.label}
                 </a>
               ))}
-              <button
-                onClick={() => { setView('check-status'); setMobileMenuOpen(false); }}
-                className="flex items-center gap-3 w-full text-right px-4 py-3 rounded-xl text-sm font-bold text-white/70 hover:text-white hover:bg-white/6 transition-all"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-brand-red shrink-0" />
-                סטטוס הזמנה
+              <button onClick={() => { setView('check-status'); setOpen(false); }}
+                className="flex items-center gap-3 w-full text-right px-4 py-3 rounded-xl text-[14px] font-semibold transition-all hover:text-white hover:bg-white/6"
+                style={{ color: 'rgba(255,255,255,0.7)' }}>
+                <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: '#c8102e' }} />
+                {lang === 'he' ? 'סטטוס הזמנה' : 'حالة الطلب'}
               </button>
             </div>
+            {/* Instagram full bar */}
             <div className="px-3 pb-3">
-              <a
-                href="https://instagram.com/yougo.israel"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full py-3 rounded-xl font-black text-sm text-white"
-                style={{ background: 'linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%)' }}
-              >
+              <a href="https://instagram.com/yougo.israel" target="_blank" rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2.5 w-full py-3 rounded-xl font-black text-[13px] text-white"
+                style={{ background: 'linear-gradient(135deg,#833ab4 0%,#e1306c 55%,#f77737 100%)', boxShadow: '0 4px 16px rgba(225,48,108,0.3)' }}>
                 <Instagram size={16} />
-                עקבו על אינסטגרם ← @yougo.israel
+                {lang === 'he' ? 'עקבו עלינו · @yougo.israel' : 'تابعونا · @yougo.israel'}
               </a>
             </div>
-          </div>
+          </motion.div>
         )}
-      </div>
+      </AnimatePresence>
     </nav>
   );
 });
@@ -2009,6 +1972,368 @@ const PaymentForm = memo(({ formData, setFormData, selectedPackage, onSubmit, lo
 });
 
 // ============================================================
+// PACKAGE INFO PAGE — full screen, themed by package color
+// ============================================================
+interface PackageInfoPageProps {
+  pkg: Package;
+  onBook: (p: Package) => void;
+  onBack: () => void;
+  lang: Language;
+}
+
+const PACKAGE_THEMES: Record<string, {
+  color: string; colorDark: string; colorName: string;
+  gradient: string; glowBig: string; icon: React.ReactNode;
+  badge: string; tagline: string; taglineAr: string;
+  requirements: { he: string[]; ar: string[] };
+  highlights: { icon: React.ReactNode; label: string; labelAr: string; value: string }[];
+}> = {
+  basic: {
+    color: '#94a3b8', colorDark: '#64748b', colorName: 'slate',
+    gradient: 'linear-gradient(160deg, rgba(148,163,184,0.12) 0%, #06060a 45%)',
+    glowBig: 'rgba(148,163,184,0.18)',
+    icon: <Rocket size={32} />, badge: '🚀', tagline: 'הכניסה המושלמת לשוק', taglineAr: 'البداية المثالية في السوق',
+    requirements: {
+      he: ['תמונות הרכב (לפחות 2-3)', 'פרטי הרכב המלאים (דגם, שנה, קילומטראז')', 'מחיר מבוקש', 'מספר טלפון לפניות', 'מיקום הרכב'],
+      ar: ['صور السيارة (2-3 على الأقل)', 'بيانات السيارة كاملة (موديل، سنة، كيلومتراج)', 'السعر المطلوب', 'رقم هاتف للتواصل', 'موقع السيارة'],
+    },
+    highlights: [
+      { icon: <Camera size={18} />, label: 'תמונות מקצועיות', labelAr: 'صور احترافية', value: '2' },
+      { icon: <Calendar size={18} />, label: 'ימי פרסום', labelAr: 'أيام النشر', value: '7' },
+      { icon: <Eye size={18} />, label: 'חשיפה מובטחת', labelAr: 'ظهور مضمون', value: '3 ימים' },
+      { icon: <DollarSign size={18} />, label: 'מחיר', labelAr: 'السعر', value: '₪199' },
+    ],
+  },
+  pro: {
+    color: '#c8102e', colorDark: '#a50d25', colorName: 'red',
+    gradient: 'linear-gradient(160deg, rgba(200,16,46,0.14) 0%, #06060a 45%)',
+    glowBig: 'rgba(200,16,46,0.22)',
+    icon: <Flame size={32} />, badge: '🔥', tagline: 'הבחירה הפופולרית ביותר', taglineAr: 'الخيار الأكثر شعبية',
+    requirements: {
+      he: ['תמונות הרכב (לפחות 4-6)', 'פרטי הרכב המלאים', 'מחיר מבוקש', 'מספר טלפון לפניות', 'מיקום הרכב', 'כל פרט מיוחד שתרצה להדגיש'],
+      ar: ['صور السيارة (4-6 على الأقل)', 'بيانات السيارة كاملة', 'السعر المطلوب', 'رقم هاتف للتواصل', 'موقع السيارة', 'أي تفصيل خاص تريد إبرازه'],
+    },
+    highlights: [
+      { icon: <Camera size={18} />, label: 'תמונות מקצועיות', labelAr: 'صور احترافية', value: '4' },
+      { icon: <Calendar size={18} />, label: 'ימי פרסום', labelAr: 'أيام النشر', value: '14' },
+      { icon: <Eye size={18} />, label: 'חשיפה מובטחת', labelAr: 'ظهور مضمون', value: '7 ימים' },
+      { icon: <DollarSign size={18} />, label: 'מחיר', labelAr: 'السعر', value: '₪299' },
+    ],
+  },
+  premium: {
+    color: '#f59e0b', colorDark: '#d97706', colorName: 'amber',
+    gradient: 'linear-gradient(160deg, rgba(245,158,11,0.14) 0%, #06060a 45%)',
+    glowBig: 'rgba(245,158,11,0.2)',
+    icon: <Crown size={32} />, badge: '👑', tagline: 'חשיפה מקסימלית ועיצוב VIP', taglineAr: 'أقصى ظهور وتصميم VIP',
+    requirements: {
+      he: ['8+ תמונות איכותיות', 'פרטי הרכב המלאים + היסטוריה', 'מחיר + גמישות במחיר', 'מספר טלפון לפניות', 'מיקום', 'סרטון אם יש (אופציונלי)', 'כל מידע שיעזור לשיווק'],
+      ar: ['8+ صور عالية الجودة', 'بيانات كاملة + تاريخ السيارة', 'السعر + مرونة', 'رقم هاتف', 'الموقع', 'فيديو إن وجد (اختياري)', 'أي معلومات تساعد التسويق'],
+    },
+    highlights: [
+      { icon: <Camera size={18} />, label: 'תמונות מקצועיות', labelAr: 'صور احترافية', value: '8+' },
+      { icon: <Calendar size={18} />, label: 'ימי פרסום', labelAr: 'أيام النشر', value: '30' },
+      { icon: <Video size={18} />, label: 'רילס + סרטון', labelAr: 'ريلز + فيديو', value: '✓' },
+      { icon: <DollarSign size={18} />, label: 'מחיר', labelAr: 'السعر', value: '₪479' },
+    ],
+  },
+  vip: {
+    color: '#d4af37', colorDark: '#b8960c', colorName: 'gold',
+    gradient: 'linear-gradient(160deg, rgba(212,175,55,0.14) 0%, #06060a 45%)',
+    glowBig: 'rgba(212,175,55,0.2)',
+    icon: <Gem size={32} />, badge: '💎', tagline: 'יחס VIP לרכבי יוקרה בלבד', taglineAr: 'معاملة VIP لسيارات الفخامة فقط',
+    requirements: {
+      he: ['15+ תמונות סטילש', 'פרטי הרכב המלאים + כל ההיסטוריה', 'מחיר + האפשרות לניהול מו"מ', 'סרטון הרכב (מועדף)', 'מיקום + זמינות לצילומים', 'כל פרט שמדגיש יוקרה'],
+      ar: ['15+ صور أنيقة', 'بيانات كاملة + كل التاريخ', 'السعر + إمكانية التفاوض', 'فيديو السيارة (مفضل)', 'الموقع + جدول للتصوير', 'كل تفصيل يبرز الفخامة'],
+    },
+    highlights: [
+      { icon: <Camera size={18} />, label: 'תמונות קולנועיות', labelAr: 'صور سينمائية', value: '15+' },
+      { icon: <Calendar size={18} />, label: 'ימי פרסום', labelAr: 'أيام النشر', value: '60' },
+      { icon: <Headphones size={18} />, label: 'ליווי 24/7', labelAr: 'مرافقة 24/7', value: '✓' },
+      { icon: <DollarSign size={18} />, label: 'מחיר', labelAr: 'السعر', value: '₪749' },
+    ],
+  },
+  duo: {
+    color: '#8b5cf6', colorDark: '#7c3aed', colorName: 'purple',
+    gradient: 'linear-gradient(160deg, rgba(139,92,246,0.14) 0%, #06060a 45%)',
+    glowBig: 'rgba(139,92,246,0.2)',
+    icon: <Zap size={32} />, badge: '🚗🚗', tagline: 'שני רכבים, מחיר אחד משתלם', taglineAr: 'سيارتان بسعر واحد مغرٍ',
+    requirements: {
+      he: ['תמונות לרכב הראשון (לפחות 4)', 'תמונות לרכב השני (לפחות 4)', 'פרטים מלאים לשני הרכבים', 'מחיר לכל רכב בנפרד', 'מספר טלפון לפניות'],
+      ar: ['صور السيارة الأولى (4 على الأقل)', 'صور السيارة الثانية (4 على الأقل)', 'بيانات كاملة للسيارتين', 'سعر لكل سيارة منفرد', 'رقم هاتف للتواصل'],
+    },
+    highlights: [
+      { icon: <Car size={18} />, label: 'רכבים', labelAr: 'سيارات', value: '2' },
+      { icon: <Percent size={18} />, label: 'חיסכון', labelAr: 'توفير', value: '40%' },
+      { icon: <Calendar size={18} />, label: 'ימי פרסום', labelAr: 'أيام النشر', value: '14' },
+      { icon: <DollarSign size={18} />, label: 'מחיר', labelAr: 'السعر', value: '₪389' },
+    ],
+  },
+  business: {
+    color: '#3b82f6', colorDark: '#2563eb', colorName: 'blue',
+    gradient: 'linear-gradient(160deg, rgba(59,130,246,0.14) 0%, #06060a 45%)',
+    glowBig: 'rgba(59,130,246,0.2)',
+    icon: <Building2 size={32} />, badge: '🏢', tagline: 'פתרון עסקי מקצועי לסוכנויות', taglineAr: 'حل تجاري احترافي للوكالات',
+    requirements: {
+      he: ['שם הסוכנות ופרטי קשר', 'כמות רכבים חודשית משוערת', 'פרטי איש קשר לניהול', 'ציפיות ויעדים', 'לוגו הסוכנות (אם יש)'],
+      ar: ['اسم الوكالة وبيانات التواصل', 'العدد الشهري التقريبي للسيارات', 'بيانات مسؤول التواصل', 'التوقعات والأهداف', 'شعار الوكالة (إن وجد)'],
+    },
+    highlights: [
+      { icon: <Car size={18} />, label: 'רכבים/חודש', labelAr: 'سيارات/شهر', value: '50' },
+      { icon: <Percent size={18} />, label: 'הנחה', labelAr: 'خصم', value: '40%' },
+      { icon: <Headphones size={18} />, label: 'מנהל ייעודי', labelAr: 'مدير خاص', value: '✓' },
+      { icon: <DollarSign size={18} />, label: 'מחיר/חודש', labelAr: 'السعر/شهر', value: '₪1,499' },
+    ],
+  },
+  business100: {
+    color: '#06b6d4', colorDark: '#0891b2', colorName: 'cyan',
+    gradient: 'linear-gradient(160deg, rgba(6,182,212,0.14) 0%, #06060a 45%)',
+    glowBig: 'rgba(6,182,212,0.2)',
+    icon: <Rocket size={32} />, badge: '🚀', tagline: 'סוכנות גדולה? הפתרון הכי חזק', taglineAr: 'وكالة كبيرة؟ الحل الأقوى',
+    requirements: {
+      he: ['שם הסוכנות ופרטי קשר בכיר', 'כמות רכבים חודשית (עד 100)', 'פרטי מנהל ואיש קשר', 'ציפיות ויעדים עסקיים', 'לוגו + חומרי מיתוג אם יש', 'תשתיות דיגיטליות קיימות'],
+      ar: ['اسم الوكالة وبيانات مسؤول رفيع', 'العدد الشهري (حتى 100 سيارة)', 'بيانات المدير والمسؤول', 'التوقعات والأهداف التجارية', 'شعار + مواد هوية إن وجدت', 'البنية الرقمية الحالية'],
+    },
+    highlights: [
+      { icon: <Car size={18} />, label: 'רכבים/חודש', labelAr: 'سيارات/شهر', value: '100' },
+      { icon: <Percent size={18} />, label: 'הנחה', labelAr: 'خصم', value: '50%' },
+      { icon: <BarChart3 size={18} />, label: 'דוחות שבועיים', labelAr: 'تقارير أسبوعية', value: '✓' },
+      { icon: <DollarSign size={18} />, label: 'מחיר/חודש', labelAr: 'السعر/شهر', value: '₪2,499' },
+    ],
+  },
+  'equipment-heavy': {
+    color: '#ea580c', colorDark: '#c2410c', colorName: 'orange',
+    gradient: 'linear-gradient(160deg, rgba(234,88,12,0.14) 0%, #06060a 45%)',
+    glowBig: 'rgba(234,88,12,0.2)',
+    icon: <Truck size={32} />, badge: '🚜', tagline: 'חשיפה מקצועית לציוד כבד', taglineAr: 'ظهور احترافي للمعدات الثقيلة',
+    requirements: {
+      he: ['10+ תמונות של הציוד מכל זווית', 'מפרט טכני מלא (שנה, שעות עבודה, מצב)', 'מחיר מבוקש', 'מיקום הציוד', 'מספר טלפון', 'כל תיעוד רלוונטי (שירות, טסט)'],
+      ar: ['10+ صور للمعدات من كل زاوية', 'المواصفات الفنية كاملة (سنة، ساعات عمل، حالة)', 'السعر المطلوب', 'موقع المعدات', 'رقم هاتف', 'أي وثائق ذات صلة (صيانة، فحص)'],
+    },
+    highlights: [
+      { icon: <Camera size={18} />, label: 'תמונות', labelAr: 'صور', value: '10+' },
+      { icon: <Calendar size={18} />, label: 'ימי פרסום', labelAr: 'أيام النشر', value: '21' },
+      { icon: <Target size={18} />, label: 'קהל קבלנים', labelAr: 'جمهور المقاولين', value: '✓' },
+      { icon: <DollarSign size={18} />, label: 'מחיר', labelAr: 'السعر', value: '₪389' },
+    ],
+  },
+  'equipment-light': {
+    color: '#10b981', colorDark: '#059669', colorName: 'emerald',
+    gradient: 'linear-gradient(160deg, rgba(16,185,129,0.14) 0%, #06060a 45%)',
+    glowBig: 'rgba(16,185,129,0.2)',
+    icon: <Wrench size={32} />, badge: '🔧', tagline: 'פרסום מקצועי לציוד קל', taglineAr: 'نشر احترافي للمعدات الخفيفة',
+    requirements: {
+      he: ['6+ תמונות של הציוד', 'מפרט טכני (שנה, מצב, שעות שימוש)', 'מחיר מבוקש', 'מיקום', 'מספר טלפון', 'אחריות/שירות אם רלוונטי'],
+      ar: ['6+ صور للمعدات', 'مواصفات فنية (سنة، حالة، ساعات استخدام)', 'السعر المطلوب', 'الموقع', 'رقم هاتف', 'ضمان/صيانة إن انطبق'],
+    },
+    highlights: [
+      { icon: <Camera size={18} />, label: 'תמונות', labelAr: 'صور', value: '6+' },
+      { icon: <Calendar size={18} />, label: 'ימי פרסום', labelAr: 'أيام النشر', value: '14' },
+      { icon: <Users size={18} />, label: 'קהל מקצועי', labelAr: 'جمهور متخصص', value: '✓' },
+      { icon: <DollarSign size={18} />, label: 'מחיר', labelAr: 'السعر', value: '₪229' },
+    ],
+  },
+  transport: {
+    color: '#0ea5e9', colorDark: '#0284c7', colorName: 'sky',
+    gradient: 'linear-gradient(160deg, rgba(14,165,233,0.14) 0%, #06060a 45%)',
+    glowBig: 'rgba(14,165,233,0.2)',
+    icon: <Bus size={32} />, badge: '🚌', tagline: 'הפלטפורמה לרכב מסחרי ותחבורה', taglineAr: 'المنصة للمركبات التجارية والنقل',
+    requirements: {
+      he: ['10+ תמונות מבפנים ומבחוץ', 'מפרט מלא (שנה, ק"מ, כיסאות, מצב)', 'מחיר מבוקש', 'מיקום', 'מספר טלפון', 'רישיונות ותיעוד אם יש'],
+      ar: ['10+ صور من الداخل والخارج', 'مواصفات كاملة (سنة، كم، مقاعد، حالة)', 'السعر المطلوب', 'الموقع', 'رقم هاتف', 'رخص وتوثيق إن وجد'],
+    },
+    highlights: [
+      { icon: <Camera size={18} />, label: 'תמונות', labelAr: 'صور', value: '10+' },
+      { icon: <Calendar size={18} />, label: 'ימי פרסום', labelAr: 'أيام النشر', value: '21' },
+      { icon: <Target size={18} />, label: 'חשיפה ייעודית', labelAr: 'ظهور مخصص', value: '✓' },
+      { icon: <DollarSign size={18} />, label: 'מחיר', labelAr: 'السعر', value: '₪329' },
+    ],
+  },
+};
+
+const PackageInfoPage = memo(({ pkg, onBook, onBack, lang }: PackageInfoPageProps) => {
+  const theme = PACKAGE_THEMES[pkg.id] || PACKAGE_THEMES['basic'];
+  const isAr = lang === 'ar';
+  const isMonthly = pkg.id === 'business' || pkg.id === 'business100';
+
+  const [revealIdx, setRevealIdx] = useState(-1);
+  useEffect(() => {
+    let i = 0;
+    const timer = setInterval(() => {
+      setRevealIdx(v => { if (v >= theme.requirements[isAr ? 'ar' : 'he'].length - 1) { clearInterval(timer); return v; } return v + 1; });
+      i++;
+    }, 120);
+    return () => clearInterval(timer);
+  }, [pkg.id, lang]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.25 }}
+      className="min-h-screen pb-16"
+      style={{ background: theme.gradient }}
+    >
+      {/* TOP GLOW */}
+      <div className="fixed top-0 inset-x-0 pointer-events-none z-0" style={{ height: 500, background: `radial-gradient(ellipse 70% 40% at 50% 0%, ${theme.glowBig} 0%, transparent 70%)` }} />
+
+      {/* ANIMATED COLOR STRIP */}
+      <div className="fixed top-0 inset-x-0 h-[3px] z-40" style={{ background: `linear-gradient(90deg, transparent, ${theme.color}, transparent)` }}>
+        <motion.div className="absolute inset-0" style={{ background: theme.color }}
+          animate={{ scaleX: [0.2, 1, 0.2], x: ['-80%', '80%'] }}
+          transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }} />
+      </div>
+
+      <div className="relative z-10 max-w-4xl mx-auto px-4 pt-28 space-y-8">
+        {/* BACK */}
+        <motion.button initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }}
+          onClick={onBack}
+          className="flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-black text-sm transition-all hover:scale-105"
+          style={{ background: `${theme.color}18`, border: `1px solid ${theme.color}40`, color: theme.color }}>
+          <ArrowLeft size={15} />
+          {isAr ? 'رجوع إلى الحزم' : 'חזרה לחבילות'}
+        </motion.button>
+
+        {/* HERO CARD */}
+        <motion.div initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.05 }}
+          className="relative rounded-3xl overflow-hidden p-8 md:p-12"
+          style={{ background: `linear-gradient(145deg, ${theme.color}14 0%, rgba(8,8,16,0.98) 60%)`, border: `1.5px solid ${theme.color}35`, boxShadow: `0 40px 80px -20px ${theme.glowBig}` }}>
+          
+          {/* BG grid */}
+          <div className="absolute inset-0 pointer-events-none opacity-[0.04]"
+            style={{ backgroundImage: `linear-gradient(${theme.color}60 1px, transparent 1px), linear-gradient(90deg, ${theme.color}60 1px, transparent 1px)`, backgroundSize: '36px 36px' }} />
+
+          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-8">
+            {/* Icon */}
+            <motion.div
+              animate={{ y: [0, -8, 0] }} transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+              className="shrink-0 w-24 h-24 rounded-2xl flex items-center justify-center"
+              style={{ background: `linear-gradient(135deg, ${theme.color}25, ${theme.color}10)`, border: `2px solid ${theme.color}40`, boxShadow: `0 0 40px ${theme.color}30` }}>
+              <span style={{ color: theme.color }}>{theme.icon}</span>
+            </motion.div>
+
+            <div className="flex-1 space-y-3">
+              <div className="flex items-center gap-3 flex-wrap">
+                <span className="text-3xl">{theme.badge}</span>
+                <h1 className="text-3xl md:text-4xl font-black text-white">{pkg.name}</h1>
+                {pkg.popular && (
+                  <span className="px-3 py-1 rounded-full text-xs font-black text-white" style={{ background: `linear-gradient(135deg, ${theme.color}, ${theme.colorDark})` }}>
+                    🔥 {isAr ? 'الأكثر طلباً' : 'הפופולרי ביותר'}
+                  </span>
+                )}
+              </div>
+              <p className="text-xl font-bold" style={{ color: theme.color }}>
+                {isAr ? theme.taglineAr : theme.tagline}
+              </p>
+              <p className="text-white/50 text-sm leading-relaxed">
+                {isAr
+                  ? 'احجز الآن وسيقوم فريقنا بالتواصل معك خلال ساعة واحدة لتنسيق كل التفاصيل.'
+                  : 'הזמן עכשיו והצוות שלנו יחזור אליך תוך שעה לתיאום כל הפרטים.'}
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* STATS GRID */}
+        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {theme.highlights.map((h, i) => (
+            <motion.div key={i}
+              initial={{ scale: 0.85, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.15 + i * 0.06 }}
+              className="flex flex-col items-center justify-center gap-2 p-5 rounded-2xl text-center"
+              style={{ background: `${theme.color}0e`, border: `1px solid ${theme.color}28` }}>
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${theme.color}20` }}>
+                <span style={{ color: theme.color }}>{h.icon}</span>
+              </div>
+              <div className="text-2xl font-black" style={{ color: theme.color }}>{h.value}</div>
+              <div className="text-[10px] font-bold text-white/45">{isAr ? h.labelAr : h.label}</div>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* WHAT'S INCLUDED */}
+        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15 }}
+          className="rounded-3xl p-6 md:p-8 space-y-5"
+          style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)' }}>
+          <h2 className="text-xl font-black text-white flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: `${theme.color}20` }}>
+              <Check size={16} style={{ color: theme.color }} />
+            </div>
+            {isAr ? 'ماذا يشمل الباقة' : 'מה כלול בחבילה'}
+          </h2>
+          <div className="grid md:grid-cols-2 gap-2">
+            {pkg.features.map((f, i) => (
+              <motion.div key={i}
+                initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.2 + i * 0.05 }}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl"
+                style={{ background: `${theme.color}09`, border: `1px solid ${theme.color}18` }}>
+                <div className="w-5 h-5 rounded-full shrink-0 flex items-center justify-center" style={{ background: `${theme.color}25` }}>
+                  <Check size={10} strokeWidth={3} style={{ color: theme.color }} />
+                </div>
+                <span className="text-sm font-medium text-white/85">{f}</span>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* WHAT WE NEED FROM YOU */}
+        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}
+          className="rounded-3xl p-6 md:p-8 space-y-5"
+          style={{ background: `${theme.color}08`, border: `1px solid ${theme.color}28` }}>
+          <h2 className="text-xl font-black text-white flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: `${theme.color}20` }}>
+              <FileText size={16} style={{ color: theme.color }} />
+            </div>
+            {isAr ? 'ما نحتاجه منك' : 'מה אנחנו צריכים ממך'}
+          </h2>
+          <p className="text-white/45 text-sm">{isAr ? 'يرجى تجهيز المعلومات التالية قبل الحجز:' : 'אנא הכן את המידע הבא לפני ההזמנה:'}</p>
+          <div className="space-y-2">
+            {theme.requirements[isAr ? 'ar' : 'he'].map((req, i) => (
+              <motion.div key={i}
+                initial={{ x: -20, opacity: 0 }}
+                animate={revealIdx >= i ? { x: 0, opacity: 1 } : { x: -20, opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="flex items-start gap-3 px-4 py-3 rounded-xl"
+                style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
+                <div className="w-6 h-6 rounded-lg shrink-0 flex items-center justify-center font-black text-xs mt-[1px]"
+                  style={{ background: `${theme.color}20`, color: theme.color }}>
+                  {i + 1}
+                </div>
+                <span className="text-sm font-medium text-white/80">{req}</span>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* CTA */}
+        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }}
+          className="flex flex-col sm:flex-row gap-3">
+          <motion.button
+            whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+            onClick={() => onBook(pkg)}
+            className="flex-1 py-4 rounded-2xl font-black text-lg text-white flex items-center justify-center gap-3"
+            style={{ background: `linear-gradient(135deg, ${theme.color}, ${theme.colorDark})`, boxShadow: `0 8px 30px ${theme.glowBig}` }}>
+            <RocketIcon size={20} />
+            {isMonthly
+              ? (isAr ? 'ابدأ المشروع الآن' : 'התחל עכשיו')
+              : (isAr ? 'احجز الآن' : 'הזמן עכשיו')}
+          </motion.button>
+          <a href={`https://wa.me/972546980606?text=${encodeURIComponent('שלום, אני מעוניין בחבילת ' + pkg.name)}`}
+            target="_blank" rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-black text-sm transition-all hover:scale-[1.02]"
+            style={{ background: 'rgba(37,211,102,0.1)', border: '1px solid rgba(37,211,102,0.3)', color: '#25D366' }}>
+            <MessageCircle size={18} />
+            {isAr ? 'واتساب' : 'שאלות? וואטסאפ'}
+          </a>
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+});
+
+// ============================================================
 // MAIN APP COMPONENT
 // ============================================================
 function App() {
@@ -2027,6 +2352,7 @@ function App() {
   const [showAllReviews, setShowAllReviews] = useState(false);
   const [modalContent, setModalContent] = useState<{ title: string; content: string } | null>(null);
   const [showChangePackage, setShowChangePackage] = useState(false);
+  const [packageInfoPkg, setPackageInfoPkg] = useState<Package | null>(null);
   const [siteSettings, setSiteSettings] = useState<any>({
     followers_count: '50K+',
     whatsapp_number: '972546980606',
@@ -2066,7 +2392,12 @@ function App() {
   ], []);
 
   const handleSelectPackage = useCallback((p: Package) => {
+    setPackageInfoPkg(p);
+  }, []);
+
+  const handleBookFromInfo = useCallback((p: Package) => {
     setSelectedPackage(p);
+    setPackageInfoPkg(null);
     setView('booking');
     setBookingStep(1);
   }, []);
@@ -2192,7 +2523,16 @@ function App() {
       <Navbar lang={lang} setLang={setLang} isAdmin={isAdmin} onLogout={() => { setIsAdmin(false); setView('home'); }} siteSettings={siteSettings} setView={setView} />
 
       <main className="pt-24 px-3 max-w-7xl mx-auto">
-        {view === 'home' && (
+        {packageInfoPkg && (
+          <PackageInfoPage
+            pkg={packageInfoPkg}
+            onBook={handleBookFromInfo}
+            onBack={() => setPackageInfoPkg(null)}
+            lang={lang}
+          />
+        )}
+
+        {!packageInfoPkg && view === 'home' && (
           <div className="space-y-24">
             {/* HERO */}
             <section className="relative min-h-screen flex items-center justify-center overflow-hidden" style={{ background: '#06060a' }}>
@@ -2955,59 +3295,69 @@ function App() {
             </section>
 
             {/* FAQ */}
-            <section id="faq" className="max-w-4xl mx-auto space-y-10">
-              <div className="text-center space-y-4">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full"
-                  style={{ background: 'rgba(200,16,46,0.1)', border: '1px solid rgba(200,16,46,0.25)' }}>
-                  <HelpCircle size={13} className="text-brand-red" />
-                  <span className="text-[10px] font-black tracking-[0.2em] uppercase text-brand-red">שאלות נפוצות</span>
+            <section id="faq" className="max-w-3xl mx-auto space-y-10">
+              {/* Header */}
+              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center space-y-4">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full" style={{ background: 'rgba(200,16,46,0.08)', border: '1px solid rgba(200,16,46,0.2)' }}>
+                  <HelpCircle size={12} className="text-brand-red" />
+                  <span className="text-[10px] font-black tracking-[0.25em] uppercase text-brand-red">{lang === 'he' ? 'שאלות נפוצות' : 'الأسئلة الشائعة'}</span>
                 </div>
-                <h2 className="text-4xl md:text-5xl font-black text-white">שאלות <span className="text-brand-red">נפוצות</span></h2>
-                <p className="text-white/45 text-base">כל מה שצריך לדעת על תהליך הפרסום והמכירה</p>
-              </div>
+                <h2 className="text-3xl md:text-4xl font-black">
+                  {lang === 'he' ? <>כל מה שרצית <span className="text-brand-red">לדעת</span></> : <>كل ما أردت <span className="text-brand-red">معرفته</span></>}
+                </h2>
+                <p className="text-white/40 text-sm">{lang === 'he' ? 'לחץ על שאלה כדי לראות את התשובה' : 'اضغط على سؤال لرؤية الإجابة'}</p>
+              </motion.div>
 
-              <div className="space-y-2.5">
-                {t.faqs.slice(0, showAllReviews ? t.faqs.length : 4).map((item, i) => {
+              {/* FAQ items */}
+              <div className="space-y-2">
+                {t.faqs.slice(0, showAllReviews ? t.faqs.length : 5).map((item, i) => {
                   const isOpen = activeFaq === i;
                   return (
-                    <div key={i}
-                      className="rounded-2xl overflow-hidden transition-all duration-200"
+                    <motion.div key={i}
+                      initial={{ opacity: 0, y: 12 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.04 }}
+                      className="rounded-2xl overflow-hidden"
                       style={{
-                        background: isOpen
-                          ? 'linear-gradient(135deg, rgba(200,16,46,0.08) 0%, rgba(10,10,14,0.98) 100%)'
-                          : 'rgba(255,255,255,0.03)',
-                        border: isOpen
-                          ? '1px solid rgba(200,16,46,0.25)'
-                          : '1px solid rgba(255,255,255,0.07)',
+                        background: isOpen ? 'linear-gradient(135deg, rgba(200,16,46,0.07) 0%, rgba(10,10,16,0.99) 100%)' : 'rgba(255,255,255,0.025)',
+                        border: isOpen ? '1px solid rgba(200,16,46,0.22)' : '1px solid rgba(255,255,255,0.06)',
+                        transition: 'all 0.25s ease',
                       }}>
                       <button
                         onClick={() => setActiveFaq(isOpen ? null : i)}
-                        className="w-full px-5 py-4 flex items-center gap-4 text-right transition-colors hover:bg-white/3"
+                        className="w-full px-5 py-4 flex items-center gap-4 text-right"
+                        style={{ cursor: 'pointer' }}
                       >
-                        <div className="w-8 h-8 rounded-xl flex items-center justify-center font-black text-xs shrink-0 transition-all"
+                        {/* Number badge */}
+                        <div className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center font-black text-[11px]"
                           style={{
-                            background: isOpen ? 'linear-gradient(135deg, #c8102e, #a50d25)' : 'rgba(255,255,255,0.06)',
-                            color: isOpen ? 'white' : 'rgba(255,255,255,0.4)',
-                            border: isOpen ? 'none' : '1px solid rgba(255,255,255,0.1)',
+                            background: isOpen ? 'linear-gradient(135deg,#c8102e,#a50d25)' : 'rgba(255,255,255,0.05)',
+                            color: isOpen ? 'white' : 'rgba(255,255,255,0.35)',
+                            border: isOpen ? 'none' : '1px solid rgba(255,255,255,0.09)',
+                            transition: 'all 0.25s ease',
+                            boxShadow: isOpen ? '0 4px 14px rgba(200,16,46,0.4)' : 'none',
                           }}>
-                          {i + 1}
+                          {String(i + 1).padStart(2, '0')}
                         </div>
-                        <span className="flex-1 font-bold text-sm md:text-base text-right"
-                          style={{ color: isOpen ? 'white' : 'rgba(255,255,255,0.8)' }}>
+
+                        {/* Question */}
+                        <span className="flex-1 font-bold text-sm md:text-[15px] text-right leading-snug"
+                          style={{ color: isOpen ? 'white' : 'rgba(255,255,255,0.75)', transition: 'color 0.2s' }}>
                           {item.q}
                         </span>
-                        <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-all"
+
+                        {/* Chevron */}
+                        <motion.div
+                          animate={{ rotate: isOpen ? 180 : 0 }}
+                          transition={{ duration: 0.22 }}
+                          className="shrink-0 w-7 h-7 rounded-lg flex items-center justify-center"
                           style={{
-                            background: isOpen ? 'rgba(200,16,46,0.15)' : 'rgba(255,255,255,0.05)',
-                            border: isOpen ? '1px solid rgba(200,16,46,0.3)' : '1px solid rgba(255,255,255,0.08)',
+                            background: isOpen ? 'rgba(200,16,46,0.12)' : 'rgba(255,255,255,0.04)',
+                            border: isOpen ? '1px solid rgba(200,16,46,0.25)' : '1px solid rgba(255,255,255,0.07)',
                           }}>
-                          <motion.div
-                            animate={{ rotate: isOpen ? 180 : 0 }}
-                            transition={{ duration: 0.2 }}
-                          >
-                            <ChevronDown size={14} style={{ color: isOpen ? '#c8102e' : 'rgba(255,255,255,0.4)' }} />
-                          </motion.div>
-                        </div>
+                          <ChevronDown size={13} style={{ color: isOpen ? '#c8102e' : 'rgba(255,255,255,0.35)' }} />
+                        </motion.div>
                       </button>
 
                       <AnimatePresence initial={false}>
@@ -3016,39 +3366,58 @@ function App() {
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: 'auto', opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.22 }}
-                            className="overflow-hidden"
+                            transition={{ duration: 0.2, ease: 'easeInOut' }}
+                            style={{ overflow: 'hidden' }}
                           >
-                            <div className="px-5 pb-5 pr-[68px]">
-                              <div className="h-px mb-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(200,16,46,0.2), transparent)' }} />
+                            <div className="px-5 pb-5" style={{ paddingRight: 64 }}>
+                              <div className="h-px mb-4" style={{ background: 'linear-gradient(90deg, transparent, rgba(200,16,46,0.18), transparent)' }} />
                               <p className="text-white/55 text-sm leading-relaxed">{item.a}</p>
                             </div>
                           </motion.div>
                         )}
                       </AnimatePresence>
-                    </div>
+                    </motion.div>
                   );
                 })}
               </div>
 
-              {t.faqs.length > 4 && (
+              {/* Show more */}
+              {t.faqs.length > 5 && (
                 <div className="text-center">
                   <button
                     onClick={() => setShowAllReviews(v => !v)}
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-black text-sm border transition-all"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-black text-sm transition-all hover:scale-[1.02]"
                     style={{
-                      background: showAllReviews ? 'rgba(200,16,46,0.1)' : 'rgba(255,255,255,0.05)',
-                      border: showAllReviews ? '1px solid rgba(200,16,46,0.3)' : '1px solid rgba(255,255,255,0.1)',
-                      color: showAllReviews ? '#c8102e' : 'rgba(255,255,255,0.6)',
+                      background: showAllReviews ? 'rgba(200,16,46,0.1)' : 'rgba(255,255,255,0.04)',
+                      border: showAllReviews ? '1px solid rgba(200,16,46,0.3)' : '1px solid rgba(255,255,255,0.09)',
+                      color: showAllReviews ? '#c8102e' : 'rgba(255,255,255,0.55)',
                     }}
                   >
                     {showAllReviews
-                      ? <><ChevronUp size={15} /> הסתר שאלות</>
-                      : <><ChevronDown size={15} /> הצג את כל {t.faqs.length} השאלות</>
+                      ? <><ChevronUp size={14} /> {lang === 'he' ? 'פחות שאלות' : 'أسئلة أقل'}</>
+                      : <><ChevronDown size={14} /> {lang === 'he' ? `הצג את כל ${t.faqs.length} השאלות` : `عرض كل ${t.faqs.length} أسئلة`}</>
                     }
                   </button>
                 </div>
               )}
+
+              {/* Contact CTA */}
+              <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                className="rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-5"
+                style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)' }}>
+                <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0" style={{ background: 'rgba(37,211,102,0.1)', border: '1px solid rgba(37,211,102,0.2)' }}>
+                  <MessageCircle size={22} className="text-green-400" />
+                </div>
+                <div className="flex-1 text-center sm:text-right">
+                  <p className="font-black text-white text-sm">{lang === 'he' ? 'עדיין יש לך שאלות?' : 'لا زال لديك أسئلة؟'}</p>
+                  <p className="text-white/40 text-xs mt-0.5">{lang === 'he' ? 'הצוות שלנו זמין 24/7 בוואטסאפ' : 'فريقنا متاح 24/7 على واتساب'}</p>
+                </div>
+                <a href="https://wa.me/972546980606" target="_blank" rel="noopener noreferrer"
+                  className="px-5 py-2.5 rounded-xl font-black text-sm text-white whitespace-nowrap"
+                  style={{ background: 'linear-gradient(135deg,#128C7E,#25D366)', boxShadow: '0 4px 14px rgba(37,211,102,0.25)' }}>
+                  {lang === 'he' ? 'פתח וואטסאפ' : 'افتح واتساب'}
+                </a>
+              </motion.div>
             </section>
 
             {/* ============================================================
@@ -3099,23 +3468,46 @@ function App() {
 
                     {/* Social icons */}
                     <div>
-                      <p className="text-[9px] text-white/20 font-black uppercase tracking-[0.25em] mb-3">עקבו אחרינו</p>
-                      <div className="flex items-center gap-2 flex-wrap">
-                        {[
-                          { href: 'https://instagram.com/yougo.israel', icon: <Instagram size={16} />, label: 'Instagram', color: '#E4405F', bg: 'rgba(228,64,95,0.12)' },
-                          { href: 'https://facebook.com', icon: <Facebook size={16} />, label: 'Facebook', color: '#1877F2', bg: 'rgba(24,119,242,0.12)' },
-                          { href: 'https://wa.me/972546980606', icon: <MessageCircle size={16} />, label: 'WhatsApp', color: '#25D366', bg: 'rgba(37,211,102,0.12)' },
-                          { href: 'https://t.me/yougoisrael', icon: <Send size={16} />, label: 'Telegram', color: '#0088cc', bg: 'rgba(0,136,204,0.12)' },
-                          { href: 'https://youtube.com/@yougoisrael', icon: <Youtube size={16} />, label: 'YouTube', color: '#FF0000', bg: 'rgba(255,0,0,0.12)' },
-                          { href: 'https://x.com/yougoisrael', icon: <Twitter size={16} />, label: 'X', color: '#9ca3af', bg: 'rgba(156,163,175,0.12)' },
-                        ].map((s, i) => (
-                          <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
-                            className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
-                            style={{ background: s.bg, border: `1px solid ${s.color}25`, color: s.color }}
-                            title={s.label}>
-                            {s.icon}
-                          </a>
-                        ))}
+                      <p className="text-[9px] font-black uppercase tracking-[0.3em] mb-4" style={{ color: 'rgba(255,255,255,0.18)' }}>
+                        {lang === 'he' ? 'עקבו אחרינו' : 'تابعونا'}
+                      </p>
+                      <div className="flex items-center gap-2">
+                        {/* Instagram - full gradient */}
+                        <a href="https://instagram.com/yougo.israel" target="_blank" rel="noopener noreferrer" title="Instagram"
+                          className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 hover:brightness-110"
+                          style={{ background: 'linear-gradient(135deg,#833ab4,#e1306c,#f77737)', boxShadow: '0 3px 10px rgba(225,48,108,0.28)', color: '#fff' }}>
+                          <Instagram size={15} />
+                        </a>
+                        {/* Facebook */}
+                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" title="Facebook"
+                          className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 hover:brightness-110"
+                          style={{ background: 'rgba(24,119,242,0.1)', border: '1px solid rgba(24,119,242,0.18)', color: '#4f9cf9' }}>
+                          <Facebook size={15} />
+                        </a>
+                        {/* WhatsApp */}
+                        <a href="https://wa.me/972546980606" target="_blank" rel="noopener noreferrer" title="WhatsApp"
+                          className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 hover:brightness-110"
+                          style={{ background: 'rgba(37,211,102,0.1)', border: '1px solid rgba(37,211,102,0.18)', color: '#25D366' }}>
+                          <MessageCircle size={15} />
+                        </a>
+                        {/* Telegram */}
+                        <a href="https://t.me/yougoisrael" target="_blank" rel="noopener noreferrer" title="Telegram"
+                          className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 hover:brightness-110"
+                          style={{ background: 'rgba(0,136,204,0.1)', border: '1px solid rgba(0,136,204,0.18)', color: '#0088cc' }}>
+                          <Send size={15} />
+                        </a>
+                        {/* YouTube */}
+                        <a href="https://youtube.com/@yougoisrael" target="_blank" rel="noopener noreferrer" title="YouTube"
+                          className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 hover:brightness-110"
+                          style={{ background: 'rgba(255,0,0,0.08)', border: '1px solid rgba(255,0,0,0.15)', color: '#ff4444' }}>
+                          <Youtube size={15} />
+                        </a>
+                        {/* X/Twitter */}
+                        <a href="https://x.com/yougoisrael" target="_blank" rel="noopener noreferrer" title="X / Twitter"
+                          className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 hover:brightness-110"
+                          style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.09)', color: 'rgba(255,255,255,0.55)' }}>
+                          <Twitter size={15} />
+                        </a>
                       </div>
                     </div>
                   </div>
