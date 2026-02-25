@@ -73,7 +73,7 @@ import {
 import { translations, Language } from './translations';
 
 // ============================================================
-// SECTION HEADER COMPONENT (كان مفقوداً)
+// SECTION HEADER COMPONENT
 // ============================================================
 const SectionHeader = ({ 
   eyebrow, 
@@ -1252,7 +1252,7 @@ const TransportPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: P
 };
 
 // ============================================================
-// BUSINESS PACKAGE CARD
+// BUSINESS PACKAGE CARD (FIXED HEIGHT)
 // ============================================================
 const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Package) => void }) => {
   const [showBack, setShowBack] = useState(false);
@@ -2395,7 +2395,7 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* ── BUSINESS ── */}
+                {/* ── BUSINESS ── (تم زيادة الارتفاع إلى 440px) */}
                 <div className="max-w-3xl mx-auto space-y-8">
                   <SectionHeader
                     eyebrow="לסוכנויות ועסקים"
@@ -2411,10 +2411,10 @@ export default function App() {
                       { value: '2h', label: 'זמן תגובה', color: '#a78bfa' },
                     ]}
                   />
-                  <div className="h-[380px]"><BusinessPackageCard pkg={businessPackage} onSelect={handleSelectPackage} /></div>
+                  <div className="h-[440px]"><BusinessPackageCard pkg={businessPackage} onSelect={handleSelectPackage} /></div>
                 </div>
 
-                {/* ── EQUIPMENT + TRANSPORT ── */}
+                {/* ── EQUIPMENT + TRANSPORT ── (تم زيادة الارتفاع إلى 460px) */}
                 <div className="space-y-8">
                   <SectionHeader
                     eyebrow="ציוד מקצועי ותחבורה"
@@ -2434,18 +2434,18 @@ export default function App() {
                   {/* Desktop grid */}
                   <div className="hidden md:grid grid-cols-3 gap-6">
                     {equipmentPackages.map(pkg => (
-                      <div key={pkg.id} className="h-[440px]"><EquipmentPackageCard pkg={pkg} onSelect={handleSelectPackage} /></div>
+                      <div key={pkg.id} className="h-[460px]"><EquipmentPackageCard pkg={pkg} onSelect={handleSelectPackage} /></div>
                     ))}
-                    <div className="h-[440px]"><TransportPackageCard pkg={transportPackage} onSelect={handleSelectPackage} /></div>
+                    <div className="h-[460px]"><TransportPackageCard pkg={transportPackage} onSelect={handleSelectPackage} /></div>
                   </div>
 
                   {/* Mobile swiper */}
                   <div className="md:hidden px-3">
-                    <MobileSwiper cardHeight={440}>
+                    <MobileSwiper cardHeight={460}>
                       {equipmentPackages.map(pkg => (
-                        <div key={pkg.id} style={{ height: '440px' }}><EquipmentPackageCard pkg={pkg} onSelect={handleSelectPackage} /></div>
+                        <div key={pkg.id} style={{ height: '460px' }}><EquipmentPackageCard pkg={pkg} onSelect={handleSelectPackage} /></div>
                       ))}
-                      <div style={{ height: '440px' }}><TransportPackageCard pkg={transportPackage} onSelect={handleSelectPackage} /></div>
+                      <div style={{ height: '460px' }}><TransportPackageCard pkg={transportPackage} onSelect={handleSelectPackage} /></div>
                     </MobileSwiper>
                   </div>
                 </div>
