@@ -5,6 +5,11 @@ export interface Translation {
   heroSubtitle: string;
   positioningLine: string;
   startOrder: string;
+  howItWorks: {
+    title: string;
+    steps: { title: string; description: string }[];
+  };
+  faqTitle: string;
   whyUs: {
     title: string;
     audience: { title: string; desc: string };
@@ -68,6 +73,24 @@ export const translations: Record<Language, Translation> = {
     heroSubtitle: "YOUGO ISRAEL - פלטפורמת השיווק המובילה באינסטגרם למכירת רכבים.",
     positioningLine: "הפרסום שמוכר רכבים – לא רק מציג אותם.",
     startOrder: "התחל הזמנה",
+    howItWorks: {
+      title: "איך זה עובד?",
+      steps: [
+        {
+          title: "בחר חבילה",
+          description: "בחר את חבילת הפרסום המתאימה לך, מחבילת BASIC ועד VIP LUXURY, בהתאם לתקציב ולמטרות שלך."
+        },
+        {
+          title: "מלא פרטים ושלם",
+          description: "מלא את פרטי הרכב, העבר תשלום דרך Bit או PayBox והעלה אישור. הכל בכמה שניות."
+        },
+        {
+          title: "הרכב שלך יפורסם",
+          description: "תוך 24-48 שעות המודעה שלך עולה לדף האינסטגרם שלנו עם 50K+ עוקבים פעילים."
+        }
+      ]
+    },
+    faqTitle: "שאלות נפוצות",
     whyUs: {
       title: "למה לבחור ב-YOUGO?",
       audience: {
@@ -163,6 +186,24 @@ export const translations: Record<Language, Translation> = {
     heroSubtitle: "YOUGO ISRAEL - المنصة الرائدة للتسويق عبر إنستغرام لبيع السيارات.",
     positioningLine: "الإعلان الذي يبيع السيارات - لا يعرضها فقط.",
     startOrder: "ابدأ الطلب",
+    howItWorks: {
+      title: "كيف يعمل؟",
+      steps: [
+        {
+          title: "اختر باقة",
+          description: "اختر باقة الإعلان المناسبة لك، من باقة BASIC إلى VIP LUXURY، بما يتناسب مع ميزانيتك وأهدافك."
+        },
+        {
+          title: "أدخل التفاصيل وادفع",
+          description: "أدخل تفاصيل السيارة، أرسل الدفعة عبر Bit أو PayBox وحمّل التأكيد. كل ذلك في ثوانٍ معدودة."
+        },
+        {
+          title: "سيارتك ستُنشر",
+          description: "خلال 24-48 ساعة، يتم نشر إعلانك على صفحتنا في إنستغرام مع أكثر من 50 ألف متابع نشط."
+        }
+      ]
+    },
+    faqTitle: "الأسئلة الشائعة",
     whyUs: {
       title: "لماذا تختار YOUGO؟",
       audience: {
