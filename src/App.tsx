@@ -2,11 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform, PanInfo, useAnimation } from 'motion/react';
 import { 
   CheckCircle2, 
-  Instagram, 
+  Instagram,
+  Facebook,
   Users, 
   Calendar, 
   ChevronRight, 
-  facebook, 
+  Globe, 
   ArrowLeft,
   Upload,
   Camera,
@@ -660,7 +661,7 @@ const packageDetails: Record<string, { title: string; content: string }> = {
 };
 
 // ============================================================
-// PACKAGE CARD (Basic, Pro, Premium) مع أيقونات محسنة
+// PACKAGE CARD (Basic, Pro, Premium)
 // ============================================================
 const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
   const t = translations[lang];
