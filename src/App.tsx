@@ -1137,136 +1137,200 @@ const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pa
 };
 
 // ============================================================
-// FIX #4: MOBILE SWIPER — Fixed RTL scroll direction issue
-// The root cause: RTL layouts invert scrollLeft behavior in some browsers.
-// Solution: Use transform-based approach instead of scrollLeft,
-// with proper touch handling and snap points.
+// MOBILE SWIPER — Transform-based, RTL-native, zero scroll issues
+//
+// Architecture: Instead of scrollLeft (broken in RTL), we use a
+// transform track that slides RIGHT-to-LEFT naturally:
+//   index=0 → translateX(0)
+//   index=1 → translateX(-(cardW + gap))   [moves left = show next card]
+//
+// In RTL context: user swipes finger RIGHT → see next card (index++)
+//                 user swipes finger LEFT  → see prev card (index--)
+// This matches native Arabic/Hebrew app UX conventions.
 // ============================================================
-const MobileSwiper = ({ children, itemWidth = 82 }: { children: React.ReactNode[], itemWidth?: number }) => {
+const MobileSwiper = ({ children, itemWidth = 82, cardHeight = 500 }: {
+  children: React.ReactNode[];
+  itemWidth?: number;
+  cardHeight?: number;
+}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState(0);
+
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
   const touchStartTime = useRef(0);
+  const isHorizontalSwipe = useRef<boolean | null>(null);
+
   const count = React.Children.count(children);
 
-  const scrollToIndex = (index: number) => {
-    const clamped = Math.max(0, Math.min(index, count - 1));
+  // Clamp index to valid range
+  const goTo = (idx: number) => {
+    const clamped = Math.max(0, Math.min(idx, count - 1));
     setCurrentIndex(clamped);
-
-    const container = containerRef.current;
-    if (!container) return;
-
-    // Use scrollLeft with a positive value regardless of RTL
-    // Calculate card + gap width
-    const cardW = container.offsetWidth * (itemWidth / 100);
-    const gap = 12;
-    const targetScroll = clamped * (cardW + gap);
-
-    // Force LTR scroll direction on the container scroll
-    container.scrollTo({ left: targetScroll, behavior: 'smooth' });
+    setDragOffset(0);
+    setIsDragging(false);
+    isHorizontalSwipe.current = null;
   };
 
-  const handleTouchStart = (e: React.TouchEvent) => {
+  // Compute card pixel width from wrapper
+  const getCardWidth = (): number => {
+    const w = wrapperRef.current?.offsetWidth ?? 320;
+    return w * (itemWidth / 100);
+  };
+
+  // Base translateX for current index (positive = shift right in RTL)
+  // In RTL, index 0 starts at left edge visually (right in DOM).
+  // Each next card is to the LEFT in DOM, so we translate positively.
+  const baseTranslate = (idx: number) => {
+    const cardW = getCardWidth();
+    const gap = 12;
+    return idx * (cardW + gap);
+  };
+
+  // ── Touch handlers ──
+  const onTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
     touchStartTime.current = Date.now();
+    isHorizontalSwipe.current = null;
+    setIsDragging(true);
   };
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    const dx = touchStartX.current - e.changedTouches[0].clientX;
+  const onTouchMove = (e: React.TouchEvent) => {
+    const dx = e.touches[0].clientX - touchStartX.current;
+    const dy = e.touches[0].clientY - touchStartY.current;
+
+    // Determine swipe axis on first significant movement
+    if (isHorizontalSwipe.current === null && (Math.abs(dx) > 5 || Math.abs(dy) > 5)) {
+      isHorizontalSwipe.current = Math.abs(dx) > Math.abs(dy);
+    }
+
+    if (!isHorizontalSwipe.current) return; // vertical scroll — don't interfere
+
+    e.preventDefault(); // prevent page scroll during horizontal swipe
+    setDragOffset(dx);
+  };
+
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (!isHorizontalSwipe.current) {
+      setIsDragging(false);
+      setDragOffset(0);
+      return;
+    }
+
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
     const dt = Date.now() - touchStartTime.current;
-    const speed = Math.abs(dx) / dt;
+    const velocity = Math.abs(dx) / dt; // px/ms
+    const cardW = getCardWidth();
+    const threshold = cardW * 0.25; // 25% of card width
 
-    // Swipe threshold: 40px OR fast swipe > 0.3px/ms
-    if (Math.abs(dx) > 40 || speed > 0.3) {
-      // dx > 0 means swiped LEFT (finger moved left = next card in LTR)
-      // In RTL UI, left swipe = go to next (higher index)
-      if (dx > 0) {
-        scrollToIndex(currentIndex + 1);
-      } else {
-        scrollToIndex(currentIndex - 1);
-      }
+    const shouldSwipe = Math.abs(dx) > threshold || velocity > 0.4;
+
+    if (shouldSwipe) {
+      // RTL convention: swipe RIGHT (dx > 0) → go to next card (higher index)
+      //                 swipe LEFT  (dx < 0) → go to prev card (lower index)
+      if (dx > 0) goTo(currentIndex + 1);
+      else        goTo(currentIndex - 1);
+    } else {
+      goTo(currentIndex); // snap back
     }
   };
 
-  // Sync dot indicator with actual scroll position
-  const handleScroll = () => {
-    const container = containerRef.current;
-    if (!container) return;
-    const cardW = container.offsetWidth * (itemWidth / 100);
-    const gap = 12;
-    const rawIndex = container.scrollLeft / (cardW + gap);
-    const snapped = Math.round(rawIndex);
-    if (snapped !== currentIndex && snapped >= 0 && snapped < count) {
-      setCurrentIndex(snapped);
-    }
-  };
+  // Compute the transform for the track
+  // Base: shifts right by currentIndex × (cardW + gap)
+  // Plus live drag offset during touch
+  const translate = baseTranslate(currentIndex) - dragOffset;
 
   return (
-    <div className="relative">
-      {/* Scroll container — force LTR direction to fix RTL scrollLeft issues */}
-      <div
-        ref={containerRef}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        onScroll={handleScroll}
-        className="flex gap-3 overflow-x-auto no-scrollbar pb-2"
-        style={{
-          scrollSnapType: 'x mandatory',
-          paddingRight: '16px',
-          paddingLeft: '16px',
-          // KEY FIX: Force LTR direction on the scroll container itself
-          // This prevents RTL from inverting scrollLeft calculations
-          direction: 'ltr',
-        }}
-      >
-        {React.Children.map(children, (child, i) => (
-          <div
-            key={i}
-            style={{
-              minWidth: `${itemWidth}%`,
-              scrollSnapAlign: 'start',
-              flexShrink: 0,
-              height: '500px',
-              transition: 'transform 0.3s ease, opacity 0.3s ease',
-              transform: i === currentIndex ? 'scale(1)' : 'scale(0.97)',
-              opacity: i === currentIndex ? 1 : 0.75,
-              // Restore RTL for card content
-              direction: 'rtl',
-            }}
-          >
-            {child}
-          </div>
-        ))}
+    <div className="relative" ref={wrapperRef}>
+      {/* Overflow mask */}
+      <div style={{ overflow: 'hidden', paddingBottom: '8px' }}>
+        {/* Track — single flex row, moved by translateX */}
+        <div
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            // RTL: cards flow right-to-left, so index-0 is on the right
+            direction: 'rtl',
+            gap: '12px',
+            paddingRight: '16px',
+            paddingLeft: '16px',
+            // Positive translateX shifts the whole track right,
+            // bringing higher-indexed cards (further left) into view
+            transform: `translateX(${translate}px)`,
+            transition: isDragging ? 'none' : 'transform 0.38s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            willChange: 'transform',
+            touchAction: 'pan-y', // allow vertical scroll, handle horizontal ourselves
+            userSelect: 'none',
+          }}
+        >
+          {React.Children.map(children, (child, i) => (
+            <div
+              key={i}
+              style={{
+                minWidth: `${itemWidth}%`,
+                maxWidth: `${itemWidth}%`,
+                flexShrink: 0,
+                height: `${cardHeight}px`,
+                // Each card's content is LTR-neutral (already has its own direction)
+                direction: 'rtl',
+                transition: isDragging ? 'none' : 'transform 0.3s ease, opacity 0.3s ease',
+                transform: i === currentIndex ? 'scale(1)' : 'scale(0.965)',
+                opacity: i === currentIndex ? 1 : 0.6,
+                transformOrigin: 'center center',
+              }}
+            >
+              {child}
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Dot indicators */}
+      {/* ── Dot indicators ── */}
       <div className="flex items-center justify-center gap-2 mt-4">
         {Array.from({ length: count }).map((_, i) => (
           <button
             key={i}
             type="button"
-            onClick={() => scrollToIndex(i)}
-            className="transition-all duration-300"
+            onClick={() => goTo(i)}
+            aria-label={`כרטיס ${i + 1}`}
             style={{
-              width: i === currentIndex ? '24px' : '6px',
+              width: i === currentIndex ? '22px' : '6px',
               height: '6px',
               borderRadius: '3px',
-              background: i === currentIndex ? '#c8102e' : 'rgba(255,255,255,0.2)',
+              background: i === currentIndex ? '#c8102e' : 'rgba(255,255,255,0.22)',
+              border: 'none',
+              padding: 0,
+              cursor: 'pointer',
+              transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
             }}
           />
         ))}
       </div>
 
-      {/* Arrow navigation for desktop */}
-      {currentIndex > 0 && (
-        <button type="button" onClick={() => scrollToIndex(currentIndex - 1)}
-          className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 -translate-x-2 w-10 h-10 rounded-full bg-white/10 border border-white/20 items-center justify-center hover:bg-white/20 transition-all z-10 backdrop-blur-sm">
+      {/* ── Left/Right arrows (desktop only) ── */}
+      {currentIndex < count - 1 && (
+        <button
+          type="button"
+          onClick={() => goTo(currentIndex + 1)}
+          className="hidden md:flex absolute right-0 top-1/2 -translate-y-8 w-10 h-10 rounded-full bg-white/10 border border-white/20 items-center justify-center hover:bg-white/20 transition-all z-10 backdrop-blur-sm"
+          style={{ transform: 'translateY(-50%) translateX(8px)' }}
+        >
           <ChevronRight size={18} />
         </button>
       )}
-      {currentIndex < count - 1 && (
-        <button type="button" onClick={() => scrollToIndex(currentIndex + 1)}
-          className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 translate-x-2 w-10 h-10 rounded-full bg-white/10 border border-white/20 items-center justify-center hover:bg-white/20 transition-all z-10 backdrop-blur-sm">
+      {currentIndex > 0 && (
+        <button
+          type="button"
+          onClick={() => goTo(currentIndex - 1)}
+          className="hidden md:flex absolute left-0 top-1/2 w-10 h-10 rounded-full bg-white/10 border border-white/20 items-center justify-center hover:bg-white/20 transition-all z-10 backdrop-blur-sm"
+          style={{ transform: 'translateY(-50%) translateX(-8px)' }}
+        >
           <ChevronLeft size={18} />
         </button>
       )}
@@ -2297,19 +2361,12 @@ export default function App() {
                     ))}
                   </div>
 
-                  <div className="md:hidden relative swiper-fade-right">
-                    <MobileSwiper itemWidth={83}>
+                  <div className="md:hidden relative">
+                    <MobileSwiper itemWidth={83} cardHeight={540}>
                       {packages.map(pkg => (
                         <PackageCard key={pkg.id} pkg={pkg} lang={lang} onSelect={handleSelectPackage} />
                       ))}
                     </MobileSwiper>
-                    <motion.div
-                      initial={{ opacity: 0.8 }} animate={{ opacity: 0 }} transition={{ delay: 2, duration: 1.5 }}
-                      className="absolute top-1/2 left-4 -translate-y-1/2 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-full pointer-events-none z-10">
-                      <ChevronLeft size={12} className="text-white/60" />
-                      <span className="text-[10px] text-white/60 font-bold">החלק לצפייה</span>
-                      <ChevronRight size={12} className="text-white/60" />
-                    </motion.div>
                   </div>
                 </div>
 
@@ -2335,10 +2392,10 @@ export default function App() {
                     <div className="h-[460px]"><DuoDealPackageCard pkg={duoPackage} onSelect={handleSelectPackage} /></div>
                   </div>
 
-                  <div className="md:hidden relative swiper-fade-right">
-                    <MobileSwiper itemWidth={85}>
-                      <div style={{ height: '460px' }}><VIPPackageCard pkg={vipPackage} lang={lang} onSelect={handleSelectPackage} /></div>
-                      <div style={{ height: '460px' }}><DuoDealPackageCard pkg={duoPackage} onSelect={handleSelectPackage} /></div>
+                  <div className="md:hidden relative">
+                    <MobileSwiper itemWidth={85} cardHeight={460}>
+                      <VIPPackageCard pkg={vipPackage} lang={lang} onSelect={handleSelectPackage} />
+                      <DuoDealPackageCard pkg={duoPackage} onSelect={handleSelectPackage} />
                     </MobileSwiper>
                   </div>
                 </div>
@@ -2386,12 +2443,12 @@ export default function App() {
                     <div className="h-[440px]"><TransportPackageCard pkg={transportPackage} onSelect={handleSelectPackage} /></div>
                   </div>
 
-                  <div className="md:hidden relative swiper-fade-right">
-                    <MobileSwiper itemWidth={83}>
+                  <div className="md:hidden relative">
+                    <MobileSwiper itemWidth={83} cardHeight={440}>
                       {equipmentPackages.map(pkg => (
-                        <div key={pkg.id} style={{ height: '440px' }}><EquipmentPackageCard pkg={pkg} onSelect={handleSelectPackage} /></div>
+                        <EquipmentPackageCard key={pkg.id} pkg={pkg} onSelect={handleSelectPackage} />
                       ))}
-                      <div style={{ height: '440px' }}><TransportPackageCard pkg={transportPackage} onSelect={handleSelectPackage} /></div>
+                      <TransportPackageCard pkg={transportPackage} onSelect={handleSelectPackage} />
                     </MobileSwiper>
                   </div>
                 </div>
