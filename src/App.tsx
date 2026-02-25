@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+// FIXED VERSION – UI + template stability improvements
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   CheckCircle2, 
@@ -6,6 +7,7 @@ import {
   Users, 
   Calendar, 
   ChevronRight, 
+  ChevronLeft,
   Globe, 
   ArrowLeft,
   Upload,
@@ -142,7 +144,7 @@ const Navbar = ({ lang, setLang, isAdmin, onLogout, siteSettings, setView }: { l
               <Car size={26} className="text-white" />
             </div>
             <div>
-              <div className="text-2xl font-black tracking-tighter">
+              <div className="text-xl font-black tracking-tighter">
                 <span className="text-brand-red">YOUGO</span> <span className="text-white">ISRAEL</span>
               </div>
               <div className="text-[9px] text-white/40 font-bold tracking-wider">
@@ -151,7 +153,7 @@ const Navbar = ({ lang, setLang, isAdmin, onLogout, siteSettings, setView }: { l
             </div>
           </motion.div>
 
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-5">
             {['how-it-works', 'packages', 'faq'].map((item, i) => (
               <motion.a
                 key={item}
@@ -323,7 +325,7 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean, onClose:
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-            className="relative w-full max-w-2xl max-h-[80vh] overflow-y-auto p-8 space-y-6"
+            className="relative w-full max-w-2xl max-h-[80vh] overflow-y-auto p-5 space-y-6"
             style={{
               background: 'linear-gradient(145deg, #0f0f14 0%, #0a0a0e 100%)',
               border: '1px solid rgba(255,255,255,0.08)',
@@ -441,9 +443,9 @@ const FlipCardBack = ({
             <p className="text-[9px] font-semibold mt-[1px]" style={{ color: `${color}aa` }}>מה כלול בחבילה</p>
           </div>
         </div>
-        <button onClick={onBack}
+        <button onClick={(e) => { e.stopPropagation(); onBack(); }}
           className="shrink-0 flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-black"
-          style={{ border: `1px solid ${color}30`, color, background: `${color}10` }}>
+          style={{ border: `1px solid ${color}30`, color, background: `${color}10`, position: 'relative', zIndex: 10 }}>
           <ArrowLeft size={9} strokeWidth={3} /> חזרה
         </button>
       </div>
@@ -483,7 +485,7 @@ const FlipCardBack = ({
             חיסכון 15%
           </span>
         </div>
-        <button onClick={() => onSelect(pkg)}
+        <button onClick={(e) => { e.stopPropagation(); onSelect(pkg); }}
           className="w-full py-[9px] rounded-[10px] font-black text-[13px] text-white flex items-center justify-center gap-2"
           style={{ background: `linear-gradient(135deg, ${color} 0%, ${color}cc 100%)`, boxShadow: `0 4px 16px ${color}35` }}>
           <RocketIcon size={13} /> הזמן עכשיו
@@ -586,7 +588,7 @@ const PackageDetailPanel = ({
           </div>
         </div>
         <button
-          onClick={onBack}
+          onClick={(e) => { e.stopPropagation(); onBack(); }}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black transition-colors hover:bg-white/5"
           style={{ border: `1px solid ${borderColor}`, color: accentColor }}
         >
@@ -861,6 +863,75 @@ const packageDetails: Record<string, { title: string; content: string }> = {
 };
 
 // ============================================================
+// MOBILE PACKAGE SWIPER
+// ============================================================
+const MobilePackageSwiper = ({ packages, lang, onSelect }: { packages: Package[], lang: Language, onSelect: (p: Package) => void }) => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const startXRef = useRef(0);
+
+  const goTo = (index: number) => {
+    const clamped = Math.max(0, Math.min(packages.length - 1, index));
+    setActiveIndex(clamped);
+    if (containerRef.current) {
+      const cardWidth = containerRef.current.offsetWidth * 0.82 + 12;
+      containerRef.current.scrollTo({ left: clamped * cardWidth, behavior: 'smooth' });
+    }
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => { startXRef.current = e.touches[0].clientX; };
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const diff = startXRef.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) goTo(diff > 0 ? activeIndex + 1 : activeIndex - 1);
+  };
+
+  return (
+    <div className="relative">
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
+        className="flex items-center justify-center gap-2 mb-4 text-[11px] text-white/35 font-bold">
+        <motion.span animate={{ x: [-3, 3, -3] }} transition={{ duration: 1.4, repeat: Infinity }}>←</motion.span>
+        החלק לגילוי חבילות נוספות
+        <motion.span animate={{ x: [3, -3, 3] }} transition={{ duration: 1.4, repeat: Infinity }}>→</motion.span>
+      </motion.div>
+      <div ref={containerRef} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}
+        className="flex gap-3 overflow-x-hidden px-4"
+        style={{ scrollSnapType: 'x mandatory' }}>
+        {packages.map((pkg, i) => (
+          <motion.div key={pkg.id}
+            animate={{ scale: i === activeIndex ? 1 : 0.94, opacity: i === activeIndex ? 1 : 0.75 }}
+            transition={{ duration: 0.3 }}
+            style={{ minWidth: '82vw', height: '520px', scrollSnapAlign: 'start', flexShrink: 0 }}>
+            <PackageCard pkg={pkg} lang={lang} onSelect={onSelect} />
+          </motion.div>
+        ))}
+        <div style={{ minWidth: '8vw', flexShrink: 0 }} />
+      </div>
+      <div className="flex items-center justify-center gap-2 mt-5">
+        {packages.map((_, i) => (
+          <motion.button key={i} onClick={() => goTo(i)}
+            animate={{ width: i === activeIndex ? 24 : 8, opacity: i === activeIndex ? 1 : 0.35 }}
+            transition={{ duration: 0.3 }}
+            className="h-2 rounded-full bg-brand-red" />
+        ))}
+      </div>
+      <div className="flex items-center justify-between px-2 mt-4">
+        <motion.button onClick={() => goTo(activeIndex - 1)} disabled={activeIndex === 0}
+          whileTap={{ scale: 0.9 }}
+          className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-black border border-white/10 bg-white/5 disabled:opacity-25">
+          <ChevronRight size={14} /> הקודם
+        </motion.button>
+        <span className="text-[11px] text-white/30 font-bold">{activeIndex + 1} / {packages.length}</span>
+        <motion.button onClick={() => goTo(activeIndex + 1)} disabled={activeIndex === packages.length - 1}
+          whileTap={{ scale: 0.9 }}
+          className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-black border border-white/10 bg-white/5 disabled:opacity-25">
+          הבא <ChevronLeft size={14} />
+        </motion.button>
+      </div>
+    </div>
+  );
+};
+
+// ============================================================
 // PACKAGE CARD – כרטיס ראשי עם כפתור "פרטים נוספים" שפותח Panel
 // ============================================================
 const PackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
@@ -1045,11 +1116,11 @@ const VIPPackageCard = ({ pkg, lang, onSelect }: PackageCardProps) => {
               </div>
             </div>
             <div>
-              <h3 className="text-2xl font-black bg-gradient-to-l from-amber-200 via-amber-400 to-amber-300 bg-clip-text text-transparent">VIP LUXURY</h3>
+              <h3 className="text-xl font-black bg-gradient-to-l from-amber-200 via-amber-400 to-amber-300 bg-clip-text text-transparent">VIP LUXURY</h3>
               <p className="text-amber-100/35 text-[11px] mt-1">חבילת הפרסום האולטימטיבית</p>
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-black text-amber-400">₪749</span>
+              <span className="text-2xl font-black text-amber-400">₪749</span>
               <span className="text-xs line-through text-white/20">₪882</span>
               <span className="text-[9px] font-black bg-amber-500/15 text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/25">חיסכון ₪133</span>
             </div>
@@ -1105,11 +1176,11 @@ const DuoDealPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pac
               </div>
             </div>
             <div>
-              <h3 className="text-2xl font-black bg-gradient-to-l from-purple-200 via-purple-400 to-purple-300 bg-clip-text text-transparent">DUO DEAL</h3>
+              <h3 className="text-xl font-black bg-gradient-to-l from-purple-200 via-purple-400 to-purple-300 bg-clip-text text-transparent">DUO DEAL</h3>
               <p className="text-purple-100/35 text-[11px] mt-1">פרסום 2 רכבים במחיר מיוחד</p>
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-black text-purple-400">₪349</span>
+              <span className="text-2xl font-black text-purple-400">₪349</span>
               <span className="text-xs line-through text-white/20">₪598</span>
               <span className="text-[9px] font-black bg-purple-500/15 text-purple-300 px-2 py-0.5 rounded-full border border-purple-500/25">חיסכון ₪249</span>
             </div>
@@ -1310,7 +1381,7 @@ const BusinessPackageCard = ({ pkg, onSelect }: { pkg: Package, onSelect: (p: Pa
             <div className="grid md:grid-cols-2 gap-4 mb-4 flex-grow">
               <div className="space-y-3">
                 <div className="flex items-baseline gap-2 flex-wrap">
-                  <span className="text-2xl font-black text-white">₪1,499</span>
+                  <span className="text-xl font-black text-white">₪1,499</span>
                   <span className="text-white/30 text-xs mr-1">/חודש</span>
                   <span className="text-xs line-through text-white/25">₪2,499</span>
                   <span className="text-[8px] font-black bg-green-500/15 text-green-400 px-1.5 py-0.5 rounded-full border border-green-500/25">40% OFF</span>
@@ -1432,7 +1503,7 @@ const OrderStatusCheck = ({ onClose }: { onClose: () => void }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: 'spring', stiffness: 300 }}
-      className="glass-card p-6 space-y-5"
+      className="glass-card p-4 space-y-5"
     >
       <div className="text-center space-y-2">
         <motion.div 
@@ -2647,7 +2718,7 @@ export default function App() {
                     <div className="w-1.5 h-1.5 bg-brand-red rounded-full" />
                     <span className="text-xs font-black tracking-[0.2em] uppercase text-brand-red">תהליך פשוט ומהיר</span>
                   </div>
-                  <h2 className="text-4xl md:text-5xl font-black text-white">איך זה עובד?</h2>
+                  <h2 className="text-3xl md:text-5xl font-black text-white">איך זה עובד?</h2>
                   <p className="text-white/45 text-base">3 שלבים פשוטים והרכב שלך באוויר</p>
                 </motion.div>
 
@@ -2660,7 +2731,7 @@ export default function App() {
                       backgroundImage: `repeating-linear-gradient(90deg, rgba(200,16,46,0.35) 0px, rgba(200,16,46,0.35) 8px, transparent 8px, transparent 18px)`
                     }} />
 
-                  <div className="grid md:grid-cols-3 gap-6 relative z-10">
+                  <div className="grid md:grid-cols-3 gap-4 relative z-10">
                     {[
                       {
                         step: '01',
@@ -2790,46 +2861,85 @@ export default function App() {
                 </motion.div>
               </section>
 
-              {/* PACKAGES */}
               <section id="packages" className="space-y-16">
                 <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
                   className="text-center space-y-3">
-                  <h2 className="text-4xl md:text-5xl font-black">{t.packages}</h2>
-                  <p className="text-white/45 text-base max-w-2xl mx-auto">בחר את המסלול המתאים ביותר עבורך</p>
+                  <motion.h2
+                    initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.1 }}
+                    className="text-3xl md:text-5xl font-black"
+                  >
+                    חבילות <span className="text-brand-red">הפרסום</span> שלנו
+                  </motion.h2>
+                  <motion.p initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                    className="text-white/45 text-base max-w-2xl mx-auto">
+                    בחר את המסלול המתאים ביותר עבורך
+                  </motion.p>
                 </motion.div>
                 
                 {/* Regular packages */}
                 <div>
-                  <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                    className="text-center space-y-3 mb-8">
-                    <div className="inline-flex items-center gap-2 bg-blue-500/15 border border-blue-500/25 px-4 py-2 rounded-full">
+                  <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                    transition={{ duration: 0.6 }} className="text-center space-y-4 mb-10">
+                    <motion.div initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.1 }}
+                      className="inline-flex items-center gap-2 bg-blue-500/15 border border-blue-500/25 px-4 py-2 rounded-full">
                       <Car size={13} className="text-blue-400" />
                       <span className="text-xs font-black tracking-wider text-blue-400">חבילות רכב פרטי</span>
-                    </div>
-                    <h3 className="text-2xl md:text-3xl font-black">מוכרים <span className="text-brand-red">רכב פרטי?</span></h3>
+                    </motion.div>
+                    <motion.h3 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.15 }}
+                      className="text-xl md:text-2xl font-black">
+                      מוכרים <span className="text-brand-red">רכב פרטי?</span>
+                    </motion.h3>
+                    <motion.p initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.22 }}
+                      className="text-white/45 text-sm max-w-lg mx-auto leading-relaxed">
+                      ✨ פרסום מקצועי ברשתות החברתיות · חשיפה לאלפי קונים פוטנציאליים · תוצאות מוכחות תוך 24 שעות
+                    </motion.p>
                   </motion.div>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
-                    {packages.map(pkg => (
-                      <div key={pkg.id} className="h-[520px] sm:h-[500px]">
+
+                  {/* Desktop grid */}
+                  <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-4">
+                    {packages.map((pkg, i) => (
+                      <motion.div key={pkg.id} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.12 }}
+                        className="h-[520px] sm:h-[500px]">
                         <PackageCard pkg={pkg} lang={lang} onSelect={(p) => { setSelectedPackage(p); setView('booking'); setBookingStep(1); }} />
-                      </div>
+                      </motion.div>
                     ))}
+                  </div>
+
+                  {/* Mobile swiper */}
+                  <div className="sm:hidden">
+                    <MobilePackageSwiper packages={packages} lang={lang} onSelect={(p) => { setSelectedPackage(p); setView('booking'); setBookingStep(1); }} />
                   </div>
                 </div>
 
                 {/* Premium Packages */}
                 <div>
-                  <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                    className="text-center space-y-3 mb-8">
-                    <div className="inline-flex items-center gap-2 bg-amber-500/15 border border-amber-500/25 px-4 py-2 rounded-full">
+                  <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                    transition={{ duration: 0.6 }} className="text-center space-y-4 mb-10">
+                    <motion.div initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.1 }}
+                      className="inline-flex items-center gap-2 bg-amber-500/15 border border-amber-500/25 px-4 py-2 rounded-full">
                       <Crown size={13} className="text-amber-400" />
                       <span className="text-xs font-black tracking-wider text-amber-400">חבילות פרימיום VIP</span>
-                    </div>
-                    <h3 className="text-2xl md:text-3xl font-black">מחפשים <span className="text-amber-400">יחס VIP?</span></h3>
+                    </motion.div>
+                    <motion.h3 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.15 }}
+                      className="text-xl md:text-2xl font-black">
+                      מחפשים <span className="text-amber-400">יחס VIP?</span>
+                    </motion.h3>
+                    <motion.p initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.22 }}
+                      className="text-white/45 text-sm max-w-lg mx-auto leading-relaxed">
+                      👑 חבילות יוקרה לרכבי פרימיום · ליווי אישי מלא 24/7 · עיצוב VIP בלעדי · חשיפה מקסימלית לקהל ממוקד
+                    </motion.p>
                   </motion.div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="h-[460px]">
                       <VIPPackageCard pkg={vipPackage} lang={lang} onSelect={(p) => { setSelectedPackage(p); setView('booking'); setBookingStep(1); }} />
                     </div>
@@ -2841,14 +2951,24 @@ export default function App() {
 
                 {/* Business */}
                 <div className="max-w-3xl mx-auto space-y-6">
-                  <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                    className="text-center space-y-3">
-                    <div className="inline-flex items-center gap-2 bg-blue-500/15 border border-blue-500/25 px-4 py-2 rounded-full">
+                  <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                    transition={{ duration: 0.6 }} className="text-center space-y-4">
+                    <motion.div initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.1 }}
+                      className="inline-flex items-center gap-2 bg-blue-500/15 border border-blue-500/25 px-4 py-2 rounded-full">
                       <Building2 size={13} className="text-blue-400" />
                       <span className="text-xs font-black tracking-wider text-blue-400">לסוכנויות ומוכרים מקצועיים</span>
-                    </div>
-                    <h3 className="text-2xl md:text-3xl font-black">פתרון <span className="text-blue-400">לסוכנים ועסקים?</span></h3>
-                    <p className="text-white/45 text-sm max-w-lg mx-auto">חבילה מקצועית לסוכניות רכב, מוכרים מרובי כלי רכב ועסקים בתחום הרכב</p>
+                    </motion.div>
+                    <motion.h3 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.15 }}
+                      className="text-xl md:text-2xl font-black">
+                      פתרון <span className="text-blue-400">לסוכנים ועסקים?</span>
+                    </motion.h3>
+                    <motion.p initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.22 }}
+                      className="text-white/45 text-sm max-w-lg mx-auto leading-relaxed">
+                      🏢 ניהול מלא של הפרסום · חיסכון עצום בעלויות · נציג אישי ייעודי לסוכנות שלך · עד 50 רכבים בחודש
+                    </motion.p>
                   </motion.div>
                   <div className="h-[380px]">
                     <BusinessPackageCard pkg={businessPackage} onSelect={(p) => { setSelectedPackage(p); setView('booking'); setBookingStep(1); }} />
@@ -2857,16 +2977,27 @@ export default function App() {
 
                 {/* Equipment + Transport */}
                 <div>
-                  <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                    className="text-center space-y-3 mb-8">
-                    <div className="inline-flex items-center gap-2 bg-orange-500/15 border border-orange-500/25 px-4 py-2 rounded-full">
+                  <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                    transition={{ duration: 0.6 }} className="text-center space-y-4 mb-10">
+                    <motion.div initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.1 }}
+                      className="inline-flex items-center gap-2 bg-orange-500/15 border border-orange-500/25 px-4 py-2 rounded-full">
                       <Truck size={13} className="text-orange-400" />
                       <span className="text-xs font-black tracking-wider text-orange-400">ציוד מקצועי ותחבורה</span>
-                    </div>
-                    <h3 className="text-2xl md:text-3xl font-black">מוכרים <span className="text-orange-400">ציוד מקצועי?</span></h3>
+                    </motion.div>
+                    <motion.h3 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.15 }}
+                      className="text-xl md:text-2xl font-black">
+                      מוכרים <span className="text-orange-400">ציוד מקצועי?</span>
+                    </motion.h3>
+                    <motion.p initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: 0.22 }}
+                      className="text-white/45 text-sm max-w-lg mx-auto leading-relaxed">
+                      🚜 ציוד כבד, ציוד קל ותחבורה · חשיפה לקהל מקצועי ממוקד · מפרט טכני מלא ומדויק לכל מודעה
+                    </motion.p>
                   </motion.div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {equipmentPackages.map(pkg => (
                       <div key={pkg.id} className="h-[440px]">
                         <EquipmentPackageCard pkg={pkg} onSelect={(p) => { setSelectedPackage(p); setView('booking'); setBookingStep(1); }} />
@@ -2883,7 +3014,7 @@ export default function App() {
               <section id="why-us" className="space-y-10">
                 <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
                   className="text-center space-y-3">
-                  <h2 className="text-4xl md:text-5xl font-black">{t.whyUs.title}</h2>
+                  <h2 className="text-3xl md:text-5xl font-black">{t.whyUs.title}</h2>
                   <p className="text-white/45 text-base max-w-2xl mx-auto">הסיבות שאלפי מוכרים בחרו דווקא בנו</p>
                 </motion.div>
 
@@ -2933,7 +3064,7 @@ export default function App() {
                       {/* Top color bar */}
                       <div className="h-1 w-full" style={{ background: `linear-gradient(90deg, ${item.gradFrom}, ${item.gradTo})` }} />
 
-                      <div className="p-6 flex flex-col gap-5 flex-1">
+                      <div className="p-4 flex flex-col gap-5 flex-1">
                         {/* Icon + Stat row */}
                         <div className="flex items-center justify-between">
                           <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg"
@@ -2941,7 +3072,7 @@ export default function App() {
                             {item.icon}
                           </div>
                           <div className="text-right">
-                            <div className="text-3xl font-black" style={{ color: item.gradTo }}>{item.stat}</div>
+                            <div className="text-2xl font-black" style={{ color: item.gradTo }}>{item.stat}</div>
                             <div className="text-[10px] text-white/35 font-bold uppercase tracking-wider">{item.statLabel}</div>
                           </div>
                         </div>
@@ -2964,7 +3095,7 @@ export default function App() {
               <section id="faq" className="max-w-4xl mx-auto space-y-10">
                 <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
                   className="text-center space-y-3">
-                  <h2 className="text-4xl md:text-5xl font-black">שאלות נפוצות</h2>
+                  <h2 className="text-3xl md:text-5xl font-black">שאלות נפוצות</h2>
                   <p className="text-white/45 text-base">כל מה שצריך לדעת על תהליך הפרסום והמכירה</p>
                 </motion.div>
 
@@ -3017,7 +3148,7 @@ export default function App() {
                           <Car size={24} className="text-white" />
                         </motion.div>
                         <div>
-                          <div className="text-3xl font-black tracking-tighter">
+                          <div className="text-2xl font-black tracking-tighter">
                             <span className="text-brand-red">YOUGO</span> <span className="text-white">ISRAEL</span>
                           </div>
                           <div className="text-[10px] text-white/25 tracking-[0.2em] uppercase font-bold">Digital Car Marketing</div>
@@ -3169,7 +3300,7 @@ export default function App() {
                 ))}
               </div>
 
-              <div className="glass-card p-6">
+              <div className="glass-card p-4">
                 <AnimatePresence mode="wait">
                   {bookingStep === 1 && (
                     <CarDetailsForm formData={formData} setFormData={setFormData} onNext={() => setBookingStep(2)}
@@ -3194,10 +3325,10 @@ export default function App() {
                 <Check size={40} strokeWidth={3} className="text-white" />
               </motion.div>
               <div className="space-y-2">
-                <h2 className="text-3xl font-black">ההזמנה התקבלה!</h2>
+                <h2 className="text-2xl font-black">ההזמנה התקבלה!</h2>
                 <p className="text-white/60 text-base">מספר הזמנה: <span className="text-brand-red font-black">#{orderId}</span></p>
               </div>
-              <div className="glass-card p-6 space-y-4">
+              <div className="glass-card p-4 space-y-4">
                 <p className="text-lg font-black">מה קורה עכשיו?</p>
                 <div className="space-y-3 text-right">
                   {['הודעת וואטסאפ נשלחה למנהל המערכת', 'הצוות שלנו יבדוק את פרטי ההזמנה תוך שעה', 'נחזור אליך עם אישור סופי'].map((text, i) => (
@@ -3235,7 +3366,7 @@ export default function App() {
           {/* Admin Login */}
           {view === 'admin-login' && (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-sm mx-auto py-12">
-              <div className="glass-card p-6 space-y-5">
+              <div className="glass-card p-4 space-y-5">
                 <div className="text-center">
                   <motion.div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-brand-red to-red-600 rounded-xl flex items-center justify-center shadow-lg"
                     animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2, repeat: Infinity }}>
@@ -3260,9 +3391,9 @@ export default function App() {
           {/* Admin Dashboard */}
           {view === 'admin-dashboard' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-12">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="space-y-2">
-                  <h2 className="text-4xl font-black flex items-center gap-4"><LayoutDashboard className="text-brand-red" size={40} />לוח בקרה</h2>
+                  <h2 className="text-3xl font-black flex items-center gap-4"><LayoutDashboard className="text-brand-red" size={40} />לוח בקרה</h2>
                   <div className="flex gap-4 mt-4">
                     {['orders', 'settings'].map(tab => (
                       <motion.button key={tab} onClick={() => setAdminTab(tab as any)} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
@@ -3288,7 +3419,7 @@ export default function App() {
 
               {adminTab === 'orders' ? (
                 <>
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     {[
                       { label: 'ממתין לבדיקה', count: orders.filter(o => o.status === 'Pending Review').length, color: 'text-yellow-600', icon: <Calendar size={20} /> },
                       { label: 'תשלום מאושר', count: orders.filter(o => o.status === 'Payment Verified').length, color: 'text-blue-600', icon: <ShieldCheck size={20} /> },
@@ -3296,10 +3427,10 @@ export default function App() {
                       { label: 'נדחה', count: orders.filter(o => o.status === 'Rejected').length, color: 'text-red-600', icon: <X size={20} /> },
                     ].map((stat, i) => (
                       <motion.div key={i} whileHover={{ y: -5, scale: 1.02 }}
-                        className="bg-white rounded-3xl p-6 shadow-xl border border-white/10 flex flex-col gap-4">
+                        className="bg-white rounded-2xl p-4 shadow-xl border border-white/10 flex flex-col gap-4">
                         <div className="flex items-center justify-between">
                           <div className={`p-3 rounded-2xl bg-gray-100 ${stat.color}`}>{stat.icon}</div>
-                          <div className="text-4xl font-black text-black">{stat.count}</div>
+                          <div className="text-3xl font-black text-black">{stat.count}</div>
                         </div>
                         <div className="text-sm font-black text-gray-500 uppercase tracking-widest">{stat.label}</div>
                       </motion.div>
@@ -3311,30 +3442,30 @@ export default function App() {
                       <table className="w-full text-right">
                         <thead className="bg-white/5 text-sm font-bold border-b border-white/10">
                           <tr>
-                            <th className="p-6">#ID</th>
-                            <th className="p-6">לקוח</th>
-                            <th className="p-6">חבילה</th>
-                            <th className="p-6">רכב</th>
-                            <th className="p-6">סטטוס</th>
-                            <th className="p-6 text-center">פעולות</th>
+                            <th className="p-4">#ID</th>
+                            <th className="p-4">לקוח</th>
+                            <th className="p-4">חבילה</th>
+                            <th className="p-4">רכב</th>
+                            <th className="p-4">סטטוס</th>
+                            <th className="p-4 text-center">פעולות</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
                           {orders.map(order => (
                             <tr key={order.id} className="hover:bg-white/5 transition-colors group">
-                              <td className="p-6 font-mono text-sm text-brand-red font-black">YG-{order.id.toString().padStart(4, '0')}</td>
-                              <td className="p-6">
+                              <td className="p-4 font-mono text-sm text-brand-red font-black">YG-{order.id.toString().padStart(4, '0')}</td>
+                              <td className="p-4">
                                 <div className="text-sm font-bold">{order.full_name}</div>
                                 <div className="text-xs text-white/40 flex items-center gap-1"><Smartphone size={12} />{order.phone}</div>
                               </td>
-                              <td className="p-6">
+                              <td className="p-4">
                                 <span className="text-xs font-bold bg-white/5 px-3 py-1 rounded-full border border-white/10">{order.package_name}</span>
                               </td>
-                              <td className="p-6">
+                              <td className="p-4">
                                 <div className="text-sm font-bold">{order.car_model}</div>
                                 <div className="text-xs text-white/40">{order.car_year} | {order.car_mileage} ק"מ</div>
                               </td>
-                              <td className="p-6">
+                              <td className="p-4">
                                 <div className={`inline-flex items-center gap-2 text-[10px] font-bold px-3 py-1.5 rounded-full border ${
                                   order.status === 'Published' ? 'bg-green-500/10 text-green-500 border-green-500/20' :
                                   order.status === 'Rejected' ? 'bg-red-500/10 text-red-500 border-red-500/20' :
@@ -3346,7 +3477,7 @@ export default function App() {
                                   {order.status}
                                 </div>
                               </td>
-                              <td className="p-6">
+                              <td className="p-4">
                                 <div className="flex items-center justify-center gap-3">
                                   <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}
                                     onClick={() => alert(`פרטי הזמנה ${order.id}:\nמחיר: ${order.car_price}\nמיקום: ${order.location}\nתאריך: ${new Date(order.created_at).toLocaleDateString('he-IL')}`)}
@@ -3370,8 +3501,8 @@ export default function App() {
                   </div>
                 </>
               ) : (
-                <div className="glass-card p-8 max-w-2xl space-y-8">
-                  <h3 className="text-2xl font-black">הגדרות אתר</h3>
+                <div className="glass-card p-5 max-w-2xl space-y-8">
+                  <h3 className="text-xl font-black">הגדרות אתר</h3>
                   <div className="space-y-6">
                     {[
                       { label: 'כמות עוקבים (Instagram)', key: 'followers_count' },
