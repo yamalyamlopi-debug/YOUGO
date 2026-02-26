@@ -318,13 +318,7 @@ const Navbar = memo(({ lang, setLang, isAdmin, onLogout, siteSettings, setView }
                   <span className="flex-1 text-right">{lang === 'he' ? 'בדיקת סטטוס' : 'تحقق من الطلب'}</span>
                   <ChevronRight size={13} className="text-white/25 shrink-0" />
                 </button>
-                <a href="https://instagram.com/yougo.israel" target="_blank" rel="noopener noreferrer"
-                  onClick={() => setMenuOpen(false)}
-                  className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-bold transition-all"
-                  style={{ color: '#f472b6' }}>
-                  <Instagram size={16} className="shrink-0" />
-                  <span className="flex-1 text-right">Instagram</span>
-                </a>
+
               </div>
             </motion.div>
           )}
@@ -2128,25 +2122,29 @@ function App() {
 
               {/* Background layers */}
               <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 90% 70% at 55% 15%, rgba(200,16,46,0.18) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 5% 85%, rgba(200,16,46,0.08) 0%, transparent 60%), #06060a' }} />
+                <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 90% 70% at 55% 15%, rgba(200,16,46,0.22) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 5% 85%, rgba(200,16,46,0.08) 0%, transparent 60%), #06060a' }} />
                 <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.055) 1px, transparent 1px)', backgroundSize: '28px 28px', WebkitMaskImage: 'radial-gradient(ellipse 85% 65% at 50% 38%, black 20%, transparent 80%)', maskImage: 'radial-gradient(ellipse 85% 65% at 50% 38%, black 20%, transparent 80%)' }} />
                 <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 110% 110% at 50% 50%, transparent 38%, #06060a 100%)' }} />
                 <div className="absolute bottom-0 inset-x-0 h-52" style={{ background: 'linear-gradient(to bottom, transparent, #06060a)' }} />
+                {/* Animated red accent lines */}
+                <div className="absolute top-1/3 right-0 w-96 h-px opacity-20" style={{ background: 'linear-gradient(90deg, transparent, #c8102e, transparent)' }} />
+                <div className="absolute top-2/3 left-0 w-64 h-px opacity-10" style={{ background: 'linear-gradient(90deg, #c8102e, transparent)' }} />
               </div>
 
-              <div className="relative z-10 w-full max-w-3xl mx-auto px-4 pt-20 sm:pt-28 pb-14 flex flex-col items-center text-center">
+              <div className="relative z-10 w-full max-w-4xl mx-auto px-4 pt-20 sm:pt-28 pb-14 flex flex-col items-center text-center">
 
-                {/* Badge */}
+                {/* Professional company badge */}
                 <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
-                  className="inline-flex items-center gap-2 mb-7 px-4 py-2 rounded-full"
+                  className="inline-flex items-center gap-3 mb-6 px-5 py-2.5 rounded-full"
                   style={{ background: 'rgba(200,16,46,0.1)', border: '1px solid rgba(200,16,46,0.3)', backdropFilter: 'blur(12px)' }}>
-                  <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#c8102e' }} />
-                  <span className="text-[11px] font-bold tracking-[0.12em] uppercase" style={{ color: 'rgba(255,255,255,0.8)' }}>הדרך המהירה ביותר למכור רכב</span>
+                  <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#c8102e' }} />
+                  <span className="text-[11px] font-black tracking-[0.15em] uppercase text-white/80">הדרך המהירה ביותר למכור רכב</span>
+                  <span className="hidden sm:inline text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'rgba(200,16,46,0.2)', color: '#ff6080' }}>ISRAEL #1</span>
                 </motion.div>
 
-                {/* Headline */}
+                {/* Main Headline */}
                 <motion.h1 initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.48, delay: 0.1 }}
-                  className="font-black leading-[1.04] tracking-tight mb-5" style={{ fontSize: 'clamp(2.5rem, 9vw, 5.5rem)' }}>
+                  className="font-black leading-[1.04] tracking-tight mb-5" style={{ fontSize: 'clamp(2.8rem, 10vw, 6rem)' }}>
                   <span className="text-white">מוכרים רכב?</span>
                   <br />
                   <span style={{ background: 'linear-gradient(135deg, #ff4060 0%, #c8102e 55%, #a00d20 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
@@ -2156,27 +2154,27 @@ function App() {
 
                 {/* Subtitle */}
                 <motion.p initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.42, delay: 0.18 }}
-                  className="text-[15px] md:text-base leading-relaxed mb-8 max-w-md" style={{ color: 'rgba(255,255,255,0.45)' }}>
+                  className="text-[15px] md:text-base leading-relaxed mb-8 max-w-lg font-semibold" style={{ color: 'rgba(255,255,255,0.45)' }}>
                   YOUGO ISRAEL — פלטפורמת השיווק המובילה באינסטגרם למכירת רכבים.
                 </motion.p>
 
                 {/* ── CTA buttons ── */}
                 <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.42, delay: 0.26 }}
-                  className="flex flex-col gap-3 w-full max-w-xs sm:max-w-md mb-9">
+                  className="flex flex-col sm:flex-row gap-3 w-full max-w-sm sm:max-w-lg mb-10">
 
                   {/* Primary - start order */}
                   <button
                     onClick={() => document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="relative flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-black text-[15px] text-white overflow-hidden transition-transform hover:scale-[1.02] active:scale-[.97]"
+                    className="relative flex items-center justify-center gap-2.5 flex-1 py-4 rounded-2xl font-black text-[15px] text-white overflow-hidden transition-transform hover:scale-[1.02] active:scale-[.97]"
                     style={{ background: 'linear-gradient(135deg, #c8102e, #a50d25)', boxShadow: '0 8px 32px rgba(200,16,46,0.45)' }}>
                     <Sparkles size={17} />
                     התחל הזמנה
                   </button>
 
-                  {/* Secondary - packages overview modal */}
+                  {/* Secondary - packages */}
                   <button
                     onClick={() => document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="relative flex items-center justify-center gap-2.5 w-full py-3.5 rounded-2xl font-black text-[14px] transition-all hover:bg-white/9 active:scale-[.97] group"
+                    className="relative flex items-center justify-center gap-2.5 flex-1 py-3.5 rounded-2xl font-black text-[14px] transition-all hover:bg-white/9 active:scale-[.97] group"
                     style={{ border: '1px solid rgba(255,255,255,0.14)', color: 'rgba(255,255,255,0.75)', background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(8px)' }}>
                     <LayoutDashboard size={16} className="text-white/50 group-hover:text-white/80 transition-colors" />
                     {lang === 'he' ? 'החבילות שלנו' : 'باقاتنا'}
@@ -2186,7 +2184,7 @@ function App() {
 
                 {/* Trust badges */}
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, delay: 0.38 }}
-                  className="flex flex-wrap items-center justify-center gap-4">
+                  className="flex flex-wrap items-center justify-center gap-5 mb-10">
                   {[
                     { icon: <ShieldCheck size={13} />, label: 'תשלום מאובטח', c: '#22c55e' },
                     { icon: <Clock size={13} />, label: 'פרסום תוך 24 שעות', c: '#60a5fa' },
@@ -2199,9 +2197,29 @@ function App() {
                   ))}
                 </motion.div>
 
+                {/* ── Stats strip ── */}
+                <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.35 }}
+                  className="w-full max-w-2xl mb-10">
+                  <div className="grid grid-cols-3 gap-3 sm:gap-5">
+                    {[
+                      { val: '50K+', label: lang === 'he' ? 'עוקבים אקטיביים' : 'متابع نشط', color: '#c8102e', icon: <Users size={16} /> },
+                      { val: '1,000+', label: lang === 'he' ? 'רכבים נמכרו' : 'سيارة بيعت', color: '#4ade80', icon: <Car size={16} /> },
+                      { val: '24H', label: lang === 'he' ? 'זמן פרסום' : 'وقت النشر', color: '#60a5fa', icon: <Zap size={16} /> },
+                    ].map((s, i) => (
+                      <div key={i} className="relative flex flex-col items-center py-4 px-3 rounded-2xl overflow-hidden"
+                        style={{ background: `${s.color}0a`, border: `1px solid ${s.color}22` }}>
+                        <div className="absolute top-0 inset-x-0 h-[2px]" style={{ background: `linear-gradient(90deg, transparent, ${s.color}60, transparent)` }} />
+                        <span className="mb-1.5" style={{ color: s.color }}>{s.icon}</span>
+                        <span className="text-2xl md:text-3xl font-black text-white leading-none">{s.val}</span>
+                        <span className="text-[10px] font-bold mt-1 text-center" style={{ color: 'rgba(255,255,255,0.4)' }}>{s.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+
                 {/* ── Package quick-select cards ── */}
                 <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.45 }}
-                  className="w-full mt-10 grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  className="w-full grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                   {[
                     { id: 'packages-car',   emoji: '🚗', label: lang === 'he' ? 'רכב פרטי' : 'سيارة خاصة', sub: lang === 'he' ? 'מ-₪199' : 'من ₪199',  color: '#c8102e', border: 'rgba(200,16,46,0.35)' },
                     { id: 'packages-vip',   emoji: '👑', label: lang === 'he' ? 'VIP' : 'VIP',              sub: lang === 'he' ? '₪749' : '₪749',         color: '#d4af37', border: 'rgba(212,175,55,0.35)' },
@@ -2317,56 +2335,91 @@ function App() {
               {/* REGULAR PACKAGES */}
               <div id="packages-car" className="scroll-mt-16 space-y-8">
                 {/* === SECTION HEADER: רכב פרטי === */}
-                <div className="relative rounded-3xl p-4 sm:p-6 md:p-10"
-                  style={{ background: 'linear-gradient(135deg, rgba(200,16,46,0.1) 0%, rgba(10,10,15,0.97) 50%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(200,16,46,0.32)' }}>
-                  <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(200,16,46,0.12) 0%, transparent 65%)' }} />
+                <div className="relative rounded-3xl overflow-hidden"
+                  style={{ background: 'linear-gradient(135deg, rgba(200,16,46,0.12) 0%, rgba(10,10,15,0.97) 50%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(200,16,46,0.32)' }}>
+                  
+                  {/* Top accent bar */}
+                  <div className="absolute top-0 inset-x-0 h-[3px]" style={{ background: 'linear-gradient(90deg, transparent, #c8102e, transparent)' }} />
+                  
+                  {/* BG glows */}
+                  <div className="absolute top-0 right-0 w-80 h-80 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(200,16,46,0.15) 0%, transparent 65%)' }} />
                   <div className="absolute bottom-0 left-0 w-48 h-48 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 20% 80%, rgba(200,16,46,0.06) 0%, transparent 65%)' }} />
-
-                  <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                    <div className="flex-1 space-y-3">
-                      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full"
-                        style={{ background: 'rgba(200,16,46,0.15)', border: '1px solid rgba(200,16,46,0.3)' }}>
-                        <Car size={12} className="text-brand-red" />
-                        <span className="text-[10px] font-black tracking-wider text-brand-red uppercase">רכב פרטי</span>
-                      </div>
-                      <h3 className="text-2xl md:text-3xl font-black text-white leading-tight">
-                        מוכרים <span className="text-brand-red">רכב פרטי?</span>
-                      </h3>
-                      <p className="text-white/45 text-sm leading-relaxed max-w-lg">
-                        שלוש חבילות מדורגות לכל תקציב ומטרה. מחבילת הכניסה הבסיסית ועד הפרמיום המלא – כל אחת מותאמת לסוג הרכב ולמטרת המכירה שלך.
-                      </p>
-                    </div>
-                    <div className="grid grid-cols-3 md:flex md:flex-col gap-2 w-full md:w-auto">
-                      {[
-                        { value: '₪199', label: 'מחבילה', color: '#94a3b8', icon: <DollarSign size={12} /> },
-                        { value: '1,000+', label: 'מכירות', color: '#c8102e', icon: <Trophy size={12} /> },
-                        { value: '7-30', label: 'ימי פרסום', color: '#4ade80', icon: <Calendar size={12} /> },
-                      ].map((s, i) => (
-                        <div key={i} className="flex items-center gap-2 px-2.5 py-2 rounded-xl min-w-0"
-                          style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
-                          <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
-                            <span style={{ color: s.color }}>{s.icon}</span>
+                  
+                  <div className="relative z-10 p-6 sm:p-8 md:p-10">
+                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+                      
+                      {/* Left: Text content */}
+                      <div className="flex-1 space-y-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
+                            style={{ background: 'linear-gradient(135deg, #c8102e, #8b0d1e)', boxShadow: '0 8px 24px rgba(200,16,46,0.4)' }}>
+                            <Car size={22} className="text-white" />
                           </div>
-                          <div className="min-w-0">
-                            <div className="text-xs font-black leading-tight" style={{ color: s.color }}>{s.value}</div>
-                            <div className="text-[9px] text-white/30 font-bold">{s.label}</div>
+                          <div>
+                            <div className="text-[9px] font-black text-brand-red uppercase tracking-[0.2em] mb-0.5">חבילות פרסום</div>
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full"
+                              style={{ background: 'rgba(200,16,46,0.15)', border: '1px solid rgba(200,16,46,0.3)' }}>
+                              <Car size={10} className="text-brand-red" />
+                              <span className="text-[10px] font-black tracking-wider text-brand-red uppercase">רכב פרטי</span>
+                            </div>
                           </div>
                         </div>
-                      ))}
+                        
+                        <h3 className="text-3xl md:text-4xl font-black text-white leading-tight">
+                          מוכרים <span className="text-brand-red">רכב פרטי?</span>
+                        </h3>
+                        <p className="text-white/50 text-sm leading-relaxed max-w-lg">
+                          שלוש חבילות מדורגות לכל תקציב ומטרה. מחבילת הכניסה הבסיסית ועד הפרמיום המלא – כל אחת מותאמת לסוג הרכב ולמטרת המכירה שלך.
+                        </p>
+                        
+                        {/* Feature pills */}
+                        <div className="flex flex-wrap gap-2">
+                          {[
+                            { icon: <Camera size={11} />, label: 'צילום מקצועי', c: '#c8102e' },
+                            { icon: <Zap size={11} />, label: 'פרסום תוך 24 שעות', c: '#4ade80' },
+                            { icon: <Users size={11} />, label: '50K+ עוקבים', c: '#60a5fa' },
+                            { icon: <TrendingUp size={11} />, label: 'חשיפה ממוקדת', c: '#a78bfa' },
+                          ].map((p, i) => (
+                            <div key={i} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10px] font-bold"
+                              style={{ background: `${p.c}12`, border: `1px solid ${p.c}25`, color: p.c }}>
+                              {p.icon}{p.label}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* Right: Stats */}
+                      <div className="flex flex-row md:flex-col gap-2 w-full md:w-auto">
+                        {[
+                          { value: '₪199', label: 'מחבילה', color: '#94a3b8', icon: <DollarSign size={12} /> },
+                          { value: '1,000+', label: 'מכירות', color: '#c8102e', icon: <Trophy size={12} /> },
+                          { value: '7-30', label: 'ימי פרסום', color: '#4ade80', icon: <Calendar size={12} /> },
+                        ].map((s, i) => (
+                          <div key={i} className="flex items-center gap-2 px-3 py-2.5 rounded-xl flex-1 md:flex-none"
+                            style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
+                            <div className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
+                              <span style={{ color: s.color }}>{s.icon}</span>
+                            </div>
+                            <div>
+                              <div className="text-sm font-black leading-tight" style={{ color: s.color }}>{s.value}</div>
+                              <div className="text-[9px] text-white/30 font-bold">{s.label}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                </div>
-
-                  {/* ── CTA ── */}
-                  <div className="relative z-10 mt-5 flex items-center gap-3 flex-wrap pt-4" style={{ borderTop: '1px solid rgba(200,16,46,0.15)' }}>
-                    <button onClick={() => document.getElementById('packages-car')?.scrollIntoView({ behavior: 'smooth' })}
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-sm text-white transition-all hover:scale-105 active:scale-95"
-                      style={{ background: 'linear-gradient(135deg,#c8102e,#a50d25)', boxShadow: '0 4px 18px rgba(200,16,46,0.4)' }}>
-                      <Car size={13} />
-                      {lang === 'he' ? 'לחבילות רכב פרטי' : 'لباقات السيارات'}
-                      <ChevronDown size={13} />
-                    </button>
-                    <span className="text-[11px] text-white/30">3 חבילות · מ-₪199</span>
+                    
+                    {/* CTA */}
+                    <div className="mt-6 flex items-center gap-3 flex-wrap pt-5" style={{ borderTop: '1px solid rgba(200,16,46,0.15)' }}>
+                      <button onClick={() => document.getElementById('packages-car')?.scrollIntoView({ behavior: 'smooth' })}
+                        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-black text-sm text-white transition-all hover:scale-105 active:scale-95"
+                        style={{ background: 'linear-gradient(135deg,#c8102e,#a50d25)', boxShadow: '0 4px 18px rgba(200,16,46,0.4)' }}>
+                        <Car size={13} />
+                        {lang === 'he' ? 'לחבילות רכב פרטי' : 'لباقات السيارات'}
+                        <ChevronDown size={13} />
+                      </button>
+                      <span className="text-[11px] text-white/30">3 חבילות · מ-₪199</span>
+                    </div>
                   </div>
                 </div>
 
@@ -2401,61 +2454,90 @@ function App() {
               {/* VIP + DUO */}
               <div id="packages-vip" className="scroll-mt-16 space-y-8">
                 {/* === SECTION HEADER: VIP === */}
-                <div className="relative rounded-3xl p-4 sm:p-6 md:p-10"
+                <div className="relative rounded-3xl overflow-hidden"
                   style={{ background: 'linear-gradient(135deg, rgba(212,175,55,0.1) 0%, rgba(10,10,15,0.97) 50%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(212,175,55,0.32)' }}>
-                  <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(212,175,55,0.1) 0%, transparent 65%)' }} />
+                  
+                  <div className="absolute top-0 inset-x-0 h-[3px]" style={{ background: 'linear-gradient(90deg, transparent, #d4af37, transparent)' }} />
+                  <div className="absolute top-0 right-0 w-80 h-80 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(212,175,55,0.12) 0%, transparent 65%)' }} />
 
-                  <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                    <div className="flex-1 space-y-3">
-                      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full"
-                        style={{ background: 'rgba(212,175,55,0.12)', border: '1px solid rgba(212,175,55,0.3)' }}>
-                        <Crown size={12} className="text-amber-400" />
-                        <span className="text-[10px] font-black tracking-wider text-amber-400 uppercase">פרימיום VIP</span>
-                      </div>
-                      <h3 className="text-2xl md:text-3xl font-black text-white leading-tight">
-                        מחפשים <span className="text-amber-400">יחס VIP?</span>
-                      </h3>
-                      <p className="text-white/45 text-sm leading-relaxed max-w-lg">
-                        לרכבי יוקרה וכאלה שמוכרים שני רכבים בבת אחת – שתי חבילות ייחודיות עם שירות אישי, עיצוב בלעדי, וחסכון משמעותי.
-                      </p>
-                    </div>
-                    <div className="grid grid-cols-3 md:flex md:flex-col gap-2 w-full md:w-auto">
-                      {[
-                        { value: '60 יום', label: 'פרסום VIP', color: '#d4af37', icon: <Calendar size={12} /> },
-                        { value: '40%', label: 'חיסכון DUO', color: '#8b5cf6', icon: <Percent size={12} /> },
-                        { value: '24/7', label: 'ליווי אישי', color: '#4ade80', icon: <Headphones size={12} /> },
-                      ].map((s, i) => (
-                        <div key={i} className="flex items-center gap-2 px-2.5 py-2 rounded-xl min-w-0"
-                          style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
-                          <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
-                            <span style={{ color: s.color }}>{s.icon}</span>
+                  <div className="relative z-10 p-6 sm:p-8 md:p-10">
+                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+                      
+                      <div className="flex-1 space-y-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
+                            style={{ background: 'linear-gradient(135deg, #d4af37, #9a7d1a)', boxShadow: '0 8px 24px rgba(212,175,55,0.4)' }}>
+                            <Crown size={22} className="text-white" />
                           </div>
-                          <div className="min-w-0">
-                            <div className="text-xs font-black leading-tight" style={{ color: s.color }}>{s.value}</div>
-                            <div className="text-[9px] text-white/30 font-bold">{s.label}</div>
+                          <div>
+                            <div className="text-[9px] font-black text-amber-400 uppercase tracking-[0.2em] mb-0.5">פרימיום בלעדי</div>
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full"
+                              style={{ background: 'rgba(212,175,55,0.12)', border: '1px solid rgba(212,175,55,0.3)' }}>
+                              <Crown size={10} className="text-amber-400" />
+                              <span className="text-[10px] font-black tracking-wider text-amber-400 uppercase">פרימיום VIP</span>
+                            </div>
                           </div>
                         </div>
-                      ))}
+                        
+                        <h3 className="text-3xl md:text-4xl font-black text-white leading-tight">
+                          מחפשים <span className="text-amber-400">יחס VIP?</span>
+                        </h3>
+                        <p className="text-white/50 text-sm leading-relaxed max-w-lg">
+                          לרכבי יוקרה וכאלה שמוכרים שני רכבים בבת אחת – שתי חבילות ייחודיות עם שירות אישי, עיצוב בלעדי, וחסכון משמעותי.
+                        </p>
+                        
+                        <div className="flex flex-wrap gap-2">
+                          {[
+                            { icon: <Crown size={11} />, label: 'שירות VIP', c: '#d4af37' },
+                            { icon: <Gem size={11} />, label: 'עיצוב בלעדי', c: '#a78bfa' },
+                            { icon: <Headphones size={11} />, label: 'ליווי 24/7', c: '#4ade80' },
+                            { icon: <Percent size={11} />, label: 'חיסכון 40% DUO', c: '#60a5fa' },
+                          ].map((p, i) => (
+                            <div key={i} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10px] font-bold"
+                              style={{ background: `${p.c}12`, border: `1px solid ${p.c}25`, color: p.c }}>
+                              {p.icon}{p.label}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      <div className="flex flex-row md:flex-col gap-2 w-full md:w-auto">
+                        {[
+                          { value: '60 יום', label: 'פרסום VIP', color: '#d4af37', icon: <Calendar size={12} /> },
+                          { value: '40%', label: 'חיסכון DUO', color: '#8b5cf6', icon: <Percent size={12} /> },
+                          { value: '24/7', label: 'ליווי אישי', color: '#4ade80', icon: <Headphones size={12} /> },
+                        ].map((s, i) => (
+                          <div key={i} className="flex items-center gap-2 px-3 py-2.5 rounded-xl flex-1 md:flex-none"
+                            style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
+                            <div className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
+                              <span style={{ color: s.color }}>{s.icon}</span>
+                            </div>
+                            <div>
+                              <div className="text-sm font-black leading-tight" style={{ color: s.color }}>{s.value}</div>
+                              <div className="text-[9px] text-white/30 font-bold">{s.label}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                </div>
-
-                  {/* ── CTA ── */}
-                  <div className="relative z-10 mt-5 flex items-center gap-3 flex-wrap pt-4" style={{ borderTop: '1px solid rgba(212,175,55,0.15)' }}>
-                    <button onClick={() => document.getElementById('packages-vip')?.scrollIntoView({ behavior: 'smooth' })}
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-sm text-white transition-all hover:scale-105 active:scale-95"
-                      style={{ background: 'linear-gradient(135deg,#d4af37,#b8860b)', boxShadow: '0 4px 18px rgba(212,175,55,0.4)' }}>
-                      <Crown size={13} />
-                      {lang === 'he' ? 'לחבילות VIP ו-DUO' : 'لباقات VIP والثنائي'}
-                      <ChevronDown size={13} />
-                    </button>
-                    <span className="text-[11px] text-white/30">VIP · DUO DEAL</span>
+                    
+                    {/* CTA */}
+                    <div className="mt-6 flex items-center gap-3 flex-wrap pt-5" style={{ borderTop: '1px solid rgba(212,175,55,0.15)' }}>
+                      <button onClick={() => document.getElementById('packages-vip')?.scrollIntoView({ behavior: 'smooth' })}
+                        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-black text-sm text-white transition-all hover:scale-105 active:scale-95"
+                        style={{ background: 'linear-gradient(135deg,#d4af37,#b8860b)', boxShadow: '0 4px 18px rgba(212,175,55,0.4)' }}>
+                        <Crown size={13} />
+                        {lang === 'he' ? 'לחבילות VIP ו-DUO' : 'لباقات VIP والثنائي'}
+                        <ChevronDown size={13} />
+                      </button>
+                      <span className="text-[11px] text-white/30">VIP · DUO DEAL</span>
+                    </div>
                   </div>
                 </div>
 
                 <div className="hidden md:grid grid-cols-2 gap-6">
-                  <div className="h-[460px]"><VIPPackageCard pkg={vipPackage} lang={lang} onSelect={handleSelectPackage} /></div>
-                  <div className="h-[460px]"><DuoDealPackageCard pkg={duoPackage} onSelect={handleSelectPackage} /></div>
+                  <div id="vip-card" className="h-[460px]"><VIPPackageCard pkg={vipPackage} lang={lang} onSelect={handleSelectPackage} /></div>
+                  <div id="duo-card" className="h-[460px]"><DuoDealPackageCard pkg={duoPackage} onSelect={handleSelectPackage} /></div>
                 </div>
 
                 <div className="md:hidden px-3">
@@ -2480,56 +2562,85 @@ function App() {
               {/* BUSINESS */}
               <div id="packages-biz" className="scroll-mt-16 max-w-3xl mx-auto space-y-8">
                 {/* === SECTION HEADER: Business === */}
-                <div className="relative rounded-3xl p-4 sm:p-6 md:p-10"
+                <div className="relative rounded-3xl overflow-hidden"
                   style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(10,10,15,0.97) 50%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(59,130,246,0.32)' }}>
-                  <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(59,130,246,0.1) 0%, transparent 65%)' }} />
+                  
+                  <div className="absolute top-0 inset-x-0 h-[3px]" style={{ background: 'linear-gradient(90deg, transparent, #3b82f6, transparent)' }} />
+                  <div className="absolute top-0 right-0 w-80 h-80 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(59,130,246,0.12) 0%, transparent 65%)' }} />
                   <div className="absolute inset-0 opacity-3" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
 
-                  <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                    <div className="flex-1 space-y-3">
-                      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full"
-                        style={{ background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.3)' }}>
-                        <Building2 size={12} className="text-blue-400" />
-                        <span className="text-[10px] font-black tracking-wider text-blue-400 uppercase">לסוכנויות ועסקים</span>
-                      </div>
-                      <h3 className="text-2xl md:text-3xl font-black text-white leading-tight">
-                        פתרון מקצועי <span className="text-blue-400">לעסקים?</span>
-                      </h3>
-                      <p className="text-white/45 text-sm leading-relaxed max-w-lg">
-                        חבילות מותאמות לסוכנויות רכב, עם אפשרויות גמישות לניהול מלא. עד 100 רכבים בחודש, מנהל לקוח ייעודי ודוחות שבועיים.
-                      </p>
-                    </div>
-                    <div className="grid grid-cols-3 md:flex md:flex-col gap-2 w-full md:w-auto">
-                      {[
-                        { value: '50-100', label: 'רכבים/חודש', color: '#3b82f6', icon: <Car size={12} /> },
-                        { value: '40-50%', label: 'הנחה', color: '#4ade80', icon: <Percent size={12} /> },
-                        { value: '24/7', label: 'תמיכה', color: '#a78bfa', icon: <Headphones size={12} /> },
-                      ].map((s, i) => (
-                        <div key={i} className="flex items-center gap-2 px-2.5 py-2 rounded-xl min-w-0"
-                          style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
-                          <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
-                            <span style={{ color: s.color }}>{s.icon}</span>
+                  <div className="relative z-10 p-6 sm:p-8 md:p-10">
+                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+                      
+                      <div className="flex-1 space-y-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
+                            style={{ background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)', boxShadow: '0 8px 24px rgba(59,130,246,0.4)' }}>
+                            <Building2 size={22} className="text-white" />
                           </div>
-                          <div className="min-w-0">
-                            <div className="text-xs font-black leading-tight" style={{ color: s.color }}>{s.value}</div>
-                            <div className="text-[9px] text-white/30 font-bold">{s.label}</div>
+                          <div>
+                            <div className="text-[9px] font-black text-blue-400 uppercase tracking-[0.2em] mb-0.5">פתרון עסקי</div>
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full"
+                              style={{ background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.3)' }}>
+                              <Building2 size={10} className="text-blue-400" />
+                              <span className="text-[10px] font-black tracking-wider text-blue-400 uppercase">לסוכנויות ועסקים</span>
+                            </div>
                           </div>
                         </div>
-                      ))}
+                        
+                        <h3 className="text-3xl md:text-4xl font-black text-white leading-tight">
+                          פתרון מקצועי <span className="text-blue-400">לעסקים?</span>
+                        </h3>
+                        <p className="text-white/50 text-sm leading-relaxed max-w-lg">
+                          חבילות מותאמות לסוכנויות רכב, עם אפשרויות גמישות לניהול מלא. עד 100 רכבים בחודש, מנהל לקוח ייעודי ודוחות שבועיים.
+                        </p>
+                        
+                        <div className="flex flex-wrap gap-2">
+                          {[
+                            { icon: <Car size={11} />, label: 'עד 100 רכבים/חודש', c: '#3b82f6' },
+                            { icon: <Users size={11} />, label: 'מנהל לקוח ייעודי', c: '#a78bfa' },
+                            { icon: <BarChart3 size={11} />, label: 'דוחות שבועיים', c: '#4ade80' },
+                            { icon: <Headphones size={11} />, label: 'תמיכה 24/7', c: '#60a5fa' },
+                          ].map((p, i) => (
+                            <div key={i} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10px] font-bold"
+                              style={{ background: `${p.c}12`, border: `1px solid ${p.c}25`, color: p.c }}>
+                              {p.icon}{p.label}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      <div className="flex flex-row md:flex-col gap-2 w-full md:w-auto">
+                        {[
+                          { value: '50-100', label: 'רכבים/חודש', color: '#3b82f6', icon: <Car size={12} /> },
+                          { value: '40-50%', label: 'הנחה', color: '#4ade80', icon: <Percent size={12} /> },
+                          { value: '24/7', label: 'תמיכה', color: '#a78bfa', icon: <Headphones size={12} /> },
+                        ].map((s, i) => (
+                          <div key={i} className="flex items-center gap-2 px-3 py-2.5 rounded-xl flex-1 md:flex-none"
+                            style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
+                            <div className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
+                              <span style={{ color: s.color }}>{s.icon}</span>
+                            </div>
+                            <div>
+                              <div className="text-sm font-black leading-tight" style={{ color: s.color }}>{s.value}</div>
+                              <div className="text-[9px] text-white/30 font-bold">{s.label}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                </div>
 
-                  {/* ── CTA ── */}
-                  <div className="relative z-10 mt-5 flex items-center gap-3 flex-wrap pt-4" style={{ borderTop: '1px solid rgba(59,130,246,0.15)' }}>
-                    <button onClick={() => document.getElementById('packages-biz')?.scrollIntoView({ behavior: 'smooth' })}
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-sm text-white transition-all hover:scale-105 active:scale-95"
-                      style={{ background: 'linear-gradient(135deg,#3b82f6,#1d4ed8)', boxShadow: '0 4px 18px rgba(59,130,246,0.4)' }}>
-                      <Building2 size={13} />
-                      {lang === 'he' ? 'לחבילות לסוכנויות' : 'لباقات الوكلاء'}
-                      <ChevronDown size={13} />
-                    </button>
-                    <span className="text-[11px] text-white/30">BUSINESS · ENTERPRISE</span>
+                    {/* ── CTA ── */}
+                    <div className="mt-6 flex items-center gap-3 flex-wrap pt-5" style={{ borderTop: '1px solid rgba(59,130,246,0.15)' }}>
+                      <button onClick={() => document.getElementById('packages-biz')?.scrollIntoView({ behavior: 'smooth' })}
+                        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-black text-sm text-white transition-all hover:scale-105 active:scale-95"
+                        style={{ background: 'linear-gradient(135deg,#3b82f6,#1d4ed8)', boxShadow: '0 4px 18px rgba(59,130,246,0.4)' }}>
+                        <Building2 size={13} />
+                        {lang === 'he' ? 'לחבילות לסוכנויות' : 'لباقات الوكلاء'}
+                        <ChevronDown size={13} />
+                      </button>
+                      <span className="text-[11px] text-white/30">BUSINESS · ENTERPRISE</span>
+                    </div>
                   </div>
                 </div>
 
@@ -3334,10 +3445,10 @@ function App() {
                 className="flex-1 py-3 rounded-xl font-black text-sm border border-brand-red/30 bg-brand-red/10 hover:bg-brand-red hover:border-brand-red transition-all flex items-center justify-center gap-2 text-brand-red hover:text-white">
                 <ArrowLeft size={14} />חזרה לדף הבית
               </button>
-              <button onClick={() => setView('check-status')}
+              <button onClick={() => { setView('home'); setTimeout(() => document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' }), 100); }}
                 className="flex-1 py-3 rounded-xl font-black text-sm shadow-lg flex items-center justify-center gap-2"
                 style={{ background: 'linear-gradient(135deg, #c8102e, #a50d25)' }}>
-                <Search size={14} />בדוק סטטוס
+                <LayoutDashboard size={14} />החבילות שלנו
               </button>
             </div>
           </div>
