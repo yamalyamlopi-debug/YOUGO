@@ -1199,7 +1199,7 @@ const BusinessPackageCard = memo(({ pkg, onSelect }: { pkg: Package, onSelect: (
 // ============================================================
 // MOBILE SWIPER
 // ============================================================
-const MobileSwiper = ({ children, cardHeight = 500 }: { children: React.ReactNode[]; cardHeight?: number }) => {
+const MobileSwiper = ({ children, cardHeight = 500 }: { children?: React.ReactNode; cardHeight?: number }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const count = React.Children.count(children);
@@ -1999,7 +1999,7 @@ const getPackageTheme = (pkgId: string, lang: Language) => {
       tagline: isAr ? 'البداية المثالية في السوق' : 'הכניסה המושלמת לשוק',
       requirements: isAr
         ? ['صور السيارة (2-3 على الأقل)', 'بيانات السيارة كاملة (موديل، سنة، كيلومتراج)', 'السعر المطلوب', 'رقم هاتف للتواصل', 'موقع السيارة']
-        : ['תמונות הרכב (לפחות 2-3)', 'פרטי הרכב המלאים (דגם, שנה, קילומטראז')', 'מחיר מבוקש', 'מספר טלפון לפניות', 'מיקום הרכב'],
+        : ["תמונות הרכב (לפחות 2-3)", "פרטי הרכב המלאים (דגם, שנה, קילומטראז')", "מחיר מבוקש", "מספר טלפון לפניות", "מיקום הרכב"],
       highlights: [
         { icon: <Camera size={18} />, label: isAr ? 'صور احترافية' : 'תמונות מקצועיות', value: '2' },
         { icon: <Calendar size={18} />, label: isAr ? 'أيام النشر' : 'ימי פרסום', value: '7' },
@@ -3343,7 +3343,7 @@ function App() {
                             transition: 'all 0.25s ease',
                             boxShadow: isOpen ? '0 4px 14px rgba(200,16,46,0.4)' : 'none',
                           }}>
-                          {String(i + 1).padStart(2, '0')}
+                          {i < 9 ? '0' + (i + 1) : String(i + 1)}
                         </div>
 
                         {/* Question */}
