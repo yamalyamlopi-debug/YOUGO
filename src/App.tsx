@@ -1981,177 +1981,182 @@ interface PackageInfoPageProps {
   lang: Language;
 }
 
-const PACKAGE_THEMES: Record<string, {
-  color: string; colorDark: string; colorName: string;
-  gradient: string; glowBig: string; icon: React.ReactNode;
-  badge: string; tagline: string; taglineAr: string;
-  requirements: { he: string[]; ar: string[] };
-  highlights: { icon: React.ReactNode; label: string; labelAr: string; value: string }[];
-}> = {
-  basic: {
-    color: '#94a3b8', colorDark: '#64748b', colorName: 'slate',
-    gradient: 'linear-gradient(160deg, rgba(148,163,184,0.12) 0%, #06060a 45%)',
-    glowBig: 'rgba(148,163,184,0.18)',
-    icon: <Rocket size={32} />, badge: '🚀', tagline: 'הכניסה המושלמת לשוק', taglineAr: 'البداية المثالية في السوق',
-    requirements: {
-      he: ['תמונות הרכב (לפחות 2-3)', 'פרטי הרכב המלאים (דגם, שנה, קילומטראז')', 'מחיר מבוקש', 'מספר טלפון לפניות', 'מיקום הרכב'],
-      ar: ['صور السيارة (2-3 على الأقل)', 'بيانات السيارة كاملة (موديل، سنة، كيلومتراج)', 'السعر المطلوب', 'رقم هاتف للتواصل', 'موقع السيارة'],
+const getPackageTheme = (pkgId: string, lang: Language) => {
+  const isAr = lang === 'ar';
+  const themes: Record<string, {
+    color: string; colorDark: string;
+    gradient: string; glowBig: string;
+    icon: React.ReactNode; badge: string;
+    tagline: string;
+    requirements: string[];
+    highlights: { icon: React.ReactNode; label: string; value: string }[];
+  }> = {
+    basic: {
+      color: '#94a3b8', colorDark: '#64748b',
+      gradient: 'linear-gradient(160deg, rgba(148,163,184,0.12) 0%, #06060a 45%)',
+      glowBig: 'rgba(148,163,184,0.18)',
+      icon: <Rocket size={32} />, badge: '🚀',
+      tagline: isAr ? 'البداية المثالية في السوق' : 'הכניסה המושלמת לשוק',
+      requirements: isAr
+        ? ['صور السيارة (2-3 على الأقل)', 'بيانات السيارة كاملة (موديل، سنة، كيلومتراج)', 'السعر المطلوب', 'رقم هاتف للتواصل', 'موقع السيارة']
+        : ['תמונות הרכב (לפחות 2-3)', 'פרטי הרכב המלאים (דגם, שנה, קילומטראז')', 'מחיר מבוקש', 'מספר טלפון לפניות', 'מיקום הרכב'],
+      highlights: [
+        { icon: <Camera size={18} />, label: isAr ? 'صور احترافية' : 'תמונות מקצועיות', value: '2' },
+        { icon: <Calendar size={18} />, label: isAr ? 'أيام النشر' : 'ימי פרסום', value: '7' },
+        { icon: <Eye size={18} />, label: isAr ? 'ظهور مضمون' : 'חשיפה מובטחת', value: isAr ? '3 أيام' : '3 ימים' },
+        { icon: <DollarSign size={18} />, label: isAr ? 'السعر' : 'מחיר', value: '₪199' },
+      ],
     },
-    highlights: [
-      { icon: <Camera size={18} />, label: 'תמונות מקצועיות', labelAr: 'صور احترافية', value: '2' },
-      { icon: <Calendar size={18} />, label: 'ימי פרסום', labelAr: 'أيام النشر', value: '7' },
-      { icon: <Eye size={18} />, label: 'חשיפה מובטחת', labelAr: 'ظهور مضمون', value: '3 ימים' },
-      { icon: <DollarSign size={18} />, label: 'מחיר', labelAr: 'السعر', value: '₪199' },
-    ],
-  },
-  pro: {
-    color: '#c8102e', colorDark: '#a50d25', colorName: 'red',
-    gradient: 'linear-gradient(160deg, rgba(200,16,46,0.14) 0%, #06060a 45%)',
-    glowBig: 'rgba(200,16,46,0.22)',
-    icon: <Flame size={32} />, badge: '🔥', tagline: 'הבחירה הפופולרית ביותר', taglineAr: 'الخيار الأكثر شعبية',
-    requirements: {
-      he: ['תמונות הרכב (לפחות 4-6)', 'פרטי הרכב המלאים', 'מחיר מבוקש', 'מספר טלפון לפניות', 'מיקום הרכב', 'כל פרט מיוחד שתרצה להדגיש'],
-      ar: ['صور السيارة (4-6 على الأقل)', 'بيانات السيارة كاملة', 'السعر المطلوب', 'رقم هاتف للتواصل', 'موقع السيارة', 'أي تفصيل خاص تريد إبرازه'],
+    pro: {
+      color: '#c8102e', colorDark: '#a50d25',
+      gradient: 'linear-gradient(160deg, rgba(200,16,46,0.14) 0%, #06060a 45%)',
+      glowBig: 'rgba(200,16,46,0.22)',
+      icon: <Flame size={32} />, badge: '🔥',
+      tagline: isAr ? 'الخيار الأكثر شعبية' : 'הבחירה הפופולרית ביותר',
+      requirements: isAr
+        ? ['صور السيارة (4-6 على الأقل)', 'بيانات السيارة كاملة', 'السعر المطلوب', 'رقم هاتف للتواصل', 'موقع السيارة', 'أي تفصيل خاص تريد إبرازه']
+        : ['תמונות הרכב (לפחות 4-6)', 'פרטי הרכב המלאים', 'מחיר מבוקש', 'מספר טלפון לפניות', 'מיקום הרכב', 'כל פרט מיוחד שתרצה להדגיש'],
+      highlights: [
+        { icon: <Camera size={18} />, label: isAr ? 'صور احترافية' : 'תמונות מקצועיות', value: '4' },
+        { icon: <Calendar size={18} />, label: isAr ? 'أيام النشر' : 'ימי פרסום', value: '14' },
+        { icon: <Eye size={18} />, label: isAr ? 'ظهور مضمون' : 'חשיפה מובטחת', value: isAr ? '7 أيام' : '7 ימים' },
+        { icon: <DollarSign size={18} />, label: isAr ? 'السعر' : 'מחיר', value: '₪299' },
+      ],
     },
-    highlights: [
-      { icon: <Camera size={18} />, label: 'תמונות מקצועיות', labelAr: 'صور احترافية', value: '4' },
-      { icon: <Calendar size={18} />, label: 'ימי פרסום', labelAr: 'أيام النشر', value: '14' },
-      { icon: <Eye size={18} />, label: 'חשיפה מובטחת', labelAr: 'ظهور مضمون', value: '7 ימים' },
-      { icon: <DollarSign size={18} />, label: 'מחיר', labelAr: 'السعر', value: '₪299' },
-    ],
-  },
-  premium: {
-    color: '#f59e0b', colorDark: '#d97706', colorName: 'amber',
-    gradient: 'linear-gradient(160deg, rgba(245,158,11,0.14) 0%, #06060a 45%)',
-    glowBig: 'rgba(245,158,11,0.2)',
-    icon: <Crown size={32} />, badge: '👑', tagline: 'חשיפה מקסימלית ועיצוב VIP', taglineAr: 'أقصى ظهور وتصميم VIP',
-    requirements: {
-      he: ['8+ תמונות איכותיות', 'פרטי הרכב המלאים + היסטוריה', 'מחיר + גמישות במחיר', 'מספר טלפון לפניות', 'מיקום', 'סרטון אם יש (אופציונלי)', 'כל מידע שיעזור לשיווק'],
-      ar: ['8+ صور عالية الجودة', 'بيانات كاملة + تاريخ السيارة', 'السعر + مرونة', 'رقم هاتف', 'الموقع', 'فيديو إن وجد (اختياري)', 'أي معلومات تساعد التسويق'],
+    premium: {
+      color: '#f59e0b', colorDark: '#d97706',
+      gradient: 'linear-gradient(160deg, rgba(245,158,11,0.14) 0%, #06060a 45%)',
+      glowBig: 'rgba(245,158,11,0.2)',
+      icon: <Crown size={32} />, badge: '👑',
+      tagline: isAr ? 'أقصى ظهور وتصميم VIP' : 'חשיפה מקסימלית ועיצוב VIP',
+      requirements: isAr
+        ? ['8+ صور عالية الجودة', 'بيانات كاملة + تاريخ السيارة', 'السعر + مرونة', 'رقم هاتف', 'الموقع', 'فيديو إن وجد (اختياري)', 'أي معلومات تساعد التسويق']
+        : ['8+ תמונות איכותיות', 'פרטי הרכב המלאים + היסטוריה', 'מחיר + גמישות במחיר', 'מספר טלפון לפניות', 'מיקום', 'סרטון אם יש (אופציונלי)', 'כל מידע שיעזור לשיווק'],
+      highlights: [
+        { icon: <Camera size={18} />, label: isAr ? 'صور احترافية' : 'תמונות מקצועיות', value: '8+' },
+        { icon: <Calendar size={18} />, label: isAr ? 'أيام النشر' : 'ימי פרסום', value: '30' },
+        { icon: <Video size={18} />, label: isAr ? 'ريلز + فيديو' : 'רילס + סרטון', value: '✓' },
+        { icon: <DollarSign size={18} />, label: isAr ? 'السعر' : 'מחיר', value: '₪479' },
+      ],
     },
-    highlights: [
-      { icon: <Camera size={18} />, label: 'תמונות מקצועיות', labelAr: 'صور احترافية', value: '8+' },
-      { icon: <Calendar size={18} />, label: 'ימי פרסום', labelAr: 'أيام النشر', value: '30' },
-      { icon: <Video size={18} />, label: 'רילס + סרטון', labelAr: 'ريلز + فيديو', value: '✓' },
-      { icon: <DollarSign size={18} />, label: 'מחיר', labelAr: 'السعر', value: '₪479' },
-    ],
-  },
-  vip: {
-    color: '#d4af37', colorDark: '#b8960c', colorName: 'gold',
-    gradient: 'linear-gradient(160deg, rgba(212,175,55,0.14) 0%, #06060a 45%)',
-    glowBig: 'rgba(212,175,55,0.2)',
-    icon: <Gem size={32} />, badge: '💎', tagline: 'יחס VIP לרכבי יוקרה בלבד', taglineAr: 'معاملة VIP لسيارات الفخامة فقط',
-    requirements: {
-      he: ['15+ תמונות סטילש', 'פרטי הרכב המלאים + כל ההיסטוריה', 'מחיר + האפשרות לניהול מו"מ', 'סרטון הרכב (מועדף)', 'מיקום + זמינות לצילומים', 'כל פרט שמדגיש יוקרה'],
-      ar: ['15+ صور أنيقة', 'بيانات كاملة + كل التاريخ', 'السعر + إمكانية التفاوض', 'فيديو السيارة (مفضل)', 'الموقع + جدول للتصوير', 'كل تفصيل يبرز الفخامة'],
+    vip: {
+      color: '#d4af37', colorDark: '#b8960c',
+      gradient: 'linear-gradient(160deg, rgba(212,175,55,0.14) 0%, #06060a 45%)',
+      glowBig: 'rgba(212,175,55,0.2)',
+      icon: <Gem size={32} />, badge: '💎',
+      tagline: isAr ? 'معاملة VIP لسيارات الفخامة فقط' : 'יחס VIP לרכבי יוקרה בלבד',
+      requirements: isAr
+        ? ['15+ صور أنيقة', 'بيانات كاملة + كل التاريخ', 'السعر + إمكانية التفاوض', 'فيديو السيارة (مفضل)', 'الموقع + جدول للتصوير', 'كل تفصيل يبرز الفخامة']
+        : ['15+ תמונות סטילש', 'פרטי הרכב המלאים + כל ההיסטוריה', 'מחיר + האפשרות לניהול מו"מ', 'סרטון הרכב (מועדף)', 'מיקום + זמינות לצילומים', 'כל פרט שמדגיש יוקרה'],
+      highlights: [
+        { icon: <Camera size={18} />, label: isAr ? 'صور سينمائية' : 'תמונות קולנועיות', value: '15+' },
+        { icon: <Calendar size={18} />, label: isAr ? 'أيام النشر' : 'ימי פרסום', value: '60' },
+        { icon: <Headphones size={18} />, label: isAr ? 'مرافقة 24/7' : 'ליווי 24/7', value: '✓' },
+        { icon: <DollarSign size={18} />, label: isAr ? 'السعر' : 'מחיר', value: '₪749' },
+      ],
     },
-    highlights: [
-      { icon: <Camera size={18} />, label: 'תמונות קולנועיות', labelAr: 'صور سينمائية', value: '15+' },
-      { icon: <Calendar size={18} />, label: 'ימי פרסום', labelAr: 'أيام النشر', value: '60' },
-      { icon: <Headphones size={18} />, label: 'ליווי 24/7', labelAr: 'مرافقة 24/7', value: '✓' },
-      { icon: <DollarSign size={18} />, label: 'מחיר', labelAr: 'السعر', value: '₪749' },
-    ],
-  },
-  duo: {
-    color: '#8b5cf6', colorDark: '#7c3aed', colorName: 'purple',
-    gradient: 'linear-gradient(160deg, rgba(139,92,246,0.14) 0%, #06060a 45%)',
-    glowBig: 'rgba(139,92,246,0.2)',
-    icon: <Zap size={32} />, badge: '🚗🚗', tagline: 'שני רכבים, מחיר אחד משתלם', taglineAr: 'سيارتان بسعر واحد مغرٍ',
-    requirements: {
-      he: ['תמונות לרכב הראשון (לפחות 4)', 'תמונות לרכב השני (לפחות 4)', 'פרטים מלאים לשני הרכבים', 'מחיר לכל רכב בנפרד', 'מספר טלפון לפניות'],
-      ar: ['صور السيارة الأولى (4 على الأقل)', 'صور السيارة الثانية (4 على الأقل)', 'بيانات كاملة للسيارتين', 'سعر لكل سيارة منفرد', 'رقم هاتف للتواصل'],
+    duo: {
+      color: '#8b5cf6', colorDark: '#7c3aed',
+      gradient: 'linear-gradient(160deg, rgba(139,92,246,0.14) 0%, #06060a 45%)',
+      glowBig: 'rgba(139,92,246,0.2)',
+      icon: <Zap size={32} />, badge: '🚗🚗',
+      tagline: isAr ? 'سيارتان بسعر واحد مغرٍ' : 'שני רכבים, מחיר אחד משתלם',
+      requirements: isAr
+        ? ['صور السيارة الأولى (4 على الأقل)', 'صور السيارة الثانية (4 على الأقل)', 'بيانات كاملة للسيارتين', 'سعر لكل سيارة منفرد', 'رقم هاتف للتواصل']
+        : ['תמונות לרכב הראשון (לפחות 4)', 'תמונות לרכב השני (לפחות 4)', 'פרטים מלאים לשני הרכבים', 'מחיר לכל רכב בנפרד', 'מספר טלפון לפניות'],
+      highlights: [
+        { icon: <Car size={18} />, label: isAr ? 'سيارات' : 'רכבים', value: '2' },
+        { icon: <Percent size={18} />, label: isAr ? 'توفير' : 'חיסכון', value: '40%' },
+        { icon: <Calendar size={18} />, label: isAr ? 'أيام النشر' : 'ימי פרסום', value: '14' },
+        { icon: <DollarSign size={18} />, label: isAr ? 'السعر' : 'מחיר', value: '₪389' },
+      ],
     },
-    highlights: [
-      { icon: <Car size={18} />, label: 'רכבים', labelAr: 'سيارات', value: '2' },
-      { icon: <Percent size={18} />, label: 'חיסכון', labelAr: 'توفير', value: '40%' },
-      { icon: <Calendar size={18} />, label: 'ימי פרסום', labelAr: 'أيام النشر', value: '14' },
-      { icon: <DollarSign size={18} />, label: 'מחיר', labelAr: 'السعر', value: '₪389' },
-    ],
-  },
-  business: {
-    color: '#3b82f6', colorDark: '#2563eb', colorName: 'blue',
-    gradient: 'linear-gradient(160deg, rgba(59,130,246,0.14) 0%, #06060a 45%)',
-    glowBig: 'rgba(59,130,246,0.2)',
-    icon: <Building2 size={32} />, badge: '🏢', tagline: 'פתרון עסקי מקצועי לסוכנויות', taglineAr: 'حل تجاري احترافي للوكالات',
-    requirements: {
-      he: ['שם הסוכנות ופרטי קשר', 'כמות רכבים חודשית משוערת', 'פרטי איש קשר לניהול', 'ציפיות ויעדים', 'לוגו הסוכנות (אם יש)'],
-      ar: ['اسم الوكالة وبيانات التواصل', 'العدد الشهري التقريبي للسيارات', 'بيانات مسؤول التواصل', 'التوقعات والأهداف', 'شعار الوكالة (إن وجد)'],
+    business: {
+      color: '#3b82f6', colorDark: '#2563eb',
+      gradient: 'linear-gradient(160deg, rgba(59,130,246,0.14) 0%, #06060a 45%)',
+      glowBig: 'rgba(59,130,246,0.2)',
+      icon: <Building2 size={32} />, badge: '🏢',
+      tagline: isAr ? 'حل تجاري احترافي للوكالات' : 'פתרון עסקי מקצועי לסוכנויות',
+      requirements: isAr
+        ? ['اسم الوكالة وبيانات التواصل', 'العدد الشهري التقريبي للسيارات', 'بيانات مسؤول التواصل', 'التوقعات والأهداف', 'شعار الوكالة (إن وجد)']
+        : ['שם הסוכנות ופרטי קשר', 'כמות רכבים חודשית משוערת', 'פרטי איש קשר לניהול', 'ציפיות ויעדים', 'לוגו הסוכנות (אם יש)'],
+      highlights: [
+        { icon: <Car size={18} />, label: isAr ? 'سيارات/شهر' : 'רכבים/חודש', value: '50' },
+        { icon: <Percent size={18} />, label: isAr ? 'خصم' : 'הנחה', value: '40%' },
+        { icon: <Headphones size={18} />, label: isAr ? 'مدير خاص' : 'מנהל ייעודי', value: '✓' },
+        { icon: <DollarSign size={18} />, label: isAr ? 'السعر/شهر' : 'מחיר/חודש', value: '₪1,499' },
+      ],
     },
-    highlights: [
-      { icon: <Car size={18} />, label: 'רכבים/חודש', labelAr: 'سيارات/شهر', value: '50' },
-      { icon: <Percent size={18} />, label: 'הנחה', labelAr: 'خصم', value: '40%' },
-      { icon: <Headphones size={18} />, label: 'מנהל ייעודי', labelAr: 'مدير خاص', value: '✓' },
-      { icon: <DollarSign size={18} />, label: 'מחיר/חודש', labelAr: 'السعر/شهر', value: '₪1,499' },
-    ],
-  },
-  business100: {
-    color: '#06b6d4', colorDark: '#0891b2', colorName: 'cyan',
-    gradient: 'linear-gradient(160deg, rgba(6,182,212,0.14) 0%, #06060a 45%)',
-    glowBig: 'rgba(6,182,212,0.2)',
-    icon: <Rocket size={32} />, badge: '🚀', tagline: 'סוכנות גדולה? הפתרון הכי חזק', taglineAr: 'وكالة كبيرة؟ الحل الأقوى',
-    requirements: {
-      he: ['שם הסוכנות ופרטי קשר בכיר', 'כמות רכבים חודשית (עד 100)', 'פרטי מנהל ואיש קשר', 'ציפיות ויעדים עסקיים', 'לוגו + חומרי מיתוג אם יש', 'תשתיות דיגיטליות קיימות'],
-      ar: ['اسم الوكالة وبيانات مسؤول رفيع', 'العدد الشهري (حتى 100 سيارة)', 'بيانات المدير والمسؤول', 'التوقعات والأهداف التجارية', 'شعار + مواد هوية إن وجدت', 'البنية الرقمية الحالية'],
+    business100: {
+      color: '#06b6d4', colorDark: '#0891b2',
+      gradient: 'linear-gradient(160deg, rgba(6,182,212,0.14) 0%, #06060a 45%)',
+      glowBig: 'rgba(6,182,212,0.2)',
+      icon: <Rocket size={32} />, badge: '🚀',
+      tagline: isAr ? 'وكالة كبيرة؟ الحل الأقوى' : 'סוכנות גדולה? הפתרון הכי חזק',
+      requirements: isAr
+        ? ['اسم الوكالة وبيانات مسؤول رفيع', 'العدد الشهري (حتى 100 سيارة)', 'بيانات المدير والمسؤول', 'التوقعات والأهداف التجارية', 'شعار + مواد هوية إن وجدت', 'البنية الرقمية الحالية']
+        : ['שם הסוכנות ופרטי קשר בכיר', 'כמות רכבים חודשית (עד 100)', 'פרטי מנהל ואיש קשר', 'ציפיות ויעדים עסקיים', 'לוגו + חומרי מיתוג אם יש', 'תשתיות דיגיטליות קיימות'],
+      highlights: [
+        { icon: <Car size={18} />, label: isAr ? 'سيارات/شهر' : 'רכבים/חודש', value: '100' },
+        { icon: <Percent size={18} />, label: isAr ? 'خصم' : 'הנחה', value: '50%' },
+        { icon: <BarChart3 size={18} />, label: isAr ? 'تقارير أسبوعية' : 'דוחות שבועיים', value: '✓' },
+        { icon: <DollarSign size={18} />, label: isAr ? 'السعر/شهر' : 'מחיר/חודש', value: '₪2,499' },
+      ],
     },
-    highlights: [
-      { icon: <Car size={18} />, label: 'רכבים/חודש', labelAr: 'سيارات/شهر', value: '100' },
-      { icon: <Percent size={18} />, label: 'הנחה', labelAr: 'خصم', value: '50%' },
-      { icon: <BarChart3 size={18} />, label: 'דוחות שבועיים', labelAr: 'تقارير أسبوعية', value: '✓' },
-      { icon: <DollarSign size={18} />, label: 'מחיר/חודש', labelAr: 'السعر/شهر', value: '₪2,499' },
-    ],
-  },
-  'equipment-heavy': {
-    color: '#ea580c', colorDark: '#c2410c', colorName: 'orange',
-    gradient: 'linear-gradient(160deg, rgba(234,88,12,0.14) 0%, #06060a 45%)',
-    glowBig: 'rgba(234,88,12,0.2)',
-    icon: <Truck size={32} />, badge: '🚜', tagline: 'חשיפה מקצועית לציוד כבד', taglineAr: 'ظهور احترافي للمعدات الثقيلة',
-    requirements: {
-      he: ['10+ תמונות של הציוד מכל זווית', 'מפרט טכני מלא (שנה, שעות עבודה, מצב)', 'מחיר מבוקש', 'מיקום הציוד', 'מספר טלפון', 'כל תיעוד רלוונטי (שירות, טסט)'],
-      ar: ['10+ صور للمعدات من كل زاوية', 'المواصفات الفنية كاملة (سنة، ساعات عمل، حالة)', 'السعر المطلوب', 'موقع المعدات', 'رقم هاتف', 'أي وثائق ذات صلة (صيانة، فحص)'],
+    'equipment-heavy': {
+      color: '#ea580c', colorDark: '#c2410c',
+      gradient: 'linear-gradient(160deg, rgba(234,88,12,0.14) 0%, #06060a 45%)',
+      glowBig: 'rgba(234,88,12,0.2)',
+      icon: <Truck size={32} />, badge: '🚜',
+      tagline: isAr ? 'ظهور احترافي للمعدات الثقيلة' : 'חשיפה מקצועית לציוד כבד',
+      requirements: isAr
+        ? ['10+ صور للمعدات من كل زاوية', 'المواصفات الفنية كاملة (سنة، ساعات عمل، حالة)', 'السعر المطلوب', 'موقع المعدات', 'رقم هاتف', 'أي وثائق ذات صلة (صيانة، فحص)']
+        : ['10+ תמונות של הציוד מכל זווית', 'מפרט טכני מלא (שנה, שעות עבודה, מצב)', 'מחיר מבוקש', 'מיקום הציוד', 'מספר טלפון', 'כל תיעוד רלוונטי (שירות, טסט)'],
+      highlights: [
+        { icon: <Camera size={18} />, label: isAr ? 'صور' : 'תמונות', value: '10+' },
+        { icon: <Calendar size={18} />, label: isAr ? 'أيام النشر' : 'ימי פרסום', value: '21' },
+        { icon: <Target size={18} />, label: isAr ? 'جمهور المقاولين' : 'קהל קבלנים', value: '✓' },
+        { icon: <DollarSign size={18} />, label: isAr ? 'السعر' : 'מחיר', value: '₪389' },
+      ],
     },
-    highlights: [
-      { icon: <Camera size={18} />, label: 'תמונות', labelAr: 'صور', value: '10+' },
-      { icon: <Calendar size={18} />, label: 'ימי פרסום', labelAr: 'أيام النشر', value: '21' },
-      { icon: <Target size={18} />, label: 'קהל קבלנים', labelAr: 'جمهور المقاولين', value: '✓' },
-      { icon: <DollarSign size={18} />, label: 'מחיר', labelAr: 'السعر', value: '₪389' },
-    ],
-  },
-  'equipment-light': {
-    color: '#10b981', colorDark: '#059669', colorName: 'emerald',
-    gradient: 'linear-gradient(160deg, rgba(16,185,129,0.14) 0%, #06060a 45%)',
-    glowBig: 'rgba(16,185,129,0.2)',
-    icon: <Wrench size={32} />, badge: '🔧', tagline: 'פרסום מקצועי לציוד קל', taglineAr: 'نشر احترافي للمعدات الخفيفة',
-    requirements: {
-      he: ['6+ תמונות של הציוד', 'מפרט טכני (שנה, מצב, שעות שימוש)', 'מחיר מבוקש', 'מיקום', 'מספר טלפון', 'אחריות/שירות אם רלוונטי'],
-      ar: ['6+ صور للمعدات', 'مواصفات فنية (سنة، حالة، ساعات استخدام)', 'السعر المطلوب', 'الموقع', 'رقم هاتف', 'ضمان/صيانة إن انطبق'],
+    'equipment-light': {
+      color: '#10b981', colorDark: '#059669',
+      gradient: 'linear-gradient(160deg, rgba(16,185,129,0.14) 0%, #06060a 45%)',
+      glowBig: 'rgba(16,185,129,0.2)',
+      icon: <Wrench size={32} />, badge: '🔧',
+      tagline: isAr ? 'نشر احترافي للمعدات الخفيفة' : 'פרסום מקצועי לציוד קל',
+      requirements: isAr
+        ? ['6+ صور للمعدات', 'مواصفات فنية (سنة، حالة، ساعات استخدام)', 'السعر المطلوب', 'الموقع', 'رقم هاتف', 'ضمان/صيانة إن انطبق']
+        : ['6+ תמונות של הציוד', 'מפרט טכני (שנה, מצב, שעות שימוש)', 'מחיר מבוקש', 'מיקום', 'מספר טלפון', 'אחריות/שירות אם רלוונטי'],
+      highlights: [
+        { icon: <Camera size={18} />, label: isAr ? 'صور' : 'תמונות', value: '6+' },
+        { icon: <Calendar size={18} />, label: isAr ? 'أيام النشر' : 'ימי פרסום', value: '14' },
+        { icon: <Users size={18} />, label: isAr ? 'جمهور متخصص' : 'קהל מקצועי', value: '✓' },
+        { icon: <DollarSign size={18} />, label: isAr ? 'السعر' : 'מחיר', value: '₪229' },
+      ],
     },
-    highlights: [
-      { icon: <Camera size={18} />, label: 'תמונות', labelAr: 'صور', value: '6+' },
-      { icon: <Calendar size={18} />, label: 'ימי פרסום', labelAr: 'أيام النشر', value: '14' },
-      { icon: <Users size={18} />, label: 'קהל מקצועי', labelAr: 'جمهور متخصص', value: '✓' },
-      { icon: <DollarSign size={18} />, label: 'מחיר', labelAr: 'السعر', value: '₪229' },
-    ],
-  },
-  transport: {
-    color: '#0ea5e9', colorDark: '#0284c7', colorName: 'sky',
-    gradient: 'linear-gradient(160deg, rgba(14,165,233,0.14) 0%, #06060a 45%)',
-    glowBig: 'rgba(14,165,233,0.2)',
-    icon: <Bus size={32} />, badge: '🚌', tagline: 'הפלטפורמה לרכב מסחרי ותחבורה', taglineAr: 'المنصة للمركبات التجارية والنقل',
-    requirements: {
-      he: ['10+ תמונות מבפנים ומבחוץ', 'מפרט מלא (שנה, ק"מ, כיסאות, מצב)', 'מחיר מבוקש', 'מיקום', 'מספר טלפון', 'רישיונות ותיעוד אם יש'],
-      ar: ['10+ صور من الداخل والخارج', 'مواصفات كاملة (سنة، كم، مقاعد، حالة)', 'السعر المطلوب', 'الموقع', 'رقم هاتف', 'رخص وتوثيق إن وجد'],
+    transport: {
+      color: '#0ea5e9', colorDark: '#0284c7',
+      gradient: 'linear-gradient(160deg, rgba(14,165,233,0.14) 0%, #06060a 45%)',
+      glowBig: 'rgba(14,165,233,0.2)',
+      icon: <Bus size={32} />, badge: '🚌',
+      tagline: isAr ? 'المنصة للمركبات التجارية والنقل' : 'הפלטפורמה לרכב מסחרי ותחבורה',
+      requirements: isAr
+        ? ['10+ صور من الداخل والخارج', 'مواصفات كاملة (سنة، كم، مقاعد، حالة)', 'السعر المطلوب', 'الموقع', 'رقم هاتف', 'رخص وتوثيق إن وجد']
+        : ['10+ תמונות מבפנים ומבחוץ', 'מפרט מלא (שנה, ק"מ, כיסאות, מצב)', 'מחיר מבוקש', 'מיקום', 'מספר טלפון', 'רישיונות ותיעוד אם יש'],
+      highlights: [
+        { icon: <Camera size={18} />, label: isAr ? 'صور' : 'תמונות', value: '10+' },
+        { icon: <Calendar size={18} />, label: isAr ? 'أيام النشر' : 'ימי פרסום', value: '21' },
+        { icon: <Target size={18} />, label: isAr ? 'ظهور مخصص' : 'חשיפה ייעודית', value: '✓' },
+        { icon: <DollarSign size={18} />, label: isAr ? 'السعر' : 'מחיר', value: '₪329' },
+      ],
     },
-    highlights: [
-      { icon: <Camera size={18} />, label: 'תמונות', labelAr: 'صور', value: '10+' },
-      { icon: <Calendar size={18} />, label: 'ימי פרסום', labelAr: 'أيام النشر', value: '21' },
-      { icon: <Target size={18} />, label: 'חשיפה ייעודית', labelAr: 'ظهور مخصص', value: '✓' },
-      { icon: <DollarSign size={18} />, label: 'מחיר', labelAr: 'السعر', value: '₪329' },
-    ],
-  },
+  };
+  return themes[pkgId] || themes['basic'];
 };
 
 const PackageInfoPage = memo(({ pkg, onBook, onBack, lang }: PackageInfoPageProps) => {
-  const theme = PACKAGE_THEMES[pkg.id] || PACKAGE_THEMES['basic'];
+  const theme = getPackageTheme(pkg.id, lang);
   const isAr = lang === 'ar';
   const isMonthly = pkg.id === 'business' || pkg.id === 'business100';
 
@@ -2223,7 +2228,7 @@ const PackageInfoPage = memo(({ pkg, onBook, onBack, lang }: PackageInfoPageProp
                 )}
               </div>
               <p className="text-xl font-bold" style={{ color: theme.color }}>
-                {isAr ? theme.taglineAr : theme.tagline}
+                {theme.tagline}
               </p>
               <p className="text-white/50 text-sm leading-relaxed">
                 {isAr
@@ -2247,7 +2252,7 @@ const PackageInfoPage = memo(({ pkg, onBook, onBack, lang }: PackageInfoPageProp
                 <span style={{ color: theme.color }}>{h.icon}</span>
               </div>
               <div className="text-2xl font-black" style={{ color: theme.color }}>{h.value}</div>
-              <div className="text-[10px] font-bold text-white/45">{isAr ? h.labelAr : h.label}</div>
+              <div className="text-[10px] font-bold text-white/45">{h.label}</div>
             </motion.div>
           ))}
         </motion.div>
@@ -2290,7 +2295,7 @@ const PackageInfoPage = memo(({ pkg, onBook, onBack, lang }: PackageInfoPageProp
           </h2>
           <p className="text-white/45 text-sm">{isAr ? 'يرجى تجهيز المعلومات التالية قبل الحجز:' : 'אנא הכן את המידע הבא לפני ההזמנה:'}</p>
           <div className="space-y-2">
-            {theme.requirements[isAr ? 'ar' : 'he'].map((req, i) => (
+            {theme.requirements.map((req, i) => (
               <motion.div key={i}
                 initial={{ x: -20, opacity: 0 }}
                 animate={revealIdx >= i ? { x: 0, opacity: 1 } : { x: -20, opacity: 0 }}
