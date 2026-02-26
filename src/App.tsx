@@ -220,19 +220,21 @@ const Navbar = memo(({ lang, setLang, isAdmin, onLogout, siteSettings, setView }
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           <div 
-            className="flex items-center gap-3 cursor-pointer"
+            className="flex items-center gap-2.5 cursor-pointer min-w-0"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           >
-            <div className="p-2.5 bg-gradient-to-br from-brand-red to-red-700 rounded-xl shadow-lg shadow-brand-red/20">
-              <Car size={26} className="text-white" />
+            <div className="p-2 bg-gradient-to-br from-brand-red to-red-700 rounded-xl shadow-lg shadow-brand-red/30 shrink-0">
+              <Car size={20} className="text-white" />
             </div>
-            <div>
-              <div className="text-2xl font-black tracking-tighter">
-                <span className="text-brand-red">YOUGO</span> <span className="text-white">ISRAEL</span>
-              </div>
-              <div className="text-[9px] text-white/40 font-bold tracking-wider">
-                {siteSettings.positioning_line_he || t.positioningLine}
-              </div>
+            <div className="flex items-center gap-2 min-w-0 flex-wrap">
+              <span className="text-lg font-black tracking-tight leading-none whitespace-nowrap">
+                <span className="text-brand-red">YOUGO</span>
+                <span className="text-white"> ISRAEL</span>
+              </span>
+              <span className="hidden sm:flex items-center gap-1.5 text-white/25 text-xs font-medium whitespace-nowrap">
+                <span>·</span>
+                <span className="text-white/40">{siteSettings.positioning_line_he || t.positioningLine}</span>
+              </span>
             </div>
           </div>
 
@@ -272,11 +274,11 @@ const Navbar = memo(({ lang, setLang, isAdmin, onLogout, siteSettings, setView }
             {/* Language switcher */}
             <button 
               onClick={() => setLang(lang === 'he' ? 'ar' : 'he')}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl border border-white/10 text-sm font-black hover:bg-white/10 transition-all"
-              style={{ background: 'rgba(255,255,255,0.05)' }}
+              className="flex items-center gap-2 px-3.5 py-2 rounded-xl transition-all hover:scale-105 active:scale-95"
+              style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.13)' }}
             >
-              <Globe size={15} className="text-white/60" />
-              <span className="text-white/80">{lang === 'he' ? 'عربي' : 'עברית'}</span>
+              <span className="text-base leading-none">{lang === 'he' ? '🇸🇦' : '🇮🇱'}</span>
+              <span className="text-sm font-black text-white/85">{lang === 'he' ? 'عربي' : 'עברית'}</span>
             </button>
 
             {isAdmin && (
@@ -295,18 +297,19 @@ const Navbar = memo(({ lang, setLang, isAdmin, onLogout, siteSettings, setView }
               href="https://instagram.com/yougo.israel"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 rounded-lg flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, rgba(228,64,95,0.15), rgba(193,53,132,0.1))', border: '1px solid rgba(228,64,95,0.25)', color: '#f472b6' }}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl transition-all active:scale-95"
+              style={{ background: 'linear-gradient(135deg, rgba(240,84,84,0.18), rgba(193,53,132,0.18))', border: '1px solid rgba(228,64,95,0.35)', color: '#f472b6' }}
             >
-              <Instagram size={18} />
+              <Instagram size={14} strokeWidth={2} />
+              <span className="text-[11px] font-black">עקבו</span>
             </a>
             <button 
               onClick={() => setLang(lang === 'he' ? 'ar' : 'he')}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-white/10 text-xs font-black"
-              style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.8)' }}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl transition-all active:scale-95"
+              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.13)', color: 'rgba(255,255,255,0.9)' }}
             >
-              <Globe size={13} />
-              {lang === 'he' ? 'عربي' : 'עב'}
+              <span className="text-sm leading-none">{lang === 'he' ? '🇸🇦' : '🇮🇱'}</span>
+              <span className="text-[11px] font-black">{lang === 'he' ? 'عربي' : 'עב'}</span>
             </button>
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -462,7 +465,7 @@ const packageDetails: Record<string, { title: string; content: string }> = {
   },
   vip: {
     title: 'VIP LUXURY',
-    content: `💎 מה מקבלים?\n• 15+ תמונות סטילש ברמה קולנועית\n• רילס VIP + סטורי עם עיצוב בלעדי\n• 60 ימי פרסום פרמיום מלא\n• ליווי אישי 24/7 – מנהל לקוח VIP\n• טרגוט מתקדם לפי פרמטרים מדויקים\n• עדיפות ראשונה בכל הפרסומים תמיד\n• קידום ממומן בערוצים נוספים\n\n🏎️ למי זה מיועד?\n• רכבי יוקרה: פורשה, מרצדס, BMW, אאודי\n• רכבי אספנות ונדירים בשוק\n\n⏱️ פרטים טכניים\n• משך פרסום: 60 ימים\n• מחיר: 749 ₪ (במקום 990 ₪)\n• חיסכון של 241 ₪ – 15% הנחה`
+    content: `💎 מה מקבלים?\n• 15+ תמונות סטילש ברמה קולנועית\n• רילס VIP + סטורי עם עיצוב בלעדי\n• 60 ימי פרסום פרמיום מלא\n• ליווי אישי 24/7 – מנהל לקוח VIP\n• טרגוט מתקדם לפי פרמטרים מדויקים\n• עדיפות ראשונה בכל הפרסומים תמיד\n• קידום ממומן בערוצים נוספים\n\n🏎️ למי זה מיועד?\n• רכבי יוקרה: פורשה, מרצדס, BMW, אאודי\n• רכבי אספנות ונדירים בשוק\n\n⏱️ פרטים טכניים\n• משך פרסום: 60 ימים\n• מחיר: 749 ₪ (במקום 882 ₪)\n• חיסכון של 133 ₪ – 15% הנחה`
   },
   duo: {
     title: 'DUO DEAL',
@@ -483,6 +486,10 @@ const packageDetails: Record<string, { title: string; content: string }> = {
   'equipment-light': {
     title: 'ציוד קל',
     content: `🔧 מה כוללת החבילה?\n• 6 תמונות מקצועיות של הציוד\n• פוסט מותאם עם תיאור טכני מלא\n• סטורי 14 ימים לקהל רלוונטי\n• חשיפה לאנשי מקצוע בתחום\n\n🛠️ מתאים לכל סוגי הציוד הקל\n• מלגזות וציוד מחסן\n• פופקטים, ג'קים וציוד הרמה`
+  },
+  'fleet-premium': {
+    title: 'FLEET PREMIUM',
+    content: `🚐 מה כוללת החבילה?\n• 20 תמונות מקצועיות לכל כלי רכב\n• רילס וידאו מרשים עם מוזיקה\n• פוסט שיווקי מותאם אישית\n• סטורי 30 ימים + הייליטס קבוע\n• טרגוט ממוקד לחברות ועסקים\n• ייעוץ תמחור מקצועי\n\n🏢 מיועד ל:\n• ציי רכב עסקיים\n• ליסינג וחברות השכרה\n• מגרשי רכבים מסחריים\n\n⏱️ פרטים טכניים\n• 30 ימי פרסום פרמיום\n• מנהל תיק לקוח ייעודי\n• מחיר: 549 ₪ (במקום 749 ₪)\n• חיסכון של 200 ₪ – 27% הנחה`
   },
   'transport': {
     title: 'תחבורה והסעות',
@@ -1066,15 +1073,9 @@ const TransportPackageCard = memo(({ pkg, onSelect }: { pkg: Package, onSelect: 
 // ============================================================
 // BUSINESS PACKAGE CARD
 // ============================================================
-const BusinessPackageCard = memo(({ pkg, onSelect, isNew }: { pkg: Package, onSelect: (p: Package) => void, isNew?: boolean }) => {
+const BusinessPackageCard = memo(({ pkg, onSelect }: { pkg: Package, onSelect: (p: Package) => void }) => {
   const [showBack, setShowBack] = useState(false);
-  const isPlus = pkg.id === 'business-plus';
-  const color = isPlus ? '#10b981' : '#3b82f6';
-  const cardBg = isPlus ? 'linear-gradient(135deg, #04130e 0%, #071a12 100%)' : 'linear-gradient(135deg, #070f1c 0%, #0d1a2e 100%)';
-  const cardBorder = isPlus ? 'rgba(16,185,129,0.45)' : 'rgba(59,130,246,0.45)';
-  const cardGrad = isPlus ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #3b82f6, #7c3aed)';
-  const origPrice = isPlus ? '1,299' : pkg.id === 'business100' ? '4,999' : '2,499';
-  const offLabel = isPlus ? '31% OFF' : pkg.id === 'business100' ? '50% OFF' : '40% OFF';
+  const color = '#3b82f6';
   const handleSelect = useCallback(() => onSelect(pkg), [onSelect, pkg]);
   const handleShowBack = useCallback(() => setShowBack(true), []);
   const handleHideBack = useCallback(() => setShowBack(false), []);
@@ -1090,88 +1091,195 @@ const BusinessPackageCard = memo(({ pkg, onSelect, isNew }: { pkg: Package, onSe
             exit={{ rotateY: -90, opacity: 0 }}
             transition={{ duration: 0.25 }}
             className="absolute inset-0 rounded-2xl overflow-hidden"
-            style={{ background: cardBg, border: `1.5px solid ${cardBorder}` }}
+            style={{
+              background: 'linear-gradient(135deg, #070f1c 0%, #0d1a2e 50%, #070f1c 100%)',
+              border: '1.5px solid rgba(59,130,246,0.4)',
+            }}
           >
-            <div className="absolute top-0 left-0 right-0 h-[3px]" style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} />
+            <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-blue-400 to-transparent" />
             <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
 
-            <div className="relative z-10 p-5 h-full flex flex-col gap-3">
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
-                    style={{ background: cardGrad }}>
-                    <Building2 size={20} className="text-white" />
+            <div className="relative z-10 p-5 h-full flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center"
+                    style={{ background: 'linear-gradient(135deg, #3b82f6, #7c3aed)' }}>
+                    <Building2 size={22} className="text-white" />
                   </div>
-                  <div className="min-w-0">
-                    <div className="text-[9px] font-black uppercase tracking-[0.15em] truncate" style={{ color }}>{isPlus ? '✨ חדש לשוק' : 'לסוכנויות'}</div>
-                    <h3 className="text-[17px] font-black text-white leading-tight truncate">{pkg.name}</h3>
+                  <div>
+                    <div className="text-[9px] font-black text-blue-400 uppercase tracking-[0.15em]">לסוכנויות</div>
+                    <h3 className="text-[20px] font-black text-white">{pkg.name}</h3>
                   </div>
                 </div>
-                {isNew ? (
-                  <div className="flex items-center gap-1 px-2 py-1 rounded-full border text-[8px] font-black shrink-0 animate-pulse"
-                    style={{ background: `${color}20`, borderColor: `${color}50`, color }}>
-                    חדש!
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-1 px-2 py-1 rounded-full border shrink-0" style={{ background: `${color}15`, borderColor: `${color}25` }}>
-                    <Award size={10} style={{ color }} />
-                    <span className="text-[8px] font-black" style={{ color }}>מומלץ</span>
-                  </div>
-                )}
+                <div className="flex items-center gap-1 bg-blue-500/15 px-2.5 py-1.5 rounded-full border border-blue-500/25">
+                  <Award size={11} className="text-blue-400" />
+                  <span className="text-[8px] font-black text-blue-400">מומלץ</span>
+                </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-1.5">
+              <div className="grid grid-cols-2 gap-2">
                 {[
-                  { icon: <Car size={10} />, val: pkg.features[0]?.split(' ').slice(0,3).join(' ') || '50 רכבים/חודש' },
-                  { icon: <Users size={10} />, val: pkg.features[1]?.split(' ').slice(0,3).join(' ') || 'מנהל ייעודי' },
-                  { icon: <BarChart3 size={10} />, val: pkg.features[2]?.split(' ').slice(0,3).join(' ') || 'דוחות' },
-                  { icon: <Target size={10} />, val: pkg.features[3]?.split(' ').slice(0,3).join(' ') || 'קידום ממומן' },
+                  { icon: <Car size={11} />, val: pkg.features[0] || '50 רכבים/חודש' },
+                  { icon: <Users size={11} />, val: pkg.features[1] || 'מנהל ייעודי' },
+                  { icon: <BarChart3 size={11} />, val: pkg.features[2] || 'דוחות חודשיים' },
+                  { icon: <Target size={11} />, val: pkg.features[3] || 'קידום ממומן' },
                 ].map((s, i) => (
-                  <div key={i} className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg"
-                    style={{ background: `${color}10`, border: `1px solid ${color}20` }}>
-                    <span style={{ color, flexShrink: 0 }}>{s.icon}</span>
-                    <span className="text-[10px] font-black text-white truncate">{s.val}</span>
+                  <div key={i} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/8 border border-white/10">
+                    <span className="text-blue-400">{s.icon}</span>
+                    <span className="text-[10px] font-black text-white">{s.val}</span>
                   </div>
                 ))}
               </div>
 
-              <div className="flex items-baseline gap-2 flex-wrap">
-                <span className="text-[28px] font-black text-white leading-none">{pkg.price}</span>
+              <div className="flex items-baseline gap-2">
+                <span className="text-[32px] font-black text-white leading-none">{pkg.price}</span>
                 <span className="text-xs text-white/30">/חודש</span>
-                <span className="text-xs line-through text-white/20">₪{origPrice}</span>
-                <span className="text-[9px] font-black bg-green-500/15 text-green-400 px-1.5 py-0.5 rounded-full border border-green-500/25">{offLabel}</span>
+                <span className="text-xs line-through text-white/20 mr-1">₪{Math.round(parseInt(pkg.price.replace(/[₪,]/g, '')) / 0.6)}</span>
+                <span className="text-[9px] font-black bg-green-500/15 text-green-400 px-1.5 py-0.5 rounded-full border border-green-500/25">{pkg.id === 'business100' ? '50% OFF' : '40% OFF'}</span>
               </div>
 
-              <div className="h-px" style={{ background: `linear-gradient(90deg, transparent, ${color}30, transparent)` }} />
+              <div className="h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(59,130,246,0.3), transparent)' }} />
 
-              <div className="flex flex-col gap-1.5 flex-grow">
+              <div className="flex flex-col gap-2 flex-grow">
                 {pkg.features.slice(0, 4).map((f, i) => (
-                  <div key={i} className="flex items-start gap-2">
-                    <div className="w-4 h-4 rounded-md flex items-center justify-center shrink-0 mt-[1px]"
-                      style={{ background: `${color}20`, border: `1.5px solid ${color}40` }}>
-                      <Check size={8} strokeWidth={3} style={{ color }} />
+                  <div key={i} className="flex items-start gap-2.5">
+                    <div className="w-4 h-4 rounded-md flex items-center justify-center shrink-0 mt-[1px] bg-blue-500/20"
+                      style={{ border: '1.5px solid rgba(59,130,246,0.4)' }}>
+                      <Check size={8} strokeWidth={3} className="text-blue-400" />
                     </div>
-                    <span className="text-[11px] font-medium text-white/80 leading-snug">{f}</span>
+                    <span className="text-[12px] font-medium text-white/82 leading-snug">{f}</span>
                   </div>
                 ))}
               </div>
 
-              <div className="flex gap-2 mt-auto">
+              <div className="flex gap-2.5 mt-auto">
                 <button type="button" onClick={handleShowBack}
-                  className="flex-1 py-2.5 rounded-xl font-black text-xs active:scale-95 transition-all"
-                  style={{ border: `1.5px solid ${color}35`, color, background: `${color}08` }}>
-                  פרטים
+                  className="flex-1 py-3 rounded-xl font-black text-xs active:scale-95 transition-all text-blue-400"
+                  style={{ border: '1.5px solid rgba(59,130,246,0.35)', background: 'rgba(59,130,246,0.08)' }}>
+                  פרטים נוספים
                 </button>
                 <button type="button" onClick={handleSelect}
-                  className="flex-1 py-2.5 rounded-xl font-black text-xs text-white active:scale-95 transition-all flex items-center justify-center gap-1"
-                  style={{ background: cardGrad }}>
-                  <Briefcase size={11} />התחל
+                  className="flex-1 py-3 rounded-xl font-black text-xs text-white active:scale-95 transition-all flex items-center justify-center gap-1.5"
+                  style={{ background: 'linear-gradient(135deg, #3b82f6, #7c3aed)' }}>
+                  <Briefcase size={12} />התחל
                 </button>
               </div>
             </div>
           </motion.div>
         ) : (
           <CardBackPanel pkg={pkg} details={packageDetails[pkg.id] || { title: pkg.name, content: pkg.features.join('\n') }} color={color} badge={<Building2 size={20} />} onSelect={handleSelect} onBack={handleHideBack} />
+        )}
+      </AnimatePresence>
+    </div>
+  );
+});
+
+
+// ============================================================
+// FLEET PREMIUM PACKAGE CARD
+// ============================================================
+const FleetPremiumPackageCard = memo(({ pkg, onSelect }: { pkg: Package, onSelect: (p: Package) => void }) => {
+  const [showBack, setShowBack] = useState(false);
+  const color = '#8b5cf6';
+  const handleSelect = useCallback(() => onSelect(pkg), [onSelect, pkg]);
+  const handleShowBack = useCallback(() => setShowBack(true), []);
+  const handleHideBack = useCallback(() => setShowBack(false), []);
+
+  return (
+    <div className="relative w-full h-full" style={{ borderRadius: '1.25rem' }}>
+      <AnimatePresence mode="wait" initial={false}>
+        {!showBack ? (
+          <motion.div
+            key="front"
+            initial={{ rotateY: 90, opacity: 0 }}
+            animate={{ rotateY: 0, opacity: 1 }}
+            exit={{ rotateY: -90, opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="absolute inset-0 rounded-2xl overflow-hidden"
+            style={{
+              background: 'linear-gradient(135deg, #0d0818 0%, #130d22 50%, #0a0612 100%)',
+              border: '1.5px solid rgba(139,92,246,0.45)',
+            }}
+          >
+            <div className="absolute top-0 left-0 right-0 h-[3px]" style={{ background: 'linear-gradient(90deg, transparent, #8b5cf6, #c026d3, transparent)' }} />
+            <div className="absolute top-0 right-0 w-48 h-48 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 10%, rgba(139,92,246,0.18) 0%, transparent 65%)' }} />
+            <div className="absolute inset-0 opacity-4" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+
+            <div className="relative z-10 p-5 h-full flex flex-col gap-3">
+              {/* Header */}
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+                    style={{ background: 'linear-gradient(135deg, #8b5cf6, #c026d3)' }}>
+                    <Truck size={20} className="text-white" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[9px] font-black uppercase tracking-[0.15em] text-purple-400">✨ מומלץ לעסקים</div>
+                    <h3 className="text-[16px] font-black text-white leading-tight">FLEET PREMIUM</h3>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 px-2 py-1 rounded-full border shrink-0 animate-pulse"
+                  style={{ background: 'rgba(139,92,246,0.2)', borderColor: 'rgba(139,92,246,0.5)', color: '#a78bfa' }}>
+                  <Zap size={9} />
+                  <span className="text-[8px] font-black">חדש</span>
+                </div>
+              </div>
+
+              {/* Features grid */}
+              <div className="grid grid-cols-2 gap-1.5">
+                {[
+                  { icon: <Camera size={10} />, val: '20 תמונות' },
+                  { icon: <Video size={10} />, val: 'רילס וידאו' },
+                  { icon: <Calendar size={10} />, val: '30 יום פרסום' },
+                  { icon: <Target size={10} />, val: 'טרגוט עסקי' },
+                ].map((s, i) => (
+                  <div key={i} className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg"
+                    style={{ background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.2)' }}>
+                    <span className="text-purple-400 shrink-0">{s.icon}</span>
+                    <span className="text-[10px] font-black text-white truncate">{s.val}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Price */}
+              <div className="flex items-baseline gap-2 flex-wrap">
+                <span className="text-[30px] font-black text-white leading-none">{pkg.price}</span>
+                <span className="text-xs line-through text-white/25">₪749</span>
+                <span className="text-[9px] font-black bg-green-500/15 text-green-400 px-1.5 py-0.5 rounded-full border border-green-500/25">27% OFF</span>
+              </div>
+
+              <div className="h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(139,92,246,0.3), transparent)' }} />
+
+              {/* Feature list */}
+              <div className="flex flex-col gap-1.5 flex-grow">
+                {pkg.features.slice(0, 5).map((f, i) => (
+                  <div key={i} className="flex items-start gap-2">
+                    <div className="w-4 h-4 rounded-md flex items-center justify-center shrink-0 mt-[1px]"
+                      style={{ background: 'rgba(139,92,246,0.2)', border: '1.5px solid rgba(139,92,246,0.4)' }}>
+                      <Check size={8} strokeWidth={3} className="text-purple-400" />
+                    </div>
+                    <span className="text-[11px] font-medium text-white/80 leading-snug">{f}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Buttons */}
+              <div className="flex gap-2 mt-auto">
+                <button type="button" onClick={handleShowBack}
+                  className="flex-1 py-2.5 rounded-xl font-black text-xs active:scale-95 transition-all text-purple-400"
+                  style={{ border: '1.5px solid rgba(139,92,246,0.35)', background: 'rgba(139,92,246,0.08)' }}>
+                  פרטים
+                </button>
+                <button type="button" onClick={handleSelect}
+                  className="flex-1 py-2.5 rounded-xl font-black text-xs text-white active:scale-95 transition-all flex items-center justify-center gap-1"
+                  style={{ background: 'linear-gradient(135deg, #8b5cf6, #c026d3)' }}>
+                  <Zap size={11} />הזמן
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        ) : (
+          <CardBackPanel pkg={pkg} details={packageDetails['fleet-premium']} color={color} badge={<Truck size={20} />} onSelect={handleSelect} onBack={handleHideBack} />
         )}
       </AnimatePresence>
     </div>
@@ -1355,83 +1463,6 @@ const Modal = memo(({ isOpen, onClose, title, children }: { isOpen: boolean, onC
   );
 });
 
-// --- Review Form ---
-const ReviewForm = memo(({ onClose }: { onClose: () => void }) => {
-  const [rating, setRating] = useState(0);
-  const [hoverRating, setHoverRating] = useState(0);
-  const [name, setName] = useState('');
-  const [location, setLocation] = useState('');
-  const [pkg, setPkg] = useState('');
-  const [text, setText] = useState('');
-  const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState('');
-
-  const handleSubmit = useCallback(() => {
-    if (!rating) { setError('נא לבחור דירוג'); return; }
-    if (!name.trim()) { setError('נא להזין שם'); return; }
-    if (text.trim().length < 15) { setError('מינימום 15 תווים'); return; }
-    setError('');
-    setSubmitted(true);
-  }, [rating, name, text]);
-
-  if (submitted) return (
-    <div className="space-y-3 py-4 text-center">
-      <div className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center" style={{ background: 'rgba(251,191,36,0.15)', border: '1px solid rgba(251,191,36,0.3)' }}>
-        <Check size={28} className="text-amber-400" />
-      </div>
-      <h3 className="text-lg font-black text-white">תודה! 🙏</h3>
-      <p className="text-white/50 text-sm">הביקורת תפורסם לאחר אישור הצוות.</p>
-      <button onClick={onClose} className="mt-2 px-5 py-2 rounded-xl text-sm font-black" style={{ background: 'rgba(251,191,36,0.15)', color: '#fbbf24', border: '1px solid rgba(251,191,36,0.3)' }}>סגור</button>
-    </div>
-  );
-
-  return (
-    <div className="space-y-4 text-right" dir="rtl">
-      <div className="flex items-center justify-between">
-        <button onClick={onClose} className="text-white/30 hover:text-white/60 transition-colors"><X size={16} /></button>
-        <h3 className="text-base font-black text-white">✍️ כתוב ביקורת</h3>
-      </div>
-      <p className="text-white/40 text-xs text-center">תפורסם לאחר אישור הצוות</p>
-      <div className="flex items-center justify-center gap-2 py-1">
-        {[1,2,3,4,5].map(s => (
-          <button key={s} type="button" onMouseEnter={() => setHoverRating(s)} onMouseLeave={() => setHoverRating(0)} onClick={() => setRating(s)} className="transition-transform hover:scale-125 active:scale-110">
-            <Star size={28} className={s <= (hoverRating || rating) ? 'text-amber-400 fill-amber-400' : 'text-white/15'} />
-          </button>
-        ))}
-      </div>
-      {rating > 0 && <p className="text-center text-xs font-black text-amber-400">{['','גרוע','סביר','טוב','מצוין','מושלם! 🔥'][rating]}</p>}
-      <div className="grid grid-cols-2 gap-2">
-        <div className="space-y-1">
-          <label className="text-[10px] font-black text-white/40">שם (ראשי תיבות) *</label>
-          <input type="text" placeholder="ישראל י." value={name} onChange={e => setName(e.target.value)} className="w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none transition-all text-right text-white" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)' }} />
-        </div>
-        <div className="space-y-1">
-          <label className="text-[10px] font-black text-white/40">עיר</label>
-          <input type="text" placeholder="תל אביב" value={location} onChange={e => setLocation(e.target.value)} className="w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none transition-all text-right text-white" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)' }} />
-        </div>
-      </div>
-      <div className="space-y-1">
-        <label className="text-[10px] font-black text-white/40">חבילה</label>
-        <select value={pkg} onChange={e => setPkg(e.target.value)} className="w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none transition-all text-right" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: pkg ? 'white' : 'rgba(255,255,255,0.4)' }}>
-          <option value="">בחר חבילה...</option>
-          {['BASIC','PRO','PREMIUM','VIP LUXURY','DUO DEAL','BUSINESS PLUS','BUSINESS','BUSINESS 100','ציוד כבד','ציוד קל','תחבורה'].map(p => (
-            <option key={p} value={p} style={{ background: '#0f0f14', color: 'white' }}>{p}</option>
-          ))}
-        </select>
-      </div>
-      <div className="space-y-1">
-        <label className="text-[10px] font-black text-white/40">הביקורת שלך *</label>
-        <textarea value={text} onChange={e => setText(e.target.value)} rows={3} placeholder="ספר על החוויה עם YOUGO..." className="w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none transition-all resize-none text-right text-white" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)' }} />
-        <div className="text-[9px] text-white/25 text-left">{text.length} / 15 מינימום</div>
-      </div>
-      {error && <p className="text-red-400 text-xs font-bold text-center">{error}</p>}
-      <button onClick={handleSubmit} className="w-full py-3.5 rounded-xl font-black text-sm text-white transition-all hover:opacity-90 active:scale-98" style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)', boxShadow: '0 4px 15px rgba(245,158,11,0.3)' }}>
-        שלח ביקורת לאישור 🚀
-      </button>
-    </div>
-  );
-});
-
 // --- Order Status Check ---
 const OrderStatusCheck = memo(({ onClose }: { onClose: () => void }) => {
   const [orderNumber, setOrderNumber] = useState('');
@@ -1512,19 +1543,20 @@ const OrderStatusCheck = memo(({ onClose }: { onClose: () => void }) => {
 // CHANGE PACKAGE MODAL
 // ============================================================
 const ChangePackageModal = memo(({
-  isOpen, onClose, currentPackageId, packages, vipPackage, duoPackage, equipmentPackages, businessPlusPackage, businessPackage, businessPackage100, transportPackage, onSelect, lang
+  isOpen, onClose, currentPackageId, packages, vipPackage, duoPackage, equipmentPackages, businessPackage, businessPackage100, transportPackage, fleetPremiumPackage, onSelect, lang
 }: {
   isOpen: boolean; onClose: () => void; currentPackageId: string; packages: Package[]; vipPackage: Package;
-  duoPackage: Package; equipmentPackages: Package[]; businessPlusPackage: Package; businessPackage: Package; businessPackage100: Package; transportPackage: Package;
+  duoPackage: Package; equipmentPackages: Package[]; businessPackage: Package; businessPackage100: Package; transportPackage: Package; fleetPremiumPackage: Package;
   onSelect: (p: Package) => void; lang: Language;
 }) => {
-  const allPackages = useMemo(() => [...packages, vipPackage, duoPackage, businessPlusPackage, businessPackage, businessPackage100, ...equipmentPackages, transportPackage], [packages, vipPackage, duoPackage, businessPlusPackage, businessPackage, businessPackage100, equipmentPackages, transportPackage]);
+  const allPackages = useMemo(() => [...packages, vipPackage, duoPackage, businessPackage, businessPackage100, ...equipmentPackages, transportPackage, fleetPremiumPackage], [packages, vipPackage, duoPackage, businessPackage, businessPackage100, equipmentPackages, transportPackage, fleetPremiumPackage]);
 
   const getPackageStyle = useCallback((pkg: Package) => {
     if (pkg.id === 'vip') return { border: 'border-amber-500/40', bg: 'bg-amber-500/10', badge: <Crown size={16} />, color: 'text-amber-400', activeBorder: 'border-amber-400' };
     if (pkg.id === 'duo') return { border: 'border-purple-500/40', bg: 'bg-purple-500/10', badge: <Car size={16} />, color: 'text-purple-400', activeBorder: 'border-purple-400' };
     if (pkg.id === 'business') return { border: 'border-blue-500/40', bg: 'bg-blue-500/10', badge: <Building2 size={16} />, color: 'text-blue-400', activeBorder: 'border-blue-400' };
     if (pkg.id === 'business100') return { border: 'border-blue-500/40', bg: 'bg-blue-500/10', badge: <Building2 size={16} />, color: 'text-blue-400', activeBorder: 'border-blue-400' };
+    if (pkg.id === 'fleet-premium') return { border: 'border-purple-500/40', bg: 'bg-purple-500/10', badge: <Truck size={16} />, color: 'text-purple-400', activeBorder: 'border-purple-400' };
     if (pkg.id === 'equipment-heavy') return { border: 'border-orange-500/40', bg: 'bg-orange-500/10', badge: <Truck size={16} />, color: 'text-orange-400', activeBorder: 'border-orange-400' };
     if (pkg.id === 'equipment-light') return { border: 'border-slate-500/40', bg: 'bg-slate-500/10', badge: <Wrench size={16} />, color: 'text-slate-400', activeBorder: 'border-slate-400' };
     if (pkg.id === 'transport') return { border: 'border-sky-500/40', bg: 'bg-sky-500/10', badge: <Bus size={16} />, color: 'text-sky-400', activeBorder: 'border-sky-400' };
@@ -1587,8 +1619,8 @@ const CarDetailsForm = memo(({ formData, setFormData, onNext, selectedPackage, o
   formData: any, setFormData: (data: any) => void, onNext: () => void, selectedPackage: Package | null, onChangePackage: () => void
 }) => {
   const isDuo = selectedPackage?.id === 'duo';
-  const isBusiness = selectedPackage?.id === 'business' || selectedPackage?.id === 'business100' || selectedPackage?.id === 'business-plus';
-  const isTransport = selectedPackage?.id === 'transport';
+  const isBusiness = selectedPackage?.id === 'business' || selectedPackage?.id === 'business100';
+  const isTransport = selectedPackage?.id === 'transport' || selectedPackage?.id === 'fleet-premium';
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -1846,10 +1878,10 @@ const PaymentForm = memo(({ formData, setFormData, selectedPackage, onSubmit, lo
     : Math.round(basePrice * discount / 100);
   const finalPrice = Math.max(0, basePrice - discountAmount);
 
-  const isBusiness = selectedPackage?.id === 'business' || selectedPackage?.id === 'business100' || selectedPackage?.id === 'business-plus';
+  const isBusiness = selectedPackage?.id === 'business' || selectedPackage?.id === 'business100';
   const isDuo = selectedPackage?.id === 'duo';
   const isTransport = selectedPackage?.id === 'transport';
-  const accentColor = isBusiness ? '#3b82f6' : isDuo ? '#8b5cf6' : isTransport ? '#0ea5e9' : '#c8102e';
+  const accentColor = isBusiness ? '#3b82f6' : isDuo ? '#8b5cf6' : selectedPackage?.id === 'fleet-premium' ? '#8b5cf6' : isTransport ? '#0ea5e9' : '#c8102e';
   const accentBorder = isBusiness ? 'border-blue-500/30' : isDuo ? 'border-purple-500/30' : isTransport ? 'border-sky-500/30' : 'border-brand-red/20';
   const accentBg = isBusiness ? 'from-blue-500/10' : isDuo ? 'from-purple-500/10' : isTransport ? 'from-sky-500/10' : 'from-brand-red/10';
 
@@ -2047,7 +2079,6 @@ function App() {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [showAllFaqs, setShowAllFaqs] = useState(false);
   const [showAllReviews, setShowAllReviews] = useState(false);
-  const [showReviewForm, setShowReviewForm] = useState(false);
   const [modalContent, setModalContent] = useState<{ title: string; content: string } | null>(null);
   const [showChangePackage, setShowChangePackage] = useState(false);
   const [siteSettings, setSiteSettings] = useState<any>({
@@ -2080,9 +2111,9 @@ function App() {
 
   const vipPackage: Package = useMemo(() => ({ id: 'vip', name: 'VIP LUXURY', price: '₪749', vip: true, features: ['15+ תמונות מקצועיות', 'רילס + סטורי VIP', '60 ימי פרסום פרמיום', 'חשיפה מקסימלית', 'ליווי אישי 24/7', 'עיצוב VIP בלעדי', 'טרגוט מתקדם', 'עדיפות ראשונה תמיד'] }), []);
   const duoPackage: Package = useMemo(() => ({ id: 'duo', name: 'DUO DEAL', price: '₪389', features: ['פרסום 2 רכבים במחיר מיוחד', '4 תמונות לכל רכב', 'פוסט נפרד לכל רכב', 'סטורי 14 יום לכל אחד', 'חשיפה כפולה לקהל מעוניין', 'חיסכון של 40% לעומת 2 חבילות'] }), []);
-  const businessPlusPackage: Package = useMemo(() => ({ id: 'business-plus', name: 'BUSINESS PLUS', price: '₪899', business: true, features: ['עד 25 רכבים בחודש', 'מנהל לקוח ייעודי', 'דוחות שבועיים', 'קידום ממומן מוגבר', 'עיצוב מקצועי', 'תמיכה 24/7'] }), []);
   const businessPackage: Package = useMemo(() => ({ id: 'business', name: 'BUSINESS', price: '₪1,499', business: true, features: ['עד 50 רכבים בחודש', 'מנהל לקוח ייעודי', 'דוחות ביצועים חודשיים', 'קידום ממומן', 'עיצוב מקצועי לכל מודעה'] }), []);
   const businessPackage100: Package = useMemo(() => ({ id: 'business100', name: 'BUSINESS 100', price: '₪2,499', business: true, features: ['עד 100 רכבים בחודש', 'מנהל לקוח בכיר', 'דוחות שבועיים', 'קידום ממומן מוגבר', 'עיצוב VIP', 'אנליטיקס מתקדם', 'תמיכה 24/7'] }), []);
+  const fleetPremiumPackage: Package = useMemo(() => ({ id: 'fleet-premium', name: 'FLEET PREMIUM', price: '₪549', equipment: true, features: ['20 תמונות מקצועיות', 'רילס וידאו מרשים', 'סטורי 30 יום + הייליטס', 'טרגוט לחברות ועסקים', 'ייעוץ תמחור מקצועי', 'מנהל תיק לקוח', 'ציי רכב · ליסינג · מגרשים'] }), []);
   const transportPackage: Package = useMemo(() => ({ id: 'transport', name: 'תחבורה והסעות', price: '₪329', features: ['10 תמונות מקצועיות מבפנים ומבחוץ', 'פוסט עם מפרט טכני מלא ומדויק', 'סטורי 21 ימים לחשיפה רחבה', 'חשיפה ייעודית לחברות הסעות ותחבורה', 'טרגוט מדויק לרוכשי רכב מסחרי', 'ייעוץ תמחור מקצועי', 'מאפיין לאוטובוסים, מיניבוסים, וואנים ומשאיות'] }), []);
   const equipmentPackages: Package[] = useMemo(() => [
     { id: 'equipment-heavy', name: 'חבילת ציוד כבד', price: '₪389', equipment: true, features: ['10 תמונות מקצועיות של הציוד', 'פוסט ייעודי עם מפרט טכני', 'סטורי 21 יום', 'חשיפה לקהל קבלנים ומגזר הבנייה', 'עדיפות בתוצאות חיפוש', 'ייעוץ תמחור מקצועי'] },
@@ -2168,7 +2199,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen text-white w-full overflow-x-hidden" style={{ background: 'linear-gradient(180deg, #06060a 0%, #0a0508 40%, #06060a 100%)' }}>
+    <div className="min-h-screen text-white overflow-x-hidden w-full" style={{ background: 'linear-gradient(180deg, #06060a 0%, #0a0508 40%, #06060a 100%)' }}>
       <style>{`
         :root { --brand-red: #c8102e; }
         .text-brand-red { color: #c8102e !important; }
@@ -2369,8 +2400,8 @@ function App() {
               {/* REGULAR PACKAGES */}
               <div className="space-y-8">
                 {/* === SECTION HEADER: רכב פרטי === */}
-                <div className="relative rounded-3xl p-4 sm:p-6 md:p-10"
-                  style={{ background: 'linear-gradient(135deg, rgba(200,16,46,0.08) 0%, rgba(10,10,15,0.95) 50%, rgba(6,6,10,1) 100%)', border: '1px solid rgba(200,16,46,0.18)', borderRadius: '1.5rem' }}>
+                <div className="relative rounded-3xl p-5 sm:p-7 md:p-10"
+                  style={{ background: 'linear-gradient(135deg, rgba(200,16,46,0.10) 0%, rgba(10,10,15,0.97) 50%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(200,16,46,0.35)' }}>
                   <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(200,16,46,0.12) 0%, transparent 65%)' }} />
                   <div className="absolute bottom-0 left-0 w-48 h-48 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 20% 80%, rgba(200,16,46,0.06) 0%, transparent 65%)' }} />
 
@@ -2388,23 +2419,35 @@ function App() {
                         שלוש חבילות מדורגות לכל תקציב ומטרה. מחבילת הכניסה הבסיסית ועד הפרמיום המלא – כל אחת מותאמת לסוג הרכב ולמטרת המכירה שלך.
                       </p>
                     </div>
-                    <div className="grid grid-cols-3 md:flex md:flex-col gap-2 md:shrink-0 w-full md:w-auto">
+                    <div className="flex flex-row flex-wrap md:flex-col gap-2 md:shrink-0 justify-start">
                       {[
                         { value: '₪199', label: 'מחבילה', color: '#94a3b8', icon: <DollarSign size={12} /> },
                         { value: '1,000+', label: 'מכירות', color: '#c8102e', icon: <Trophy size={12} /> },
                         { value: '7-30', label: 'ימי פרסום', color: '#4ade80', icon: <Calendar size={12} /> },
                       ].map((s, i) => (
-                        <div key={i} className="flex items-center gap-2 px-2.5 py-2 rounded-xl flex-1 min-w-0"
+                        <div key={i} className="flex items-center gap-2 px-2.5 py-2 rounded-xl"
                           style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
                           <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
                             <span style={{ color: s.color }}>{s.icon}</span>
                           </div>
                           <div className="min-w-0">
-                            <div className="text-xs font-black leading-tight truncate" style={{ color: s.color }}>{s.value}</div>
-                            <div className="text-[9px] text-white/30 font-bold truncate">{s.label}</div>
+                            <div className="text-xs font-black leading-tight" style={{ color: s.color }}>{s.value}</div>
+                            <div className="text-[9px] text-white/30 font-bold">{s.label}</div>
                           </div>
                         </div>
                       ))}
+                    </div>
+                  </div>
+                  <div className="relative z-10 mt-4 pt-4" style={{ borderTop: '1px solid rgba(200,16,46,0.15)' }}>
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <button onClick={() => document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' })}
+                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-sm text-white transition-all hover:opacity-90 hover:scale-105 active:scale-95"
+                        style={{ background: 'linear-gradient(135deg, #c8102e, #a50d25)', boxShadow: '0 4px 18px rgba(200,16,46,0.4)' }}>
+                        <Sparkles size={13} />
+                        בחר חבילה עכשיו
+                        <ChevronDown size={13} />
+                      </button>
+                      <span className="text-[11px] text-white/30">3 חבילות · מתחיל מ-₪199</span>
                     </div>
                   </div>
                 </div>
@@ -2426,11 +2469,22 @@ function App() {
                 </div>
               </div>
 
+              {/* ── SECTION DIVIDER ── */}
+              <div className="flex items-center justify-center gap-3 py-2">
+                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.07))' }} />
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-white/15 block" />
+                  <span className="w-2 h-2 rounded-full bg-brand-red/40 block" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-white/15 block" />
+                </div>
+                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.07), transparent)' }} />
+              </div>
+
               {/* VIP + DUO */}
               <div className="space-y-8">
                 {/* === SECTION HEADER: VIP === */}
-                <div className="relative rounded-3xl p-4 sm:p-6 md:p-10"
-                  style={{ background: 'linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(10,10,15,0.95) 50%, rgba(6,6,10,1) 100%)', border: '1px solid rgba(212,175,55,0.2)', borderRadius: '1.5rem' }}>
+                <div className="relative rounded-3xl p-5 sm:p-7 md:p-10"
+                  style={{ background: 'linear-gradient(135deg, rgba(212,175,55,0.10) 0%, rgba(10,10,15,0.97) 50%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(212,175,55,0.35)' }}>
                   <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(212,175,55,0.1) 0%, transparent 65%)' }} />
 
                   <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
@@ -2447,23 +2501,35 @@ function App() {
                         לרכבי יוקרה וכאלה שמוכרים שני רכבים בבת אחת – שתי חבילות ייחודיות עם שירות אישי, עיצוב בלעדי, וחסכון משמעותי.
                       </p>
                     </div>
-                    <div className="grid grid-cols-3 md:flex md:flex-col gap-2 md:shrink-0 w-full md:w-auto">
+                    <div className="flex flex-row flex-wrap md:flex-col gap-2 md:shrink-0 justify-start">
                       {[
                         { value: '60 יום', label: 'פרסום VIP', color: '#d4af37', icon: <Calendar size={12} /> },
                         { value: '40%', label: 'חיסכון DUO', color: '#8b5cf6', icon: <Percent size={12} /> },
                         { value: '24/7', label: 'ליווי אישי', color: '#4ade80', icon: <Headphones size={12} /> },
                       ].map((s, i) => (
-                        <div key={i} className="flex items-center gap-2 px-2.5 py-2 rounded-xl flex-1 min-w-0"
+                        <div key={i} className="flex items-center gap-2 px-2.5 py-2 rounded-xl"
                           style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
                           <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
                             <span style={{ color: s.color }}>{s.icon}</span>
                           </div>
                           <div className="min-w-0">
-                            <div className="text-xs font-black leading-tight truncate" style={{ color: s.color }}>{s.value}</div>
-                            <div className="text-[9px] text-white/30 font-bold truncate">{s.label}</div>
+                            <div className="text-xs font-black leading-tight" style={{ color: s.color }}>{s.value}</div>
+                            <div className="text-[9px] text-white/30 font-bold">{s.label}</div>
                           </div>
                         </div>
                       ))}
+                    </div>
+                  </div>
+                  <div className="relative z-10 mt-4 pt-4" style={{ borderTop: '1px solid rgba(212,175,55,0.15)' }}>
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <button onClick={() => document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' })}
+                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-sm text-white transition-all hover:opacity-90 hover:scale-105 active:scale-95"
+                        style={{ background: 'linear-gradient(135deg, #d4af37, #b8860b)', boxShadow: '0 4px 18px rgba(212,175,55,0.4)' }}>
+                        <Crown size={13} />
+                        לחבילות VIP ו-DUO
+                        <ChevronDown size={13} />
+                      </button>
+                      <span className="text-[11px] text-white/30">יוקרה · חיסכון 40%</span>
                     </div>
                   </div>
                 </div>
@@ -2481,11 +2547,22 @@ function App() {
                 </div>
               </div>
 
+              {/* ── SECTION DIVIDER ── */}
+              <div className="flex items-center justify-center gap-3 py-2">
+                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.07))' }} />
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-white/15 block" />
+                  <span className="w-2 h-2 rounded-full bg-brand-red/40 block" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-white/15 block" />
+                </div>
+                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.07), transparent)' }} />
+              </div>
+
               {/* BUSINESS */}
-              <div className="max-w-3xl mx-auto space-y-8">
+              <div className="space-y-8">
                 {/* === SECTION HEADER: Business === */}
-                <div className="relative rounded-3xl p-4 sm:p-6 md:p-10"
-                  style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.08) 0%, rgba(10,10,15,0.95) 50%, rgba(6,6,10,1) 100%)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: '1.5rem' }}>
+                <div className="relative rounded-3xl p-5 sm:p-7 md:p-10"
+                  style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.10) 0%, rgba(10,10,15,0.97) 50%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(59,130,246,0.35)' }}>
                   <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(59,130,246,0.1) 0%, transparent 65%)' }} />
                   <div className="absolute inset-0 opacity-3" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
 
@@ -2497,37 +2574,48 @@ function App() {
                         <span className="text-[10px] font-black tracking-wider text-blue-400 uppercase">לסוכנויות ועסקים</span>
                       </div>
                       <h3 className="text-2xl md:text-3xl font-black text-white leading-tight">
-                        פתרונות <span className="text-blue-400">לעסקים</span>
+                        פתרון מקצועי <span className="text-blue-400">לעסקים?</span>
                       </h3>
                       <p className="text-white/45 text-sm leading-relaxed max-w-lg">
                         חבילות מותאמות לסוכנויות רכב, עם אפשרויות גמישות לניהול מלא. עד 100 רכבים בחודש, מנהל לקוח ייעודי ודוחות שבועיים.
                       </p>
                     </div>
-                    <div className="grid grid-cols-3 md:flex md:flex-col gap-2 md:shrink-0 w-full md:w-auto">
+                    <div className="flex flex-row flex-wrap md:flex-col gap-2 md:shrink-0 justify-start">
                       {[
                         { value: '50-100', label: 'רכבים/חודש', color: '#3b82f6', icon: <Car size={12} /> },
                         { value: '40-50%', label: 'הנחה', color: '#4ade80', icon: <Percent size={12} /> },
                         { value: '24/7', label: 'תמיכה', color: '#a78bfa', icon: <Headphones size={12} /> },
                       ].map((s, i) => (
-                        <div key={i} className="flex items-center gap-2 px-2.5 py-2 rounded-xl flex-1 min-w-0"
+                        <div key={i} className="flex items-center gap-2 px-2.5 py-2 rounded-xl"
                           style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
                           <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
                             <span style={{ color: s.color }}>{s.icon}</span>
                           </div>
                           <div className="min-w-0">
-                            <div className="text-xs font-black leading-tight truncate" style={{ color: s.color }}>{s.value}</div>
-                            <div className="text-[9px] text-white/30 font-bold truncate">{s.label}</div>
+                            <div className="text-xs font-black leading-tight" style={{ color: s.color }}>{s.value}</div>
+                            <div className="text-[9px] text-white/30 font-bold">{s.label}</div>
                           </div>
                         </div>
                       ))}
                     </div>
                   </div>
+                  <div className="relative z-10 mt-4 pt-4" style={{ borderTop: '1px solid rgba(59,130,246,0.15)' }}>
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <button onClick={() => document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' })}
+                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-sm text-white transition-all hover:opacity-90 hover:scale-105 active:scale-95"
+                        style={{ background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)', boxShadow: '0 4px 18px rgba(59,130,246,0.4)' }}>
+                        <Building2 size={13} />
+                        לחבילות לסוכנויות
+                        <ChevronDown size={13} />
+                      </button>
+                      <span className="text-[11px] text-white/30">BUSINESS · ENTERPRISE</span>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                  <div className="h-[480px]"><BusinessPackageCard pkg={businessPlusPackage} onSelect={handleSelectPackage} isNew={true} /></div>
-                  <div className="h-[480px]"><BusinessPackageCard pkg={businessPackage} onSelect={handleSelectPackage} /></div>
-                  <div className="h-[480px]"><BusinessPackageCard pkg={businessPackage100} onSelect={handleSelectPackage} /></div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="h-[460px]"><BusinessPackageCard pkg={businessPackage} onSelect={handleSelectPackage} /></div>
+                  <div className="h-[460px]"><BusinessPackageCard pkg={businessPackage100} onSelect={handleSelectPackage} /></div>
                 </div>
 
                 {/* NEW ENTERPRISE PACKAGE */}
@@ -2536,7 +2624,7 @@ function App() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5 }}
-                  className="relative rounded-3xl p-4 sm:p-7 md:p-10"
+                  className="relative rounded-3xl p-5 sm:p-7 md:p-10"
                   style={{ background: 'linear-gradient(135deg, #0a0f1e 0%, #060812 100%)', border: '1.5px solid rgba(99,102,241,0.4)' }}
                 >
                   {/* Glow effects */}
@@ -2628,11 +2716,22 @@ function App() {
                 </motion.div>
               </div>
 
+              {/* ── SECTION DIVIDER ── */}
+              <div className="flex items-center justify-center gap-3 py-2">
+                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.07))' }} />
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-white/15 block" />
+                  <span className="w-2 h-2 rounded-full bg-brand-red/40 block" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-white/15 block" />
+                </div>
+                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.07), transparent)' }} />
+              </div>
+
               {/* EQUIPMENT + TRANSPORT */}
               <div className="space-y-8">
                 {/* === SECTION HEADER: ציוד === */}
-                <div className="relative rounded-3xl p-4 sm:p-6 md:p-10"
-                  style={{ background: 'linear-gradient(135deg, rgba(234,88,12,0.08) 0%, rgba(10,10,15,0.95) 50%, rgba(6,6,10,1) 100%)', border: '1px solid rgba(234,88,12,0.2)', borderRadius: '1.5rem' }}>
+                <div className="relative rounded-3xl p-5 sm:p-7 md:p-10"
+                  style={{ background: 'linear-gradient(135deg, rgba(234,88,12,0.10) 0%, rgba(10,10,15,0.97) 50%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(234,88,12,0.35)' }}>
                   <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(234,88,12,0.1) 0%, transparent 65%)' }} />
 
                   <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
@@ -2649,40 +2748,54 @@ function App() {
                         חבילות ייחודיות לציוד כבד, ציוד קל, ורכבים מסחריים. חשיפה ממוקדת לקהל המקצועי הנכון – קבלנים, חברות הסעות, ועסקים.
                       </p>
                     </div>
-                    <div className="grid grid-cols-3 md:flex md:flex-col gap-2 md:shrink-0 w-full md:w-auto">
+                    <div className="flex flex-row flex-wrap md:flex-col gap-2 md:shrink-0 justify-start">
                       {[
                         { value: '85%', label: 'נמכרו תוך 14 יום', color: '#ea580c', icon: <TrendingUp size={12} /> },
                         { value: '500+', label: 'ציודים פורסמו', color: '#0ea5e9', icon: <Truck size={12} /> },
                         { value: '3', label: 'קטגוריות', color: '#4ade80', icon: <Target size={12} /> },
                       ].map((s, i) => (
-                        <div key={i} className="flex items-center gap-2 px-2.5 py-2 rounded-xl flex-1 min-w-0"
+                        <div key={i} className="flex items-center gap-2 px-2.5 py-2 rounded-xl"
                           style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
                           <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
                             <span style={{ color: s.color }}>{s.icon}</span>
                           </div>
                           <div className="min-w-0">
-                            <div className="text-xs font-black leading-tight truncate" style={{ color: s.color }}>{s.value}</div>
-                            <div className="text-[9px] text-white/30 font-bold truncate">{s.label}</div>
+                            <div className="text-xs font-black leading-tight" style={{ color: s.color }}>{s.value}</div>
+                            <div className="text-[9px] text-white/30 font-bold">{s.label}</div>
                           </div>
                         </div>
                       ))}
                     </div>
                   </div>
+                  <div className="relative z-10 mt-4 pt-4" style={{ borderTop: '1px solid rgba(234,88,12,0.15)' }}>
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <button onClick={() => document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' })}
+                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-sm text-white transition-all hover:opacity-90 hover:scale-105 active:scale-95"
+                        style={{ background: 'linear-gradient(135deg, #ea580c, #c2410c)', boxShadow: '0 4px 18px rgba(234,88,12,0.4)' }}>
+                        <Truck size={13} />
+                        לחבילות ציוד ותחבורה
+                        <ChevronDown size={13} />
+                      </button>
+                      <span className="text-[11px] text-white/30">ציוד כבד · קל · תחבורה</span>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="hidden md:grid grid-cols-3 gap-6">
+                <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-5">
                   {equipmentPackages.map(pkg => (
-                    <div key={pkg.id} className="h-[460px]"><EquipmentPackageCard pkg={pkg} onSelect={handleSelectPackage} /></div>
+                    <div key={pkg.id} className="h-[480px]"><EquipmentPackageCard pkg={pkg} onSelect={handleSelectPackage} /></div>
                   ))}
-                  <div className="h-[460px]"><TransportPackageCard pkg={transportPackage} onSelect={handleSelectPackage} /></div>
+                  <div className="h-[480px]"><TransportPackageCard pkg={transportPackage} onSelect={handleSelectPackage} /></div>
+                  <div className="h-[480px]"><FleetPremiumPackageCard pkg={fleetPremiumPackage} onSelect={handleSelectPackage} /></div>
                 </div>
 
                 <div className="md:hidden px-3">
-                  <MobileSwiper cardHeight={460}>
+                  <MobileSwiper cardHeight={480}>
                     {equipmentPackages.map(pkg => (
-                      <div key={pkg.id} style={{ height: '460px' }}><EquipmentPackageCard pkg={pkg} onSelect={handleSelectPackage} /></div>
+                      <div key={pkg.id} style={{ height: '480px' }}><EquipmentPackageCard pkg={pkg} onSelect={handleSelectPackage} /></div>
                     ))}
-                    <div style={{ height: '460px' }}><TransportPackageCard pkg={transportPackage} onSelect={handleSelectPackage} /></div>
+                    <div style={{ height: '480px' }}><TransportPackageCard pkg={transportPackage} onSelect={handleSelectPackage} /></div>
+                    <div style={{ height: '480px' }}><FleetPremiumPackageCard pkg={fleetPremiumPackage} onSelect={handleSelectPackage} /></div>
                   </MobileSwiper>
                 </div>
               </div>
@@ -2946,15 +3059,6 @@ function App() {
                         </button>
                       </div>
                     )}
-                    <div className="flex justify-center pt-2">
-                      <button onClick={() => setShowReviewForm(true)}
-                        className="inline-flex items-center gap-2.5 px-7 py-3 rounded-2xl font-black text-sm transition-all hover:scale-105 active:scale-95"
-                        style={{ background: 'linear-gradient(135deg, rgba(251,191,36,0.15), rgba(251,191,36,0.05))', border: '1.5px solid rgba(251,191,36,0.35)', color: '#fbbf24' }}>
-                        <Star size={14} className="fill-amber-400" />
-                        כתוב ביקורת
-                        <span className="text-[9px] bg-amber-400/20 px-2 py-0.5 rounded-full">מחכים לדעתך!</span>
-                      </button>
-                    </div>
 
                     {/* WRITE REVIEW BUTTON */}
                     <div className="relative overflow-hidden rounded-2xl p-6 md:p-8 text-center"
@@ -3001,7 +3105,7 @@ function App() {
               </div>
 
               <div className="space-y-2.5">
-                {t.faqs.slice(0, showAllFaqs ? t.faqs.length : 4).map((item, i) => {
+                {t.faqs.slice(0, showAllReviews ? t.faqs.length : 4).map((item, i) => {
                   const isOpen = activeFaq === i;
                   return (
                     <div key={i}
@@ -3068,15 +3172,15 @@ function App() {
               {t.faqs.length > 4 && (
                 <div className="text-center">
                   <button
-                    onClick={() => setShowAllFaqs(v => !v)}
+                    onClick={() => setShowAllReviews(v => !v)}
                     className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-black text-sm border transition-all"
                     style={{
-                      background: showAllFaqs ? 'rgba(200,16,46,0.1)' : 'rgba(255,255,255,0.05)',
-                      border: showAllFaqs ? '1px solid rgba(200,16,46,0.3)' : '1px solid rgba(255,255,255,0.1)',
-                      color: showAllFaqs ? '#c8102e' : 'rgba(255,255,255,0.6)',
+                      background: showAllReviews ? 'rgba(200,16,46,0.1)' : 'rgba(255,255,255,0.05)',
+                      border: showAllReviews ? '1px solid rgba(200,16,46,0.3)' : '1px solid rgba(255,255,255,0.1)',
+                      color: showAllReviews ? '#c8102e' : 'rgba(255,255,255,0.6)',
                     }}
                   >
-                    {showAllFaqs
+                    {showAllReviews
                       ? <><ChevronUp size={15} /> הסתר שאלות</>
                       : <><ChevronDown size={15} /> הצג את כל {t.faqs.length} השאלות</>
                     }
@@ -3136,30 +3240,16 @@ function App() {
                       <p className="text-[9px] text-white/20 font-black uppercase tracking-[0.25em] mb-3">עקבו אחרינו</p>
                       <div className="flex items-center gap-2 flex-wrap">
                         {[
-                          { href: 'https://instagram.com/yougo.israel', icon: <Instagram size={15} />, label: 'Instagram', color: '#E4405F', gradient: 'linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)' },
-                          { href: 'https://facebook.com', icon: <Facebook size={15} />, label: 'Facebook', color: '#1877F2', gradient: 'linear-gradient(135deg,#1877F2,#0a5dc2)' },
-                          { href: 'https://wa.me/972546980606', icon: <MessageCircle size={15} />, label: 'WhatsApp', color: '#25D366', gradient: 'linear-gradient(135deg,#25D366,#128C7E)' },
-                          { href: 'https://t.me/yougoisrael', icon: <Send size={15} />, label: 'Telegram', color: '#29b6f6', gradient: 'linear-gradient(135deg,#29b6f6,#0288d1)' },
-                          { href: 'https://youtube.com/@yougoisrael', icon: <Youtube size={15} />, label: 'YouTube', color: '#FF0000', gradient: 'linear-gradient(135deg,#FF0000,#cc0000)' },
-                          { href: 'https://x.com/yougoisrael', icon: <Twitter size={15} />, label: 'X', color: '#e5e7eb', gradient: 'linear-gradient(135deg,#1d1d1d,#3d3d3d)' },
+                          { href: 'https://instagram.com/yougo.israel', icon: <Instagram size={16} />, label: 'Instagram', color: '#E4405F', bg: 'rgba(228,64,95,0.12)' },
+                          { href: 'https://facebook.com', icon: <Facebook size={16} />, label: 'Facebook', color: '#1877F2', bg: 'rgba(24,119,242,0.12)' },
+                          { href: 'https://wa.me/972546980606', icon: <MessageCircle size={16} />, label: 'WhatsApp', color: '#25D366', bg: 'rgba(37,211,102,0.12)' },
+                          { href: 'https://t.me/yougoisrael', icon: <Send size={16} />, label: 'Telegram', color: '#0088cc', bg: 'rgba(0,136,204,0.12)' },
+                          { href: 'https://youtube.com/@yougoisrael', icon: <Youtube size={16} />, label: 'YouTube', color: '#FF0000', bg: 'rgba(255,0,0,0.12)' },
+                          { href: 'https://x.com/yougoisrael', icon: <Twitter size={16} />, label: 'X', color: '#9ca3af', bg: 'rgba(156,163,175,0.12)' },
                         ].map((s, i) => (
                           <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
-                            className="group w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:-translate-y-0.5 active:scale-95"
-                            style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: s.color }}
-                            onMouseEnter={e => {
-                              const el = e.currentTarget as HTMLElement;
-                              el.style.background = s.gradient;
-                              el.style.border = '1px solid transparent';
-                              el.style.color = 'white';
-                              el.style.boxShadow = `0 6px 20px ${s.color}50`;
-                            }}
-                            onMouseLeave={e => {
-                              const el = e.currentTarget as HTMLElement;
-                              el.style.background = 'rgba(255,255,255,0.06)';
-                              el.style.border = '1px solid rgba(255,255,255,0.1)';
-                              el.style.color = s.color;
-                              el.style.boxShadow = 'none';
-                            }}
+                            className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
+                            style={{ background: s.bg, border: `1px solid ${s.color}25`, color: s.color }}
                             title={s.label}>
                             {s.icon}
                           </a>
@@ -3491,15 +3581,6 @@ function App() {
 
       {modalContent && <Modal isOpen={!!modalContent} onClose={() => setModalContent(null)} title={modalContent.title}>{modalContent.content}</Modal>}
 
-      {showReviewForm && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" onClick={() => setShowReviewForm(false)}>
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
-          <div className="relative w-full max-w-md rounded-2xl p-6" style={{ background: '#0f0f14', border: '1px solid rgba(251,191,36,0.25)' }} onClick={e => e.stopPropagation()}>
-            <ReviewForm onClose={() => setShowReviewForm(false)} />
-          </div>
-        </div>
-      )}
-
       {showChangePackage && (
         <ChangePackageModal
           isOpen={showChangePackage}
@@ -3509,10 +3590,10 @@ function App() {
           vipPackage={vipPackage}
           duoPackage={duoPackage}
           equipmentPackages={equipmentPackages}
-          businessPlusPackage={businessPlusPackage}
           businessPackage={businessPackage}
           businessPackage100={businessPackage100}
           transportPackage={transportPackage}
+          fleetPremiumPackage={fleetPremiumPackage}
           onSelect={handleChangePackage}
           lang={lang}
         />
