@@ -200,147 +200,139 @@ interface Order {
 // --- Navbar ---
 const Navbar = memo(({ lang, setLang, isAdmin, onLogout, siteSettings, setView }: { lang: Language, setLang: (l: Language) => void, isAdmin?: boolean, onLogout?: () => void, siteSettings: any, setView: (v: string) => void }) => {
   const t = translations[lang];
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    const fn = () => setScrolled(window.scrollY > 40);
+    window.addEventListener('scroll', fn);
+    return () => window.removeEventListener('scroll', fn);
   }, []);
-  
+
+  const go = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    setMenuOpen(false);
+  };
+
+  const sections = [
+    { id: 'packages-car',   emoji: '🚗', he: 'רכב פרטי',   ar: 'سيارة خاصة', color: '#c8102e' },
+    { id: 'packages-vip',   emoji: '👑', he: 'VIP',         ar: 'VIP',         color: '#d4af37' },
+    { id: 'packages-biz',   emoji: '🏢', he: 'עסקים',       ar: 'أعمال',       color: '#3b82f6' },
+    { id: 'packages-equip', emoji: '🚛', he: 'ציוד',        ar: 'معدات',       color: '#ea580c' },
+    { id: 'how-it-works',   emoji: '⚡', he: 'איך זה עובד', ar: 'كيف يعمل',    color: '' },
+    { id: 'reviews',        emoji: '⭐', he: 'ביקורות',     ar: 'تقييمات',     color: '' },
+    { id: 'faq',            emoji: '❓', he: 'שאלות',       ar: 'أسئلة',       color: '' },
+  ];
+
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
-      scrolled 
-        ? 'bg-dark-bg/95 backdrop-blur-xl border-b border-white/10 py-2' 
-        : 'bg-transparent py-4'
-    }`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center">
-          <div 
-            className="flex items-center gap-2.5 cursor-pointer min-w-0"
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          >
-            <div className="p-2 bg-gradient-to-br from-brand-red to-red-700 rounded-xl shadow-lg shadow-brand-red/30 shrink-0">
-              <Car size={20} className="text-white" />
+    <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${scrolled ? 'py-2 border-b border-white/8' : 'py-3'}`}
+      style={{ background: scrolled ? 'rgba(6,6,10,0.97)' : 'transparent', backdropFilter: scrolled ? 'blur(20px)' : 'none' }}>
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="flex items-center justify-between h-11">
+
+          {/* ── LOGO inline ── */}
+          <button className="flex items-center gap-2 shrink-0"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+              style={{ background: 'linear-gradient(135deg,#c8102e,#9b0d24)', boxShadow: '0 4px 14px rgba(200,16,46,0.4)' }}>
+              <Car size={18} className="text-white" />
             </div>
-            <div className="flex items-center gap-2 min-w-0 flex-wrap">
-              <span className="text-lg font-black tracking-tight leading-none whitespace-nowrap">
-                <span className="text-brand-red">YOUGO</span>
-                <span className="text-white"> ISRAEL</span>
-              </span>
-              <span className="hidden sm:flex items-center gap-1.5 text-white/25 text-xs font-medium whitespace-nowrap">
-                <span>·</span>
-                <span className="text-white/40">{siteSettings.positioning_line_he || t.positioningLine}</span>
-              </span>
-            </div>
-          </div>
+            <span className="text-[17px] font-black tracking-tight leading-none whitespace-nowrap">
+              <span className="text-brand-red">YOUGO</span>
+              <span className="text-white"> ISRAEL</span>
+            </span>
+          </button>
 
-          {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-6">
-            {['how-it-works', 'packages', 'faq'].map((item) => (
-              <a
-                key={item}
-                href={`#${item}`}
-                className="text-sm font-bold text-white/70 hover:text-brand-red transition-colors relative group"
-              >
-                {item === 'how-it-works' ? 'איך זה עובד' : 
-                 item === 'packages' ? 'חבילות' : 'שאלות'}
-                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-brand-red rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-200" />
-              </a>
-            ))}
-            
-            <button 
-              onClick={() => setView('check-status')}
-              className="text-sm font-bold text-white/70 hover:text-brand-red transition-colors"
-            >
-              בדיקת סטטוס
-            </button>
-
-            {/* Instagram button */}
-            <a
-              href="https://instagram.com/yougo.israel"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-black transition-all hover:scale-105 active:scale-95"
-              style={{ background: 'linear-gradient(135deg, rgba(228,64,95,0.15), rgba(193,53,132,0.1))', border: '1px solid rgba(228,64,95,0.3)', color: '#f472b6' }}
-            >
-              <Instagram size={15} />
-              <span className="text-xs">Instagram</span>
-            </a>
-            
-            {/* Language switcher */}
-            <button 
-              onClick={() => setLang(lang === 'he' ? 'ar' : 'he')}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-xl transition-all hover:scale-105 active:scale-95"
-              style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.13)' }}
-            >
-              <span className="text-base leading-none">{lang === 'he' ? '🇸🇦' : '🇮🇱'}</span>
-              <span className="text-sm font-black text-white/85">{lang === 'he' ? 'عربي' : 'עברית'}</span>
-            </button>
-
-            {isAdmin && (
-              <button 
-                onClick={onLogout} 
-                className="text-sm font-bold text-white/40 hover:text-white transition-colors"
-              >
-                <LogOut size={18} />
+          {/* ── Desktop nav ── */}
+          <div className="hidden md:flex items-center gap-0.5">
+            {sections.slice(0, 4).map(s => (
+              <button key={s.id} onClick={() => go(s.id)}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-[12px] font-bold text-white/55 hover:text-white hover:bg-white/7 transition-all">
+                <span className="text-sm">{s.emoji}</span>
+                {lang === 'he' ? s.he : s.ar}
               </button>
-            )}
+            ))}
+            <div className="w-px h-4 bg-white/10 mx-2" />
+            {sections.slice(4).map(s => (
+              <button key={s.id} onClick={() => go(s.id)}
+                className="px-3 py-2 rounded-xl text-[12px] font-bold text-white/45 hover:text-white hover:bg-white/7 transition-all">
+                {lang === 'he' ? s.he : s.ar}
+              </button>
+            ))}
+            <div className="w-px h-4 bg-white/10 mx-2" />
+            <button onClick={() => setLang(lang === 'he' ? 'ar' : 'he')}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-[12px] font-bold text-white/55 hover:bg-white/7 transition-all">
+              <span>{lang === 'he' ? '🇸🇦' : '🇮🇱'}</span>
+              <span>{lang === 'he' ? 'عربي' : 'עברית'}</span>
+            </button>
+            {isAdmin && <button onClick={onLogout} className="p-2 text-white/30 hover:text-white transition-colors"><LogOut size={15} /></button>}
           </div>
 
-          {/* Mobile: language + instagram + menu */}
+          {/* ── Mobile: lang + hamburger (NO Instagram) ── */}
           <div className="md:hidden flex items-center gap-2">
-            <a
-              href="https://instagram.com/yougo.israel"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl transition-all active:scale-95"
-              style={{ background: 'linear-gradient(135deg, rgba(240,84,84,0.18), rgba(193,53,132,0.18))', border: '1px solid rgba(228,64,95,0.35)', color: '#f472b6' }}
-            >
-              <Instagram size={14} strokeWidth={2} />
-              <span className="text-[11px] font-black">עקבו</span>
-            </a>
-            <button 
-              onClick={() => setLang(lang === 'he' ? 'ar' : 'he')}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl transition-all active:scale-95"
-              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.13)', color: 'rgba(255,255,255,0.9)' }}
-            >
-              <span className="text-sm leading-none">{lang === 'he' ? '🇸🇦' : '🇮🇱'}</span>
-              <span className="text-[11px] font-black">{lang === 'he' ? 'عربي' : 'עב'}</span>
+            <button onClick={() => setLang(lang === 'he' ? 'ar' : 'he')}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-black transition-all"
+              style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.11)' }}>
+              <span>{lang === 'he' ? '🇸🇦' : '🇮🇱'}</span>
+              <span className="text-white/80">{lang === 'he' ? 'عربي' : 'עב'}</span>
             </button>
-            <button 
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg bg-white/5 border border-white/10"
-            >
-              {mobileMenuOpen ? <X size={22} className="text-white" /> : <Menu size={22} className="text-white" />}
+            <button onClick={() => setMenuOpen(v => !v)}
+              className="w-9 h-9 rounded-xl flex items-center justify-center transition-all"
+              style={{ background: menuOpen ? 'rgba(200,16,46,0.18)' : 'rgba(255,255,255,0.07)', border: `1px solid ${menuOpen ? 'rgba(200,16,46,0.4)' : 'rgba(255,255,255,0.11)'}` }}>
+              {menuOpen ? <X size={17} className="text-brand-red" /> : <Menu size={17} className="text-white/80" />}
             </button>
           </div>
         </div>
 
-        {mobileMenuOpen && (
-          <div className="md:hidden py-4 space-y-1 border-t border-white/5 mt-4">
-            {[
-              { href: '#how-it-works', label: 'איך זה עובד' },
-              { href: '#packages', label: 'חבילות' },
-              { href: '#faq', label: 'שאלות' }
-            ].map((item) => (
-              <a key={item.href} href={item.href} onClick={() => setMobileMenuOpen(false)} className="block py-3 px-4 text-white/70 hover:bg-white/5 rounded-xl font-bold">
-                {item.label}
-              </a>
-            ))}
-            <button onClick={() => { setView('check-status'); setMobileMenuOpen(false); }} className="block w-full text-right py-3 px-4 text-white/70 hover:bg-white/5 rounded-xl font-bold">
-              בדיקת סטטוס
-            </button>
-          </div>
-        )}
+        {/* ── Mobile drawer ── */}
+        <AnimatePresence>
+          {menuOpen && (
+            <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.16 }}
+              className="md:hidden mt-2 pb-2 rounded-2xl overflow-hidden"
+              style={{ background: 'rgba(10,10,16,0.98)', border: '1px solid rgba(255,255,255,0.09)' }}>
+              <div className="p-2 space-y-0.5">
+                <p className="text-[9px] font-black text-white/25 uppercase tracking-widest px-3 py-2">{lang === 'he' ? 'חבילות' : 'الباقات'}</p>
+                {sections.slice(0, 4).map(s => (
+                  <button key={s.id} onClick={() => go(s.id)}
+                    className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-bold text-white/70 hover:bg-white/6 transition-all text-right">
+                    <span className="text-base shrink-0">{s.emoji}</span>
+                    <span className="flex-1">{lang === 'he' ? s.he : s.ar}</span>
+                    <ChevronRight size={13} className="text-white/25 shrink-0" />
+                  </button>
+                ))}
+                <div className="h-px bg-white/7 mx-3 my-1" />
+                <p className="text-[9px] font-black text-white/25 uppercase tracking-widest px-3 py-1">{lang === 'he' ? 'עוד' : 'المزيد'}</p>
+                {sections.slice(4).map(s => (
+                  <button key={s.id} onClick={() => go(s.id)}
+                    className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-bold text-white/55 hover:bg-white/6 transition-all">
+                    <span className="text-base shrink-0">{s.emoji}</span>
+                    <span className="flex-1 text-right">{lang === 'he' ? s.he : s.ar}</span>
+                    <ChevronRight size={13} className="text-white/25 shrink-0" />
+                  </button>
+                ))}
+                <div className="h-px bg-white/7 mx-3 my-1" />
+                <button onClick={() => { setView('check-status'); setMenuOpen(false); }}
+                  className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-bold text-white/55 hover:bg-white/6 transition-all">
+                  <span className="text-base">🔍</span>
+                  <span className="flex-1 text-right">{lang === 'he' ? 'בדיקת סטטוס' : 'تحقق من الطلب'}</span>
+                  <ChevronRight size={13} className="text-white/25 shrink-0" />
+                </button>
+                <a href="https://instagram.com/yougo.israel" target="_blank" rel="noopener noreferrer"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-bold transition-all"
+                  style={{ color: '#f472b6' }}>
+                  <Instagram size={16} className="shrink-0" />
+                  <span className="flex-1 text-right">Instagram</span>
+                </a>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </nav>
   );
 });
-
 interface PackageCardProps {
   pkg: Package;
   lang: Language;
@@ -486,10 +478,6 @@ const packageDetails: Record<string, { title: string; content: string }> = {
   'equipment-light': {
     title: 'ציוד קל',
     content: `🔧 מה כוללת החבילה?\n• 6 תמונות מקצועיות של הציוד\n• פוסט מותאם עם תיאור טכני מלא\n• סטורי 14 ימים לקהל רלוונטי\n• חשיפה לאנשי מקצוע בתחום\n\n🛠️ מתאים לכל סוגי הציוד הקל\n• מלגזות וציוד מחסן\n• פופקטים, ג'קים וציוד הרמה`
-  },
-  'fleet-premium': {
-    title: 'FLEET PREMIUM',
-    content: `🚐 מה כוללת החבילה?\n• 20 תמונות מקצועיות לכל כלי רכב\n• רילס וידאו מרשים עם מוזיקה\n• פוסט שיווקי מותאם אישית\n• סטורי 30 ימים + הייליטס קבוע\n• טרגוט ממוקד לחברות ועסקים\n• ייעוץ תמחור מקצועי\n\n🏢 מיועד ל:\n• ציי רכב עסקיים\n• ליסינג וחברות השכרה\n• מגרשי רכבים מסחריים\n\n⏱️ פרטים טכניים\n• 30 ימי פרסום פרמיום\n• מנהל תיק לקוח ייעודי\n• מחיר: 549 ₪ (במקום 749 ₪)\n• חיסכון של 200 ₪ – 27% הנחה`
   },
   'transport': {
     title: 'תחבורה והסעות',
@@ -1174,118 +1162,6 @@ const BusinessPackageCard = memo(({ pkg, onSelect }: { pkg: Package, onSelect: (
   );
 });
 
-
-// ============================================================
-// FLEET PREMIUM PACKAGE CARD
-// ============================================================
-const FleetPremiumPackageCard = memo(({ pkg, onSelect }: { pkg: Package, onSelect: (p: Package) => void }) => {
-  const [showBack, setShowBack] = useState(false);
-  const color = '#8b5cf6';
-  const handleSelect = useCallback(() => onSelect(pkg), [onSelect, pkg]);
-  const handleShowBack = useCallback(() => setShowBack(true), []);
-  const handleHideBack = useCallback(() => setShowBack(false), []);
-
-  return (
-    <div className="relative w-full h-full" style={{ borderRadius: '1.25rem' }}>
-      <AnimatePresence mode="wait" initial={false}>
-        {!showBack ? (
-          <motion.div
-            key="front"
-            initial={{ rotateY: 90, opacity: 0 }}
-            animate={{ rotateY: 0, opacity: 1 }}
-            exit={{ rotateY: -90, opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="absolute inset-0 rounded-2xl overflow-hidden"
-            style={{
-              background: 'linear-gradient(135deg, #0d0818 0%, #130d22 50%, #0a0612 100%)',
-              border: '1.5px solid rgba(139,92,246,0.45)',
-            }}
-          >
-            <div className="absolute top-0 left-0 right-0 h-[3px]" style={{ background: 'linear-gradient(90deg, transparent, #8b5cf6, #c026d3, transparent)' }} />
-            <div className="absolute top-0 right-0 w-48 h-48 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 10%, rgba(139,92,246,0.18) 0%, transparent 65%)' }} />
-            <div className="absolute inset-0 opacity-4" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
-
-            <div className="relative z-10 p-5 h-full flex flex-col gap-3">
-              {/* Header */}
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
-                    style={{ background: 'linear-gradient(135deg, #8b5cf6, #c026d3)' }}>
-                    <Truck size={20} className="text-white" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="text-[9px] font-black uppercase tracking-[0.15em] text-purple-400">✨ מומלץ לעסקים</div>
-                    <h3 className="text-[16px] font-black text-white leading-tight">FLEET PREMIUM</h3>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1 px-2 py-1 rounded-full border shrink-0 animate-pulse"
-                  style={{ background: 'rgba(139,92,246,0.2)', borderColor: 'rgba(139,92,246,0.5)', color: '#a78bfa' }}>
-                  <Zap size={9} />
-                  <span className="text-[8px] font-black">חדש</span>
-                </div>
-              </div>
-
-              {/* Features grid */}
-              <div className="grid grid-cols-2 gap-1.5">
-                {[
-                  { icon: <Camera size={10} />, val: '20 תמונות' },
-                  { icon: <Video size={10} />, val: 'רילס וידאו' },
-                  { icon: <Calendar size={10} />, val: '30 יום פרסום' },
-                  { icon: <Target size={10} />, val: 'טרגוט עסקי' },
-                ].map((s, i) => (
-                  <div key={i} className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg"
-                    style={{ background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.2)' }}>
-                    <span className="text-purple-400 shrink-0">{s.icon}</span>
-                    <span className="text-[10px] font-black text-white truncate">{s.val}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Price */}
-              <div className="flex items-baseline gap-2 flex-wrap">
-                <span className="text-[30px] font-black text-white leading-none">{pkg.price}</span>
-                <span className="text-xs line-through text-white/25">₪749</span>
-                <span className="text-[9px] font-black bg-green-500/15 text-green-400 px-1.5 py-0.5 rounded-full border border-green-500/25">27% OFF</span>
-              </div>
-
-              <div className="h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(139,92,246,0.3), transparent)' }} />
-
-              {/* Feature list */}
-              <div className="flex flex-col gap-1.5 flex-grow">
-                {pkg.features.slice(0, 5).map((f, i) => (
-                  <div key={i} className="flex items-start gap-2">
-                    <div className="w-4 h-4 rounded-md flex items-center justify-center shrink-0 mt-[1px]"
-                      style={{ background: 'rgba(139,92,246,0.2)', border: '1.5px solid rgba(139,92,246,0.4)' }}>
-                      <Check size={8} strokeWidth={3} className="text-purple-400" />
-                    </div>
-                    <span className="text-[11px] font-medium text-white/80 leading-snug">{f}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Buttons */}
-              <div className="flex gap-2 mt-auto">
-                <button type="button" onClick={handleShowBack}
-                  className="flex-1 py-2.5 rounded-xl font-black text-xs active:scale-95 transition-all text-purple-400"
-                  style={{ border: '1.5px solid rgba(139,92,246,0.35)', background: 'rgba(139,92,246,0.08)' }}>
-                  פרטים
-                </button>
-                <button type="button" onClick={handleSelect}
-                  className="flex-1 py-2.5 rounded-xl font-black text-xs text-white active:scale-95 transition-all flex items-center justify-center gap-1"
-                  style={{ background: 'linear-gradient(135deg, #8b5cf6, #c026d3)' }}>
-                  <Zap size={11} />הזמן
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        ) : (
-          <CardBackPanel pkg={pkg} details={packageDetails['fleet-premium']} color={color} badge={<Truck size={20} />} onSelect={handleSelect} onBack={handleHideBack} />
-        )}
-      </AnimatePresence>
-    </div>
-  );
-});
-
 // ============================================================
 // MOBILE SWIPER
 // ============================================================
@@ -1543,20 +1419,19 @@ const OrderStatusCheck = memo(({ onClose }: { onClose: () => void }) => {
 // CHANGE PACKAGE MODAL
 // ============================================================
 const ChangePackageModal = memo(({
-  isOpen, onClose, currentPackageId, packages, vipPackage, duoPackage, equipmentPackages, businessPackage, businessPackage100, transportPackage, fleetPremiumPackage, onSelect, lang
+  isOpen, onClose, currentPackageId, packages, vipPackage, duoPackage, equipmentPackages, businessPackage, businessPackage100, transportPackage, onSelect, lang
 }: {
   isOpen: boolean; onClose: () => void; currentPackageId: string; packages: Package[]; vipPackage: Package;
-  duoPackage: Package; equipmentPackages: Package[]; businessPackage: Package; businessPackage100: Package; transportPackage: Package; fleetPremiumPackage: Package;
+  duoPackage: Package; equipmentPackages: Package[]; businessPackage: Package; businessPackage100: Package; transportPackage: Package;
   onSelect: (p: Package) => void; lang: Language;
 }) => {
-  const allPackages = useMemo(() => [...packages, vipPackage, duoPackage, businessPackage, businessPackage100, ...equipmentPackages, transportPackage, fleetPremiumPackage], [packages, vipPackage, duoPackage, businessPackage, businessPackage100, equipmentPackages, transportPackage, fleetPremiumPackage]);
+  const allPackages = useMemo(() => [...packages, vipPackage, duoPackage, businessPackage, businessPackage100, ...equipmentPackages, transportPackage], [packages, vipPackage, duoPackage, businessPackage, businessPackage100, equipmentPackages, transportPackage]);
 
   const getPackageStyle = useCallback((pkg: Package) => {
     if (pkg.id === 'vip') return { border: 'border-amber-500/40', bg: 'bg-amber-500/10', badge: <Crown size={16} />, color: 'text-amber-400', activeBorder: 'border-amber-400' };
     if (pkg.id === 'duo') return { border: 'border-purple-500/40', bg: 'bg-purple-500/10', badge: <Car size={16} />, color: 'text-purple-400', activeBorder: 'border-purple-400' };
     if (pkg.id === 'business') return { border: 'border-blue-500/40', bg: 'bg-blue-500/10', badge: <Building2 size={16} />, color: 'text-blue-400', activeBorder: 'border-blue-400' };
     if (pkg.id === 'business100') return { border: 'border-blue-500/40', bg: 'bg-blue-500/10', badge: <Building2 size={16} />, color: 'text-blue-400', activeBorder: 'border-blue-400' };
-    if (pkg.id === 'fleet-premium') return { border: 'border-purple-500/40', bg: 'bg-purple-500/10', badge: <Truck size={16} />, color: 'text-purple-400', activeBorder: 'border-purple-400' };
     if (pkg.id === 'equipment-heavy') return { border: 'border-orange-500/40', bg: 'bg-orange-500/10', badge: <Truck size={16} />, color: 'text-orange-400', activeBorder: 'border-orange-400' };
     if (pkg.id === 'equipment-light') return { border: 'border-slate-500/40', bg: 'bg-slate-500/10', badge: <Wrench size={16} />, color: 'text-slate-400', activeBorder: 'border-slate-400' };
     if (pkg.id === 'transport') return { border: 'border-sky-500/40', bg: 'bg-sky-500/10', badge: <Bus size={16} />, color: 'text-sky-400', activeBorder: 'border-sky-400' };
@@ -1620,7 +1495,7 @@ const CarDetailsForm = memo(({ formData, setFormData, onNext, selectedPackage, o
 }) => {
   const isDuo = selectedPackage?.id === 'duo';
   const isBusiness = selectedPackage?.id === 'business' || selectedPackage?.id === 'business100';
-  const isTransport = selectedPackage?.id === 'transport' || selectedPackage?.id === 'fleet-premium';
+  const isTransport = selectedPackage?.id === 'transport';
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -1881,7 +1756,7 @@ const PaymentForm = memo(({ formData, setFormData, selectedPackage, onSubmit, lo
   const isBusiness = selectedPackage?.id === 'business' || selectedPackage?.id === 'business100';
   const isDuo = selectedPackage?.id === 'duo';
   const isTransport = selectedPackage?.id === 'transport';
-  const accentColor = isBusiness ? '#3b82f6' : isDuo ? '#8b5cf6' : selectedPackage?.id === 'fleet-premium' ? '#8b5cf6' : isTransport ? '#0ea5e9' : '#c8102e';
+  const accentColor = isBusiness ? '#3b82f6' : isDuo ? '#8b5cf6' : isTransport ? '#0ea5e9' : '#c8102e';
   const accentBorder = isBusiness ? 'border-blue-500/30' : isDuo ? 'border-purple-500/30' : isTransport ? 'border-sky-500/30' : 'border-brand-red/20';
   const accentBg = isBusiness ? 'from-blue-500/10' : isDuo ? 'from-purple-500/10' : isTransport ? 'from-sky-500/10' : 'from-brand-red/10';
 
@@ -2113,7 +1988,6 @@ function App() {
   const duoPackage: Package = useMemo(() => ({ id: 'duo', name: 'DUO DEAL', price: '₪389', features: ['פרסום 2 רכבים במחיר מיוחד', '4 תמונות לכל רכב', 'פוסט נפרד לכל רכב', 'סטורי 14 יום לכל אחד', 'חשיפה כפולה לקהל מעוניין', 'חיסכון של 40% לעומת 2 חבילות'] }), []);
   const businessPackage: Package = useMemo(() => ({ id: 'business', name: 'BUSINESS', price: '₪1,499', business: true, features: ['עד 50 רכבים בחודש', 'מנהל לקוח ייעודי', 'דוחות ביצועים חודשיים', 'קידום ממומן', 'עיצוב מקצועי לכל מודעה'] }), []);
   const businessPackage100: Package = useMemo(() => ({ id: 'business100', name: 'BUSINESS 100', price: '₪2,499', business: true, features: ['עד 100 רכבים בחודש', 'מנהל לקוח בכיר', 'דוחות שבועיים', 'קידום ממומן מוגבר', 'עיצוב VIP', 'אנליטיקס מתקדם', 'תמיכה 24/7'] }), []);
-  const fleetPremiumPackage: Package = useMemo(() => ({ id: 'fleet-premium', name: 'FLEET PREMIUM', price: '₪549', equipment: true, features: ['20 תמונות מקצועיות', 'רילס וידאו מרשים', 'סטורי 30 יום + הייליטס', 'טרגוט לחברות ועסקים', 'ייעוץ תמחור מקצועי', 'מנהל תיק לקוח', 'ציי רכב · ליסינג · מגרשים'] }), []);
   const transportPackage: Package = useMemo(() => ({ id: 'transport', name: 'תחבורה והסעות', price: '₪329', features: ['10 תמונות מקצועיות מבפנים ומבחוץ', 'פוסט עם מפרט טכני מלא ומדויק', 'סטורי 21 ימים לחשיפה רחבה', 'חשיפה ייעודית לחברות הסעות ותחבורה', 'טרגוט מדויק לרוכשי רכב מסחרי', 'ייעוץ תמחור מקצועי', 'מאפיין לאוטובוסים, מיניבוסים, וואנים ומשאיות'] }), []);
   const equipmentPackages: Package[] = useMemo(() => [
     { id: 'equipment-heavy', name: 'חבילת ציוד כבד', price: '₪389', equipment: true, features: ['10 תמונות מקצועיות של הציוד', 'פוסט ייעודי עם מפרט טכני', 'סטורי 21 יום', 'חשיפה לקהל קבלנים ומגזר הבנייה', 'עדיפות בתוצאות חיפוש', 'ייעוץ תמחור מקצועי'] },
@@ -2248,69 +2122,112 @@ function App() {
 
       <main className="pt-24 px-3 max-w-7xl mx-auto">
         {view === 'home' && (
-          <div className="space-y-24">
-            {/* HERO */}
+          <div className="space-y-0">
+            {/* ═══════════ HERO ═══════════ */}
             <section className="relative min-h-screen flex items-center justify-center overflow-hidden" style={{ background: '#06060a' }}>
+
+              {/* Background layers */}
               <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 80% 60% at 60% 20%, rgba(200,16,46,0.14) 0%, transparent 65%), radial-gradient(ellipse 60% 50% at 10% 80%, rgba(200,16,46,0.08) 0%, transparent 60%), #06060a' }} />
-                <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)', backgroundSize: '32px 32px', maskImage: 'radial-gradient(ellipse 90% 70% at 50% 40%, black 30%, transparent 80%)' }} />
-                <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 40%, #06060a 100%)' }} />
-                <div className="absolute bottom-0 inset-x-0 h-40" style={{ background: 'linear-gradient(to bottom, transparent, #06060a)' }} />
+                <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 90% 70% at 55% 15%, rgba(200,16,46,0.18) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 5% 85%, rgba(200,16,46,0.08) 0%, transparent 60%), #06060a' }} />
+                <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.055) 1px, transparent 1px)', backgroundSize: '28px 28px', WebkitMaskImage: 'radial-gradient(ellipse 85% 65% at 50% 38%, black 20%, transparent 80%)', maskImage: 'radial-gradient(ellipse 85% 65% at 50% 38%, black 20%, transparent 80%)' }} />
+                <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 110% 110% at 50% 50%, transparent 38%, #06060a 100%)' }} />
+                <div className="absolute bottom-0 inset-x-0 h-52" style={{ background: 'linear-gradient(to bottom, transparent, #06060a)' }} />
               </div>
 
-              <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 pt-20 sm:pt-28 pb-14 flex flex-col items-center text-center">
-                <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}
-                  className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full"
-                  style={{ background: 'rgba(200,16,46,0.1)', border: '1px solid rgba(200,16,46,0.28)', backdropFilter: 'blur(8px)' }}>
-                  <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#c8102e' }} />
-                  <span className="text-[11px] font-bold tracking-[0.12em] uppercase" style={{ color: 'rgba(255,255,255,0.75)' }}>הדרך המהירה ביותר למכור רכב</span>
+              <div className="relative z-10 w-full max-w-3xl mx-auto px-4 pt-20 sm:pt-28 pb-14 flex flex-col items-center text-center">
+
+                {/* Badge */}
+                <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
+                  className="inline-flex items-center gap-2 mb-7 px-4 py-2 rounded-full"
+                  style={{ background: 'rgba(200,16,46,0.1)', border: '1px solid rgba(200,16,46,0.3)', backdropFilter: 'blur(12px)' }}>
+                  <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#c8102e' }} />
+                  <span className="text-[11px] font-bold tracking-[0.12em] uppercase" style={{ color: 'rgba(255,255,255,0.8)' }}>הדרך המהירה ביותר למכור רכב</span>
                 </motion.div>
 
-                <motion.h1 initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
-                  className="font-black leading-[1.05] tracking-tight mb-5" style={{ fontSize: 'clamp(2.6rem, 8vw, 5.5rem)' }}>
+                {/* Headline */}
+                <motion.h1 initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.48, delay: 0.1 }}
+                  className="font-black leading-[1.04] tracking-tight mb-5" style={{ fontSize: 'clamp(2.5rem, 9vw, 5.5rem)' }}>
                   <span className="text-white">מוכרים רכב?</span>
                   <br />
-                  <span style={{ background: 'linear-gradient(135deg, #ff3d5e 0%, #c8102e 50%, #a50d25 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                  <span style={{ background: 'linear-gradient(135deg, #ff4060 0%, #c8102e 55%, #a00d20 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
                     אנחנו מוכרים אותו מהר יותר.
                   </span>
                 </motion.h1>
 
-                <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, delay: 0.18 }}
-                  className="text-base md:text-lg leading-relaxed mb-10 max-w-xl" style={{ color: 'rgba(255,255,255,0.48)' }}>
+                {/* Subtitle */}
+                <motion.p initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.42, delay: 0.18 }}
+                  className="text-[15px] md:text-base leading-relaxed mb-8 max-w-md" style={{ color: 'rgba(255,255,255,0.45)' }}>
                   YOUGO ISRAEL — פלטפורמת השיווק המובילה באינסטגרם למכירת רכבים.
                 </motion.p>
 
-                <div className="flex flex-col sm:flex-row items-center gap-3 mb-10 w-full justify-center">
-                  <button onClick={() => { document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' }); }}
-                    className="group relative flex items-center gap-2.5 px-8 py-3.5 rounded-2xl font-black text-[15px] text-white w-full sm:w-auto justify-center overflow-hidden transition-transform hover:scale-[1.03] active:scale-[.97]"
-                    style={{ background: 'linear-gradient(135deg, #c8102e, #a50d25)', boxShadow: '0 8px 32px rgba(200,16,46,0.4)' }}>
-                    <Sparkles size={18} /><span className="relative">התחל הזמנה</span>
-                  </button>
-                  <button onClick={() => setView('check-status')}
-                    className="flex items-center gap-2.5 px-8 py-3.5 rounded-2xl font-black text-[15px] w-full sm:w-auto justify-center transition-all hover:bg-white/8 active:scale-[.97]"
-                    style={{ border: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.7)', background: 'rgba(255,255,255,0.04)' }}>
-                    <Search size={18} />בדוק סטטוס
-                  </button>
-                </div>
+                {/* ── CTA buttons ── */}
+                <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.42, delay: 0.26 }}
+                  className="flex flex-col gap-3 w-full max-w-xs sm:max-w-md mb-9">
 
-                <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2.5">
+                  {/* Primary - start order */}
+                  <button
+                    onClick={() => document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="relative flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl font-black text-[15px] text-white overflow-hidden transition-transform hover:scale-[1.02] active:scale-[.97]"
+                    style={{ background: 'linear-gradient(135deg, #c8102e, #a50d25)', boxShadow: '0 8px 32px rgba(200,16,46,0.45)' }}>
+                    <Sparkles size={17} />
+                    התחל הזמנה
+                  </button>
+
+                  {/* Secondary - packages overview modal */}
+                  <button
+                    onClick={() => document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="relative flex items-center justify-center gap-2.5 w-full py-3.5 rounded-2xl font-black text-[14px] transition-all hover:bg-white/9 active:scale-[.97] group"
+                    style={{ border: '1px solid rgba(255,255,255,0.14)', color: 'rgba(255,255,255,0.75)', background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(8px)' }}>
+                    <LayoutDashboard size={16} className="text-white/50 group-hover:text-white/80 transition-colors" />
+                    {lang === 'he' ? 'החבילות שלנו' : 'باقاتنا'}
+                    <ChevronDown size={15} className="text-white/35 group-hover:text-white/60 transition-colors" />
+                  </button>
+                </motion.div>
+
+                {/* Trust badges */}
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, delay: 0.38 }}
+                  className="flex flex-wrap items-center justify-center gap-4">
                   {[
-                    { icon: <ShieldCheck size={14} />, label: 'תשלום מאובטח', c: '#22c55e' },
-                    { icon: <Clock size={14} />, label: 'פרסום תוך 24 שעות', c: '#60a5fa' },
-                    { icon: <Users size={14} />, label: '50K+ עוקבים', c: '#c8102e' },
+                    { icon: <ShieldCheck size={13} />, label: 'תשלום מאובטח', c: '#22c55e' },
+                    { icon: <Clock size={13} />, label: 'פרסום תוך 24 שעות', c: '#60a5fa' },
+                    { icon: <Users size={13} />, label: '50K+ עוקבים', c: '#c8102e' },
                   ].map((b, i) => (
                     <div key={i} className="flex items-center gap-1.5">
                       <span style={{ color: b.c }}>{b.icon}</span>
-                      <span className="text-[12px] font-semibold" style={{ color: 'rgba(255,255,255,0.5)' }}>{b.label}</span>
-                      {i < 2 && <span className="w-px h-3 mx-1 hidden sm:block" style={{ background: 'rgba(255,255,255,0.1)' }} />}
+                      <span className="text-[11px] font-semibold" style={{ color: 'rgba(255,255,255,0.45)' }}>{b.label}</span>
                     </div>
                   ))}
-                </div>
+                </motion.div>
+
+                {/* ── Package quick-select cards ── */}
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.45 }}
+                  className="w-full mt-10 grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  {[
+                    { id: 'packages-car',   emoji: '🚗', label: lang === 'he' ? 'רכב פרטי' : 'سيارة خاصة', sub: lang === 'he' ? 'מ-₪199' : 'من ₪199',  color: '#c8102e', border: 'rgba(200,16,46,0.35)' },
+                    { id: 'packages-vip',   emoji: '👑', label: lang === 'he' ? 'VIP' : 'VIP',              sub: lang === 'he' ? '₪749' : '₪749',         color: '#d4af37', border: 'rgba(212,175,55,0.35)' },
+                    { id: 'packages-biz',   emoji: '🏢', label: lang === 'he' ? 'עסקים' : 'أعمال',          sub: lang === 'he' ? 'מ-₪1,499' : 'من ₪1,499', color: '#3b82f6', border: 'rgba(59,130,246,0.35)' },
+                    { id: 'packages-equip', emoji: '🚛', label: lang === 'he' ? 'ציוד' : 'معدات',           sub: lang === 'he' ? 'מ-₪229' : 'من ₪229',    color: '#ea580c', border: 'rgba(234,88,12,0.35)' },
+                  ].map((c, i) => (
+                    <motion.button
+                      key={c.id}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.5 + i * 0.07 }}
+                      onClick={() => document.getElementById(c.id)?.scrollIntoView({ behavior: 'smooth' })}
+                      className="flex flex-col items-center gap-1.5 py-4 px-2 rounded-2xl transition-all hover:scale-[1.04] active:scale-[.96] cursor-pointer"
+                      style={{ background: `${c.color}0e`, border: `1.5px solid ${c.border}` }}>
+                      <span className="text-2xl">{c.emoji}</span>
+                      <span className="text-[13px] font-black text-white leading-tight">{c.label}</span>
+                      <span className="text-[10px] font-bold" style={{ color: c.color }}>{c.sub}</span>
+                    </motion.button>
+                  ))}
+                </motion.div>
               </div>
 
-              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 cursor-pointer" style={{ color: 'rgba(255,255,255,0.2)' }}
-                onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}>
-                <ChevronDown size={28} />
+              <div className="absolute bottom-5 left-1/2 -translate-x-1/2 cursor-pointer animate-bounce"
+                style={{ color: 'rgba(255,255,255,0.18)' }}
+                onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}>
+                <ChevronDown size={26} />
               </div>
             </section>
 
@@ -2398,10 +2315,10 @@ function App() {
               </motion.div>
 
               {/* REGULAR PACKAGES */}
-              <div className="space-y-8">
+              <div id="packages-car" className="scroll-mt-16 space-y-8">
                 {/* === SECTION HEADER: רכב פרטי === */}
-                <div className="relative rounded-3xl p-5 sm:p-7 md:p-10"
-                  style={{ background: 'linear-gradient(135deg, rgba(200,16,46,0.10) 0%, rgba(10,10,15,0.97) 50%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(200,16,46,0.35)' }}>
+                <div className="relative rounded-3xl p-4 sm:p-6 md:p-10"
+                  style={{ background: 'linear-gradient(135deg, rgba(200,16,46,0.1) 0%, rgba(10,10,15,0.97) 50%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(200,16,46,0.32)' }}>
                   <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(200,16,46,0.12) 0%, transparent 65%)' }} />
                   <div className="absolute bottom-0 left-0 w-48 h-48 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 20% 80%, rgba(200,16,46,0.06) 0%, transparent 65%)' }} />
 
@@ -2419,13 +2336,13 @@ function App() {
                         שלוש חבילות מדורגות לכל תקציב ומטרה. מחבילת הכניסה הבסיסית ועד הפרמיום המלא – כל אחת מותאמת לסוג הרכב ולמטרת המכירה שלך.
                       </p>
                     </div>
-                    <div className="flex flex-row flex-wrap md:flex-col gap-2 md:shrink-0 justify-start">
+                    <div className="grid grid-cols-3 md:flex md:flex-col gap-2 w-full md:w-auto">
                       {[
                         { value: '₪199', label: 'מחבילה', color: '#94a3b8', icon: <DollarSign size={12} /> },
                         { value: '1,000+', label: 'מכירות', color: '#c8102e', icon: <Trophy size={12} /> },
                         { value: '7-30', label: 'ימי פרסום', color: '#4ade80', icon: <Calendar size={12} /> },
                       ].map((s, i) => (
-                        <div key={i} className="flex items-center gap-2 px-2.5 py-2 rounded-xl"
+                        <div key={i} className="flex items-center gap-2 px-2.5 py-2 rounded-xl min-w-0"
                           style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
                           <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
                             <span style={{ color: s.color }}>{s.icon}</span>
@@ -2438,17 +2355,18 @@ function App() {
                       ))}
                     </div>
                   </div>
-                  <div className="relative z-10 mt-4 pt-4" style={{ borderTop: '1px solid rgba(200,16,46,0.15)' }}>
-                    <div className="flex items-center gap-3 flex-wrap">
-                      <button onClick={() => document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' })}
-                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-sm text-white transition-all hover:opacity-90 hover:scale-105 active:scale-95"
-                        style={{ background: 'linear-gradient(135deg, #c8102e, #a50d25)', boxShadow: '0 4px 18px rgba(200,16,46,0.4)' }}>
-                        <Sparkles size={13} />
-                        בחר חבילה עכשיו
-                        <ChevronDown size={13} />
-                      </button>
-                      <span className="text-[11px] text-white/30">3 חבילות · מתחיל מ-₪199</span>
-                    </div>
+                </div>
+
+                  {/* ── CTA ── */}
+                  <div className="relative z-10 mt-5 flex items-center gap-3 flex-wrap pt-4" style={{ borderTop: '1px solid rgba(200,16,46,0.15)' }}>
+                    <button onClick={() => document.getElementById('packages-car')?.scrollIntoView({ behavior: 'smooth' })}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-sm text-white transition-all hover:scale-105 active:scale-95"
+                      style={{ background: 'linear-gradient(135deg,#c8102e,#a50d25)', boxShadow: '0 4px 18px rgba(200,16,46,0.4)' }}>
+                      <Car size={13} />
+                      {lang === 'he' ? 'לחבילות רכב פרטי' : 'لباقات السيارات'}
+                      <ChevronDown size={13} />
+                    </button>
+                    <span className="text-[11px] text-white/30">3 חבילות · מ-₪199</span>
                   </div>
                 </div>
 
@@ -2469,22 +2387,22 @@ function App() {
                 </div>
               </div>
 
-              {/* ── SECTION DIVIDER ── */}
-              <div className="flex items-center justify-center gap-3 py-2">
-                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.07))' }} />
-                <div className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-white/15 block" />
-                  <span className="w-2 h-2 rounded-full bg-brand-red/40 block" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-white/15 block" />
+              {/* ── divider ── */}
+              <div className="flex items-center justify-center gap-3 py-1">
+                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.06))' }} />
+                <div className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full block" style={{ background: 'rgba(255,255,255,0.12)' }} />
+                  <span className="w-2 h-2 rounded-full block" style={{ background: 'rgba(200,16,46,0.45)' }} />
+                  <span className="w-1.5 h-1.5 rounded-full block" style={{ background: 'rgba(255,255,255,0.12)' }} />
                 </div>
-                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.07), transparent)' }} />
+                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.06), transparent)' }} />
               </div>
 
               {/* VIP + DUO */}
-              <div className="space-y-8">
+              <div id="packages-vip" className="scroll-mt-16 space-y-8">
                 {/* === SECTION HEADER: VIP === */}
-                <div className="relative rounded-3xl p-5 sm:p-7 md:p-10"
-                  style={{ background: 'linear-gradient(135deg, rgba(212,175,55,0.10) 0%, rgba(10,10,15,0.97) 50%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(212,175,55,0.35)' }}>
+                <div className="relative rounded-3xl p-4 sm:p-6 md:p-10"
+                  style={{ background: 'linear-gradient(135deg, rgba(212,175,55,0.1) 0%, rgba(10,10,15,0.97) 50%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(212,175,55,0.32)' }}>
                   <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(212,175,55,0.1) 0%, transparent 65%)' }} />
 
                   <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
@@ -2501,13 +2419,13 @@ function App() {
                         לרכבי יוקרה וכאלה שמוכרים שני רכבים בבת אחת – שתי חבילות ייחודיות עם שירות אישי, עיצוב בלעדי, וחסכון משמעותי.
                       </p>
                     </div>
-                    <div className="flex flex-row flex-wrap md:flex-col gap-2 md:shrink-0 justify-start">
+                    <div className="grid grid-cols-3 md:flex md:flex-col gap-2 w-full md:w-auto">
                       {[
                         { value: '60 יום', label: 'פרסום VIP', color: '#d4af37', icon: <Calendar size={12} /> },
                         { value: '40%', label: 'חיסכון DUO', color: '#8b5cf6', icon: <Percent size={12} /> },
                         { value: '24/7', label: 'ליווי אישי', color: '#4ade80', icon: <Headphones size={12} /> },
                       ].map((s, i) => (
-                        <div key={i} className="flex items-center gap-2 px-2.5 py-2 rounded-xl"
+                        <div key={i} className="flex items-center gap-2 px-2.5 py-2 rounded-xl min-w-0"
                           style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
                           <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
                             <span style={{ color: s.color }}>{s.icon}</span>
@@ -2520,17 +2438,18 @@ function App() {
                       ))}
                     </div>
                   </div>
-                  <div className="relative z-10 mt-4 pt-4" style={{ borderTop: '1px solid rgba(212,175,55,0.15)' }}>
-                    <div className="flex items-center gap-3 flex-wrap">
-                      <button onClick={() => document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' })}
-                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-sm text-white transition-all hover:opacity-90 hover:scale-105 active:scale-95"
-                        style={{ background: 'linear-gradient(135deg, #d4af37, #b8860b)', boxShadow: '0 4px 18px rgba(212,175,55,0.4)' }}>
-                        <Crown size={13} />
-                        לחבילות VIP ו-DUO
-                        <ChevronDown size={13} />
-                      </button>
-                      <span className="text-[11px] text-white/30">יוקרה · חיסכון 40%</span>
-                    </div>
+                </div>
+
+                  {/* ── CTA ── */}
+                  <div className="relative z-10 mt-5 flex items-center gap-3 flex-wrap pt-4" style={{ borderTop: '1px solid rgba(212,175,55,0.15)' }}>
+                    <button onClick={() => document.getElementById('packages-vip')?.scrollIntoView({ behavior: 'smooth' })}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-sm text-white transition-all hover:scale-105 active:scale-95"
+                      style={{ background: 'linear-gradient(135deg,#d4af37,#b8860b)', boxShadow: '0 4px 18px rgba(212,175,55,0.4)' }}>
+                      <Crown size={13} />
+                      {lang === 'he' ? 'לחבילות VIP ו-DUO' : 'لباقات VIP والثنائي'}
+                      <ChevronDown size={13} />
+                    </button>
+                    <span className="text-[11px] text-white/30">VIP · DUO DEAL</span>
                   </div>
                 </div>
 
@@ -2547,22 +2466,22 @@ function App() {
                 </div>
               </div>
 
-              {/* ── SECTION DIVIDER ── */}
-              <div className="flex items-center justify-center gap-3 py-2">
-                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.07))' }} />
-                <div className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-white/15 block" />
-                  <span className="w-2 h-2 rounded-full bg-brand-red/40 block" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-white/15 block" />
+              {/* ── divider ── */}
+              <div className="flex items-center justify-center gap-3 py-1">
+                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.06))' }} />
+                <div className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full block" style={{ background: 'rgba(255,255,255,0.12)' }} />
+                  <span className="w-2 h-2 rounded-full block" style={{ background: 'rgba(200,16,46,0.45)' }} />
+                  <span className="w-1.5 h-1.5 rounded-full block" style={{ background: 'rgba(255,255,255,0.12)' }} />
                 </div>
-                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.07), transparent)' }} />
+                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.06), transparent)' }} />
               </div>
 
               {/* BUSINESS */}
-              <div className="space-y-8">
+              <div id="packages-biz" className="scroll-mt-16 max-w-3xl mx-auto space-y-8">
                 {/* === SECTION HEADER: Business === */}
-                <div className="relative rounded-3xl p-5 sm:p-7 md:p-10"
-                  style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.10) 0%, rgba(10,10,15,0.97) 50%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(59,130,246,0.35)' }}>
+                <div className="relative rounded-3xl p-4 sm:p-6 md:p-10"
+                  style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(10,10,15,0.97) 50%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(59,130,246,0.32)' }}>
                   <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(59,130,246,0.1) 0%, transparent 65%)' }} />
                   <div className="absolute inset-0 opacity-3" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
 
@@ -2580,13 +2499,13 @@ function App() {
                         חבילות מותאמות לסוכנויות רכב, עם אפשרויות גמישות לניהול מלא. עד 100 רכבים בחודש, מנהל לקוח ייעודי ודוחות שבועיים.
                       </p>
                     </div>
-                    <div className="flex flex-row flex-wrap md:flex-col gap-2 md:shrink-0 justify-start">
+                    <div className="grid grid-cols-3 md:flex md:flex-col gap-2 w-full md:w-auto">
                       {[
                         { value: '50-100', label: 'רכבים/חודש', color: '#3b82f6', icon: <Car size={12} /> },
                         { value: '40-50%', label: 'הנחה', color: '#4ade80', icon: <Percent size={12} /> },
                         { value: '24/7', label: 'תמיכה', color: '#a78bfa', icon: <Headphones size={12} /> },
                       ].map((s, i) => (
-                        <div key={i} className="flex items-center gap-2 px-2.5 py-2 rounded-xl"
+                        <div key={i} className="flex items-center gap-2 px-2.5 py-2 rounded-xl min-w-0"
                           style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
                           <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
                             <span style={{ color: s.color }}>{s.icon}</span>
@@ -2599,17 +2518,18 @@ function App() {
                       ))}
                     </div>
                   </div>
-                  <div className="relative z-10 mt-4 pt-4" style={{ borderTop: '1px solid rgba(59,130,246,0.15)' }}>
-                    <div className="flex items-center gap-3 flex-wrap">
-                      <button onClick={() => document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' })}
-                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-sm text-white transition-all hover:opacity-90 hover:scale-105 active:scale-95"
-                        style={{ background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)', boxShadow: '0 4px 18px rgba(59,130,246,0.4)' }}>
-                        <Building2 size={13} />
-                        לחבילות לסוכנויות
-                        <ChevronDown size={13} />
-                      </button>
-                      <span className="text-[11px] text-white/30">BUSINESS · ENTERPRISE</span>
-                    </div>
+                </div>
+
+                  {/* ── CTA ── */}
+                  <div className="relative z-10 mt-5 flex items-center gap-3 flex-wrap pt-4" style={{ borderTop: '1px solid rgba(59,130,246,0.15)' }}>
+                    <button onClick={() => document.getElementById('packages-biz')?.scrollIntoView({ behavior: 'smooth' })}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-sm text-white transition-all hover:scale-105 active:scale-95"
+                      style={{ background: 'linear-gradient(135deg,#3b82f6,#1d4ed8)', boxShadow: '0 4px 18px rgba(59,130,246,0.4)' }}>
+                      <Building2 size={13} />
+                      {lang === 'he' ? 'לחבילות לסוכנויות' : 'لباقات الوكلاء'}
+                      <ChevronDown size={13} />
+                    </button>
+                    <span className="text-[11px] text-white/30">BUSINESS · ENTERPRISE</span>
                   </div>
                 </div>
 
@@ -2624,7 +2544,7 @@ function App() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5 }}
-                  className="relative rounded-3xl p-5 sm:p-7 md:p-10"
+                  className="relative rounded-3xl p-4 sm:p-6 md:p-10"
                   style={{ background: 'linear-gradient(135deg, #0a0f1e 0%, #060812 100%)', border: '1.5px solid rgba(99,102,241,0.4)' }}
                 >
                   {/* Glow effects */}
@@ -2716,22 +2636,22 @@ function App() {
                 </motion.div>
               </div>
 
-              {/* ── SECTION DIVIDER ── */}
-              <div className="flex items-center justify-center gap-3 py-2">
-                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.07))' }} />
-                <div className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-white/15 block" />
-                  <span className="w-2 h-2 rounded-full bg-brand-red/40 block" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-white/15 block" />
+              {/* ── divider ── */}
+              <div className="flex items-center justify-center gap-3 py-1">
+                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.06))' }} />
+                <div className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full block" style={{ background: 'rgba(255,255,255,0.12)' }} />
+                  <span className="w-2 h-2 rounded-full block" style={{ background: 'rgba(200,16,46,0.45)' }} />
+                  <span className="w-1.5 h-1.5 rounded-full block" style={{ background: 'rgba(255,255,255,0.12)' }} />
                 </div>
-                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.07), transparent)' }} />
+                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.06), transparent)' }} />
               </div>
 
               {/* EQUIPMENT + TRANSPORT */}
-              <div className="space-y-8">
+              <div id="packages-equip" className="scroll-mt-16 space-y-8">
                 {/* === SECTION HEADER: ציוד === */}
-                <div className="relative rounded-3xl p-5 sm:p-7 md:p-10"
-                  style={{ background: 'linear-gradient(135deg, rgba(234,88,12,0.10) 0%, rgba(10,10,15,0.97) 50%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(234,88,12,0.35)' }}>
+                <div className="relative rounded-3xl p-4 sm:p-6 md:p-10"
+                  style={{ background: 'linear-gradient(135deg, rgba(234,88,12,0.1) 0%, rgba(10,10,15,0.97) 50%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(234,88,12,0.32)' }}>
                   <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(234,88,12,0.1) 0%, transparent 65%)' }} />
 
                   <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
@@ -2748,13 +2668,13 @@ function App() {
                         חבילות ייחודיות לציוד כבד, ציוד קל, ורכבים מסחריים. חשיפה ממוקדת לקהל המקצועי הנכון – קבלנים, חברות הסעות, ועסקים.
                       </p>
                     </div>
-                    <div className="flex flex-row flex-wrap md:flex-col gap-2 md:shrink-0 justify-start">
+                    <div className="grid grid-cols-3 md:flex md:flex-col gap-2 w-full md:w-auto">
                       {[
                         { value: '85%', label: 'נמכרו תוך 14 יום', color: '#ea580c', icon: <TrendingUp size={12} /> },
                         { value: '500+', label: 'ציודים פורסמו', color: '#0ea5e9', icon: <Truck size={12} /> },
                         { value: '3', label: 'קטגוריות', color: '#4ade80', icon: <Target size={12} /> },
                       ].map((s, i) => (
-                        <div key={i} className="flex items-center gap-2 px-2.5 py-2 rounded-xl"
+                        <div key={i} className="flex items-center gap-2 px-2.5 py-2 rounded-xl min-w-0"
                           style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
                           <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
                             <span style={{ color: s.color }}>{s.icon}</span>
@@ -2767,35 +2687,34 @@ function App() {
                       ))}
                     </div>
                   </div>
-                  <div className="relative z-10 mt-4 pt-4" style={{ borderTop: '1px solid rgba(234,88,12,0.15)' }}>
-                    <div className="flex items-center gap-3 flex-wrap">
-                      <button onClick={() => document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' })}
-                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-sm text-white transition-all hover:opacity-90 hover:scale-105 active:scale-95"
-                        style={{ background: 'linear-gradient(135deg, #ea580c, #c2410c)', boxShadow: '0 4px 18px rgba(234,88,12,0.4)' }}>
-                        <Truck size={13} />
-                        לחבילות ציוד ותחבורה
-                        <ChevronDown size={13} />
-                      </button>
-                      <span className="text-[11px] text-white/30">ציוד כבד · קל · תחבורה</span>
-                    </div>
+                </div>
+
+                  {/* ── CTA ── */}
+                  <div className="relative z-10 mt-5 flex items-center gap-3 flex-wrap pt-4" style={{ borderTop: '1px solid rgba(234,88,12,0.15)' }}>
+                    <button onClick={() => document.getElementById('packages-equip')?.scrollIntoView({ behavior: 'smooth' })}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-black text-sm text-white transition-all hover:scale-105 active:scale-95"
+                      style={{ background: 'linear-gradient(135deg,#ea580c,#c2410c)', boxShadow: '0 4px 18px rgba(234,88,12,0.4)' }}>
+                      <Truck size={13} />
+                      {lang === 'he' ? 'לחבילות ציוד ותחבורה' : 'لباقات المعدات والنقل'}
+                      <ChevronDown size={13} />
+                    </button>
+                    <span className="text-[11px] text-white/30">ציוד כבד · קל · תחבורה</span>
                   </div>
                 </div>
 
-                <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-5">
+                <div className="hidden md:grid grid-cols-3 gap-6">
                   {equipmentPackages.map(pkg => (
-                    <div key={pkg.id} className="h-[480px]"><EquipmentPackageCard pkg={pkg} onSelect={handleSelectPackage} /></div>
+                    <div key={pkg.id} className="h-[460px]"><EquipmentPackageCard pkg={pkg} onSelect={handleSelectPackage} /></div>
                   ))}
-                  <div className="h-[480px]"><TransportPackageCard pkg={transportPackage} onSelect={handleSelectPackage} /></div>
-                  <div className="h-[480px]"><FleetPremiumPackageCard pkg={fleetPremiumPackage} onSelect={handleSelectPackage} /></div>
+                  <div className="h-[460px]"><TransportPackageCard pkg={transportPackage} onSelect={handleSelectPackage} /></div>
                 </div>
 
                 <div className="md:hidden px-3">
-                  <MobileSwiper cardHeight={480}>
+                  <MobileSwiper cardHeight={460}>
                     {equipmentPackages.map(pkg => (
-                      <div key={pkg.id} style={{ height: '480px' }}><EquipmentPackageCard pkg={pkg} onSelect={handleSelectPackage} /></div>
+                      <div key={pkg.id} style={{ height: '460px' }}><EquipmentPackageCard pkg={pkg} onSelect={handleSelectPackage} /></div>
                     ))}
-                    <div style={{ height: '480px' }}><TransportPackageCard pkg={transportPackage} onSelect={handleSelectPackage} /></div>
-                    <div style={{ height: '480px' }}><FleetPremiumPackageCard pkg={fleetPremiumPackage} onSelect={handleSelectPackage} /></div>
+                    <div style={{ height: '460px' }}><TransportPackageCard pkg={transportPackage} onSelect={handleSelectPackage} /></div>
                   </MobileSwiper>
                 </div>
               </div>
@@ -3593,7 +3512,6 @@ function App() {
           businessPackage={businessPackage}
           businessPackage100={businessPackage100}
           transportPackage={transportPackage}
-          fleetPremiumPackage={fleetPremiumPackage}
           onSelect={handleChangePackage}
           lang={lang}
         />
