@@ -236,8 +236,9 @@ const Navbar = memo(({ lang, setLang, isAdmin, onLogout, siteSettings, setView }
             </div>
           </div>
 
-          <div className="hidden md:flex items-center gap-8">
-            {['how-it-works', 'packages', 'faq'].map((item, i) => (
+          {/* Desktop nav */}
+          <div className="hidden md:flex items-center gap-6">
+            {['how-it-works', 'packages', 'faq'].map((item) => (
               <a
                 key={item}
                 href={`#${item}`}
@@ -255,13 +256,27 @@ const Navbar = memo(({ lang, setLang, isAdmin, onLogout, siteSettings, setView }
             >
               בדיקת סטטוס
             </button>
+
+            {/* Instagram button */}
+            <a
+              href="https://instagram.com/yougo.israel"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-black transition-all hover:scale-105 active:scale-95"
+              style={{ background: 'linear-gradient(135deg, rgba(228,64,95,0.15), rgba(193,53,132,0.1))', border: '1px solid rgba(228,64,95,0.3)', color: '#f472b6' }}
+            >
+              <Instagram size={15} />
+              <span className="text-xs">Instagram</span>
+            </a>
             
+            {/* Language switcher */}
             <button 
               onClick={() => setLang(lang === 'he' ? 'ar' : 'he')}
-              className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-xl border border-white/10 text-sm font-bold hover:bg-white/10 transition-all"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl border border-white/10 text-sm font-black hover:bg-white/10 transition-all"
+              style={{ background: 'rgba(255,255,255,0.05)' }}
             >
-              <Globe size={16} />
-              {lang === 'he' ? 'العربية' : 'עברית'}
+              <Globe size={15} className="text-white/60" />
+              <span className="text-white/80">{lang === 'he' ? 'عربي' : 'עברית'}</span>
             </button>
 
             {isAdmin && (
@@ -274,31 +289,47 @@ const Navbar = memo(({ lang, setLang, isAdmin, onLogout, siteSettings, setView }
             )}
           </div>
 
-          <button 
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg bg-white/5 border border-white/10"
-          >
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* Mobile: language + instagram + menu */}
+          <div className="md:hidden flex items-center gap-2">
+            <a
+              href="https://instagram.com/yougo.israel"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 rounded-lg flex items-center justify-center"
+              style={{ background: 'linear-gradient(135deg, rgba(228,64,95,0.15), rgba(193,53,132,0.1))', border: '1px solid rgba(228,64,95,0.25)', color: '#f472b6' }}
+            >
+              <Instagram size={18} />
+            </a>
+            <button 
+              onClick={() => setLang(lang === 'he' ? 'ar' : 'he')}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-white/10 text-xs font-black"
+              style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.8)' }}
+            >
+              <Globe size={13} />
+              {lang === 'he' ? 'عربي' : 'עב'}
+            </button>
+            <button 
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 rounded-lg bg-white/5 border border-white/10"
+            >
+              {mobileMenuOpen ? <X size={22} className="text-white" /> : <Menu size={22} className="text-white" />}
+            </button>
+          </div>
         </div>
 
         {mobileMenuOpen && (
-          <div className="md:hidden py-4 space-y-2 border-t border-white/5 mt-4">
+          <div className="md:hidden py-4 space-y-1 border-t border-white/5 mt-4">
             {[
               { href: '#how-it-works', label: 'איך זה עובד' },
               { href: '#packages', label: 'חבילות' },
               { href: '#faq', label: 'שאלות' }
             ].map((item) => (
-              <a key={item.href} href={item.href} onClick={() => setMobileMenuOpen(false)} className="block py-3 px-4 text-white/70 hover:bg-white/5 rounded-lg">
+              <a key={item.href} href={item.href} onClick={() => setMobileMenuOpen(false)} className="block py-3 px-4 text-white/70 hover:bg-white/5 rounded-xl font-bold">
                 {item.label}
               </a>
             ))}
-            <button onClick={() => { setView('check-status'); setMobileMenuOpen(false); }} className="block w-full text-right py-3 px-4 text-white/70 hover:bg-white/5 rounded-lg">
+            <button onClick={() => { setView('check-status'); setMobileMenuOpen(false); }} className="block w-full text-right py-3 px-4 text-white/70 hover:bg-white/5 rounded-xl font-bold">
               בדיקת סטטוס
-            </button>
-            <button onClick={() => setLang(lang === 'he' ? 'ar' : 'he')} className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-white/5 rounded-lg border border-white/10">
-              <Globe size={16} />
-              {lang === 'he' ? 'العربية' : 'עברית'}
             </button>
           </div>
         )}
@@ -419,15 +450,15 @@ const CardBackPanel = memo(({
 const packageDetails: Record<string, { title: string; content: string }> = {
   basic: {
     title: 'חבילת BASIC',
-    content: `✨ מה כוללת החבילה?\n• 2 תמונות מקצועיות עם עריכה איכותית\n• פוסט שיווקי ממוקד עם תיאור מפורט\n• סטורי לאורך 7 ימים רצופים\n• חשיפה לקהל קונים פוטנציאלי פעיל\n\n🌟 למי זה מתאים?\n• מוכרים פרטיים עם תקציב מינימלי\n• רכבים במחיר עד 50,000 ₪\n• מי שרוצה לבדוק את השוק במהירות\n\n⏱️ פרטים טכניים\n• משך פרסום: 7 ימים\n• 3 ימי חשיפה מובטחת\n• מחיר: 149 ₪ (במקום 175 ₪)\n• חיסכון של 26 ₪ – 15% הנחה`
+    content: `✨ מה כוללת החבילה?\n• 2 תמונות מקצועיות עם עריכה איכותית\n• פוסט שיווקי ממוקד עם תיאור מפורט\n• סטורי לאורך 7 ימים רצופים\n• חשיפה לקהל קונים פוטנציאלי פעיל\n\n🌟 למי זה מתאים?\n• מוכרים פרטיים עם תקציב מינימלי\n• רכבים במחיר עד 50,000 ₪\n• מי שרוצה לבדוק את השוק במהירות\n\n⏱️ פרטים טכניים\n• משך פרסום: 7 ימים\n• 3 ימי חשיפה מובטחת\n• מחיר: 199 ₪ (במקום 250 ₪)\n• חיסכון של 51 ₪ – 20% הנחה`
   },
   pro: {
     title: 'חבילת PRO',
-    content: `🔥 מה כוללת החבילה?\n• 4 תמונות מקצועיות עם עריכה מתקדמת\n• פוסט ראשי + פוסט שמור מתוזמן אסטרטגית\n• סטורי 14 ימים לחשיפה מתמדת\n• עדיפות בתור הפרסומים\n• טרגוט מתקדם לקהלים רלוונטיים\n\n💎 למה בוחרים בה?\n• יחס עלות-תועלת הכי גבוה בשוק\n• מעל 1,000 מכירות מוכחות דרך החבילה\n• זמן פרסום אופטימלי לרוב סוגי הרכבים\n\n⏱️ פרטים טכניים\n• משך פרסום: 14 ימים\n• 7 ימי חשיפה מובטחת\n• מחיר: 249 ₪ (במקום 293 ₪)\n• חיסכון של 44 ₪ – 15% הנחה`
+    content: `🔥 מה כוללת החבילה?\n• 4 תמונות מקצועיות עם עריכה מתקדמת\n• פוסט ראשי + פוסט שמור מתוזמן אסטרטגית\n• סטורי 14 ימים לחשיפה מתמדת\n• עדיפות בתור הפרסומים\n• טרגוט מתקדם לקהלים רלוונטיים\n\n💎 למה בוחרים בה?\n• יחס עלות-תועלת הכי גבוה בשוק\n• מעל 1,000 מכירות מוכחות דרך החבילה\n• זמן פרסום אופטימלי לרוב סוגי הרכבים\n\n⏱️ פרטים טכניים\n• משך פרסום: 14 ימים\n• 7 ימי חשיפה מובטחת\n• מחיר: 299 ₪ (במקום 350 ₪)\n• חיסכון של 51 ₪ – 15% הנחה`
   },
   premium: {
     title: 'חבילת PREMIUM',
-    content: `👑 מה כוללת החבילה?\n• 8+ תמונות מקצועיות עם עריכה מרהיבה\n• רילס וידאו + סרטון פרסומי מלא\n• פוסט מותאם אישית עם אסטרטגיית תוכן\n• סטורי 30 ימים לחשיפה מקסימלית\n• עדיפות מלאה – תמיד ראשון בתור\n• מעצב + קופירייטר אישי לכל מודעה\n• עיצוב VIP עם מיתוג ייחודי\n\n⏱️ פרטים טכניים\n• משך פרסום: 30 ימים\n• 14 ימי חשיפה מובטחת\n• מחיר: 449 ₪ (במקום 528 ₪)\n• חיסכון של 79 ₪ – 15% הנחה`
+    content: `👑 מה כוללת החבילה?\n• 8+ תמונות מקצועיות עם עריכה מרהיבה\n• רילס וידאו + סרטון פרסומי מלא\n• פוסט מותאם אישית עם אסטרטגיית תוכן\n• סטורי 30 ימים לחשיפה מקסימלית\n• עדיפות מלאה – תמיד ראשון בתור\n• מעצב + קופירייטר אישי לכל מודעה\n• עיצוב VIP עם מיתוג ייחודי\n\n⏱️ פרטים טכניים\n• משך פרסום: 30 ימים\n• 14 ימי חשיפה מובטחת\n• מחיר: 479 ₪ (במקום 599 ₪)\n• חיסכון של 120 ₪ – 20% הנחה`
   },
   vip: {
     title: 'VIP LUXURY',
@@ -435,11 +466,15 @@ const packageDetails: Record<string, { title: string; content: string }> = {
   },
   duo: {
     title: 'DUO DEAL',
-    content: `🚗🚗 מה כוללת החבילה?\n• פרסום מלא לשני רכבים במחיר מיוחד\n• 4 תמונות מקצועיות לכל רכב בנפרד\n• פוסט שיווקי נפרד ומותאם לכל רכב\n• סטורי 14 ימים לכל אחד מהרכבים\n• חשיפה כפולה לקהל מעוניין ורחב\n\n💰 למה זה משתלם?\n• במקום לשלם 598 ₪ – משלמים רק 349 ₪\n• חיסכון עצום של 249 ₪ – 40% הנחה`
+    content: `🚗🚗 מה כוללת החבילה?\n• פרסום מלא לשני רכבים במחיר מיוחד\n• 4 תמונות מקצועיות לכל רכב בנפרד\n• פוסט שיווקי נפרד ומותאם לכל רכב\n• סטורי 14 ימים לכל אחד מהרכבים\n• חשיפה כפולה לקהל מעוניין ורחב\n\n💰 למה זה משתלם?\n• במקום לשלם 598 ₪ – משלמים רק 389 ₪\n• חיסכון עצום של 209 ₪ – 35% הנחה`
   },
   business: {
     title: 'חבילת BUSINESS',
     content: `🏢 מה מקבלים?\n• עד 50 רכבים מפורסמים בחודש\n• צילומים מקצועיים לכל רכב בנפרד\n• דפי נחיתה מותאמים לסוכנות\n• מנהל לקוח ייעודי – איש קשר אחד\n• דוחות ביצועים חודשיים עם המלצות\n\n📈 יתרונות לעסקים\n• תוכנית שיווקית סדורה לאורך השנה\n• חיסכון עצום בעלויות פרסום חודשיות\n\n⏱️ פרטים טכניים\n• מינוי חודשי מתחדש אוטומטית\n• מחיר: 1,499 ₪ לחודש (במקום 2,499 ₪)\n• חיסכון של 1,000 ₪ – 40% הנחה`
+  },
+  'business-plus': {
+    title: 'חבילת BUSINESS PLUS',
+    content: `🚀 מה מקבלים?\n• עד 20 רכבים מפורסמים בחודש\n• מנהל חשבון ייעודי עם זמינות גבוהה\n• דוחות ביצועים שבועיים מפורטים\n• קידום ממומן מוגבר בכל הפלטפורמות\n• עיצוב מותאם אישית לכל מודעה\n• תמיכה 24/7 בוואטסאפ\n\n📊 יתרונות\n• מושלם לסוכנויות בינוניות\n• ממשק ניהול פשוט ויעיל\n• דיווח שקוף ומפורט\n\n⏱️ פרטים טכניים\n• מינוי חודשי גמיש\n• מחיר: 899 ₪ לחודש (במקום 1,199 ₪)\n• חיסכון של 300 ₪ – 25% הנחה`
   },
   business100: {
     title: 'חבילת BUSINESS 100',
@@ -512,7 +547,7 @@ const PackageCard = memo(({ pkg, lang, onSelect }: PackageCardProps) => {
 
             <div className="absolute top-3 left-3 z-20 flex items-center gap-1 text-[8px] font-black py-1 px-2 rounded-full"
               style={{ background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.3)', color: '#4ade80' }}>
-              <Zap size={7} />15% OFF
+              <Zap size={7} />20% OFF
             </div>
 
             <div className="relative z-10 flex flex-col h-full p-5 gap-3.5 pt-12">
@@ -551,9 +586,9 @@ const PackageCard = memo(({ pkg, lang, onSelect }: PackageCardProps) => {
                 <span className="text-[38px] font-black text-white leading-none tracking-tight">{pkg.price}</span>
                 <div className="flex flex-col gap-0.5">
                   <span className="text-[9px] line-through" style={{ color: 'rgba(255,255,255,0.2)' }}>
-                    ₪{Math.round(parseInt(pkg.price.replace('₪', '')) / 0.85)}
+                    {pkg.id === 'basic' ? '₪250' : pkg.id === 'pro' ? '₪350' : pkg.id === 'premium' ? '₪599' : `₪${Math.round(parseInt(pkg.price.replace('₪', '')) / 0.85)}`}
                   </span>
-                  <span className="text-[9px] font-black" style={{ color: '#4ade80' }}>חיסכון 15%</span>
+                  <span className="text-[9px] font-black" style={{ color: '#4ade80' }}>חיסכון 20%</span>
                 </div>
               </div>
 
@@ -687,8 +722,8 @@ const VIPPackageCard = memo(({ pkg, lang, onSelect }: PackageCardProps) => {
 
               <div className="flex items-baseline gap-2">
                 <span className="text-[36px] font-black leading-none text-amber-400">₪749</span>
-                <span className="text-xs line-through text-white/20">₪882</span>
-                <span className="text-[9px] font-black bg-amber-500/15 text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/25">חיסכון 15%</span>
+                <span className="text-xs line-through text-white/20">₪950</span>
+                <span className="text-[9px] font-black bg-amber-500/15 text-amber-300 px-2 py-0.5 rounded-full border border-amber-500/25">חיסכון 20%</span>
               </div>
 
               <div className="h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.3), transparent)' }} />
@@ -795,9 +830,9 @@ const DuoDealPackageCard = memo(({ pkg, onSelect }: { pkg: Package, onSelect: (p
               </div>
 
               <div className="flex items-baseline gap-2">
-                <span className="text-[36px] font-black leading-none text-purple-400">₪349</span>
-                <span className="text-xs line-through text-white/20">₪598</span>
-                <span className="text-[9px] font-black bg-purple-500/15 text-purple-300 px-2 py-0.5 rounded-full border border-purple-500/25">חיסכון ₪249</span>
+                <span className="text-[36px] font-black leading-none text-purple-400">₪389</span>
+                <span className="text-xs line-through text-white/20">₪648</span>
+                <span className="text-[9px] font-black bg-purple-500/15 text-purple-300 px-2 py-0.5 rounded-full border border-purple-500/25">חיסכון ₪259</span>
               </div>
 
               <div className="h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(139,92,246,0.3), transparent)' }} />
@@ -1037,7 +1072,8 @@ const TransportPackageCard = memo(({ pkg, onSelect }: { pkg: Package, onSelect: 
 // ============================================================
 const BusinessPackageCard = memo(({ pkg, onSelect }: { pkg: Package, onSelect: (p: Package) => void }) => {
   const [showBack, setShowBack] = useState(false);
-  const color = '#3b82f6';
+  const isPlus = pkg.id === 'business-plus';
+  const color = isPlus ? '#10b981' : '#3b82f6';
   const handleSelect = useCallback(() => onSelect(pkg), [onSelect, pkg]);
   const handleShowBack = useCallback(() => setShowBack(true), []);
   const handleHideBack = useCallback(() => setShowBack(false), []);
@@ -1054,40 +1090,51 @@ const BusinessPackageCard = memo(({ pkg, onSelect }: { pkg: Package, onSelect: (
             transition={{ duration: 0.25 }}
             className="absolute inset-0 rounded-2xl overflow-hidden"
             style={{
-              background: 'linear-gradient(135deg, #070f1c 0%, #0d1a2e 50%, #070f1c 100%)',
-              border: '1.5px solid rgba(59,130,246,0.4)',
+              background: isPlus
+                ? 'linear-gradient(135deg, #071a12 0%, #0d1f17 50%, #071a12 100%)'
+                : 'linear-gradient(135deg, #070f1c 0%, #0d1a2e 50%, #070f1c 100%)',
+              border: `1.5px solid ${color}40`,
             }}
           >
-            <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-blue-400 to-transparent" />
+            <div className="absolute top-0 left-0 right-0 h-[3px]" style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} />
             <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
+
+            {isPlus && (
+              <div className="absolute top-3 right-3 z-20 flex items-center gap-1 text-white text-[8px] font-black py-1 px-2.5 rounded-full"
+                style={{ background: 'linear-gradient(135deg, #10b981, #059669)', boxShadow: '0 4px 14px rgba(16,185,129,0.5)' }}>
+                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />חדש!
+              </div>
+            )}
 
             <div className="relative z-10 p-5 h-full flex flex-col gap-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   <div className="w-12 h-12 rounded-xl flex items-center justify-center"
-                    style={{ background: 'linear-gradient(135deg, #3b82f6, #7c3aed)' }}>
+                    style={{ background: isPlus ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #3b82f6, #7c3aed)' }}>
                     <Building2 size={22} className="text-white" />
                   </div>
                   <div>
-                    <div className="text-[9px] font-black text-blue-400 uppercase tracking-[0.15em]">לסוכנויות</div>
+                    <div className="text-[9px] font-black uppercase tracking-[0.15em]" style={{ color }}>
+                      {isPlus ? 'לסוכנויות בינוניות' : 'לסוכנויות'}
+                    </div>
                     <h3 className="text-[20px] font-black text-white">{pkg.name}</h3>
                   </div>
                 </div>
-                <div className="flex items-center gap-1 bg-blue-500/15 px-2.5 py-1.5 rounded-full border border-blue-500/25">
-                  <Award size={11} className="text-blue-400" />
-                  <span className="text-[8px] font-black text-blue-400">מומלץ</span>
+                <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-full border" style={{ background: `${color}15`, borderColor: `${color}25` }}>
+                  <Award size={11} style={{ color }} />
+                  <span className="text-[8px] font-black" style={{ color }}>{isPlus ? 'פופולרי' : 'מומלץ'}</span>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-2">
                 {[
-                  { icon: <Car size={11} />, val: pkg.features[0] || '50 רכבים/חודש' },
-                  { icon: <Users size={11} />, val: pkg.features[1] || 'מנהל ייעודי' },
-                  { icon: <BarChart3 size={11} />, val: pkg.features[2] || 'דוחות חודשיים' },
-                  { icon: <Target size={11} />, val: pkg.features[3] || 'קידום ממומן' },
+                  { icon: <Car size={11} />, val: isPlus ? '20 רכבים/חודש' : pkg.features[0] || '50 רכבים/חודש' },
+                  { icon: <Users size={11} />, val: isPlus ? 'מנהל ייעודי' : pkg.features[1] || 'מנהל ייעודי' },
+                  { icon: <BarChart3 size={11} />, val: isPlus ? 'דוחות שבועיים' : pkg.features[2] || 'דוחות חודשיים' },
+                  { icon: <Target size={11} />, val: isPlus ? 'קידום מוגבר' : pkg.features[3] || 'קידום ממומן' },
                 ].map((s, i) => (
                   <div key={i} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/8 border border-white/10">
-                    <span className="text-blue-400">{s.icon}</span>
+                    <span style={{ color }}>{s.icon}</span>
                     <span className="text-[10px] font-black text-white">{s.val}</span>
                   </div>
                 ))}
@@ -1096,18 +1143,23 @@ const BusinessPackageCard = memo(({ pkg, onSelect }: { pkg: Package, onSelect: (
               <div className="flex items-baseline gap-2">
                 <span className="text-[32px] font-black text-white leading-none">{pkg.price}</span>
                 <span className="text-xs text-white/30">/חודש</span>
-                <span className="text-xs line-through text-white/20 mr-1">₪{Math.round(parseInt(pkg.price.replace(/[₪,]/g, '')) / 0.6)}</span>
-                <span className="text-[9px] font-black bg-green-500/15 text-green-400 px-1.5 py-0.5 rounded-full border border-green-500/25">{pkg.id === 'business100' ? '50% OFF' : '40% OFF'}</span>
+                <span className="text-xs line-through text-white/20 mr-1">
+                  ₪{isPlus ? '1,199' : Math.round(parseInt(pkg.price.replace(/[₪,]/g, '')) / 0.6)}
+                </span>
+                <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full border"
+                  style={{ background: 'rgba(34,197,94,0.15)', color: '#4ade80', borderColor: 'rgba(34,197,94,0.25)' }}>
+                  {isPlus ? '25% OFF' : pkg.id === 'business100' ? '50% OFF' : '40% OFF'}
+                </span>
               </div>
 
-              <div className="h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(59,130,246,0.3), transparent)' }} />
+              <div className="h-px" style={{ background: `linear-gradient(90deg, transparent, ${color}30, transparent)` }} />
 
               <div className="flex flex-col gap-2 flex-grow">
                 {pkg.features.slice(0, 4).map((f, i) => (
                   <div key={i} className="flex items-start gap-2.5">
-                    <div className="w-4 h-4 rounded-md flex items-center justify-center shrink-0 mt-[1px] bg-blue-500/20"
-                      style={{ border: '1.5px solid rgba(59,130,246,0.4)' }}>
-                      <Check size={8} strokeWidth={3} className="text-blue-400" />
+                    <div className="w-4 h-4 rounded-md flex items-center justify-center shrink-0 mt-[1px]"
+                      style={{ background: `${color}20`, border: `1.5px solid ${color}40` }}>
+                      <Check size={8} strokeWidth={3} style={{ color }} />
                     </div>
                     <span className="text-[12px] font-medium text-white/82 leading-snug">{f}</span>
                   </div>
@@ -1116,13 +1168,13 @@ const BusinessPackageCard = memo(({ pkg, onSelect }: { pkg: Package, onSelect: (
 
               <div className="flex gap-2.5 mt-auto">
                 <button type="button" onClick={handleShowBack}
-                  className="flex-1 py-3 rounded-xl font-black text-xs active:scale-95 transition-all text-blue-400"
-                  style={{ border: '1.5px solid rgba(59,130,246,0.35)', background: 'rgba(59,130,246,0.08)' }}>
+                  className="flex-1 py-3 rounded-xl font-black text-xs active:scale-95 transition-all"
+                  style={{ border: `1.5px solid ${color}35`, color, background: `${color}08` }}>
                   פרטים נוספים
                 </button>
                 <button type="button" onClick={handleSelect}
                   className="flex-1 py-3 rounded-xl font-black text-xs text-white active:scale-95 transition-all flex items-center justify-center gap-1.5"
-                  style={{ background: 'linear-gradient(135deg, #3b82f6, #7c3aed)' }}>
+                  style={{ background: isPlus ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #3b82f6, #7c3aed)' }}>
                   <Briefcase size={12} />התחל
                 </button>
               </div>
@@ -1130,14 +1182,6 @@ const BusinessPackageCard = memo(({ pkg, onSelect }: { pkg: Package, onSelect: (
           </motion.div>
         ) : (
           <CardBackPanel pkg={pkg} details={packageDetails[pkg.id] || { title: pkg.name, content: pkg.features.join('\n') }} color={color} badge={<Building2 size={20} />} onSelect={handleSelect} onBack={handleHideBack} />
-        )}
-      </AnimatePresence>
-    </div>
-  );
-});
-
-// ============================================================
-// MOBILE SWIPER
 // ============================================================
 const MobileSwiper = ({ children, cardHeight = 500 }: { children: React.ReactNode[]; cardHeight?: number }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -1393,18 +1437,19 @@ const OrderStatusCheck = memo(({ onClose }: { onClose: () => void }) => {
 // CHANGE PACKAGE MODAL
 // ============================================================
 const ChangePackageModal = memo(({
-  isOpen, onClose, currentPackageId, packages, vipPackage, duoPackage, equipmentPackages, businessPackage, businessPackage100, transportPackage, onSelect, lang
+  isOpen, onClose, currentPackageId, packages, vipPackage, duoPackage, equipmentPackages, businessPackage, businessPackage100, businessPlusPackage, transportPackage, onSelect, lang
 }: {
   isOpen: boolean; onClose: () => void; currentPackageId: string; packages: Package[]; vipPackage: Package;
-  duoPackage: Package; equipmentPackages: Package[]; businessPackage: Package; businessPackage100: Package; transportPackage: Package;
+  duoPackage: Package; equipmentPackages: Package[]; businessPackage: Package; businessPackage100: Package; businessPlusPackage: Package; transportPackage: Package;
   onSelect: (p: Package) => void; lang: Language;
 }) => {
-  const allPackages = useMemo(() => [...packages, vipPackage, duoPackage, businessPackage, businessPackage100, ...equipmentPackages, transportPackage], [packages, vipPackage, duoPackage, businessPackage, businessPackage100, equipmentPackages, transportPackage]);
+  const allPackages = useMemo(() => [...packages, vipPackage, duoPackage, businessPlusPackage, businessPackage, businessPackage100, ...equipmentPackages, transportPackage], [packages, vipPackage, duoPackage, businessPlusPackage, businessPackage, businessPackage100, equipmentPackages, transportPackage]);
 
   const getPackageStyle = useCallback((pkg: Package) => {
     if (pkg.id === 'vip') return { border: 'border-amber-500/40', bg: 'bg-amber-500/10', badge: <Crown size={16} />, color: 'text-amber-400', activeBorder: 'border-amber-400' };
     if (pkg.id === 'duo') return { border: 'border-purple-500/40', bg: 'bg-purple-500/10', badge: <Car size={16} />, color: 'text-purple-400', activeBorder: 'border-purple-400' };
     if (pkg.id === 'business') return { border: 'border-blue-500/40', bg: 'bg-blue-500/10', badge: <Building2 size={16} />, color: 'text-blue-400', activeBorder: 'border-blue-400' };
+    if (pkg.id === 'business-plus') return { border: 'border-emerald-500/40', bg: 'bg-emerald-500/10', badge: <Building2 size={16} />, color: 'text-emerald-400', activeBorder: 'border-emerald-400' };
     if (pkg.id === 'business100') return { border: 'border-blue-500/40', bg: 'bg-blue-500/10', badge: <Building2 size={16} />, color: 'text-blue-400', activeBorder: 'border-blue-400' };
     if (pkg.id === 'equipment-heavy') return { border: 'border-orange-500/40', bg: 'bg-orange-500/10', badge: <Truck size={16} />, color: 'text-orange-400', activeBorder: 'border-orange-400' };
     if (pkg.id === 'equipment-light') return { border: 'border-slate-500/40', bg: 'bg-slate-500/10', badge: <Wrench size={16} />, color: 'text-slate-400', activeBorder: 'border-slate-400' };
@@ -1468,7 +1513,7 @@ const CarDetailsForm = memo(({ formData, setFormData, onNext, selectedPackage, o
   formData: any, setFormData: (data: any) => void, onNext: () => void, selectedPackage: Package | null, onChangePackage: () => void
 }) => {
   const isDuo = selectedPackage?.id === 'duo';
-  const isBusiness = selectedPackage?.id === 'business' || selectedPackage?.id === 'business100';
+  const isBusiness = selectedPackage?.id === 'business' || selectedPackage?.id === 'business100' || selectedPackage?.id === 'business-plus';
   const isTransport = selectedPackage?.id === 'transport';
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -1482,7 +1527,7 @@ const CarDetailsForm = memo(({ formData, setFormData, onNext, selectedPackage, o
           <div className="w-10 h-10 rounded-lg bg-brand-red/10 flex items-center justify-center">
             {selectedPackage?.id === 'vip' ? <Crown size={16} className="text-amber-400" /> :
              selectedPackage?.id === 'duo' ? <Car size={16} className="text-purple-400" /> :
-             selectedPackage?.id === 'business' || selectedPackage?.id === 'business100' ? <Building2 size={16} className="text-blue-400" /> :
+             selectedPackage?.id === 'business' || selectedPackage?.id === 'business100' || selectedPackage?.id === 'business-plus' ? <Building2 size={16} className="text-blue-400" /> :
              selectedPackage?.id === 'transport' ? <Bus size={16} className="text-sky-400" /> :
              selectedPackage?.id === 'equipment-heavy' ? <Truck size={16} className="text-orange-400" /> :
              selectedPackage?.id === 'equipment-light' ? <Wrench size={16} className="text-slate-400" /> :
@@ -1912,6 +1957,121 @@ const PaymentForm = memo(({ formData, setFormData, selectedPackage, onSubmit, lo
 });
 
 // ============================================================
+// REVIEW FORM COMPONENT
+// ============================================================
+const ReviewForm = memo(() => {
+  const [showForm, setShowForm] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [form, setForm] = useState({ name: '', location: '', pkg: 'PRO', text: '', stars: 5 });
+
+  const handleSubmit = () => {
+    if (!form.name || !form.text || form.text.length < 15) return;
+    setSubmitted(true);
+    setTimeout(() => { setShowForm(false); setSubmitted(false); setForm({ name: '', location: '', pkg: 'PRO', text: '', stars: 5 }); }, 3500);
+  };
+
+  if (!showForm) return (
+    <div className="space-y-3">
+      <div className="w-12 h-12 rounded-2xl mx-auto flex items-center justify-center"
+        style={{ background: 'rgba(251,191,36,0.12)', border: '1px solid rgba(251,191,36,0.25)' }}>
+        <MessageSquare size={22} className="text-amber-400" />
+      </div>
+      <h3 className="text-lg font-black text-white">מכרת דרכנו? שתף את החוויה!</h3>
+      <p className="text-white/40 text-sm">הביקורת שלך עוזרת לאנשים אחרים להחליט. כל ביקורת עוברת אישור לפני פרסום.</p>
+      <button
+        onClick={() => setShowForm(true)}
+        className="inline-flex items-center gap-2 px-8 py-3 rounded-xl font-black text-sm transition-all hover:scale-105 active:scale-95"
+        style={{ background: 'linear-gradient(135deg, rgba(251,191,36,0.2), rgba(251,191,36,0.1))', border: '1px solid rgba(251,191,36,0.35)', color: '#fbbf24' }}>
+        <Star size={15} className="fill-amber-400" />
+        כתוב ביקורת
+      </button>
+    </div>
+  );
+
+  if (submitted) return (
+    <div className="space-y-3 py-4">
+      <div className="w-14 h-14 rounded-2xl mx-auto flex items-center justify-center bg-amber-500/20 border border-amber-500/30">
+        <Check size={28} className="text-amber-400" />
+      </div>
+      <h3 className="text-lg font-black text-white">תודה רבה! 🙏</h3>
+      <p className="text-white/50 text-sm">הביקורת שלך התקבלה ותפורסם לאחר אישור הצוות שלנו.</p>
+    </div>
+  );
+
+  return (
+    <div className="space-y-4 text-right" dir="rtl">
+      <div className="flex items-center justify-between">
+        <button onClick={() => setShowForm(false)} className="text-white/30 hover:text-white/60 transition-colors">
+          <X size={16} />
+        </button>
+        <h3 className="text-base font-black text-white">כתוב ביקורת</h3>
+      </div>
+
+      {/* Stars */}
+      <div className="flex items-center gap-1 justify-center">
+        {[1,2,3,4,5].map(s => (
+          <button key={s} onClick={() => setForm(f => ({ ...f, stars: s }))} className="transition-transform hover:scale-110">
+            <Star size={24} className={s <= form.stars ? 'text-amber-400 fill-amber-400' : 'text-white/20'} />
+          </button>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <input
+          type="text"
+          placeholder="שם פרטי ואות משפחה"
+          value={form.name}
+          onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+          className="w-full px-3 py-2.5 rounded-xl text-sm font-bold text-white placeholder-white/25 focus:outline-none focus:border-amber-400 transition-colors"
+          style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
+        />
+        <input
+          type="text"
+          placeholder="עיר מגורים"
+          value={form.location}
+          onChange={e => setForm(f => ({ ...f, location: e.target.value }))}
+          className="w-full px-3 py-2.5 rounded-xl text-sm font-bold text-white placeholder-white/25 focus:outline-none transition-colors"
+          style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
+        />
+      </div>
+
+      <select
+        value={form.pkg}
+        onChange={e => setForm(f => ({ ...f, pkg: e.target.value }))}
+        className="w-full px-3 py-2.5 rounded-xl text-sm font-bold text-white focus:outline-none"
+        style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }}
+      >
+        {['BASIC','PRO','PREMIUM','VIP','DUO DEAL','BUSINESS'].map(p => (
+          <option key={p} value={p} style={{ background: '#111' }}>{p}</option>
+        ))}
+      </select>
+
+      <textarea
+        placeholder="שתף את החוויה שלך... (לפחות 15 תווים)"
+        value={form.text}
+        onChange={e => setForm(f => ({ ...f, text: e.target.value }))}
+        rows={4}
+        className="w-full px-3 py-2.5 rounded-xl text-sm font-medium text-white placeholder-white/25 focus:outline-none resize-none transition-colors"
+        style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
+      />
+
+      <p className="text-white/25 text-[10px] text-center">הביקורת תפורסם לאחר אישור הצוות שלנו</p>
+
+      <button
+        onClick={handleSubmit}
+        disabled={!form.name || form.text.length < 15}
+        className="w-full py-3 rounded-xl font-black text-sm transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+        style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: '#000' }}
+      >
+        <span className="flex items-center justify-center gap-2">
+          <Send size={14} />שלח ביקורת לאישור
+        </span>
+      </button>
+    </div>
+  );
+});
+
+// ============================================================
 // MAIN APP COMPONENT
 // ============================================================
 function App() {
@@ -1953,19 +2113,20 @@ function App() {
   }, [view, bookingStep]);
 
   const packages: Package[] = useMemo(() => [
-    { id: 'basic', name: t.basic, price: '₪149', features: [t.features.images2, t.features.post1, t.features.story7, t.features.exposureBasic] },
-    { id: 'pro', name: t.pro, price: '₪249', popular: true, features: [t.features.images4, t.features.postPro, t.features.story14, t.features.priorityPro, t.features.exposurePro] },
-    { id: 'premium', name: t.premium, price: '₪449', premium: true, features: [t.features.imagesPremium, t.features.postPremium, t.features.story30, t.features.priorityFull, t.features.exposureMax, t.features.guidance, t.features.video] }
+    { id: 'basic', name: t.basic, price: '₪199', features: [t.features.images2, t.features.post1, t.features.story7, t.features.exposureBasic] },
+    { id: 'pro', name: t.pro, price: '₪299', popular: true, features: [t.features.images4, t.features.postPro, t.features.story14, t.features.priorityPro, t.features.exposurePro] },
+    { id: 'premium', name: t.premium, price: '₪479', premium: true, features: [t.features.imagesPremium, t.features.postPremium, t.features.story30, t.features.priorityFull, t.features.exposureMax, t.features.guidance, t.features.video] }
   ], [t]);
 
   const vipPackage: Package = useMemo(() => ({ id: 'vip', name: 'VIP LUXURY', price: '₪749', vip: true, features: ['15+ תמונות מקצועיות', 'רילס + סטורי VIP', '60 ימי פרסום פרמיום', 'חשיפה מקסימלית', 'ליווי אישי 24/7', 'עיצוב VIP בלעדי', 'טרגוט מתקדם', 'עדיפות ראשונה תמיד'] }), []);
-  const duoPackage: Package = useMemo(() => ({ id: 'duo', name: 'DUO DEAL', price: '₪349', features: ['פרסום 2 רכבים במחיר מיוחד', '4 תמונות לכל רכב', 'פוסט נפרד לכל רכב', 'סטורי 14 יום לכל אחד', 'חשיפה כפולה לקהל מעוניין', 'חיסכון של 40% לעומת 2 חבילות'] }), []);
+  const duoPackage: Package = useMemo(() => ({ id: 'duo', name: 'DUO DEAL', price: '₪389', features: ['פרסום 2 רכבים במחיר מיוחד', '4 תמונות לכל רכב', 'פוסט נפרד לכל רכב', 'סטורי 14 יום לכל אחד', 'חשיפה כפולה לקהל מעוניין', 'חיסכון של 40% לעומת 2 חבילות'] }), []);
   const businessPackage: Package = useMemo(() => ({ id: 'business', name: 'BUSINESS', price: '₪1,499', business: true, features: ['עד 50 רכבים בחודש', 'מנהל לקוח ייעודי', 'דוחות ביצועים חודשיים', 'קידום ממומן', 'עיצוב מקצועי לכל מודעה'] }), []);
   const businessPackage100: Package = useMemo(() => ({ id: 'business100', name: 'BUSINESS 100', price: '₪2,499', business: true, features: ['עד 100 רכבים בחודש', 'מנהל לקוח בכיר', 'דוחות שבועיים', 'קידום ממומן מוגבר', 'עיצוב VIP', 'אנליטיקס מתקדם', 'תמיכה 24/7'] }), []);
-  const transportPackage: Package = useMemo(() => ({ id: 'transport', name: 'תחבורה והסעות', price: '₪299', features: ['10 תמונות מקצועיות מבפנים ומבחוץ', 'פוסט עם מפרט טכני מלא ומדויק', 'סטורי 21 ימים לחשיפה רחבה', 'חשיפה ייעודית לחברות הסעות ותחבורה', 'טרגוט מדויק לרוכשי רכב מסחרי', 'ייעוץ תמחור מקצועי', 'מאפיין לאוטובוסים, מיניבוסים, וואנים ומשאיות'] }), []);
+  const businessPlusPackage: Package = useMemo(() => ({ id: 'business-plus', name: 'BUSINESS PLUS', price: '₪899', business: true, features: ['עד 20 רכבים בחודש', 'מנהל חשבון ייעודי', 'דוחות ביצועים שבועיים', 'קידום ממומן מוגבר', 'עיצוב מותאם אישית', 'תמיכה 24/7 בוואטסאפ'] }), []);
+  const transportPackage: Package = useMemo(() => ({ id: 'transport', name: 'תחבורה והסעות', price: '₪329', features: ['10 תמונות מקצועיות מבפנים ומבחוץ', 'פוסט עם מפרט טכני מלא ומדויק', 'סטורי 21 ימים לחשיפה רחבה', 'חשיפה ייעודית לחברות הסעות ותחבורה', 'טרגוט מדויק לרוכשי רכב מסחרי', 'ייעוץ תמחור מקצועי', 'מאפיין לאוטובוסים, מיניבוסים, וואנים ומשאיות'] }), []);
   const equipmentPackages: Package[] = useMemo(() => [
-    { id: 'equipment-heavy', name: 'חבילת ציוד כבד', price: '₪349', equipment: true, features: ['10 תמונות מקצועיות של הציוד', 'פוסט ייעודי עם מפרט טכני', 'סטורי 21 יום', 'חשיפה לקהל קבלנים ומגזר הבנייה', 'עדיפות בתוצאות חיפוש', 'ייעוץ תמחור מקצועי'] },
-    { id: 'equipment-light', name: 'חבילת ציוד קל', price: '₪199', equipment: true, features: ['6 תמונות מקצועיות', 'פוסט מותאם לציוד קל', 'סטורי 14 יום', 'חשיפה לקהל מקצועי רלוונטי', 'תיאור טכני מפורט', 'תמיכה ב-WhatsApp'] }
+    { id: 'equipment-heavy', name: 'חבילת ציוד כבד', price: '₪389', equipment: true, features: ['10 תמונות מקצועיות של הציוד', 'פוסט ייעודי עם מפרט טכני', 'סטורי 21 יום', 'חשיפה לקהל קבלנים ומגזר הבנייה', 'עדיפות בתוצאות חיפוש', 'ייעוץ תמחור מקצועי'] },
+    { id: 'equipment-light', name: 'חבילת ציוד קל', price: '₪229', equipment: true, features: ['6 תמונות מקצועיות', 'פוסט מותאם לציוד קל', 'סטורי 14 יום', 'חשיפה לקהל מקצועי רלוונטי', 'תיאור טכני מפורט', 'תמיכה ב-WhatsApp'] }
   ], []);
 
   const handleSelectPackage = useCallback((p: Package) => {
@@ -2038,7 +2199,7 @@ function App() {
     },
     howItWorks: {
       title: 'איך מפרסמים רכב?',
-      content: `שלב 1 – בחירת חבילה\nבחרו את חבילת הפרסום המתאימה לסוג הרכב ולתקציב שלכם. יש לנו חבילות לכל צורך: מחבילת הכניסה ב-₪149 ועד VIP LUXURY ב-₪749.\n\nשלב 2 – מילוי פרטים\nמלאו את פרטי הרכב בטופס המאובטח: דגם, שנה, קילומטראז', מחיר, ומיקום.\n\nשלב 3 – תשלום\nשלמו בביט או בפייבוקס למספר 054-6980606 והעלו צילום מסך של ההעברה.\n\nשלב 4 – שליחת תמונות\nלאחר אישור ההזמנה, שלחו את תמונות הרכב ישירות בוואטסאפ.\n\nשלב 5 – פרסום\nהצוות שלנו יפרסם את הרכב שלכם ברשתות החברתיות תוך 24 שעות.\n\nשלב 6 – קבלת פניות\nקונים פוטנציאליים ייצרו איתכם קשר ישירות. ממוצע הזמן לקבלת הפנייה הראשונה: 3-6 שעות.`
+      content: `שלב 1 – בחירת חבילה\nבחרו את חבילת הפרסום המתאימה לסוג הרכב ולתקציב שלכם. יש לנו חבילות לכל צורך: מחבילת הכניסה ב-₪199 ועד VIP LUXURY ב-₪749.\n\nשלב 2 – מילוי פרטים\nמלאו את פרטי הרכב בטופס המאובטח: דגם, שנה, קילומטראז', מחיר, ומיקום.\n\nשלב 3 – תשלום\nשלמו בביט או בפייבוקס למספר 054-6980606 והעלו צילום מסך של ההעברה.\n\nשלב 4 – שליחת תמונות\nלאחר אישור ההזמנה, שלחו את תמונות הרכב ישירות בוואטסאפ.\n\nשלב 5 – פרסום\nהצוות שלנו יפרסם את הרכב שלכם ברשתות החברתיות תוך 24 שעות.\n\nשלב 6 – קבלת פניות\nקונים פוטנציאליים ייצרו איתכם קשר ישירות. ממוצע הזמן לקבלת הפנייה הראשונה: 3-6 שעות.`
     },
     affiliate: {
       title: 'שיווק שותפים',
@@ -2247,10 +2408,9 @@ function App() {
 
               {/* REGULAR PACKAGES */}
               <div className="space-y-8">
-                {/* === REDESIGNED SECTION HEADER: רכב פרטי === */}
-                <div className="relative overflow-hidden rounded-3xl p-8 md:p-10"
-                  style={{ background: 'linear-gradient(135deg, rgba(200,16,46,0.08) 0%, rgba(10,10,15,0.95) 50%, rgba(6,6,10,1) 100%)', border: '1px solid rgba(200,16,46,0.18)' }}>
-                  {/* decorative glow */}
+                {/* === SECTION HEADER: רכב פרטי === */}
+                <div className="relative rounded-3xl p-8 md:p-10 mx-0"
+                  style={{ background: 'linear-gradient(135deg, rgba(200,16,46,0.08) 0%, rgba(10,10,15,0.95) 50%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(200,16,46,0.30)', borderRadius: '1.5rem' }}>
                   <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(200,16,46,0.12) 0%, transparent 65%)' }} />
                   <div className="absolute bottom-0 left-0 w-48 h-48 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 20% 80%, rgba(200,16,46,0.06) 0%, transparent 65%)' }} />
 
@@ -2270,7 +2430,7 @@ function App() {
                     </div>
                     <div className="flex flex-row md:flex-col gap-2 shrink-0">
                       {[
-                        { value: '₪149', label: 'מחבילה', color: '#94a3b8', icon: <DollarSign size={12} /> },
+                        { value: '₪199', label: 'מחבילה', color: '#94a3b8', icon: <DollarSign size={12} /> },
                         { value: '1,000+', label: 'מכירות', color: '#c8102e', icon: <Trophy size={12} /> },
                         { value: '7-30', label: 'ימי פרסום', color: '#4ade80', icon: <Calendar size={12} /> },
                       ].map((s, i) => (
@@ -2308,9 +2468,9 @@ function App() {
 
               {/* VIP + DUO */}
               <div className="space-y-8">
-                {/* === REDESIGNED SECTION HEADER: VIP === */}
-                <div className="relative overflow-hidden rounded-3xl p-8 md:p-10"
-                  style={{ background: 'linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(10,10,15,0.95) 50%, rgba(6,6,10,1) 100%)', border: '1px solid rgba(212,175,55,0.2)' }}>
+                {/* === SECTION HEADER: VIP === */}
+                <div className="relative rounded-3xl p-8 md:p-10"
+                  style={{ background: 'linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(10,10,15,0.95) 50%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(212,175,55,0.35)', borderRadius: '1.5rem' }}>
                   <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(212,175,55,0.1) 0%, transparent 65%)' }} />
 
                   <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
@@ -2363,11 +2523,10 @@ function App() {
 
               {/* BUSINESS */}
               <div className="max-w-3xl mx-auto space-y-8">
-                {/* === REDESIGNED SECTION HEADER: Business === */}
-                <div className="relative overflow-hidden rounded-3xl p-8 md:p-10"
-                  style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.08) 0%, rgba(10,10,15,0.95) 50%, rgba(6,6,10,1) 100%)', border: '1px solid rgba(59,130,246,0.2)' }}>
+                {/* === SECTION HEADER: Business === */}
+                <div className="relative rounded-3xl p-8 md:p-10"
+                  style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.08) 0%, rgba(10,10,15,0.95) 50%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(59,130,246,0.35)', borderRadius: '1.5rem' }}>
                   <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(59,130,246,0.1) 0%, transparent 65%)' }} />
-                  <div className="absolute inset-0 opacity-3" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
 
                   <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                     <div className="flex-1 space-y-3">
@@ -2404,17 +2563,115 @@ function App() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="h-[460px]"><BusinessPackageCard pkg={businessPlusPackage} onSelect={handleSelectPackage} /></div>
                   <div className="h-[460px]"><BusinessPackageCard pkg={businessPackage} onSelect={handleSelectPackage} /></div>
                   <div className="h-[460px]"><BusinessPackageCard pkg={businessPackage100} onSelect={handleSelectPackage} /></div>
                 </div>
+
+                {/* NEW ENTERPRISE PACKAGE */}
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5 }}
+                  className="relative overflow-hidden rounded-3xl p-7 md:p-10"
+                  style={{ background: 'linear-gradient(135deg, #0a0f1e 0%, #060812 100%)', border: '1.5px solid rgba(99,102,241,0.4)' }}
+                >
+                  {/* Glow effects */}
+                  <div className="absolute top-0 right-0 w-80 h-80 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 10%, rgba(99,102,241,0.15) 0%, transparent 65%)' }} />
+                  <div className="absolute bottom-0 left-0 w-64 h-64 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 20% 90%, rgba(139,92,246,0.1) 0%, transparent 65%)' }} />
+                  <div className="absolute top-0 inset-x-0 h-[3px]" style={{ background: 'linear-gradient(90deg, transparent, #6366f1, #8b5cf6, transparent)' }} />
+
+                  {/* NEW badge */}
+                  <div className="absolute top-5 left-5 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-black text-white"
+                    style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 4px 14px rgba(99,102,241,0.5)' }}>
+                    <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />חדש!
+                  </div>
+
+                  <div className="relative z-10 flex flex-col md:flex-row items-start gap-8">
+                    {/* Left content */}
+                    <div className="flex-1 space-y-5">
+                      <div className="flex items-center gap-3 mt-6 md:mt-0">
+                        <div className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0"
+                          style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 8px 24px rgba(99,102,241,0.4)' }}>
+                          <Briefcase size={26} className="text-white" />
+                        </div>
+                        <div>
+                          <div className="text-[9px] font-black text-indigo-400 uppercase tracking-[0.18em] mb-0.5">פתרון ארגוני</div>
+                          <h3 className="text-2xl md:text-3xl font-black text-white leading-tight">ENTERPRISE</h3>
+                          <p className="text-[10px] text-white/35 mt-0.5">לרשתות סוכנויות וקבוצות רכב גדולות</p>
+                        </div>
+                      </div>
+
+                      <p className="text-white/50 text-sm leading-relaxed max-w-lg">
+                        פתרון ניהול שיווקי מקיף לרשתות סוכנויות עם סניפים מרובים. כולל מנהל תיק לקוח בכיר, מערכת דיווח בזמן אמת, ושיתוף פעולה עם הצוות השיווקי שלנו בצורה רציפה.
+                      </p>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                        {[
+                          { icon: <Car size={13} />, val: 'ללא הגבלה', label: 'רכבים/חודש', color: '#6366f1' },
+                          { icon: <Users size={13} />, val: 'צוות ייעודי', label: 'ניהול חשבון', color: '#8b5cf6' },
+                          { icon: <BarChart3 size={13} />, val: 'בזמן אמת', label: 'דיווחים', color: '#a78bfa' },
+                          { icon: <Target size={13} />, val: 'מותאם אישית', label: 'אסטרטגיה', color: '#818cf8' },
+                          { icon: <Headphones size={13} />, val: '24/7', label: 'תמיכה', color: '#6366f1' },
+                          { icon: <Zap size={13} />, val: 'API', label: 'אינטגרציה', color: '#8b5cf6' },
+                        ].map((s, i) => (
+                          <div key={i} className="flex items-center gap-2 px-3 py-2.5 rounded-xl"
+                            style={{ background: `${s.color}12`, border: `1px solid ${s.color}25` }}>
+                            <span style={{ color: s.color }}>{s.icon}</span>
+                            <div>
+                              <div className="text-[10px] font-black text-white leading-tight">{s.val}</div>
+                              <div className="text-[8px] text-white/30 font-bold">{s.label}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Right pricing */}
+                    <div className="flex flex-col items-center md:items-end gap-5 shrink-0 w-full md:w-auto">
+                      <div className="text-center md:text-right">
+                        <div className="text-[10px] text-indigo-400 font-black uppercase tracking-widest mb-1">מחיר מותאם אישית</div>
+                        <div className="text-4xl font-black text-white leading-none">צור קשר</div>
+                        <div className="text-[11px] text-white/35 mt-2">תמחור מותאם לפי נפח ודרישות</div>
+                      </div>
+
+                      <div className="flex flex-col gap-2.5 w-full md:w-48">
+                        <button
+                          onClick={() => window.open(`https://wa.me/972546980606?text=${encodeURIComponent('שלום, אני מעוניין בחבילת ENTERPRISE עבור רשת סוכנויות')}`, '_blank')}
+                          className="w-full py-3.5 rounded-xl font-black text-sm text-white flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-95"
+                          style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 8px 24px rgba(99,102,241,0.35)' }}>
+                          <MessageCircle size={15} />
+                          לתיאום פגישה
+                        </button>
+                        <button
+                          onClick={() => window.open(`https://wa.me/972546980606?text=${encodeURIComponent('שלום, בקשה לפרטים על ENTERPRISE')}`, '_blank')}
+                          className="w-full py-3 rounded-xl font-black text-sm flex items-center justify-center gap-2 transition-all hover:bg-indigo-500/15"
+                          style={{ border: '1.5px solid rgba(99,102,241,0.35)', color: '#818cf8', background: 'rgba(99,102,241,0.08)' }}>
+                          <Phone size={13} />
+                          קבל הצעת מחיר
+                        </button>
+                      </div>
+
+                      <div className="flex flex-wrap gap-1.5 justify-center md:justify-end">
+                        {['סוכנויות גדולות', 'רשתות רכב', 'יבואנים'].map((tag, i) => (
+                          <span key={i} className="text-[9px] font-black px-2.5 py-1 rounded-full"
+                            style={{ background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.2)', color: '#a5b4fc' }}>
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
               </div>
 
               {/* EQUIPMENT + TRANSPORT */}
               <div className="space-y-8">
-                {/* === REDESIGNED SECTION HEADER: ציוד === */}
-                <div className="relative overflow-hidden rounded-3xl p-8 md:p-10"
-                  style={{ background: 'linear-gradient(135deg, rgba(234,88,12,0.08) 0%, rgba(10,10,15,0.95) 50%, rgba(6,6,10,1) 100%)', border: '1px solid rgba(234,88,12,0.2)' }}>
+                {/* === SECTION HEADER: ציוד === */}
+                <div className="relative rounded-3xl p-8 md:p-10"
+                  style={{ background: 'linear-gradient(135deg, rgba(234,88,12,0.08) 0%, rgba(10,10,15,0.95) 50%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(234,88,12,0.35)', borderRadius: '1.5rem' }}>
                   <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(234,88,12,0.1) 0%, transparent 65%)' }} />
 
                   <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
@@ -2637,26 +2894,26 @@ function App() {
 
               {(() => {
                 const allReviews = [
-                  { name: 'יוסף אבו חמד', location: 'נצרת', pkg: 'PRO', lang: 'ar', text: 'والله شي ما توقعته، نشروا السيارة وبعد 6 ساعات اتصل فيني واحد وعمل الصفقة. الصور طلعت كثير احترافية وكلام التسويق كان ممتاز. رح ارسل كمان سيارة الشهر الجاي', stars: 5, time: 'לפני 3 ימים', avatar: 'ي' },
-                  { name: 'דני לוי', location: 'תל אביב', pkg: 'PREMIUM', lang: 'he', text: 'מכרתי BMW 3 סיריס תוך יומיים מהפרסום. ממש לא האמנתי שזה יקרה כל כך מהר. התמונות יצאו מקצועיות ברמה גבוהה, וראיתי שהאינסטגרם שלהם עם קהל ממש איכותי', stars: 5, time: 'לפני 5 ימים', avatar: 'ד' },
-                  { name: 'מוחמד ח׳ורי', location: 'חיפה', pkg: 'VIP', lang: 'ar', text: 'بعت مرسيدس E-Class بـ 750 الف شيكل بعد 3 أيام بس! الخدمة VIP كانت تستاهل كل شيكل. المدير الشخصي كان متاح كل وقت وساعدني بكل شي', stars: 5, time: 'לפני שבוע', avatar: 'م' },
-                  { name: 'שרה כהן', location: 'ירושלים', pkg: 'BASIC', lang: 'he', text: 'הזמנתי חבילה בסיסית ולא ציפיתי ליותר מדי, אבל קיבלתי שירות מעולה. הרכב שלי נמכר תוך 10 ימים במחיר שביקשתי. שווה כל שקל', stars: 5, time: 'לפני 10 ימים', avatar: 'ש' },
-                  { name: 'אחמד נאסר', location: 'טירה', pkg: 'DUO DEAL', lang: 'ar', text: 'عندي سيارتين بدهم يروحوا، جربت الـ DUO DEAL وكانت صفقة ممتازة. الأولى اتباعت بعد يوم، والثانية بعد 4 أيام. توفرت فلوس كثيرة مقارنة لو دفعت لكل واحدة لحالها', stars: 5, time: 'לפני שבועיים', avatar: 'أ' },
-                  { name: 'רוני אברהם', location: 'באר שבע', pkg: 'PRO', lang: 'he', text: 'ניסיתי קודם יד2 ולא קיבלתי שום פניות. עברתי ל-YOUGO ותוך 48 שעות היו לי 4 פניות רציניות. בסוף מכרתי מעל המחיר שרציתי כי היו כמה מתעניינים במקביל', stars: 5, time: 'לפני 3 שבועות', avatar: 'ר' },
-                  { name: 'פאטמה עלי', location: 'אום אל פחם', pkg: 'PRO', lang: 'ar', text: 'كنت خايفة بالأول لأني ما جربت هالنوع من الإعلانات. بس الشباب شرحولي كل شي وساعدوني. السيارة تباعت بـ 48 ساعة! الصور كانوا يجننوا الناس', stars: 5, time: 'לפני חודש', avatar: 'ف' },
-                  { name: 'אייל גולן', location: 'רמת גן', pkg: 'PREMIUM', lang: 'he', text: 'שלחתי פורשה קאיין ל-YOUGO ואחרי 24 שעות כבר היו 7 פניות. מכרתי ב-580 אלף שקל. הצוות שלהם עשה עבודת צילום ועיצוב ברמה של מגזין', stars: 5, time: 'לפני חודש', avatar: 'א' },
-                  { name: 'ח׳אלד מחמוד', location: 'בקה אל גרבייה', pkg: 'BASIC', lang: 'ar', text: 'بدي قول الحقيقة - توقعتها تاخد وقت أكثر. بعت السيارة بـ 7 أيام بالضبط. الخدمة سريعة وما حسيت بأي مشكلة. يستاهلوا النجوم', stars: 5, time: 'לפני 5 שבועות', avatar: 'خ' },
-                  { name: 'מיכל שפירא', location: 'פתח תקווה', pkg: 'PRO', lang: 'he', text: 'בעלי ואני מכרנו את שני הרכבים שלנו בחודש האחרון דרך YOUGO. שניהם נמכרו תוך שבוע. ממליצה בחום לכל מי שמחפש תוצאות אמיתיות ולא רק הבטחות', stars: 5, time: 'לפני 6 שבועות', avatar: 'מ' },
-                  { name: 'סאמר זועבי', location: 'שפרעם', pkg: 'VIP', lang: 'ar', text: 'عندي رنج روفر فيل موديل 2023 بعته بـ 1.2 مليون شيكل! الـ VIP كان يستاهل. الصور كانت كأنها من مجلة سيارات وكلام التسويق كان ذكي جداً', stars: 5, time: 'לפני 2 חודשים', avatar: 'س' },
-                  { name: 'ניר ביטון', location: 'נתניה', pkg: 'BASIC', lang: 'he', text: 'פשוט עובד. שילמתי 149 שקל, קיבלתי פרסום מקצועי, ומכרתי סוזוקי מרוטי תמורת המחיר המלא. לא צריך יותר מזה', stars: 5, time: 'לפני 2 חודשים', avatar: 'נ' },
-                  { name: 'ריאן אבו ריא', location: 'כפר כנא', pkg: 'PRO', lang: 'ar', text: 'ابعت صور السيارة على الواتساب وبعد ساعتين كانت الصور منشورة وكلام التسويق. الأسلوب عندهم عالمستوى. بعت هيونداي توسان بـ 3 أيام', stars: 5, time: 'לפני 2 חודשים', avatar: 'ر' },
-                  { name: 'אסף מזרחי', location: 'אשדוד', pkg: 'PREMIUM', lang: 'he', text: 'הרכב שלי עמד חודשיים ב-yad2 בלי שום פניות רציניות. עברתי ל-YOUGO ותוך 5 ימים מכרתי. ההבדל הוא הקהל - אנשים שמחפשים לקנות באמת', stars: 5, time: 'לפני 3 חודשים', avatar: 'א' },
-                  { name: 'לינא חסן', location: 'עכו', pkg: 'DUO DEAL', lang: 'ar', text: 'انا وجوزي عندنا سيارتين بدنا نبيعهم. جربنا الـ DUO وبالله اتباعوا الاثنتين بأسبوع. وفرنا 250 شيكل وحصلنا على نفس الجودة. شكراً جزيلاً', stars: 5, time: 'לפני 3 חודשים', avatar: 'ل' },
-                  { name: 'תומר לוינשטיין', location: 'חולון', pkg: 'PRO', lang: 'he', text: 'מוכר רכבים מדי שנה כי אני מחליף הרבה. YOUGO הפך להיות הדרך היחידה שאני מפרסם. מהיר, מקצועי, ותמיד מביא תוצאות. כבר 4 עסקאות דרכם', stars: 5, time: 'לפני 3 חודשים', avatar: 'ת' },
-                  { name: 'ג׳ואד מחאמיד', location: 'ג׳לג׳וליה', pkg: 'PRO', lang: 'ar', text: 'ما حسبتش راح يجي واحد بجد بهالسرعة. بعد 30 ساعة من النشر جالي 3 تلفونات وبعت السيارة لأول واحد. خدمة ممتازة وناس محترمين', stars: 5, time: 'לפני 4 חודשים', avatar: 'ج' },
-                  { name: 'הדס פרץ', location: 'ראשון לציון', pkg: 'PREMIUM', lang: 'he', text: 'לא האמנתי שאינסטגרם יכול למכור רכב. YOUGO הוכיח לי שטעיתי. מכרתי הונדה HR-V תוך 4 ימים ב-98 אלף שקל. הצילומים שלהם שינו הכל', stars: 5, time: 'לפני 4 חודשים', avatar: 'ה' },
-                  { name: 'עמאד כבהה', location: 'רהט', pkg: 'BASIC', lang: 'ar', text: 'حتى مع الباقة الأرخص الخدمة كانت ممتازة. نشروا الإعلان بسرعة والصور كانت ظبط. بعت السيارة بـ 9 أيام وأنا مبسوط جداً', stars: 5, time: 'לפני 5 חודשים', avatar: 'ع' },
-                  { name: 'ליאור דהן', location: 'מודיעין', pkg: 'VIP', lang: 'he', text: 'מכרתי לקסוס IS350 ב-VIP LUXURY. השירות האישי היה ברמה אחרת - מנהל לקוח שענה בכל שעה, עיצוב שנראה כמו פרסומת טלוויזיה. מכרתי ב-3 ימים', stars: 5, time: 'לפני 6 חודשים', avatar: 'ל' },
+                  { name: 'יוסף א.', location: 'נצרת', pkg: 'PRO', lang: 'ar', text: 'والله شي ما توقعته، نشروا السيارة وبعد 6 ساعات اتصل فيني واحد وعمل الصفقة. الصور طلعت كثير احترافية وكلام التسويق كان ممتاز. رح ارسل كمان سيارة الشهر الجاي', stars: 5, time: 'לפני 3 ימים', avatar: 'י' },
+                  { name: 'דוד ל.', location: 'תל אביב', pkg: 'PREMIUM', lang: 'he', text: 'מכרתי BMW 3 סיריס תוך יומיים מהפרסום. ממש לא האמנתי שזה יקרה כל כך מהר. התמונות יצאו מקצועיות ברמה גבוהה, וראיתי שהאינסטגרם שלהם עם קהל ממש איכותי', stars: 5, time: 'לפני 5 ימים', avatar: 'ד' },
+                  { name: 'מוחמד ח.', location: 'חיפה', pkg: 'VIP', lang: 'ar', text: 'بعت مرسيدس E-Class بـ 750 الف شيكل بعد 3 أيام بس! الخدمة VIP كانت تستاهل كل شيكل. المدير الشخصي كان متاح كل وقت وساعدني بكل شي', stars: 5, time: 'לפני שבוע', avatar: 'מ' },
+                  { name: 'שרה כ.', location: 'ירושלים', pkg: 'BASIC', lang: 'he', text: 'הזמנתי חבילה בסיסית ולא ציפיתי ליותר מדי, אבל קיבלתי שירות מעולה. הרכב שלי נמכר תוך 10 ימים במחיר שביקשתי. שווה כל שקל', stars: 5, time: 'לפני 10 ימים', avatar: 'ש' },
+                  { name: 'אחמד נ.', location: 'טירה', pkg: 'DUO DEAL', lang: 'ar', text: 'عندي سيارتين بدهم يروحوا، جربت الـ DUO DEAL وكانت صفقة ممتازة. الأولى اتباعت بعد يوم، والثانية بعد 4 أيام. توفرت فلوس كثيرة مقارنة لو دفعت لكل واحدة لحالها', stars: 5, time: 'לפני שבועיים', avatar: 'א' },
+                  { name: 'רוני מ.', location: 'באר שבע', pkg: 'PRO', lang: 'he', text: 'ניסיתי קודם יד2 ולא קיבלתי שום פניות. עברתי ל-YOUGO ותוך 48 שעות היו לי 4 פניות רציניות. בסוף מכרתי מעל המחיר שרציתי כי היו כמה מתעניינים במקביל', stars: 5, time: 'לפני 3 שבועות', avatar: 'ר' },
+                  { name: 'פאטמה ע.', location: 'אום אל פחם', pkg: 'PRO', lang: 'ar', text: 'كنت خايفة بالأول لأني ما جربت هالنوع من الإعلانات. بس الشباب شرحولي كل شي وساعدوني. السيارة تباعت بـ 48 ساعة! الصور كانوا يجننوا الناس', stars: 5, time: 'לפני חודש', avatar: 'פ' },
+                  { name: 'יניב ב.', location: 'רמת גן', pkg: 'PREMIUM', lang: 'he', text: 'שלחתי פורשה קאיין ל-YOUGO ואחרי 24 שעות כבר היו 7 פניות. מכרתי ב-580 אלף שקל. הצוות שלהם עשה עבודת צילום ועיצוב ברמה של מגזין', stars: 5, time: 'לפני חודש', avatar: 'י' },
+                  { name: 'ח.מ.', location: 'בקה אל גרבייה', pkg: 'BASIC', lang: 'ar', text: 'بدي قول الحقيقة - توقعتها تاخد وقت أكثر. بعت السيارة بـ 7 أيام بالضبط. الخدمة سريعة وما حسيت بأي مشكلة. يستاهلوا النجوم', stars: 5, time: 'לפני 5 שבועות', avatar: 'ח' },
+                  { name: 'מיכל ש.', location: 'פתח תקווה', pkg: 'PRO', lang: 'he', text: 'בעלי ואני מכרנו את שני הרכבים שלנו בחודש האחרון דרך YOUGO. שניהם נמכרו תוך שבוע. ממליצה בחום לכל מי שמחפש תוצאות אמיתיות ולא רק הבטחות', stars: 5, time: 'לפני 6 שבועות', avatar: 'מ' },
+                  { name: 'סאמר ז.', location: 'שפרעם', pkg: 'VIP', lang: 'ar', text: 'عندي رنج روفر فيل موديل 2023 بعته بـ 1.2 مليون شيكل! الـ VIP كان يستاهل. الصور كانت كأنها من مجلة سيارات وكلام التسويق كان ذكي جداً', stars: 5, time: 'לפני 2 חודשים', avatar: 'ס' },
+                  { name: 'ניר ב.', location: 'נתניה', pkg: 'BASIC', lang: 'he', text: 'פשוט עובד. שילמתי 199 שקל, קיבלתי פרסום מקצועי, ומכרתי סוזוקי מרוטי תמורת המחיר המלא. לא צריך יותר מזה', stars: 5, time: 'לפני 2 חודשים', avatar: 'נ' },
+                  { name: 'ריאן א.', location: 'כפר כנא', pkg: 'PRO', lang: 'ar', text: 'ابعت صور السيارة على الواتساب وبعد ساعتين كانت الصور منشورة وكلام التسويق. الأسلوب عندهم عالمستوى. بعت هيونداي توسان بـ 3 أيام', stars: 5, time: 'לפני 2 חודשים', avatar: 'ר' },
+                  { name: 'אסף מ.', location: 'אשדוד', pkg: 'PREMIUM', lang: 'he', text: 'הרכב שלי עמד חודשיים ב-yad2 בלי שום פניות רציניות. עברתי ל-YOUGO ותוך 5 ימים מכרתי. ההבדל הוא הקהל - אנשים שמחפשים לקנות באמת', stars: 5, time: 'לפני 3 חודשים', avatar: 'א' },
+                  { name: 'לינא ח.', location: 'עכו', pkg: 'DUO DEAL', lang: 'ar', text: 'انا وجوزي عندنا سيارتين بدنا نبيعهم. جربنا الـ DUO وبالله اتباعوا الاثنتين بأسبوع. وفرنا 200 شيكل وحصلنا على نفس الجودة. شكراً جزيلاً', stars: 5, time: 'לפני 3 חודשים', avatar: 'ל' },
+                  { name: 'תומר כ.', location: 'חולון', pkg: 'PRO', lang: 'he', text: 'מוכר רכבים מדי שנה כי אני מחליף הרבה. YOUGO הפך להיות הדרך היחידה שאני מפרסם. מהיר, מקצועי, ותמיד מביא תוצאות. כבר 4 עסקאות דרכם', stars: 5, time: 'לפני 3 חודשים', avatar: 'ת' },
+                  { name: "ג'ואד מ.", location: "ג'לג'וליה", pkg: 'PRO', lang: 'ar', text: 'ما حسبتش راح يجي واحد بجد بهالسرعة. بعد 30 ساعة من النشر جالي 3 تلفونات وبعت السيارة لأول واحد. خدمة ممتازة وناس محترمين', stars: 5, time: 'לפני 4 חודשים', avatar: 'ג' },
+                  { name: 'הדס פ.', location: 'ראשון לציון', pkg: 'PREMIUM', lang: 'he', text: 'לא האמנתי שאינסטגרם יכול למכור רכב. YOUGO הוכיח לי שטעיתי. מכרתי הונדה HR-V תוך 4 ימים ב-98 אלף שקל. הצילומים שלהם שינו הכל', stars: 5, time: 'לפני 4 חודשים', avatar: 'ה' },
+                  { name: 'עמאד כ.', location: 'רהט', pkg: 'BASIC', lang: 'ar', text: 'حتى مع الباقة الأرخص الخدمة كانت ممتازة. نشروا الإعلان بسرعة والصور كانت ظبط. بعت السيارة بـ 9 أيام وأنا مبسوط جداً', stars: 5, time: 'לפני 5 חודשים', avatar: 'ע' },
+                  { name: 'ליאור ד.', location: 'מודיעין', pkg: 'VIP', lang: 'he', text: 'מכרתי לקסוס IS350 ב-VIP LUXURY. השירות האישי היה ברמה אחרת - מנהל לקוח שענה בכל שעה, עיצוב שנראה כמו פרסומת טלוויזיה. מכרתי ב-3 ימים', stars: 5, time: 'לפני 6 חודשים', avatar: 'ל' },
                 ];
 
                 return (
@@ -2728,6 +2985,12 @@ function App() {
                         </button>
                       </div>
                     )}
+
+                    {/* WRITE REVIEW BUTTON - Professional */}
+                    <div className="relative overflow-hidden rounded-2xl p-6 md:p-8 text-center"
+                      style={{ background: 'linear-gradient(135deg, rgba(251,191,36,0.06) 0%, rgba(6,6,10,0.98) 100%)', border: '1px solid rgba(251,191,36,0.15)' }}>
+                      <div className="absolute top-0 inset-x-0 h-[2px]" style={{ background: 'linear-gradient(90deg, transparent, rgba(251,191,36,0.5), transparent)' }} />
+                      <ReviewForm /></div>
                   </div>
                 );
               })()}
@@ -2876,23 +3139,23 @@ function App() {
                       </div>
                     </div>
 
-                    {/* Social icons */}
+                    {/* Social icons - Professional */}
                     <div>
                       <p className="text-[9px] text-white/20 font-black uppercase tracking-[0.25em] mb-3">עקבו אחרינו</p>
-                      <div className="flex items-center gap-2 flex-wrap">
+                      <div className="flex flex-wrap gap-2">
                         {[
-                          { href: 'https://instagram.com/yougo.israel', icon: <Instagram size={16} />, label: 'Instagram', color: '#E4405F', bg: 'rgba(228,64,95,0.12)' },
-                          { href: 'https://facebook.com', icon: <Facebook size={16} />, label: 'Facebook', color: '#1877F2', bg: 'rgba(24,119,242,0.12)' },
-                          { href: 'https://wa.me/972546980606', icon: <MessageCircle size={16} />, label: 'WhatsApp', color: '#25D366', bg: 'rgba(37,211,102,0.12)' },
-                          { href: 'https://t.me/yougoisrael', icon: <Send size={16} />, label: 'Telegram', color: '#0088cc', bg: 'rgba(0,136,204,0.12)' },
-                          { href: 'https://youtube.com/@yougoisrael', icon: <Youtube size={16} />, label: 'YouTube', color: '#FF0000', bg: 'rgba(255,0,0,0.12)' },
-                          { href: 'https://x.com/yougoisrael', icon: <Twitter size={16} />, label: 'X', color: '#9ca3af', bg: 'rgba(156,163,175,0.12)' },
+                          { href: 'https://instagram.com/yougo.israel', icon: <Instagram size={15} />, label: 'Instagram', color: '#E4405F', bg: 'rgba(228,64,95,0.12)', border: 'rgba(228,64,95,0.25)' },
+                          { href: 'https://facebook.com', icon: <Facebook size={15} />, label: 'Facebook', color: '#1877F2', bg: 'rgba(24,119,242,0.12)', border: 'rgba(24,119,242,0.25)' },
+                          { href: 'https://wa.me/972546980606', icon: <MessageCircle size={15} />, label: 'WhatsApp', color: '#25D366', bg: 'rgba(37,211,102,0.12)', border: 'rgba(37,211,102,0.25)' },
+                          { href: 'https://t.me/yougoisrael', icon: <Send size={15} />, label: 'Telegram', color: '#0088cc', bg: 'rgba(0,136,204,0.12)', border: 'rgba(0,136,204,0.25)' },
+                          { href: 'https://youtube.com/@yougoisrael', icon: <Youtube size={15} />, label: 'YouTube', color: '#FF0000', bg: 'rgba(255,0,0,0.12)', border: 'rgba(255,0,0,0.25)' },
+                          { href: 'https://x.com/yougoisrael', icon: <Twitter size={15} />, label: 'X', color: '#9ca3af', bg: 'rgba(156,163,175,0.12)', border: 'rgba(156,163,175,0.2)' },
                         ].map((s, i) => (
                           <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
-                            className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
-                            style={{ background: s.bg, border: `1px solid ${s.color}25`, color: s.color }}
-                            title={s.label}>
+                            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl transition-all duration-200 hover:scale-105 active:scale-95 group"
+                            style={{ background: s.bg, border: `1px solid ${s.border}`, color: s.color }}>
                             {s.icon}
+                            <span className="text-[10px] font-black" style={{ color: s.color }}>{s.label}</span>
                           </a>
                         ))}
                       </div>
@@ -2998,37 +3261,68 @@ function App() {
         )}
 
         {/* Booking */}
-        {view === 'booking' && (
+        {view === 'booking' && (() => {
+          const pkgColor = selectedPackage?.id === 'vip' ? '#d4af37' 
+            : selectedPackage?.id === 'duo' ? '#8b5cf6'
+            : selectedPackage?.id === 'business-plus' ? '#10b981'
+            : selectedPackage?.id === 'business' || selectedPackage?.id === 'business100' ? '#3b82f6'
+            : selectedPackage?.id === 'transport' ? '#0ea5e9'
+            : selectedPackage?.id === 'equipment-heavy' ? '#ea580c'
+            : selectedPackage?.id === 'equipment-light' ? '#94a3b8'
+            : '#c8102e';
+          return (
           <div className="max-w-2xl mx-auto space-y-6">
-            <div className="flex items-center gap-3">
+            {/* Package color accent strip */}
+            <div className="rounded-2xl p-4 flex items-center justify-between"
+              style={{ background: `${pkgColor}10`, border: `1px solid ${pkgColor}30` }}>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+                  style={{ background: `${pkgColor}20`, border: `1px solid ${pkgColor}30` }}>
+                  {selectedPackage?.id === 'vip' ? <Crown size={18} style={{ color: pkgColor }} /> :
+                   selectedPackage?.id === 'duo' ? <Car size={18} style={{ color: pkgColor }} /> :
+                   selectedPackage?.id === 'business' || selectedPackage?.id === 'business100' || selectedPackage?.id === 'business-plus' ? <Building2 size={18} style={{ color: pkgColor }} /> :
+                   selectedPackage?.id === 'transport' ? <Bus size={18} style={{ color: pkgColor }} /> :
+                   selectedPackage?.id?.includes('equipment') ? <Truck size={18} style={{ color: pkgColor }} /> :
+                   selectedPackage?.id === 'premium' ? <Gem size={18} style={{ color: pkgColor }} /> :
+                   <Flame size={18} style={{ color: pkgColor }} />}
+                </div>
+                <div>
+                  <div className="text-[9px] font-black uppercase tracking-widest" style={{ color: `${pkgColor}99` }}>חבילה נבחרת</div>
+                  <div className="text-sm font-black text-white">{selectedPackage?.name} — {selectedPackage?.price}</div>
+                </div>
+              </div>
               <button onClick={() => setView('home')}
-                className="flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-black border border-brand-red/30 bg-brand-red/10 hover:bg-brand-red hover:border-brand-red transition-all text-brand-red hover:text-white">
-                <ArrowLeft size={16} /><span>חזרה לחבילות</span>
+                className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black transition-all hover:scale-105 active:scale-95"
+                style={{ border: `1px solid ${pkgColor}30`, color: pkgColor, background: `${pkgColor}10` }}>
+                <ArrowLeft size={13} />חזור
               </button>
-              <div className="h-5 w-px bg-white/20" />
-              <span className="text-xs text-white/40 font-bold">{selectedPackage?.name || 'הזמנה חדשה'}</span>
             </div>
 
             <div className="flex items-center justify-center gap-3 mb-4">
               {[1, 2].map((step) => (
                 <React.Fragment key={step}>
-                  <div className={`flex items-center gap-2 ${bookingStep >= step ? 'text-brand-red' : 'text-white/30'}`}>
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm border-2 ${bookingStep >= step ? 'border-brand-red bg-brand-red/20' : 'border-white/20'}`}>
+                  <div className="flex items-center gap-2" style={{ color: bookingStep >= step ? pkgColor : 'rgba(255,255,255,0.3)' }}>
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center font-black text-sm border-2"
+                      style={{
+                        borderColor: bookingStep >= step ? pkgColor : 'rgba(255,255,255,0.2)',
+                        background: bookingStep >= step ? `${pkgColor}20` : 'transparent'
+                      }}>
                       {step}
                     </div>
                     <span className="text-sm font-black">{step === 1 ? 'פרטי רכב' : 'תשלום'}</span>
                   </div>
-                  {step === 1 && <div className={`w-16 h-px ${bookingStep >= 2 ? 'bg-brand-red' : 'bg-white/20'}`} />}
+                  {step === 1 && <div className="w-16 h-px" style={{ background: bookingStep >= 2 ? pkgColor : 'rgba(255,255,255,0.2)' }} />}
                 </React.Fragment>
               ))}
             </div>
 
-            <div className="glass-card p-6">
+            <div className="glass-card p-6" style={{ border: `1px solid ${pkgColor}18` }}>
               {bookingStep === 1 && <CarDetailsForm formData={formData} setFormData={setFormData} onNext={() => setBookingStep(2)} selectedPackage={selectedPackage} onChangePackage={() => setShowChangePackage(true)} />}
               {bookingStep === 2 && <PaymentForm formData={formData} setFormData={setFormData} selectedPackage={selectedPackage} onSubmit={handleSubmitOrder} loading={loading} onBack={() => setBookingStep(1)} onChangePackage={() => setShowChangePackage(true)} />}
             </div>
           </div>
-        )}
+          );
+        })()}
 
         {/* Success */}
         {view === 'success' && (
@@ -3233,6 +3527,7 @@ function App() {
           equipmentPackages={equipmentPackages}
           businessPackage={businessPackage}
           businessPackage100={businessPackage100}
+          businessPlusPackage={businessPlusPackage}
           transportPackage={transportPackage}
           onSelect={handleChangePackage}
           lang={lang}
