@@ -462,7 +462,7 @@ const packageDetails: Record<string, { title: string; content: string }> = {
   },
   vip: {
     title: 'VIP LUXURY',
-    content: `💎 מה מקבלים?\n• 15+ תמונות סטילש ברמה קולנועית\n• רילס VIP + סטורי עם עיצוב בלעדי\n• 60 ימי פרסום פרמיום מלא\n• ליווי אישי 24/7 – מנהל לקוח VIP\n• טרגוט מתקדם לפי פרמטרים מדויקים\n• עדיפות ראשונה בכל הפרסומים תמיד\n• קידום ממומן בערוצים נוספים\n\n🏎️ למי זה מיועד?\n• רכבי יוקרה: פורשה, מרצדס, BMW, אאודי\n• רכבי אספנות ונדירים בשוק\n\n⏱️ פרטים טכניים\n• משך פרסום: 60 ימים\n• מחיר: 749 ₪ (במקום 882 ₪)\n• חיסכון של 133 ₪ – 15% הנחה`
+    content: `💎 מה מקבלים?\n• 15+ תמונות סטילש ברמה קולנועית\n• רילס VIP + סטורי עם עיצוב בלעדי\n• 60 ימי פרסום פרמיום מלא\n• ליווי אישי 24/7 – מנהל לקוח VIP\n• טרגוט מתקדם לפי פרמטרים מדויקים\n• עדיפות ראשונה בכל הפרסומים תמיד\n• קידום ממומן בערוצים נוספים\n\n🏎️ למי זה מיועד?\n• רכבי יוקרה: פורשה, מרצדס, BMW, אאודי\n• רכבי אספנות ונדירים בשוק\n\n⏱️ פרטים טכניים\n• משך פרסום: 60 ימים\n• מחיר: 749 ₪ (במקום 990 ₪)\n• חיסכון של 241 ₪ – 15% הנחה`
   },
   duo: {
     title: 'DUO DEAL',
@@ -1066,9 +1066,15 @@ const TransportPackageCard = memo(({ pkg, onSelect }: { pkg: Package, onSelect: 
 // ============================================================
 // BUSINESS PACKAGE CARD
 // ============================================================
-const BusinessPackageCard = memo(({ pkg, onSelect }: { pkg: Package, onSelect: (p: Package) => void }) => {
+const BusinessPackageCard = memo(({ pkg, onSelect, isNew }: { pkg: Package, onSelect: (p: Package) => void, isNew?: boolean }) => {
   const [showBack, setShowBack] = useState(false);
-  const color = '#3b82f6';
+  const isPlus = pkg.id === 'business-plus';
+  const color = isPlus ? '#10b981' : '#3b82f6';
+  const cardBg = isPlus ? 'linear-gradient(135deg, #04130e 0%, #071a12 100%)' : 'linear-gradient(135deg, #070f1c 0%, #0d1a2e 100%)';
+  const cardBorder = isPlus ? 'rgba(16,185,129,0.45)' : 'rgba(59,130,246,0.45)';
+  const cardGrad = isPlus ? 'linear-gradient(135deg, #10b981, #059669)' : 'linear-gradient(135deg, #3b82f6, #7c3aed)';
+  const origPrice = isPlus ? '1,299' : pkg.id === 'business100' ? '4,999' : '2,499';
+  const offLabel = isPlus ? '31% OFF' : pkg.id === 'business100' ? '50% OFF' : '40% OFF';
   const handleSelect = useCallback(() => onSelect(pkg), [onSelect, pkg]);
   const handleShowBack = useCallback(() => setShowBack(true), []);
   const handleHideBack = useCallback(() => setShowBack(false), []);
@@ -1084,77 +1090,82 @@ const BusinessPackageCard = memo(({ pkg, onSelect }: { pkg: Package, onSelect: (
             exit={{ rotateY: -90, opacity: 0 }}
             transition={{ duration: 0.25 }}
             className="absolute inset-0 rounded-2xl overflow-hidden"
-            style={{
-              background: 'linear-gradient(135deg, #070f1c 0%, #0d1a2e 50%, #070f1c 100%)',
-              border: '1.5px solid rgba(59,130,246,0.4)',
-            }}
+            style={{ background: cardBg, border: `1.5px solid ${cardBorder}` }}
           >
-            <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-blue-400 to-transparent" />
+            <div className="absolute top-0 left-0 right-0 h-[3px]" style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} />
             <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
 
-            <div className="relative z-10 p-5 h-full flex flex-col gap-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center"
-                    style={{ background: 'linear-gradient(135deg, #3b82f6, #7c3aed)' }}>
-                    <Building2 size={22} className="text-white" />
+            <div className="relative z-10 p-5 h-full flex flex-col gap-3">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+                    style={{ background: cardGrad }}>
+                    <Building2 size={20} className="text-white" />
                   </div>
-                  <div>
-                    <div className="text-[9px] font-black text-blue-400 uppercase tracking-[0.15em]">לסוכנויות</div>
-                    <h3 className="text-[20px] font-black text-white">{pkg.name}</h3>
+                  <div className="min-w-0">
+                    <div className="text-[9px] font-black uppercase tracking-[0.15em] truncate" style={{ color }}>{isPlus ? '✨ חדש לשוק' : 'לסוכנויות'}</div>
+                    <h3 className="text-[17px] font-black text-white leading-tight truncate">{pkg.name}</h3>
                   </div>
                 </div>
-                <div className="flex items-center gap-1 bg-blue-500/15 px-2.5 py-1.5 rounded-full border border-blue-500/25">
-                  <Award size={11} className="text-blue-400" />
-                  <span className="text-[8px] font-black text-blue-400">מומלץ</span>
-                </div>
+                {isNew ? (
+                  <div className="flex items-center gap-1 px-2 py-1 rounded-full border text-[8px] font-black shrink-0 animate-pulse"
+                    style={{ background: `${color}20`, borderColor: `${color}50`, color }}>
+                    חדש!
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1 px-2 py-1 rounded-full border shrink-0" style={{ background: `${color}15`, borderColor: `${color}25` }}>
+                    <Award size={10} style={{ color }} />
+                    <span className="text-[8px] font-black" style={{ color }}>מומלץ</span>
+                  </div>
+                )}
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-1.5">
                 {[
-                  { icon: <Car size={11} />, val: pkg.features[0] || '50 רכבים/חודש' },
-                  { icon: <Users size={11} />, val: pkg.features[1] || 'מנהל ייעודי' },
-                  { icon: <BarChart3 size={11} />, val: pkg.features[2] || 'דוחות חודשיים' },
-                  { icon: <Target size={11} />, val: pkg.features[3] || 'קידום ממומן' },
+                  { icon: <Car size={10} />, val: pkg.features[0]?.split(' ').slice(0,3).join(' ') || '50 רכבים/חודש' },
+                  { icon: <Users size={10} />, val: pkg.features[1]?.split(' ').slice(0,3).join(' ') || 'מנהל ייעודי' },
+                  { icon: <BarChart3 size={10} />, val: pkg.features[2]?.split(' ').slice(0,3).join(' ') || 'דוחות' },
+                  { icon: <Target size={10} />, val: pkg.features[3]?.split(' ').slice(0,3).join(' ') || 'קידום ממומן' },
                 ].map((s, i) => (
-                  <div key={i} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/8 border border-white/10">
-                    <span className="text-blue-400">{s.icon}</span>
-                    <span className="text-[10px] font-black text-white">{s.val}</span>
+                  <div key={i} className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg"
+                    style={{ background: `${color}10`, border: `1px solid ${color}20` }}>
+                    <span style={{ color, flexShrink: 0 }}>{s.icon}</span>
+                    <span className="text-[10px] font-black text-white truncate">{s.val}</span>
                   </div>
                 ))}
               </div>
 
-              <div className="flex items-baseline gap-2">
-                <span className="text-[32px] font-black text-white leading-none">{pkg.price}</span>
+              <div className="flex items-baseline gap-2 flex-wrap">
+                <span className="text-[28px] font-black text-white leading-none">{pkg.price}</span>
                 <span className="text-xs text-white/30">/חודש</span>
-                <span className="text-xs line-through text-white/20 mr-1">₪{Math.round(parseInt(pkg.price.replace(/[₪,]/g, '')) / 0.6)}</span>
-                <span className="text-[9px] font-black bg-green-500/15 text-green-400 px-1.5 py-0.5 rounded-full border border-green-500/25">{pkg.id === 'business100' ? '50% OFF' : '40% OFF'}</span>
+                <span className="text-xs line-through text-white/20">₪{origPrice}</span>
+                <span className="text-[9px] font-black bg-green-500/15 text-green-400 px-1.5 py-0.5 rounded-full border border-green-500/25">{offLabel}</span>
               </div>
 
-              <div className="h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(59,130,246,0.3), transparent)' }} />
+              <div className="h-px" style={{ background: `linear-gradient(90deg, transparent, ${color}30, transparent)` }} />
 
-              <div className="flex flex-col gap-2 flex-grow">
+              <div className="flex flex-col gap-1.5 flex-grow">
                 {pkg.features.slice(0, 4).map((f, i) => (
-                  <div key={i} className="flex items-start gap-2.5">
-                    <div className="w-4 h-4 rounded-md flex items-center justify-center shrink-0 mt-[1px] bg-blue-500/20"
-                      style={{ border: '1.5px solid rgba(59,130,246,0.4)' }}>
-                      <Check size={8} strokeWidth={3} className="text-blue-400" />
+                  <div key={i} className="flex items-start gap-2">
+                    <div className="w-4 h-4 rounded-md flex items-center justify-center shrink-0 mt-[1px]"
+                      style={{ background: `${color}20`, border: `1.5px solid ${color}40` }}>
+                      <Check size={8} strokeWidth={3} style={{ color }} />
                     </div>
-                    <span className="text-[12px] font-medium text-white/82 leading-snug">{f}</span>
+                    <span className="text-[11px] font-medium text-white/80 leading-snug">{f}</span>
                   </div>
                 ))}
               </div>
 
-              <div className="flex gap-2.5 mt-auto">
+              <div className="flex gap-2 mt-auto">
                 <button type="button" onClick={handleShowBack}
-                  className="flex-1 py-3 rounded-xl font-black text-xs active:scale-95 transition-all text-blue-400"
-                  style={{ border: '1.5px solid rgba(59,130,246,0.35)', background: 'rgba(59,130,246,0.08)' }}>
-                  פרטים נוספים
+                  className="flex-1 py-2.5 rounded-xl font-black text-xs active:scale-95 transition-all"
+                  style={{ border: `1.5px solid ${color}35`, color, background: `${color}08` }}>
+                  פרטים
                 </button>
                 <button type="button" onClick={handleSelect}
-                  className="flex-1 py-3 rounded-xl font-black text-xs text-white active:scale-95 transition-all flex items-center justify-center gap-1.5"
-                  style={{ background: 'linear-gradient(135deg, #3b82f6, #7c3aed)' }}>
-                  <Briefcase size={12} />התחל
+                  className="flex-1 py-2.5 rounded-xl font-black text-xs text-white active:scale-95 transition-all flex items-center justify-center gap-1"
+                  style={{ background: cardGrad }}>
+                  <Briefcase size={11} />התחל
                 </button>
               </div>
             </div>
@@ -1344,6 +1355,83 @@ const Modal = memo(({ isOpen, onClose, title, children }: { isOpen: boolean, onC
   );
 });
 
+// --- Review Form ---
+const ReviewForm = memo(({ onClose }: { onClose: () => void }) => {
+  const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [name, setName] = useState('');
+  const [location, setLocation] = useState('');
+  const [pkg, setPkg] = useState('');
+  const [text, setText] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = useCallback(() => {
+    if (!rating) { setError('נא לבחור דירוג'); return; }
+    if (!name.trim()) { setError('נא להזין שם'); return; }
+    if (text.trim().length < 15) { setError('מינימום 15 תווים'); return; }
+    setError('');
+    setSubmitted(true);
+  }, [rating, name, text]);
+
+  if (submitted) return (
+    <div className="space-y-3 py-4 text-center">
+      <div className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center" style={{ background: 'rgba(251,191,36,0.15)', border: '1px solid rgba(251,191,36,0.3)' }}>
+        <Check size={28} className="text-amber-400" />
+      </div>
+      <h3 className="text-lg font-black text-white">תודה! 🙏</h3>
+      <p className="text-white/50 text-sm">הביקורת תפורסם לאחר אישור הצוות.</p>
+      <button onClick={onClose} className="mt-2 px-5 py-2 rounded-xl text-sm font-black" style={{ background: 'rgba(251,191,36,0.15)', color: '#fbbf24', border: '1px solid rgba(251,191,36,0.3)' }}>סגור</button>
+    </div>
+  );
+
+  return (
+    <div className="space-y-4 text-right" dir="rtl">
+      <div className="flex items-center justify-between">
+        <button onClick={onClose} className="text-white/30 hover:text-white/60 transition-colors"><X size={16} /></button>
+        <h3 className="text-base font-black text-white">✍️ כתוב ביקורת</h3>
+      </div>
+      <p className="text-white/40 text-xs text-center">תפורסם לאחר אישור הצוות</p>
+      <div className="flex items-center justify-center gap-2 py-1">
+        {[1,2,3,4,5].map(s => (
+          <button key={s} type="button" onMouseEnter={() => setHoverRating(s)} onMouseLeave={() => setHoverRating(0)} onClick={() => setRating(s)} className="transition-transform hover:scale-125 active:scale-110">
+            <Star size={28} className={s <= (hoverRating || rating) ? 'text-amber-400 fill-amber-400' : 'text-white/15'} />
+          </button>
+        ))}
+      </div>
+      {rating > 0 && <p className="text-center text-xs font-black text-amber-400">{['','גרוע','סביר','טוב','מצוין','מושלם! 🔥'][rating]}</p>}
+      <div className="grid grid-cols-2 gap-2">
+        <div className="space-y-1">
+          <label className="text-[10px] font-black text-white/40">שם (ראשי תיבות) *</label>
+          <input type="text" placeholder="ישראל י." value={name} onChange={e => setName(e.target.value)} className="w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none transition-all text-right text-white" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)' }} />
+        </div>
+        <div className="space-y-1">
+          <label className="text-[10px] font-black text-white/40">עיר</label>
+          <input type="text" placeholder="תל אביב" value={location} onChange={e => setLocation(e.target.value)} className="w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none transition-all text-right text-white" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)' }} />
+        </div>
+      </div>
+      <div className="space-y-1">
+        <label className="text-[10px] font-black text-white/40">חבילה</label>
+        <select value={pkg} onChange={e => setPkg(e.target.value)} className="w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none transition-all text-right" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)', color: pkg ? 'white' : 'rgba(255,255,255,0.4)' }}>
+          <option value="">בחר חבילה...</option>
+          {['BASIC','PRO','PREMIUM','VIP LUXURY','DUO DEAL','BUSINESS PLUS','BUSINESS','BUSINESS 100','ציוד כבד','ציוד קל','תחבורה'].map(p => (
+            <option key={p} value={p} style={{ background: '#0f0f14', color: 'white' }}>{p}</option>
+          ))}
+        </select>
+      </div>
+      <div className="space-y-1">
+        <label className="text-[10px] font-black text-white/40">הביקורת שלך *</label>
+        <textarea value={text} onChange={e => setText(e.target.value)} rows={3} placeholder="ספר על החוויה עם YOUGO..." className="w-full px-3 py-2.5 rounded-xl text-sm focus:outline-none transition-all resize-none text-right text-white" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)' }} />
+        <div className="text-[9px] text-white/25 text-left">{text.length} / 15 מינימום</div>
+      </div>
+      {error && <p className="text-red-400 text-xs font-bold text-center">{error}</p>}
+      <button onClick={handleSubmit} className="w-full py-3.5 rounded-xl font-black text-sm text-white transition-all hover:opacity-90 active:scale-98" style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)', boxShadow: '0 4px 15px rgba(245,158,11,0.3)' }}>
+        שלח ביקורת לאישור 🚀
+      </button>
+    </div>
+  );
+});
+
 // --- Order Status Check ---
 const OrderStatusCheck = memo(({ onClose }: { onClose: () => void }) => {
   const [orderNumber, setOrderNumber] = useState('');
@@ -1424,13 +1512,13 @@ const OrderStatusCheck = memo(({ onClose }: { onClose: () => void }) => {
 // CHANGE PACKAGE MODAL
 // ============================================================
 const ChangePackageModal = memo(({
-  isOpen, onClose, currentPackageId, packages, vipPackage, duoPackage, equipmentPackages, businessPackage, businessPackage100, transportPackage, onSelect, lang
+  isOpen, onClose, currentPackageId, packages, vipPackage, duoPackage, equipmentPackages, businessPlusPackage, businessPackage, businessPackage100, transportPackage, onSelect, lang
 }: {
   isOpen: boolean; onClose: () => void; currentPackageId: string; packages: Package[]; vipPackage: Package;
-  duoPackage: Package; equipmentPackages: Package[]; businessPackage: Package; businessPackage100: Package; transportPackage: Package;
+  duoPackage: Package; equipmentPackages: Package[]; businessPlusPackage: Package; businessPackage: Package; businessPackage100: Package; transportPackage: Package;
   onSelect: (p: Package) => void; lang: Language;
 }) => {
-  const allPackages = useMemo(() => [...packages, vipPackage, duoPackage, businessPackage, businessPackage100, ...equipmentPackages, transportPackage], [packages, vipPackage, duoPackage, businessPackage, businessPackage100, equipmentPackages, transportPackage]);
+  const allPackages = useMemo(() => [...packages, vipPackage, duoPackage, businessPlusPackage, businessPackage, businessPackage100, ...equipmentPackages, transportPackage], [packages, vipPackage, duoPackage, businessPlusPackage, businessPackage, businessPackage100, equipmentPackages, transportPackage]);
 
   const getPackageStyle = useCallback((pkg: Package) => {
     if (pkg.id === 'vip') return { border: 'border-amber-500/40', bg: 'bg-amber-500/10', badge: <Crown size={16} />, color: 'text-amber-400', activeBorder: 'border-amber-400' };
@@ -1499,7 +1587,7 @@ const CarDetailsForm = memo(({ formData, setFormData, onNext, selectedPackage, o
   formData: any, setFormData: (data: any) => void, onNext: () => void, selectedPackage: Package | null, onChangePackage: () => void
 }) => {
   const isDuo = selectedPackage?.id === 'duo';
-  const isBusiness = selectedPackage?.id === 'business' || selectedPackage?.id === 'business100';
+  const isBusiness = selectedPackage?.id === 'business' || selectedPackage?.id === 'business100' || selectedPackage?.id === 'business-plus';
   const isTransport = selectedPackage?.id === 'transport';
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -1758,7 +1846,7 @@ const PaymentForm = memo(({ formData, setFormData, selectedPackage, onSubmit, lo
     : Math.round(basePrice * discount / 100);
   const finalPrice = Math.max(0, basePrice - discountAmount);
 
-  const isBusiness = selectedPackage?.id === 'business' || selectedPackage?.id === 'business100';
+  const isBusiness = selectedPackage?.id === 'business' || selectedPackage?.id === 'business100' || selectedPackage?.id === 'business-plus';
   const isDuo = selectedPackage?.id === 'duo';
   const isTransport = selectedPackage?.id === 'transport';
   const accentColor = isBusiness ? '#3b82f6' : isDuo ? '#8b5cf6' : isTransport ? '#0ea5e9' : '#c8102e';
@@ -1959,6 +2047,7 @@ function App() {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [showAllFaqs, setShowAllFaqs] = useState(false);
   const [showAllReviews, setShowAllReviews] = useState(false);
+  const [showReviewForm, setShowReviewForm] = useState(false);
   const [modalContent, setModalContent] = useState<{ title: string; content: string } | null>(null);
   const [showChangePackage, setShowChangePackage] = useState(false);
   const [siteSettings, setSiteSettings] = useState<any>({
@@ -1991,6 +2080,7 @@ function App() {
 
   const vipPackage: Package = useMemo(() => ({ id: 'vip', name: 'VIP LUXURY', price: '₪749', vip: true, features: ['15+ תמונות מקצועיות', 'רילס + סטורי VIP', '60 ימי פרסום פרמיום', 'חשיפה מקסימלית', 'ליווי אישי 24/7', 'עיצוב VIP בלעדי', 'טרגוט מתקדם', 'עדיפות ראשונה תמיד'] }), []);
   const duoPackage: Package = useMemo(() => ({ id: 'duo', name: 'DUO DEAL', price: '₪389', features: ['פרסום 2 רכבים במחיר מיוחד', '4 תמונות לכל רכב', 'פוסט נפרד לכל רכב', 'סטורי 14 יום לכל אחד', 'חשיפה כפולה לקהל מעוניין', 'חיסכון של 40% לעומת 2 חבילות'] }), []);
+  const businessPlusPackage: Package = useMemo(() => ({ id: 'business-plus', name: 'BUSINESS PLUS', price: '₪899', business: true, features: ['עד 25 רכבים בחודש', 'מנהל לקוח ייעודי', 'דוחות שבועיים', 'קידום ממומן מוגבר', 'עיצוב מקצועי', 'תמיכה 24/7'] }), []);
   const businessPackage: Package = useMemo(() => ({ id: 'business', name: 'BUSINESS', price: '₪1,499', business: true, features: ['עד 50 רכבים בחודש', 'מנהל לקוח ייעודי', 'דוחות ביצועים חודשיים', 'קידום ממומן', 'עיצוב מקצועי לכל מודעה'] }), []);
   const businessPackage100: Package = useMemo(() => ({ id: 'business100', name: 'BUSINESS 100', price: '₪2,499', business: true, features: ['עד 100 רכבים בחודש', 'מנהל לקוח בכיר', 'דוחות שבועיים', 'קידום ממומן מוגבר', 'עיצוב VIP', 'אנליטיקס מתקדם', 'תמיכה 24/7'] }), []);
   const transportPackage: Package = useMemo(() => ({ id: 'transport', name: 'תחבורה והסעות', price: '₪329', features: ['10 תמונות מקצועיות מבפנים ומבחוץ', 'פוסט עם מפרט טכני מלא ומדויק', 'סטורי 21 ימים לחשיפה רחבה', 'חשיפה ייעודית לחברות הסעות ותחבורה', 'טרגוט מדויק לרוכשי רכב מסחרי', 'ייעוץ תמחור מקצועי', 'מאפיין לאוטובוסים, מיניבוסים, וואנים ומשאיות'] }), []);
@@ -2078,7 +2168,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen text-white" style={{ background: 'linear-gradient(180deg, #06060a 0%, #0a0508 40%, #06060a 100%)' }}>
+    <div className="min-h-screen text-white w-full overflow-x-hidden" style={{ background: 'linear-gradient(180deg, #06060a 0%, #0a0508 40%, #06060a 100%)' }}>
       <style>{`
         :root { --brand-red: #c8102e; }
         .text-brand-red { color: #c8102e !important; }
@@ -2137,7 +2227,7 @@ function App() {
                 <div className="absolute bottom-0 inset-x-0 h-40" style={{ background: 'linear-gradient(to bottom, transparent, #06060a)' }} />
               </div>
 
-              <div className="relative z-10 w-full max-w-4xl mx-auto px-5 pt-28 pb-16 flex flex-col items-center text-center">
+              <div className="relative z-10 w-full max-w-4xl mx-auto px-4 sm:px-6 pt-20 sm:pt-28 pb-14 flex flex-col items-center text-center">
                 <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}
                   className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full"
                   style={{ background: 'rgba(200,16,46,0.1)', border: '1px solid rgba(200,16,46,0.28)', backdropFilter: 'blur(8px)' }}>
@@ -2279,7 +2369,7 @@ function App() {
               {/* REGULAR PACKAGES */}
               <div className="space-y-8">
                 {/* === SECTION HEADER: רכב פרטי === */}
-                <div className="relative overflow-hidden rounded-3xl p-8 md:p-10 mx-0"
+                <div className="relative rounded-3xl p-4 sm:p-6 md:p-10"
                   style={{ background: 'linear-gradient(135deg, rgba(200,16,46,0.08) 0%, rgba(10,10,15,0.95) 50%, rgba(6,6,10,1) 100%)', border: '1px solid rgba(200,16,46,0.18)', borderRadius: '1.5rem' }}>
                   <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(200,16,46,0.12) 0%, transparent 65%)' }} />
                   <div className="absolute bottom-0 left-0 w-48 h-48 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 20% 80%, rgba(200,16,46,0.06) 0%, transparent 65%)' }} />
@@ -2298,20 +2388,20 @@ function App() {
                         שלוש חבילות מדורגות לכל תקציב ומטרה. מחבילת הכניסה הבסיסית ועד הפרמיום המלא – כל אחת מותאמת לסוג הרכב ולמטרת המכירה שלך.
                       </p>
                     </div>
-                    <div className="flex flex-row md:flex-col gap-2 shrink-0">
+                    <div className="grid grid-cols-3 md:flex md:flex-col gap-2 md:shrink-0 w-full md:w-auto">
                       {[
                         { value: '₪199', label: 'מחבילה', color: '#94a3b8', icon: <DollarSign size={12} /> },
                         { value: '1,000+', label: 'מכירות', color: '#c8102e', icon: <Trophy size={12} /> },
                         { value: '7-30', label: 'ימי פרסום', color: '#4ade80', icon: <Calendar size={12} /> },
                       ].map((s, i) => (
-                        <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-xl min-w-[110px]"
+                        <div key={i} className="flex items-center gap-2 px-2.5 py-2 rounded-xl flex-1 min-w-0"
                           style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
                           <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
                             <span style={{ color: s.color }}>{s.icon}</span>
                           </div>
                           <div className="min-w-0">
-                            <div className="text-xs font-black leading-tight whitespace-nowrap" style={{ color: s.color }}>{s.value}</div>
-                            <div className="text-[9px] text-white/30 font-bold whitespace-nowrap">{s.label}</div>
+                            <div className="text-xs font-black leading-tight truncate" style={{ color: s.color }}>{s.value}</div>
+                            <div className="text-[9px] text-white/30 font-bold truncate">{s.label}</div>
                           </div>
                         </div>
                       ))}
@@ -2339,7 +2429,7 @@ function App() {
               {/* VIP + DUO */}
               <div className="space-y-8">
                 {/* === SECTION HEADER: VIP === */}
-                <div className="relative overflow-hidden rounded-3xl p-8 md:p-10"
+                <div className="relative rounded-3xl p-4 sm:p-6 md:p-10"
                   style={{ background: 'linear-gradient(135deg, rgba(212,175,55,0.08) 0%, rgba(10,10,15,0.95) 50%, rgba(6,6,10,1) 100%)', border: '1px solid rgba(212,175,55,0.2)', borderRadius: '1.5rem' }}>
                   <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(212,175,55,0.1) 0%, transparent 65%)' }} />
 
@@ -2357,20 +2447,20 @@ function App() {
                         לרכבי יוקרה וכאלה שמוכרים שני רכבים בבת אחת – שתי חבילות ייחודיות עם שירות אישי, עיצוב בלעדי, וחסכון משמעותי.
                       </p>
                     </div>
-                    <div className="flex flex-row md:flex-col gap-2 shrink-0">
+                    <div className="grid grid-cols-3 md:flex md:flex-col gap-2 md:shrink-0 w-full md:w-auto">
                       {[
                         { value: '60 יום', label: 'פרסום VIP', color: '#d4af37', icon: <Calendar size={12} /> },
                         { value: '40%', label: 'חיסכון DUO', color: '#8b5cf6', icon: <Percent size={12} /> },
                         { value: '24/7', label: 'ליווי אישי', color: '#4ade80', icon: <Headphones size={12} /> },
                       ].map((s, i) => (
-                        <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-xl min-w-[110px]"
+                        <div key={i} className="flex items-center gap-2 px-2.5 py-2 rounded-xl flex-1 min-w-0"
                           style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
                           <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
                             <span style={{ color: s.color }}>{s.icon}</span>
                           </div>
                           <div className="min-w-0">
-                            <div className="text-xs font-black leading-tight whitespace-nowrap" style={{ color: s.color }}>{s.value}</div>
-                            <div className="text-[9px] text-white/30 font-bold whitespace-nowrap">{s.label}</div>
+                            <div className="text-xs font-black leading-tight truncate" style={{ color: s.color }}>{s.value}</div>
+                            <div className="text-[9px] text-white/30 font-bold truncate">{s.label}</div>
                           </div>
                         </div>
                       ))}
@@ -2394,7 +2484,7 @@ function App() {
               {/* BUSINESS */}
               <div className="max-w-3xl mx-auto space-y-8">
                 {/* === SECTION HEADER: Business === */}
-                <div className="relative overflow-hidden rounded-3xl p-8 md:p-10"
+                <div className="relative rounded-3xl p-4 sm:p-6 md:p-10"
                   style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.08) 0%, rgba(10,10,15,0.95) 50%, rgba(6,6,10,1) 100%)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: '1.5rem' }}>
                   <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(59,130,246,0.1) 0%, transparent 65%)' }} />
                   <div className="absolute inset-0 opacity-3" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
@@ -2407,26 +2497,26 @@ function App() {
                         <span className="text-[10px] font-black tracking-wider text-blue-400 uppercase">לסוכנויות ועסקים</span>
                       </div>
                       <h3 className="text-2xl md:text-3xl font-black text-white leading-tight">
-                        פתרון מקצועי <span className="text-blue-400">לעסקים?</span>
+                        פתרונות <span className="text-blue-400">לעסקים</span>
                       </h3>
                       <p className="text-white/45 text-sm leading-relaxed max-w-lg">
                         חבילות מותאמות לסוכנויות רכב, עם אפשרויות גמישות לניהול מלא. עד 100 רכבים בחודש, מנהל לקוח ייעודי ודוחות שבועיים.
                       </p>
                     </div>
-                    <div className="flex flex-row md:flex-col gap-2 shrink-0">
+                    <div className="grid grid-cols-3 md:flex md:flex-col gap-2 md:shrink-0 w-full md:w-auto">
                       {[
                         { value: '50-100', label: 'רכבים/חודש', color: '#3b82f6', icon: <Car size={12} /> },
                         { value: '40-50%', label: 'הנחה', color: '#4ade80', icon: <Percent size={12} /> },
                         { value: '24/7', label: 'תמיכה', color: '#a78bfa', icon: <Headphones size={12} /> },
                       ].map((s, i) => (
-                        <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-xl min-w-[120px]"
+                        <div key={i} className="flex items-center gap-2 px-2.5 py-2 rounded-xl flex-1 min-w-0"
                           style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
                           <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
                             <span style={{ color: s.color }}>{s.icon}</span>
                           </div>
                           <div className="min-w-0">
-                            <div className="text-xs font-black leading-tight whitespace-nowrap" style={{ color: s.color }}>{s.value}</div>
-                            <div className="text-[9px] text-white/30 font-bold whitespace-nowrap">{s.label}</div>
+                            <div className="text-xs font-black leading-tight truncate" style={{ color: s.color }}>{s.value}</div>
+                            <div className="text-[9px] text-white/30 font-bold truncate">{s.label}</div>
                           </div>
                         </div>
                       ))}
@@ -2434,9 +2524,10 @@ function App() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="h-[460px]"><BusinessPackageCard pkg={businessPackage} onSelect={handleSelectPackage} /></div>
-                  <div className="h-[460px]"><BusinessPackageCard pkg={businessPackage100} onSelect={handleSelectPackage} /></div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  <div className="h-[480px]"><BusinessPackageCard pkg={businessPlusPackage} onSelect={handleSelectPackage} isNew={true} /></div>
+                  <div className="h-[480px]"><BusinessPackageCard pkg={businessPackage} onSelect={handleSelectPackage} /></div>
+                  <div className="h-[480px]"><BusinessPackageCard pkg={businessPackage100} onSelect={handleSelectPackage} /></div>
                 </div>
 
                 {/* NEW ENTERPRISE PACKAGE */}
@@ -2445,7 +2536,7 @@ function App() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5 }}
-                  className="relative overflow-hidden rounded-3xl p-7 md:p-10"
+                  className="relative rounded-3xl p-4 sm:p-7 md:p-10"
                   style={{ background: 'linear-gradient(135deg, #0a0f1e 0%, #060812 100%)', border: '1.5px solid rgba(99,102,241,0.4)' }}
                 >
                   {/* Glow effects */}
@@ -2540,7 +2631,7 @@ function App() {
               {/* EQUIPMENT + TRANSPORT */}
               <div className="space-y-8">
                 {/* === SECTION HEADER: ציוד === */}
-                <div className="relative overflow-hidden rounded-3xl p-8 md:p-10"
+                <div className="relative rounded-3xl p-4 sm:p-6 md:p-10"
                   style={{ background: 'linear-gradient(135deg, rgba(234,88,12,0.08) 0%, rgba(10,10,15,0.95) 50%, rgba(6,6,10,1) 100%)', border: '1px solid rgba(234,88,12,0.2)', borderRadius: '1.5rem' }}>
                   <div className="absolute top-0 right-0 w-72 h-72 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(234,88,12,0.1) 0%, transparent 65%)' }} />
 
@@ -2558,20 +2649,20 @@ function App() {
                         חבילות ייחודיות לציוד כבד, ציוד קל, ורכבים מסחריים. חשיפה ממוקדת לקהל המקצועי הנכון – קבלנים, חברות הסעות, ועסקים.
                       </p>
                     </div>
-                    <div className="flex flex-row md:flex-col gap-2 shrink-0">
+                    <div className="grid grid-cols-3 md:flex md:flex-col gap-2 md:shrink-0 w-full md:w-auto">
                       {[
                         { value: '85%', label: 'נמכרו תוך 14 יום', color: '#ea580c', icon: <TrendingUp size={12} /> },
                         { value: '500+', label: 'ציודים פורסמו', color: '#0ea5e9', icon: <Truck size={12} /> },
                         { value: '3', label: 'קטגוריות', color: '#4ade80', icon: <Target size={12} /> },
                       ].map((s, i) => (
-                        <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-xl min-w-[120px]"
+                        <div key={i} className="flex items-center gap-2 px-2.5 py-2 rounded-xl flex-1 min-w-0"
                           style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
                           <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
                             <span style={{ color: s.color }}>{s.icon}</span>
                           </div>
                           <div className="min-w-0">
-                            <div className="text-xs font-black leading-tight whitespace-nowrap" style={{ color: s.color }}>{s.value}</div>
-                            <div className="text-[9px] text-white/30 font-bold whitespace-nowrap">{s.label}</div>
+                            <div className="text-xs font-black leading-tight truncate" style={{ color: s.color }}>{s.value}</div>
+                            <div className="text-[9px] text-white/30 font-bold truncate">{s.label}</div>
                           </div>
                         </div>
                       ))}
@@ -2855,6 +2946,15 @@ function App() {
                         </button>
                       </div>
                     )}
+                    <div className="flex justify-center pt-2">
+                      <button onClick={() => setShowReviewForm(true)}
+                        className="inline-flex items-center gap-2.5 px-7 py-3 rounded-2xl font-black text-sm transition-all hover:scale-105 active:scale-95"
+                        style={{ background: 'linear-gradient(135deg, rgba(251,191,36,0.15), rgba(251,191,36,0.05))', border: '1.5px solid rgba(251,191,36,0.35)', color: '#fbbf24' }}>
+                        <Star size={14} className="fill-amber-400" />
+                        כתוב ביקורת
+                        <span className="text-[9px] bg-amber-400/20 px-2 py-0.5 rounded-full">מחכים לדעתך!</span>
+                      </button>
+                    </div>
 
                     {/* WRITE REVIEW BUTTON */}
                     <div className="relative overflow-hidden rounded-2xl p-6 md:p-8 text-center"
@@ -2901,7 +3001,7 @@ function App() {
               </div>
 
               <div className="space-y-2.5">
-                {t.faqs.slice(0, showAllReviews ? t.faqs.length : 4).map((item, i) => {
+                {t.faqs.slice(0, showAllFaqs ? t.faqs.length : 4).map((item, i) => {
                   const isOpen = activeFaq === i;
                   return (
                     <div key={i}
@@ -2968,15 +3068,15 @@ function App() {
               {t.faqs.length > 4 && (
                 <div className="text-center">
                   <button
-                    onClick={() => setShowAllReviews(v => !v)}
+                    onClick={() => setShowAllFaqs(v => !v)}
                     className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-black text-sm border transition-all"
                     style={{
-                      background: showAllReviews ? 'rgba(200,16,46,0.1)' : 'rgba(255,255,255,0.05)',
-                      border: showAllReviews ? '1px solid rgba(200,16,46,0.3)' : '1px solid rgba(255,255,255,0.1)',
-                      color: showAllReviews ? '#c8102e' : 'rgba(255,255,255,0.6)',
+                      background: showAllFaqs ? 'rgba(200,16,46,0.1)' : 'rgba(255,255,255,0.05)',
+                      border: showAllFaqs ? '1px solid rgba(200,16,46,0.3)' : '1px solid rgba(255,255,255,0.1)',
+                      color: showAllFaqs ? '#c8102e' : 'rgba(255,255,255,0.6)',
                     }}
                   >
-                    {showAllReviews
+                    {showAllFaqs
                       ? <><ChevronUp size={15} /> הסתר שאלות</>
                       : <><ChevronDown size={15} /> הצג את כל {t.faqs.length} השאלות</>
                     }
@@ -3036,16 +3136,30 @@ function App() {
                       <p className="text-[9px] text-white/20 font-black uppercase tracking-[0.25em] mb-3">עקבו אחרינו</p>
                       <div className="flex items-center gap-2 flex-wrap">
                         {[
-                          { href: 'https://instagram.com/yougo.israel', icon: <Instagram size={16} />, label: 'Instagram', color: '#E4405F', bg: 'rgba(228,64,95,0.12)' },
-                          { href: 'https://facebook.com', icon: <Facebook size={16} />, label: 'Facebook', color: '#1877F2', bg: 'rgba(24,119,242,0.12)' },
-                          { href: 'https://wa.me/972546980606', icon: <MessageCircle size={16} />, label: 'WhatsApp', color: '#25D366', bg: 'rgba(37,211,102,0.12)' },
-                          { href: 'https://t.me/yougoisrael', icon: <Send size={16} />, label: 'Telegram', color: '#0088cc', bg: 'rgba(0,136,204,0.12)' },
-                          { href: 'https://youtube.com/@yougoisrael', icon: <Youtube size={16} />, label: 'YouTube', color: '#FF0000', bg: 'rgba(255,0,0,0.12)' },
-                          { href: 'https://x.com/yougoisrael', icon: <Twitter size={16} />, label: 'X', color: '#9ca3af', bg: 'rgba(156,163,175,0.12)' },
+                          { href: 'https://instagram.com/yougo.israel', icon: <Instagram size={15} />, label: 'Instagram', color: '#E4405F', gradient: 'linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)' },
+                          { href: 'https://facebook.com', icon: <Facebook size={15} />, label: 'Facebook', color: '#1877F2', gradient: 'linear-gradient(135deg,#1877F2,#0a5dc2)' },
+                          { href: 'https://wa.me/972546980606', icon: <MessageCircle size={15} />, label: 'WhatsApp', color: '#25D366', gradient: 'linear-gradient(135deg,#25D366,#128C7E)' },
+                          { href: 'https://t.me/yougoisrael', icon: <Send size={15} />, label: 'Telegram', color: '#29b6f6', gradient: 'linear-gradient(135deg,#29b6f6,#0288d1)' },
+                          { href: 'https://youtube.com/@yougoisrael', icon: <Youtube size={15} />, label: 'YouTube', color: '#FF0000', gradient: 'linear-gradient(135deg,#FF0000,#cc0000)' },
+                          { href: 'https://x.com/yougoisrael', icon: <Twitter size={15} />, label: 'X', color: '#e5e7eb', gradient: 'linear-gradient(135deg,#1d1d1d,#3d3d3d)' },
                         ].map((s, i) => (
                           <a key={i} href={s.href} target="_blank" rel="noopener noreferrer"
-                            className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
-                            style={{ background: s.bg, border: `1px solid ${s.color}25`, color: s.color }}
+                            className="group w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:-translate-y-0.5 active:scale-95"
+                            style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: s.color }}
+                            onMouseEnter={e => {
+                              const el = e.currentTarget as HTMLElement;
+                              el.style.background = s.gradient;
+                              el.style.border = '1px solid transparent';
+                              el.style.color = 'white';
+                              el.style.boxShadow = `0 6px 20px ${s.color}50`;
+                            }}
+                            onMouseLeave={e => {
+                              const el = e.currentTarget as HTMLElement;
+                              el.style.background = 'rgba(255,255,255,0.06)';
+                              el.style.border = '1px solid rgba(255,255,255,0.1)';
+                              el.style.color = s.color;
+                              el.style.boxShadow = 'none';
+                            }}
                             title={s.label}>
                             {s.icon}
                           </a>
@@ -3377,6 +3491,15 @@ function App() {
 
       {modalContent && <Modal isOpen={!!modalContent} onClose={() => setModalContent(null)} title={modalContent.title}>{modalContent.content}</Modal>}
 
+      {showReviewForm && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" onClick={() => setShowReviewForm(false)}>
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+          <div className="relative w-full max-w-md rounded-2xl p-6" style={{ background: '#0f0f14', border: '1px solid rgba(251,191,36,0.25)' }} onClick={e => e.stopPropagation()}>
+            <ReviewForm onClose={() => setShowReviewForm(false)} />
+          </div>
+        </div>
+      )}
+
       {showChangePackage && (
         <ChangePackageModal
           isOpen={showChangePackage}
@@ -3386,6 +3509,7 @@ function App() {
           vipPackage={vipPackage}
           duoPackage={duoPackage}
           equipmentPackages={equipmentPackages}
+          businessPlusPackage={businessPlusPackage}
           businessPackage={businessPackage}
           businessPackage100={businessPackage100}
           transportPackage={transportPackage}
