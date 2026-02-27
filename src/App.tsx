@@ -1947,6 +1947,7 @@ function App() {
   const [orderId, setOrderId] = useState('');
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [showAllFaqs, setShowAllFaqs] = useState(false);
+  const [showPackagesModal, setShowPackagesModal] = useState(false);
   const [showAllReviews, setShowAllReviews] = useState(false);
   const [modalContent, setModalContent] = useState<{ title: string; content: string } | null>(null);
   const [showChangePackage, setShowChangePackage] = useState(false);
@@ -2173,7 +2174,7 @@ function App() {
 
                   {/* Secondary - packages */}
                   <button
-                    onClick={() => document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' })}
+                    onClick={() => setShowPackagesModal(true)}
                     className="relative flex items-center justify-center gap-2.5 flex-1 py-3.5 rounded-2xl font-black text-[14px] transition-all hover:bg-white/9 active:scale-[.97] group"
                     style={{ border: '1px solid rgba(255,255,255,0.14)', color: 'rgba(255,255,255,0.75)', background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(8px)' }}>
                     <LayoutDashboard size={16} className="text-white/50 group-hover:text-white/80 transition-colors" />
@@ -2217,29 +2218,6 @@ function App() {
                   </div>
                 </motion.div>
 
-                {/* ── Package quick-select cards ── */}
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.45 }}
-                  className="w-full grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                  {[
-                    { id: 'packages-car',   emoji: '🚗', label: lang === 'he' ? 'רכב פרטי' : 'سيارة خاصة', sub: lang === 'he' ? 'מ-₪199' : 'من ₪199',  color: '#c8102e', border: 'rgba(200,16,46,0.35)' },
-                    { id: 'packages-vip',   emoji: '👑', label: lang === 'he' ? 'VIP' : 'VIP',              sub: lang === 'he' ? '₪749' : '₪749',         color: '#d4af37', border: 'rgba(212,175,55,0.35)' },
-                    { id: 'packages-biz',   emoji: '🏢', label: lang === 'he' ? 'עסקים' : 'أعمال',          sub: lang === 'he' ? 'מ-₪1,499' : 'من ₪1,499', color: '#3b82f6', border: 'rgba(59,130,246,0.35)' },
-                    { id: 'packages-equip', emoji: '🚛', label: lang === 'he' ? 'ציוד' : 'معدات',           sub: lang === 'he' ? 'מ-₪229' : 'من ₪229',    color: '#ea580c', border: 'rgba(234,88,12,0.35)' },
-                  ].map((c, i) => (
-                    <motion.button
-                      key={c.id}
-                      initial={{ opacity: 0, y: 12 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.5 + i * 0.07 }}
-                      onClick={() => document.getElementById(c.id)?.scrollIntoView({ behavior: 'smooth' })}
-                      className="flex flex-col items-center gap-1.5 py-4 px-2 rounded-2xl transition-all hover:scale-[1.04] active:scale-[.96] cursor-pointer"
-                      style={{ background: `${c.color}0e`, border: `1.5px solid ${c.border}` }}>
-                      <span className="text-2xl">{c.emoji}</span>
-                      <span className="text-[13px] font-black text-white leading-tight">{c.label}</span>
-                      <span className="text-[10px] font-bold" style={{ color: c.color }}>{c.sub}</span>
-                    </motion.button>
-                  ))}
-                </motion.div>
               </div>
 
               <div className="absolute bottom-5 left-1/2 -translate-x-1/2 cursor-pointer animate-bounce"
@@ -2248,6 +2226,110 @@ function App() {
                 <ChevronDown size={26} />
               </div>
             </section>
+
+            {/* ══════════ PACKAGES MODAL ══════════ */}
+            {showPackagesModal && (
+              <div className="fixed inset-0 z-[999] flex items-center justify-center p-4"
+                style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(16px)' }}
+                onClick={() => setShowPackagesModal(false)}>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.92, y: 24 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.92 }}
+                  transition={{ duration: 0.28 }}
+                  onClick={e => e.stopPropagation()}
+                  className="w-full max-w-lg rounded-3xl overflow-hidden"
+                  style={{ background: 'linear-gradient(160deg, #0e0e14 0%, #06060a 100%)', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 32px 80px rgba(0,0,0,0.7)' }}>
+
+                  {/* Modal Header */}
+                  <div className="flex items-center justify-between px-6 py-5" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+                    <div>
+                      <p className="text-[10px] font-black tracking-[0.2em] uppercase mb-1" style={{ color: '#c8102e' }}>YOUGO ISRAEL</p>
+                      <h3 className="text-xl font-black text-white">{lang === 'he' ? 'בחר את החבילה שלך' : 'اختر باقتك'}</h3>
+                    </div>
+                    <button onClick={() => setShowPackagesModal(false)}
+                      className="w-9 h-9 rounded-full flex items-center justify-center transition-colors hover:bg-white/10"
+                      style={{ border: '1px solid rgba(255,255,255,0.12)' }}>
+                      <span className="text-white/60 text-lg leading-none">×</span>
+                    </button>
+                  </div>
+
+                  {/* Package Cards */}
+                  <div className="p-5 grid grid-cols-2 gap-3">
+                    {[
+                      {
+                        id: 'packages-car',
+                        icon: '🚗',
+                        label: lang === 'he' ? 'רכב פרטי' : 'سيارة خاصة',
+                        price: lang === 'he' ? 'מ-₪199' : 'من ₪199',
+                        desc: lang === 'he' ? 'פרסום מקצועי ברשתות החברתיות לרכב פרטי' : 'نشر احترافي على شبكات التواصل للسيارة الخاصة',
+                        color: '#c8102e',
+                        tag: lang === 'he' ? 'הכי פופולרי' : 'الأكثر شيوعاً',
+                      },
+                      {
+                        id: 'packages-vip',
+                        icon: '👑',
+                        label: 'VIP',
+                        price: '₪749',
+                        desc: lang === 'he' ? 'חבילת פרמיום עם עיצוב בלעדי וליווי אישי' : 'باقة بريميوم بتصميم حصري ومتابعة شخصية',
+                        color: '#d4af37',
+                        tag: lang === 'he' ? 'פרמיום' : 'مميز',
+                      },
+                      {
+                        id: 'packages-biz',
+                        icon: '🏢',
+                        label: lang === 'he' ? 'עסקים' : 'أعمال',
+                        price: lang === 'he' ? 'מ-₪1,499' : 'من ₪1,499',
+                        desc: lang === 'he' ? 'פתרון מלא לסוחרי רכב ועסקים עם צי רכבים' : 'حل متكامل لتجار السيارات والشركات',
+                        color: '#3b82f6',
+                        tag: lang === 'he' ? 'לעסקים' : 'للأعمال',
+                      },
+                      {
+                        id: 'packages-equip',
+                        icon: '🚛',
+                        label: lang === 'he' ? 'ציוד ותחבורה' : 'معدات ونقل',
+                        price: lang === 'he' ? 'מ-₪229' : 'من ₪229',
+                        desc: lang === 'he' ? 'ציוד כבד, מכונות, ורכבים מסחריים לקהל מקצועי' : 'معدات ثقيلة وآليات للجمهور المتخصص',
+                        color: '#ea580c',
+                        tag: lang === 'he' ? 'מקצועי' : 'احترافي',
+                      },
+                    ].map((pkg) => (
+                      <button key={pkg.id}
+                        onClick={() => {
+                          setShowPackagesModal(false);
+                          setTimeout(() => document.getElementById(pkg.id)?.scrollIntoView({ behavior: 'smooth' }), 150);
+                        }}
+                        className="group relative flex flex-col p-4 rounded-2xl text-right transition-all hover:scale-[1.03] active:scale-[.97]"
+                        style={{ background: `${pkg.color}0c`, border: `1.5px solid ${pkg.color}30` }}>
+                        {/* Tag */}
+                        <span className="absolute top-3 left-3 text-[9px] font-black px-2 py-0.5 rounded-full"
+                          style={{ background: `${pkg.color}22`, color: pkg.color }}>
+                          {pkg.tag}
+                        </span>
+                        {/* Icon */}
+                        <span className="text-3xl mb-2 block">{pkg.icon}</span>
+                        {/* Label */}
+                        <span className="text-[15px] font-black text-white mb-1">{pkg.label}</span>
+                        {/* Price */}
+                        <span className="text-[13px] font-black mb-2" style={{ color: pkg.color }}>{pkg.price}</span>
+                        {/* Desc */}
+                        <span className="text-[10px] leading-relaxed text-white/40">{pkg.desc}</span>
+                        {/* Arrow */}
+                        <div className="mt-3 flex items-center gap-1 text-[11px] font-bold" style={{ color: pkg.color }}>
+                          <span>{lang === 'he' ? 'לפרטים' : 'التفاصيل'}</span>
+                          <ChevronDown size={11} className="-rotate-90" />
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Footer note */}
+                  <div className="px-6 pb-5 text-center">
+                    <p className="text-[11px] text-white/25">{lang === 'he' ? 'לחץ על חבילה לגלול לפרטים המלאים' : 'انقر على الباقة للاطلاع على التفاصيل الكاملة'}</p>
+                  </div>
+                </motion.div>
+              </div>
+            )}
 
             {/* HOW IT WORKS */}
             <section id="how-it-works" className="space-y-14">
