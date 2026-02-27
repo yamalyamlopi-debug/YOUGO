@@ -2744,125 +2744,6 @@ function App() {
               </motion.div>
 
               {/* REGULAR PACKAGES */}
-              <div id="packages-car" className="scroll-mt-16 space-y-8">
-                {/* === SECTION HEADER: רכב פרטי === */}
-                <div className="relative rounded-3xl overflow-hidden"
-                  style={{ background: 'linear-gradient(135deg, rgba(200,16,46,0.12) 0%, rgba(10,10,15,0.97) 50%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(200,16,46,0.32)' }}>
-                  
-                  {/* Top accent bar */}
-                  <div className="absolute top-0 inset-x-0 h-[3px]" style={{ background: 'linear-gradient(90deg, transparent, #c8102e, transparent)' }} />
-                  
-                  {/* BG glows */}
-                  <div className="absolute top-0 right-0 w-80 h-80 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(200,16,46,0.15) 0%, transparent 65%)' }} />
-                  <div className="absolute bottom-0 left-0 w-48 h-48 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 20% 80%, rgba(200,16,46,0.06) 0%, transparent 65%)' }} />
-                  
-                  <div className="relative z-10 p-6 sm:p-8 md:p-10">
-                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
-                      
-                      {/* Left: Text content */}
-                      <div className="flex-1 space-y-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
-                            style={{ background: 'linear-gradient(135deg, #c8102e, #8b0d1e)', boxShadow: '0 8px 24px rgba(200,16,46,0.4)' }}>
-                            <Car size={22} className="text-white" />
-                          </div>
-                          <div>
-                            <div className="text-[9px] font-black text-brand-red uppercase tracking-[0.2em] mb-0.5">חבילות פרסום</div>
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full"
-                              style={{ background: 'rgba(200,16,46,0.15)', border: '1px solid rgba(200,16,46,0.3)' }}>
-                              <Car size={10} className="text-brand-red" />
-                              <span className="text-[10px] font-black tracking-wider text-brand-red uppercase">רכב פרטי</span>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <h3 className="text-3xl md:text-4xl font-black text-white leading-tight">
-                          מוכרים <span className="text-brand-red">רכב פרטי?</span>
-                        </h3>
-                        <p className="text-white/50 text-sm leading-relaxed max-w-lg">
-                          שלוש חבילות מדורגות לכל תקציב ומטרה. מחבילת הכניסה הבסיסית ועד הפרמיום המלא – כל אחת מותאמת לסוג הרכב ולמטרת המכירה שלך.
-                        </p>
-                        
-                        {/* Feature pills */}
-                        <div className="flex flex-wrap gap-2">
-                          {[
-                            { icon: <Camera size={11} />, label: 'צילום מקצועי', c: '#c8102e' },
-                            { icon: <Zap size={11} />, label: 'פרסום תוך 24 שעות', c: '#4ade80' },
-                            { icon: <Users size={11} />, label: '50K+ עוקבים', c: '#60a5fa' },
-                            { icon: <TrendingUp size={11} />, label: 'חשיפה ממוקדת', c: '#a78bfa' },
-                          ].map((p, i) => (
-                            <div key={i} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10px] font-bold"
-                              style={{ background: `${p.c}12`, border: `1px solid ${p.c}25`, color: p.c }}>
-                              {p.icon}{p.label}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                      
-                      {/* Right: Stats */}
-                      <div className="flex flex-row md:flex-col gap-2 w-full md:w-auto">
-                        {[
-                          { value: '₪199', label: 'מחבילה', color: '#94a3b8', icon: <DollarSign size={12} /> },
-                          { value: '1,000+', label: 'מכירות', color: '#c8102e', icon: <Trophy size={12} /> },
-                          { value: '7-30', label: 'ימי פרסום', color: '#4ade80', icon: <Calendar size={12} /> },
-                        ].map((s, i) => (
-                          <div key={i} className="flex items-center gap-2 px-3 py-2.5 rounded-xl flex-1 md:flex-none"
-                            style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
-                            <div className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
-                              <span style={{ color: s.color }}>{s.icon}</span>
-                            </div>
-                            <div>
-                              <div className="text-sm font-black leading-tight" style={{ color: s.color }}>{s.value}</div>
-                              <div className="text-[9px] text-white/30 font-bold">{s.label}</div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    {/* CTA */}
-                    <div className="mt-6 flex items-center gap-3 flex-wrap pt-5" style={{ borderTop: '1px solid rgba(200,16,46,0.15)' }}>
-                      <button onClick={() => document.getElementById('packages-car')?.scrollIntoView({ behavior: 'smooth' })}
-                        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-black text-sm text-white transition-all hover:scale-105 active:scale-95"
-                        style={{ background: 'linear-gradient(135deg,#c8102e,#a50d25)', boxShadow: '0 4px 18px rgba(200,16,46,0.4)' }}>
-                        <Car size={13} />
-                        {lang === 'he' ? 'לחבילות רכב פרטי' : 'لباقات السيارات'}
-                        <ChevronDown size={13} />
-                      </button>
-                      <span className="text-[11px] text-white/30">3 חבילות · מ-₪219</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="hidden md:grid grid-cols-3 gap-5 lg:gap-6">
-                  {packages.map(pkg => (
-                    <div key={pkg.id} className="h-[520px]">
-                      <PackageCard pkg={pkg} lang={lang} onSelect={handleSelectPackage} />
-                    </div>
-                  ))}
-                </div>
-
-                <div className="md:hidden px-3">
-                  <MobileSwiper cardHeight={520}>
-                    {packages.map(pkg => (
-                      <PackageCard key={pkg.id} pkg={pkg} lang={lang} onSelect={handleSelectPackage} />
-                    ))}
-                  </MobileSwiper>
-                </div>
-              </div>
-
-              {/* ── divider ── */}
-              <div className="flex items-center justify-center gap-3 py-1">
-                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.06))' }} />
-                <div className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full block" style={{ background: 'rgba(255,255,255,0.12)' }} />
-                  <span className="w-2 h-2 rounded-full block" style={{ background: 'rgba(200,16,46,0.45)' }} />
-                  <span className="w-1.5 h-1.5 rounded-full block" style={{ background: 'rgba(255,255,255,0.12)' }} />
-                </div>
-                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.06), transparent)' }} />
-              </div>
-
-              {/* ══ WEBSITE PACKAGES ══ */}
               <div id="packages-website" className="scroll-mt-16 space-y-8">
                 {/* Header */}
                 <div className="relative rounded-3xl overflow-hidden p-6 sm:p-8 md:p-10"
@@ -3007,6 +2888,123 @@ function App() {
                 <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.06), transparent)' }} />
               </div>
 
+              {/* ── divider ── */}
+              <div className="flex items-center justify-center gap-3 py-1">
+                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.06))' }} />
+                <div className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full block" style={{ background: 'rgba(255,255,255,0.12)' }} />
+                  <span className="w-2 h-2 rounded-full block" style={{ background: 'rgba(200,16,46,0.45)' }} />
+                  <span className="w-1.5 h-1.5 rounded-full block" style={{ background: 'rgba(255,255,255,0.12)' }} />
+                </div>
+                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.06), transparent)' }} />
+              </div>
+
+              <div id="packages-car" className="scroll-mt-16 space-y-8">
+                {/* === SECTION HEADER: רכב פרטי === */}
+                <div className="relative rounded-3xl overflow-hidden"
+                  style={{ background: 'linear-gradient(135deg, rgba(200,16,46,0.12) 0%, rgba(10,10,15,0.97) 50%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(200,16,46,0.32)' }}>
+                  
+                  {/* Top accent bar */}
+                  <div className="absolute top-0 inset-x-0 h-[3px]" style={{ background: 'linear-gradient(90deg, transparent, #c8102e, transparent)' }} />
+                  
+                  {/* BG glows */}
+                  <div className="absolute top-0 right-0 w-80 h-80 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(200,16,46,0.15) 0%, transparent 65%)' }} />
+                  <div className="absolute bottom-0 left-0 w-48 h-48 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 20% 80%, rgba(200,16,46,0.06) 0%, transparent 65%)' }} />
+                  
+                  <div className="relative z-10 p-6 sm:p-8 md:p-10">
+                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+                      
+                      {/* Left: Text content */}
+                      <div className="flex-1 space-y-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
+                            style={{ background: 'linear-gradient(135deg, #c8102e, #8b0d1e)', boxShadow: '0 8px 24px rgba(200,16,46,0.4)' }}>
+                            <Car size={22} className="text-white" />
+                          </div>
+                          <div>
+                            <div className="text-[9px] font-black text-brand-red uppercase tracking-[0.2em] mb-0.5">חבילות פרסום</div>
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full"
+                              style={{ background: 'rgba(200,16,46,0.15)', border: '1px solid rgba(200,16,46,0.3)' }}>
+                              <Car size={10} className="text-brand-red" />
+                              <span className="text-[10px] font-black tracking-wider text-brand-red uppercase">רכב פרטי</span>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <h3 className="text-3xl md:text-4xl font-black text-white leading-tight">
+                          מוכרים <span className="text-brand-red">רכב פרטי?</span>
+                        </h3>
+                        <p className="text-white/50 text-sm leading-relaxed max-w-lg">
+                          שלוש חבילות מדורגות לכל תקציב ומטרה. מחבילת הכניסה הבסיסית ועד הפרמיום המלא – כל אחת מותאמת לסוג הרכב ולמטרת המכירה שלך.
+                        </p>
+                        
+                        {/* Feature pills */}
+                        <div className="flex flex-wrap gap-2">
+                          {[
+                            { icon: <Camera size={11} />, label: 'צילום מקצועי', c: '#c8102e' },
+                            { icon: <Zap size={11} />, label: 'פרסום תוך 24 שעות', c: '#4ade80' },
+                            { icon: <Users size={11} />, label: '50K+ עוקבים', c: '#60a5fa' },
+                            { icon: <TrendingUp size={11} />, label: 'חשיפה ממוקדת', c: '#a78bfa' },
+                          ].map((p, i) => (
+                            <div key={i} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10px] font-bold"
+                              style={{ background: `${p.c}12`, border: `1px solid ${p.c}25`, color: p.c }}>
+                              {p.icon}{p.label}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      {/* Right: Stats */}
+                      <div className="flex flex-row md:flex-col gap-2 w-full md:w-auto">
+                        {[
+                          { value: '₪199', label: 'מחבילה', color: '#94a3b8', icon: <DollarSign size={12} /> },
+                          { value: '1,000+', label: 'מכירות', color: '#c8102e', icon: <Trophy size={12} /> },
+                          { value: '7-30', label: 'ימי פרסום', color: '#4ade80', icon: <Calendar size={12} /> },
+                        ].map((s, i) => (
+                          <div key={i} className="flex items-center gap-2 px-3 py-2.5 rounded-xl flex-1 md:flex-none"
+                            style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
+                            <div className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
+                              <span style={{ color: s.color }}>{s.icon}</span>
+                            </div>
+                            <div>
+                              <div className="text-sm font-black leading-tight" style={{ color: s.color }}>{s.value}</div>
+                              <div className="text-[9px] text-white/30 font-bold">{s.label}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* CTA */}
+                    <div className="mt-6 flex items-center gap-3 flex-wrap pt-5" style={{ borderTop: '1px solid rgba(200,16,46,0.15)' }}>
+                      <button onClick={() => document.getElementById('packages-car')?.scrollIntoView({ behavior: 'smooth' })}
+                        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-black text-sm text-white transition-all hover:scale-105 active:scale-95"
+                        style={{ background: 'linear-gradient(135deg,#c8102e,#a50d25)', boxShadow: '0 4px 18px rgba(200,16,46,0.4)' }}>
+                        <Car size={13} />
+                        {lang === 'he' ? 'לחבילות רכב פרטי' : 'لباقات السيارات'}
+                        <ChevronDown size={13} />
+                      </button>
+                      <span className="text-[11px] text-white/30">3 חבילות · מ-₪219</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="hidden md:grid grid-cols-3 gap-5 lg:gap-6">
+                  {packages.map(pkg => (
+                    <div key={pkg.id} className="h-[520px]">
+                      <PackageCard pkg={pkg} lang={lang} onSelect={handleSelectPackage} />
+                    </div>
+                  ))}
+                </div>
+
+                <div className="md:hidden px-3">
+                  <MobileSwiper cardHeight={520}>
+                    {packages.map(pkg => (
+                      <PackageCard key={pkg.id} pkg={pkg} lang={lang} onSelect={handleSelectPackage} />
+                    ))}
+                  </MobileSwiper>
+                </div>
+              </div>
               {/* VIP + DUO */}
               <div id="packages-vip" className="scroll-mt-16 space-y-8">
                 {/* === SECTION HEADER: VIP === */}
