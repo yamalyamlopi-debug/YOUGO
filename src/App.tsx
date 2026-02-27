@@ -2798,7 +2798,6 @@ function App() {
                       ))}
                     </div>
                   </div>
-                </div>
 
                   {/* ── CTA ── */}
                   <div className="relative z-10 mt-5 flex items-center gap-3 flex-wrap pt-4" style={{ borderTop: '1px solid rgba(234,88,12,0.15)' }}>
