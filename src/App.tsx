@@ -216,6 +216,7 @@ const Navbar = memo(({ lang, setLang, isAdmin, onLogout, siteSettings, setView }
 
   const sections = [
     { id: 'packages-car',   emoji: '🚗', he: 'רכב פרטי',   ar: 'سيارة خاصة', color: '#c8102e' },
+    { id: 'packages-website', emoji: '🌐', he: 'אתר CARS',  ar: 'موقع CARS',   color: '#22c55e' },
     { id: 'packages-vip',   emoji: '👑', he: 'VIP',         ar: 'VIP',         color: '#d4af37' },
     { id: 'packages-biz',   emoji: '🏢', he: 'עסקים',       ar: 'أعمال',       color: '#3b82f6' },
     { id: 'packages-equip', emoji: '🚛', he: 'ציוד',        ar: 'معدات',       color: '#ea580c' },
@@ -496,8 +497,8 @@ const PackageCard = memo(({ pkg, lang, onSelect }: PackageCardProps) => {
   const isPremium = pkg.id === 'premium';
   const isBasic = pkg.id === 'basic';
 
-  const featureDurations: Record<string, string> = { basic: '7 ימים', pro: '14 ימים', premium: '30 ימים' };
-  const featureImages: Record<string, string> = { basic: '2 תמונות', pro: '4 תמונות', premium: '8+ תמונות' };
+  const featureDurations: Record<string, string> = { basic: '7 ימים', pro: '14 ימים', premium: '30 ימים', 'web-basic': '30 ימים', 'web-pro': '60 ימים', 'web-vip': '90 ימים' };
+  const featureImages: Record<string, string> = { basic: '2 תמונות', pro: '4 תמונות', premium: '8+ תמונות', 'web-basic': '5 תמונות', 'web-pro': '10 תמונות', 'web-vip': '20+ תמונות' };
 
   const handleSelect = useCallback(() => onSelect(pkg), [onSelect, pkg]);
   const handleShowBack = useCallback(() => setShowBack(true), []);
@@ -571,7 +572,7 @@ const PackageCard = memo(({ pkg, lang, onSelect }: PackageCardProps) => {
                 <span className="text-[38px] font-black text-white leading-none tracking-tight">{pkg.price}</span>
                 <div className="flex flex-col gap-0.5">
                   <span className="text-[9px] line-through" style={{ color: 'rgba(255,255,255,0.2)' }}>
-                    {pkg.id === 'basic' ? '₪250' : pkg.id === 'pro' ? '₪350' : pkg.id === 'premium' ? '₪580' : `₪${Math.round(parseInt(pkg.price.replace('₪', '')) / 0.85)}`}
+                    {pkg.id === 'basic' ? '₪299' : pkg.id === 'pro' ? '₪479' : pkg.id === 'premium' ? '₪749' : `₪${Math.round(parseInt(pkg.price.replace('₪', '')) / 0.85)}`}
                   </span>
                   <span className="text-[9px] font-black" style={{ color: '#4ade80' }}>חיסכון 20%</span>
                 </div>
@@ -1152,6 +1153,146 @@ const BusinessPackageCard = memo(({ pkg, onSelect }: { pkg: Package, onSelect: (
           <CardBackPanel pkg={pkg} details={packageDetails[pkg.id] || { title: pkg.name, content: pkg.features.join('\n') }} color={color} badge={<Building2 size={20} />} onSelect={handleSelect} onBack={handleHideBack} />
         )}
       </AnimatePresence>
+    </div>
+  );
+});
+
+
+// ============================================================
+// WEBSITE PACKAGE CARD
+// ============================================================
+const WebsitePackageCard = memo(({ pkg, lang, onSelect }: { pkg: Package; lang: Language; onSelect: (p: Package) => void }) => {
+  const isFree  = pkg.id === 'web-free';
+  const isBasic = pkg.id === 'web-basic';
+  const isPro   = pkg.id === 'web-pro';
+  const isVip   = pkg.id === 'web-vip';
+
+  const cfg = isFree ? {
+    color: '#64748b', glow: 'rgba(100,116,139,0.12)',
+    gradient: 'linear-gradient(145deg,#111318 0%,#0b0d10 100%)',
+    badge: <Globe size={20} />, border: 'rgba(100,116,139,0.28)',
+  } : isBasic ? {
+    color: '#22c55e', glow: 'rgba(34,197,94,0.15)',
+    gradient: 'linear-gradient(145deg,#0d1a10 0%,#080f0a 100%)',
+    badge: <Car size={20} />, border: 'rgba(34,197,94,0.3)',
+  } : isPro ? {
+    color: '#c8102e', glow: 'rgba(200,16,46,0.2)',
+    gradient: 'linear-gradient(145deg,#1a0a0d 0%,#110508 100%)',
+    badge: <Rocket size={20} />, border: 'rgba(200,16,46,0.4)',
+  } : {
+    color: '#d4af37', glow: 'rgba(212,175,55,0.2)',
+    gradient: 'linear-gradient(145deg,#1e160a 0%,#100c05 100%)',
+    badge: <Crown size={20} />, border: 'rgba(212,175,55,0.45)',
+  };
+
+  return (
+    <div className="relative flex flex-col rounded-2xl overflow-hidden h-full"
+      style={{ background: cfg.gradient, border: `1.5px solid ${cfg.border}`, boxShadow: `0 24px 50px -15px ${cfg.glow}` }}>
+
+      <div className="absolute top-0 inset-x-0 h-[3px]"
+        style={{ background: `linear-gradient(90deg, transparent, ${cfg.color}, transparent)` }} />
+      <div className="absolute top-0 inset-x-0 h-40 pointer-events-none"
+        style={{ background: `radial-gradient(ellipse at 50% -20%, ${cfg.color}18 0%, transparent 70%)` }} />
+
+      {isPro && (
+        <div className="absolute top-3 right-3 z-20 flex items-center gap-1 text-white text-[8px] font-black py-1.5 px-2.5 rounded-full"
+          style={{ background: `linear-gradient(135deg,${cfg.color},#8b0d1e)`, boxShadow: `0 4px 14px ${cfg.color}60` }}>
+          <Trophy size={9} /> {lang === 'he' ? 'הכי פופולרי' : 'الأكثر طلباً'}
+        </div>
+      )}
+      {isVip && (
+        <div className="absolute top-3 right-3 z-20 flex items-center gap-1 text-black text-[8px] font-black py-1.5 px-2.5 rounded-full"
+          style={{ background: 'linear-gradient(135deg,#f5d060,#d4af37)' }}>
+          <Crown size={9} /> VIP
+        </div>
+      )}
+      {isFree && (
+        <div className="absolute top-3 right-3 z-20 flex items-center gap-1 text-[8px] font-black py-1.5 px-2.5 rounded-full"
+          style={{ background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.35)', color: '#4ade80' }}>
+          <Zap size={8} /> {lang === 'he' ? 'ניסיון חינם' : 'تجربة مجانية'}
+        </div>
+      )}
+
+      <div className="relative z-10 flex flex-col h-full p-5 gap-3.5 pt-11">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+            style={{ background: `${cfg.color}20`, border: `1.5px solid ${cfg.color}35` }}>
+            <span style={{ color: cfg.color }}>{cfg.badge}</span>
+          </div>
+          <div>
+            <h3 className="text-[19px] font-black tracking-tight leading-none" style={{ color: isFree ? '#e2e8f0' : cfg.color }}>
+              {pkg.name}
+            </h3>
+            <p className="text-[10px] font-semibold mt-1" style={{ color: `${cfg.color}80` }}>
+              {isFree ? (lang === 'he' ? '✓ ניסיון 3 ימים — ללא תשלום' : '✓ تجربة 3 أيام — بدون دفع')
+               : isBasic ? (lang === 'he' ? '✓ חשיפה מהירה לאתר' : '✓ وصول سريع للموقع')
+               : isPro ? (lang === 'he' ? '✓ הבחירה הפופולרית' : '✓ الخيار الأكثر شعبية')
+               : (lang === 'he' ? '✓ חשיפה מקסימלית 90 ימים' : '✓ أقصى وصول 90 يوماً')}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex gap-2 flex-wrap">
+          {[
+            { icon: <Globe size={10} />, val: isFree ? (lang === 'he' ? '3 ימים' : '3 أيام') : isBasic ? (lang === 'he' ? '30 ימים' : '30 يوماً') : isPro ? (lang === 'he' ? '60 ימים' : '60 يوماً') : (lang === 'he' ? '90 ימים' : '90 يوماً') },
+            { icon: <Camera size={10} />, val: isFree ? (lang === 'he' ? 'תמונה 1' : 'صورة 1') : isBasic ? (lang === 'he' ? '5 תמונות' : '5 صور') : isPro ? (lang === 'he' ? '10 תמונות' : '10 صور') : (lang === 'he' ? '20+ וידאו' : '20+ فيديو') },
+          ].map((s, i) => (
+            <div key={i} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg"
+              style={{ background: `${cfg.color}10`, border: `1px solid ${cfg.color}20` }}>
+              <span style={{ color: cfg.color }}>{s.icon}</span>
+              <span className="text-[10px] font-black text-white">{s.val}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex items-baseline gap-2">
+          <span className="text-[36px] font-black leading-none tracking-tight" style={{ color: isFree ? '#4ade80' : cfg.color }}>
+            {pkg.price}
+          </span>
+          {!isFree && (
+            <div className="flex flex-col">
+              <span className="text-[9px] line-through" style={{ color: 'rgba(255,255,255,0.2)' }}>
+                {isBasic ? '₪99' : isPro ? '₪219' : '₪389'}
+              </span>
+              <span className="text-[9px] font-black" style={{ color: '#4ade80' }}>
+                {lang === 'he' ? 'חיסכון 30%' : 'توفير 30%'}
+              </span>
+            </div>
+          )}
+        </div>
+
+        <div className="h-px" style={{ background: `linear-gradient(90deg, transparent, ${cfg.color}40, transparent)` }} />
+
+        <div className="flex flex-col gap-2 flex-grow">
+          {pkg.features.map((feat, i) => (
+            <div key={i} className="flex items-start gap-2.5">
+              <div className="w-4 h-4 rounded-lg flex items-center justify-center shrink-0 mt-[1px]"
+                style={{ background: `${cfg.color}20`, border: `1.5px solid ${cfg.color}40` }}>
+                <Check size={9} strokeWidth={3} style={{ color: cfg.color }} />
+              </div>
+              <span className="text-[12px] font-medium leading-snug" style={{ color: 'rgba(255,255,255,0.82)' }}>{feat}</span>
+            </div>
+          ))}
+        </div>
+
+        <button
+          type="button"
+          onClick={() => onSelect(pkg)}
+          className="w-full py-3.5 rounded-xl font-black text-sm mt-auto active:scale-95 transition-all flex items-center justify-center gap-2"
+          style={isFree ? {
+            background: 'rgba(34,197,94,0.15)', border: '1.5px solid rgba(34,197,94,0.35)', color: '#4ade80'
+          } : isVip ? {
+            background: 'linear-gradient(135deg,#f5d060,#d4af37)', color: '#111'
+          } : {
+            background: `linear-gradient(135deg, ${cfg.color}, ${cfg.color}cc)`, color: 'white'
+          }}>
+          {isFree
+            ? <><Zap size={13} /> {lang === 'he' ? 'פרסם חינם עכשיו' : 'انشر مجاناً الآن'}</>
+            : isVip
+            ? <><Crown size={13} /> {lang === 'he' ? 'הזמן VIP' : 'احجز VIP'}</>
+            : <><Rocket size={13} /> {lang === 'he' ? 'הזמן עכשיו' : 'احجز الآن'}</>}
+        </button>
+      </div>
     </div>
   );
 });
@@ -1974,22 +2115,190 @@ function App() {
   }, [view, bookingStep]);
 
   const packages: Package[] = useMemo(() => [
-    { id: 'basic', name: t.basic, price: '₪199', features: [t.features.images2, t.features.post1, t.features.story7, t.features.exposureBasic] },
-    { id: 'pro', name: t.pro, price: '₪299', popular: true, features: [t.features.images4, t.features.postPro, t.features.story14, t.features.priorityPro, t.features.exposurePro] },
-    { id: 'premium', name: t.premium, price: '₪479', premium: true, features: [t.features.imagesPremium, t.features.postPremium, t.features.story30, t.features.priorityFull, t.features.exposureMax, t.features.guidance, t.features.video] }
-  ], [t]);
+    {
+      id: 'basic', name: t.basic, price: '₪219',
+      features: [
+        t.features.images2,
+        t.features.post1,
+        t.features.story7,
+        t.features.exposureBasic,
+        lang === 'he' ? '🌐 YOUGO CARS — 7 ימים' : '🌐 YOUGO CARS — 7 أيام',
+      ]
+    },
+    {
+      id: 'pro', name: t.pro, price: '₪349', popular: true,
+      features: [
+        t.features.images4,
+        t.features.postPro,
+        t.features.story14,
+        t.features.priorityPro,
+        t.features.exposurePro,
+        lang === 'he' ? '🌐 YOUGO CARS — 14 ימים + בנר מומלץ' : '🌐 YOUGO CARS — 14 يوماً + بانر مميز',
+      ]
+    },
+    {
+      id: 'premium', name: t.premium, price: '₪549', premium: true,
+      features: [
+        t.features.imagesPremium,
+        t.features.postPremium,
+        t.features.story30,
+        t.features.priorityFull,
+        t.features.exposureMax,
+        t.features.guidance,
+        t.features.video,
+        lang === 'he' ? '🌐 YOUGO CARS — 30 ימים VIP + ראשון בחיפוש' : '🌐 YOUGO CARS — 30 يوماً VIP + الأول في البحث',
+      ]
+    }
+  ], [t, lang]);
 
-  const vipPackage: Package = useMemo(() => ({ id: 'vip', name: 'VIP LUXURY', price: '₪749', vip: true, features: ['15+ תמונות מקצועיות', 'רילס + סטורי VIP', '60 ימי פרסום פרמיום', 'חשיפה מקסימלית', 'ליווי אישי 24/7', 'עיצוב VIP בלעדי', 'טרגוט מתקדם', 'עדיפות ראשונה תמיד'] }), []);
-  const duoPackage: Package = useMemo(() => ({ id: 'duo', name: 'DUO DEAL', price: '₪389', features: ['פרסום 2 רכבים במחיר מיוחד', '4 תמונות לכל רכב', 'פוסט נפרד לכל רכב', 'סטורי 14 יום לכל אחד', 'חשיפה כפולה לקהל מעוניין', 'חיסכון של 40% לעומת 2 חבילות'] }), []);
-  const businessPackage: Package = useMemo(() => ({ id: 'business', name: 'BUSINESS', price: '₪1,499', business: true, features: ['עד 50 רכבים בחודש', 'מנהל לקוח ייעודי', 'דוחות ביצועים חודשיים', 'קידום ממומן', 'עיצוב מקצועי לכל מודעה'] }), []);
-  const businessPackage100: Package = useMemo(() => ({ id: 'business100', name: 'BUSINESS 100', price: '₪2,499', business: true, features: ['עד 100 רכבים בחודש', 'מנהל לקוח בכיר', 'דוחות שבועיים', 'קידום ממומן מוגבר', 'עיצוב VIP', 'אנליטיקס מתקדם', 'תמיכה 24/7'] }), []);
-  const transportPackage: Package = useMemo(() => ({ id: 'transport', name: 'תחבורה והסעות', price: '₪329', features: ['10 תמונות מקצועיות מבפנים ומבחוץ', 'פוסט עם מפרט טכני מלא ומדויק', 'סטורי 21 ימים לחשיפה רחבה', 'חשיפה ייעודית לחברות הסעות ותחבורה', 'טרגוט מדויק לרוכשי רכב מסחרי', 'ייעוץ תמחור מקצועי', 'מאפיין לאוטובוסים, מיניבוסים, וואנים ומשאיות'] }), []);
+  const vipPackage: Package = useMemo(() => ({
+    id: 'vip', name: 'VIP LUXURY', price: '₪899', vip: true,
+    features: [
+      lang === 'he' ? '15+ תמונות מקצועיות + עריכה VIP' : '15+ صورة احترافية + تعديل VIP',
+      lang === 'he' ? 'רילס וידאו מקצועי לאינסטגרם' : 'ريلز فيديو احترافي لإنستغرام',
+      lang === 'he' ? '60 ימי פרסום פרמיום מלאים' : '60 يوماً نشر بريميوم كاملة',
+      lang === 'he' ? 'סטורי יומי + פרסום ממומן' : 'ستوري يومي + إعلان ممول',
+      lang === 'he' ? 'ליווי מנהל לקוח אישי 24/7' : 'متابعة مدير عميل شخصي 24/7',
+      lang === 'he' ? 'ייעוץ תמחור + ניהול משא ומתן' : 'استشارة تسعير + إدارة تفاوض',
+      lang === 'he' ? '🌐 YOUGO CARS — עמוד VIP זהוב 60 ימים' : '🌐 YOUGO CARS — صفحة VIP ذهبية 60 يوماً',
+      lang === 'he' ? '⭐ עדיפות ראשונה בכל תוצאות החיפוש' : '⭐ الأولوية الأولى في نتائج البحث',
+    ]
+  }), [lang]);
+
+  const duoPackage: Package = useMemo(() => ({
+    id: 'duo', name: 'DUO DEAL', price: '₪499',
+    features: [
+      lang === 'he' ? 'פרסום 2 רכבים — אינסטגרם + אתר' : 'نشر سيارتين — إنستغرام + موقع',
+      lang === 'he' ? '4 תמונות מקצועיות לכל רכב' : '4 صور احترافية لكل سيارة',
+      lang === 'he' ? 'פוסט נפרד לכל רכב 14 ימים' : 'بوست منفصل لكل سيارة 14 يوماً',
+      lang === 'he' ? 'סטורי שבועי לשני הרכבים' : 'ستوري أسبوعي لكلتا السيارتين',
+      lang === 'he' ? '🌐 YOUGO CARS — 2 מודעות פעילות 14 ימים' : '🌐 YOUGO CARS — إعلانان نشطان 14 يوماً',
+      lang === 'he' ? 'חיסכון 40% — במקום ₪838' : 'توفير 40% — بدلاً من ₪838',
+    ]
+  }), [lang]);
+
+  const businessPackage: Package = useMemo(() => ({
+    id: 'business', name: 'BUSINESS 50', price: '₪2,890',
+    business: true,
+    features: [
+      lang === 'he' ? 'עד 50 רכבים בחודש — אינסטגרם' : 'حتى 50 سيارة شهرياً — إنستغرام',
+      lang === 'he' ? 'מנהל לקוח ייעודי אישי' : 'مدير عميل مخصص شخصي',
+      lang === 'he' ? 'דוחות ביצועים שבועיים מפורטים' : 'تقارير أداء أسبوعية مفصلة',
+      lang === 'he' ? 'קידום ממומן כלול בחבילה' : 'ترويج مدفوع مشمول في الباقة',
+      lang === 'he' ? '🌐 YOUGO CARS — דף סוכנות קבוע + לוגו' : '🌐 YOUGO CARS — صفحة وكالة دائمة + شعار',
+      lang === 'he' ? 'חיסכון 40% לעומת פרטני' : 'توفير 40% مقارنة بالفردي',
+    ]
+  }), [lang]);
+
+  const businessPackage100: Package = useMemo(() => ({
+    id: 'business100', name: 'BUSINESS 100', price: '₪4,990',
+    business: true,
+    features: [
+      lang === 'he' ? 'עד 100 רכבים בחודש — אינסטגרם' : 'حتى 100 سيارة شهرياً — إنستغرام',
+      lang === 'he' ? 'מנהל לקוח בכיר ייעודי' : 'مدير عميل كبير مخصص',
+      lang === 'he' ? 'דוחות יומיים + analytics מתקדם' : 'تقارير يومية + analytics متقدم',
+      lang === 'he' ? 'פרסום ממומן פרימיום כלול' : 'إعلان ممول بريميوم مشمول',
+      lang === 'he' ? '🌐 YOUGO CARS — דף VIP זהוב + בנר ענק' : '🌐 YOUGO CARS — صفحة VIP ذهبية + بانر ضخم',
+      lang === 'he' ? 'פגישות וידאו שבועיות + WhatsApp ייעודי' : 'اجتماعات فيديو أسبوعية + واتساب مخصص',
+      lang === 'he' ? 'חיסכון 50% לעומת פרטני' : 'توفير 50% مقارنة بالفردي',
+    ]
+  }), [lang]);
+
+  const transportPackage: Package = useMemo(() => ({
+    id: 'transport', name: lang === 'he' ? 'תחבורה והסעות' : 'نقل ومواصلات', price: '₪459',
+    features: [
+      lang === 'he' ? '10 תמונות מקצועיות מבפנים ומבחוץ' : '10 صور احترافية من الداخل والخارج',
+      lang === 'he' ? 'פוסט עם מפרט טכני מלא ומדויק' : 'بوست بمواصفات تقنية كاملة',
+      lang === 'he' ? 'סטורי 21 ימים לחשיפה רחבה' : 'ستوري 21 يوماً للوصول الواسع',
+      lang === 'he' ? 'חשיפה ייעודית לחברות הסעות ותחבורה' : 'وصول مخصص لشركات النقل',
+      lang === 'he' ? '🌐 YOUGO CARS — מודעת תחבורה 21 ימים' : '🌐 YOUGO CARS — إعلان نقل 21 يوماً',
+    ]
+  }), [lang]);
+
   const equipmentPackages: Package[] = useMemo(() => [
-    { id: 'equipment-heavy', name: 'חבילת ציוד כבד', price: '₪389', equipment: true, features: ['10 תמונות מקצועיות של הציוד', 'פוסט ייעודי עם מפרט טכני', 'סטורי 21 יום', 'חשיפה לקהל קבלנים ומגזר הבנייה', 'עדיפות בתוצאות חיפוש', 'ייעוץ תמחור מקצועי'] },
-    { id: 'equipment-light', name: 'חבילת ציוד קל', price: '₪229', equipment: true, features: ['6 תמונות מקצועיות', 'פוסט מותאם לציוד קל', 'סטורי 14 יום', 'חשיפה לקהל מקצועי רלוונטי', 'תיאור טכני מפורט', 'תמיכה ב-WhatsApp'] }
-  ], []);
+    {
+      id: 'equipment-heavy', name: lang === 'he' ? 'ציוד כבד' : 'معدات ثقيلة', price: '₪529', equipment: true,
+      features: [
+        lang === 'he' ? '10 תמונות מקצועיות של הציוד בשטח' : '10 صور احترافية للمعدات في الميدان',
+        lang === 'he' ? 'פוסט ייעודי עם מפרט טכני מפורט' : 'بوست مخصص بمواصفات تقنية',
+        lang === 'he' ? 'סטורי 21 יום לחשיפה ממושכת' : 'ستوري 21 يوماً للوصول المستمر',
+        lang === 'he' ? 'חשיפה לקהל קבלנים ומגזר הבנייה' : 'وصول لجمهور المقاولين والبناء',
+        lang === 'he' ? '🌐 YOUGO CARS — מודעת ציוד כבד 21 ימים' : '🌐 YOUGO CARS — إعلان معدات ثقيلة 21 يوماً',
+      ]
+    },
+    {
+      id: 'equipment-light', name: lang === 'he' ? 'ציוד קל' : 'معدات خفيفة', price: '₪299', equipment: true,
+      features: [
+        lang === 'he' ? '6 תמונות מקצועיות של הציוד' : '6 صور احترافية للمعدات',
+        lang === 'he' ? 'פוסט מותאם עם תיאור טכני מלא' : 'بوست مخصص بوصف تقني كامل',
+        lang === 'he' ? 'סטורי 14 ימים לקהל רלוונטי' : 'ستوري 14 يوماً لجمهور مناسب',
+        lang === 'he' ? 'חשיפה לאנשי מקצוע בתחום' : 'وصول لأصحاب المهن المتخصصة',
+        lang === 'he' ? '🌐 YOUGO CARS — מודעת ציוד 14 ימים' : '🌐 YOUGO CARS — إعلان معدات 14 يوماً',
+      ]
+    }
+  ], [lang]);
+
+  // ── Website-only packages ──
+  const websitePackages: Package[] = useMemo(() => [
+    {
+      id: 'web-free',
+      name: lang === 'he' ? 'חינם — 3 ימים' : 'مجاني — 3 أيام',
+      price: lang === 'he' ? 'חינם' : 'مجاناً',
+      features: [
+        lang === 'he' ? '🌐 פרסום ב-YOUGO CARS 3 ימים בלבד' : '🌐 نشر في YOUGO CARS 3 أيام فقط',
+        lang === 'he' ? 'מודעה בסיסית — תמונה אחת' : 'إعلان أساسي — صورة واحدة',
+        lang === 'he' ? 'חשיפה ישירה לגולשי האתר' : 'وصول مباشر لزوار الموقع',
+        lang === 'he' ? 'כפתור WhatsApp ישיר' : 'زر واتساب مباشر',
+        lang === 'he' ? 'ללא פרסום אינסטגרם' : 'بدون إنستغرام',
+      ],
+    },
+    {
+      id: 'web-basic',
+      name: lang === 'he' ? 'אתר BASIC' : 'موقع أساسي',
+      price: '₪69',
+      features: [
+        lang === 'he' ? '🌐 פרסום ב-YOUGO CARS 30 ימים' : '🌐 نشر في YOUGO CARS 30 يوماً',
+        lang === 'he' ? 'עד 5 תמונות איכותיות' : 'حتى 5 صور عالية الجودة',
+        lang === 'he' ? 'מיקום בעמוד הראשי' : 'موضع في الصفحة الرئيسية',
+        lang === 'he' ? 'כפתורי WhatsApp + שיחה' : 'أزرار واتساب + مكالمة',
+        lang === 'he' ? 'ללא פרסום אינסטגרם' : 'بدون إنستغرام',
+      ],
+    },
+    {
+      id: 'web-pro',
+      name: lang === 'he' ? 'אתר PRO' : 'موقع PRO',
+      price: '₪149',
+      popular: true,
+      features: [
+        lang === 'he' ? '🌐 פרסום ב-YOUGO CARS 60 ימים' : '🌐 نشر في YOUGO CARS 60 يوماً',
+        lang === 'he' ? 'עד 10 תמונות + תיאור מורחב' : 'حتى 10 صور + وصف موسّع',
+        lang === 'he' ? 'בנר "מומלץ" בולט בדף הראשי' : 'بانر "مميز" بارز في الصفحة الرئيسية',
+        lang === 'he' ? 'עולה ראשון בתוצאות חיפוש' : 'يظهر أولاً في نتائج البحث',
+        lang === 'he' ? 'סטטיסטיקות צפיות ו-leads' : 'إحصائيات المشاهدات والعملاء',
+      ],
+    },
+    {
+      id: 'web-vip',
+      name: lang === 'he' ? 'אתר VIP' : 'موقع VIP',
+      price: '₪269',
+      premium: true,
+      features: [
+        lang === 'he' ? '🌐 פרסום ב-YOUGO CARS 90 ימים' : '🌐 نشر في YOUGO CARS 90 يوماً',
+        lang === 'he' ? 'עד 20 תמונות + וידאו' : 'حتى 20 صورة + فيديو',
+        lang === 'he' ? 'עמוד מוצר VIP מיוחד עם לוגו' : 'صفحة منتج VIP خاصة مع شعار',
+        lang === 'he' ? 'מיקום ראשון + תג VIP זהוב' : 'المرتبة الأولى + شارة VIP ذهبية',
+        lang === 'he' ? 'שיתוף ב-WhatsApp Groups ויראלי' : 'مشاركة في مجموعات واتساب',
+        lang === 'he' ? 'גם פרסום בדף אינסטגרם YOUGO' : 'أيضاً نشر في صفحة YOUGO بإنستغرام',
+      ],
+    },
+  ], [lang]);
 
   const handleSelectPackage = useCallback((p: Package) => {
+    // باقة الموقع المجانية — فتح الموقع مباشرة
+    if (p.id === 'web-free') {
+      window.open('https://yougo-cars.vercel.app', '_blank');
+      return;
+    }
     setSelectedPackage(p);
     setView('booking');
     setBookingStep(1);
@@ -2272,16 +2581,25 @@ function App() {
                         id: 'packages-car',
                         icon: '🚗',
                         label: lang === 'he' ? 'רכב פרטי' : 'سيارة خاصة',
-                        price: lang === 'he' ? 'מ-₪199' : 'من ₪199',
+                        price: lang === 'he' ? 'מ-₪219' : 'من ₪219',
                         desc: lang === 'he' ? 'פרסום מקצועי ברשתות החברתיות לרכב פרטי' : 'نشر احترافي على شبكات التواصل للسيارة الخاصة',
                         color: '#c8102e',
                         tag: lang === 'he' ? 'הכי פופולרי' : 'الأكثر شيوعاً',
                       },
                       {
+                        id: 'packages-website',
+                        icon: '🌐',
+                        label: lang === 'he' ? 'אתר YOUGO CARS' : 'موقع YOUGO CARS',
+                        price: lang === 'he' ? 'חינם — ₪269' : 'مجاني — ₪269',
+                        desc: lang === 'he' ? 'פרסום ישיר לאתר לאלפי קונים — 3 ימים חינם' : 'نشر مباشر للموقع لآلاف المشترين — 3 أيام مجاناً',
+                        color: '#22c55e',
+                        tag: lang === 'he' ? '🆕 חדש!' : '🆕 جديد!',
+                      },
+                      {
                         id: 'packages-vip',
                         icon: '👑',
                         label: 'VIP',
-                        price: '₪749',
+                        price: '₪899',
                         desc: lang === 'he' ? 'חבילת פרמיום עם עיצוב בלעדי וליווי אישי' : 'باقة بريميوم بتصميم حصري ومتابعة شخصية',
                         color: '#d4af37',
                         tag: lang === 'he' ? 'פרמיום' : 'مميز',
@@ -2290,7 +2608,7 @@ function App() {
                         id: 'packages-biz',
                         icon: '🏢',
                         label: lang === 'he' ? 'עסקים' : 'أعمال',
-                        price: lang === 'he' ? 'מ-₪1,499' : 'من ₪1,499',
+                        price: lang === 'he' ? 'מ-₪2,890' : 'من ₪2,890',
                         desc: lang === 'he' ? 'פתרון מלא לסוחרי רכב ועסקים עם צי רכבים' : 'حل متكامل لتجار السيارات والشركات',
                         color: '#3b82f6',
                         tag: lang === 'he' ? 'לעסקים' : 'للأعمال',
@@ -2299,7 +2617,7 @@ function App() {
                         id: 'packages-equip',
                         icon: '🚛',
                         label: lang === 'he' ? 'ציוד ותחבורה' : 'معدات ونقل',
-                        price: lang === 'he' ? 'מ-₪229' : 'من ₪229',
+                        price: lang === 'he' ? 'מ-₪299' : 'من ₪299',
                         desc: lang === 'he' ? 'ציוד כבד, מכונות, ורכבים מסחריים לקהל מקצועי' : 'معدات ثقيلة وآليات للجمهور المتخصص',
                         color: '#ea580c',
                         tag: lang === 'he' ? 'מקצועי' : 'احترافي',
@@ -2511,7 +2829,7 @@ function App() {
                         {lang === 'he' ? 'לחבילות רכב פרטי' : 'لباقات السيارات'}
                         <ChevronDown size={13} />
                       </button>
-                      <span className="text-[11px] text-white/30">3 חבילות · מ-₪199</span>
+                      <span className="text-[11px] text-white/30">3 חבילות · מ-₪219</span>
                     </div>
                   </div>
                 </div>
@@ -2539,6 +2857,151 @@ function App() {
                 <div className="flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full block" style={{ background: 'rgba(255,255,255,0.12)' }} />
                   <span className="w-2 h-2 rounded-full block" style={{ background: 'rgba(200,16,46,0.45)' }} />
+                  <span className="w-1.5 h-1.5 rounded-full block" style={{ background: 'rgba(255,255,255,0.12)' }} />
+                </div>
+                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.06), transparent)' }} />
+              </div>
+
+              {/* ══ WEBSITE PACKAGES ══ */}
+              <div id="packages-website" className="scroll-mt-16 space-y-8">
+                {/* Header */}
+                <div className="relative rounded-3xl overflow-hidden p-6 sm:p-8 md:p-10"
+                  style={{ background: 'linear-gradient(135deg, rgba(34,197,94,0.1) 0%, rgba(10,10,15,0.97) 50%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(34,197,94,0.28)' }}>
+                  <div className="absolute top-0 inset-x-0 h-[3px]" style={{ background: 'linear-gradient(90deg, transparent, #22c55e, transparent)' }} />
+                  <div className="absolute top-0 right-0 w-80 h-80 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 0%, rgba(34,197,94,0.12) 0%, transparent 65%)' }} />
+
+                  <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+                    <div className="flex-1 space-y-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
+                          style={{ background: 'linear-gradient(135deg,#16a34a,#22c55e)', boxShadow: '0 8px 24px rgba(34,197,94,0.4)' }}>
+                          <Globe size={22} className="text-white" />
+                        </div>
+                        <div>
+                          <div className="text-[9px] font-black text-green-400 uppercase tracking-[0.2em] mb-0.5">
+                            {lang === 'he' ? '🆕 חדש!' : '🆕 جديد!'}
+                          </div>
+                          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full"
+                            style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.3)' }}>
+                            <Car size={10} className="text-green-400" />
+                            <span className="text-[10px] font-black tracking-wider text-green-400 uppercase">
+                              {lang === 'he' ? 'פרסום ישיר ב-YOUGO CARS' : 'نشر مباشر في YOUGO CARS'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <h3 className="text-3xl md:text-4xl font-black text-white leading-tight">
+                        {lang === 'he' ? 'פרסם את הרכב' : 'أعلن عن سيارتك'}{' '}
+                        <span className="text-green-400">{lang === 'he' ? 'ישירות באתר' : 'مباشرة في الموقع'}</span>
+                      </h3>
+                      <p className="text-white/50 text-sm leading-relaxed max-w-lg">
+                        {lang === 'he'
+                          ? 'מעבר לאינסטגרם — עכשיו פרסם ישירות ב-YOUGO CARS ותגיע לאלפי קונים ביום. התחל ב-3 ימים חינם, ללא כרטיס אשראי.'
+                          : 'إضافة للإنستغرام — انشر مباشرة في YOUGO CARS وتواصل مع آلاف المشترين يومياً. ابدأ بـ3 أيام مجاناً، بدون بطاقة ائتمان.'}
+                      </p>
+
+                      <div className="flex flex-wrap gap-2">
+                        {[
+                          { icon: <Zap size={11} />, label: lang === 'he' ? 'פרסום מיידי' : 'نشر فوري', c: '#22c55e' },
+                          { icon: <Users size={11} />, label: lang === 'he' ? 'אלפי גולשים/יום' : 'آلاف الزوار/يوم', c: '#60a5fa' },
+                          { icon: <Globe size={11} />, label: lang === 'he' ? 'ראה בכל מכשיר' : 'على كل الأجهزة', c: '#d4af37' },
+                          { icon: <ShieldCheck size={11} />, label: lang === 'he' ? '3 ימים חינם' : '3 أيام مجاناً', c: '#c8102e' },
+                        ].map((p, i) => (
+                          <div key={i} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10px] font-bold"
+                            style={{ background: `${p.c}12`, border: `1px solid ${p.c}25`, color: p.c }}>
+                            {p.icon}{p.label}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex flex-row md:flex-col gap-2 w-full md:w-auto">
+                      {[
+                        { value: lang === 'he' ? 'חינם' : 'مجاناً', label: lang === 'he' ? 'ניסיון 3 ימים' : 'تجربة 3 أيام', color: '#22c55e', icon: <Zap size={12} /> },
+                        { value: '90', label: lang === 'he' ? 'ימים מקסימום' : 'أيام كحد أقصى', color: '#c8102e', icon: <Calendar size={12} /> },
+                        { value: '24/7', label: lang === 'he' ? 'גלוי לקונים' : 'مرئي للمشترين', color: '#60a5fa', icon: <Eye size={12} /> },
+                      ].map((s, i) => (
+                        <div key={i} className="flex items-center gap-2 px-3 py-2.5 rounded-xl"
+                          style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
+                          <div className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
+                            <span style={{ color: s.color }}>{s.icon}</span>
+                          </div>
+                          <div>
+                            <div className="text-sm font-black leading-tight" style={{ color: s.color }}>{s.value}</div>
+                            <div className="text-[9px] text-white/30 font-bold">{s.label}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="relative z-10 mt-6 flex items-center gap-3 flex-wrap pt-5"
+                    style={{ borderTop: '1px solid rgba(34,197,94,0.15)' }}>
+                    <a href="https://yougo-cars.vercel.app" target="_blank" rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-black text-sm text-white transition-all hover:scale-105 active:scale-95"
+                      style={{ background: 'linear-gradient(135deg,#16a34a,#22c55e)', boxShadow: '0 4px 18px rgba(34,197,94,0.4)' }}>
+                      <Globe size={13} />
+                      {lang === 'he' ? 'פתח YOUGO CARS' : 'افتح YOUGO CARS'}
+                      <ExternalLink size={11} />
+                    </a>
+                    <span className="text-[11px] text-white/30">yougo-cars.vercel.app</span>
+                  </div>
+                </div>
+
+                {/* Cards desktop */}
+                <div className="hidden md:grid grid-cols-4 gap-5">
+                  {websitePackages.map(pkg => (
+                    <div key={pkg.id} className="h-[520px]">
+                      <WebsitePackageCard pkg={pkg} lang={lang} onSelect={handleSelectPackage} />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Cards mobile */}
+                <div className="md:hidden px-3">
+                  <MobileSwiper cardHeight={520}>
+                    {websitePackages.map(pkg => (
+                      <div key={pkg.id} style={{ height: '520px' }}>
+                        <WebsitePackageCard pkg={pkg} lang={lang} onSelect={handleSelectPackage} />
+                      </div>
+                    ))}
+                  </MobileSwiper>
+                </div>
+
+                {/* Free CTA Banner */}
+                <div className="relative rounded-2xl overflow-hidden p-6 flex flex-col sm:flex-row items-center justify-between gap-5"
+                  style={{ background: 'linear-gradient(135deg, rgba(34,197,94,0.08), rgba(6,6,10,0.98))', border: '1px solid rgba(34,197,94,0.2)' }}>
+                  <div className="absolute top-0 inset-x-0 h-[2px]" style={{ background: 'linear-gradient(90deg,transparent,#22c55e,transparent)' }} />
+                  <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 text-3xl"
+                      style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.25)' }}>
+                      🚗
+                    </div>
+                    <div>
+                      <p className="text-base font-black text-white">
+                        {lang === 'he' ? 'פרסם בחינם ל-3 ימים — ללא כרטיס אשראי!' : 'انشر مجاناً لـ3 أيام — بدون بطاقة ائتمان!'}
+                      </p>
+                      <p className="text-[12px] text-white/45 mt-0.5">
+                        {lang === 'he' ? 'ללא מחויבות. רק תוצאות אמיתיות.' : 'لا التزامات. فقط نتائج حقيقية.'}
+                      </p>
+                    </div>
+                  </div>
+                  <a href="https://yougo-cars.vercel.app" target="_blank" rel="noopener noreferrer"
+                    className="shrink-0 flex items-center gap-2 px-7 py-3.5 rounded-xl font-black text-sm text-white transition-all hover:scale-105 active:scale-95"
+                    style={{ background: 'linear-gradient(135deg,#16a34a,#22c55e)', boxShadow: '0 4px 18px rgba(34,197,94,0.35)' }}>
+                    <Zap size={14} />
+                    {lang === 'he' ? 'פרסם חינם עכשיו →' : 'انشر مجاناً الآن →'}
+                  </a>
+                </div>
+              </div>
+
+              {/* Divider */}
+              <div className="flex items-center justify-center gap-3 py-1">
+                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.06))' }} />
+                <div className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full block" style={{ background: 'rgba(255,255,255,0.12)' }} />
+                  <span className="w-2 h-2 rounded-full block" style={{ background: 'rgba(34,197,94,0.45)' }} />
                   <span className="w-1.5 h-1.5 rounded-full block" style={{ background: 'rgba(255,255,255,0.12)' }} />
                 </div>
                 <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.06), transparent)' }} />
@@ -3710,6 +4173,7 @@ function App() {
           currentPackageId={selectedPackage?.id || ''}
           packages={packages}
           vipPackage={vipPackage}
+          websitePackages={websitePackages}
           duoPackage={duoPackage}
           equipmentPackages={equipmentPackages}
           businessPackage={businessPackage}
