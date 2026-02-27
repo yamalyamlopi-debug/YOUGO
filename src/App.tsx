@@ -2169,8 +2169,19 @@ function App() {
                     className="relative flex items-center justify-center gap-2.5 flex-1 py-4 rounded-2xl font-black text-[15px] text-white overflow-hidden transition-transform hover:scale-[1.02] active:scale-[.97]"
                     style={{ background: 'linear-gradient(135deg, #c8102e, #a50d25)', boxShadow: '0 8px 32px rgba(200,16,46,0.45)' }}>
                     <Sparkles size={17} />
-                    התחל הזמנה
+                    {lang === 'he' ? 'מוכרים רכב?' : 'تبيع سيارة؟'}
                   </button>
+
+                  {/* Buy car - opens listings site */}
+                  <a
+                    href="https://yougo-cars.vercel.app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="relative flex items-center justify-center gap-2.5 flex-1 py-4 rounded-2xl font-black text-[15px] text-white overflow-hidden transition-transform hover:scale-[1.02] active:scale-[.97] no-underline"
+                    style={{ background: 'linear-gradient(135deg, #1a4a8a, #1e3a6e)', boxShadow: '0 8px 32px rgba(30,58,138,0.4)', border: '1px solid rgba(59,130,246,0.3)' }}>
+                    <Car size={17} />
+                    {lang === 'he' ? 'קונים רכב?' : 'تشتري سيارة؟'}
+                  </a>
 
                   {/* Secondary - packages */}
                   <button
