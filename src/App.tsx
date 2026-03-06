@@ -226,7 +226,7 @@ const Navbar = memo(({ lang, setLang, isAdmin, onLogout, siteSettings, setView }
   ];
 
   return (
-    <nav className={`fixed top-9 inset-x-0 z-50 transition-all duration-300 ${scrolled ? 'py-2 border-b border-white/8' : 'py-3'}`}
+    <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${scrolled ? 'py-2 border-b border-white/8' : 'py-3'}`}
       style={{ background: scrolled ? 'rgba(6,6,10,0.97)' : 'transparent', backdropFilter: scrolled ? 'blur(20px)' : 'none' }}>
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex items-center justify-between h-11">
@@ -1844,374 +1844,6 @@ const CarDetailsForm = memo(({ formData, setFormData, onNext, selectedPackage, o
   );
 });
 
-
-// ============================================================
-// LIVE NOTIFICATION POPUP
-// ============================================================
-const LiveNotificationPopup = memo(() => {
-  const [visible, setVisible] = useState(false);
-  const [currentIdx, setCurrentIdx] = useState(0);
-
-  const notifications = [
-    { name: 'יוסף מנצרת', action: 'מכר טויוטה קורולה', time: 'לפני 2 דקות', flag: '🟢' },
-    { name: 'מוחמד מחיפה', action: 'מכר מרצדס E-Class', time: 'לפני 5 דקות', flag: '🟢' },
-    { name: 'דני מתל אביב', action: 'פרסם BMW 3 סיריס', time: 'לפני 8 דקות', flag: '🔵' },
-    { name: 'שרה מירושלים', action: 'מכרה הונדה HR-V', time: 'לפני 12 דקות', flag: '🟢' },
-    { name: 'ריאן מכפר כנא', action: 'מכר היונדאי טוסון', time: 'לפני 15 דקות', flag: '🟢' },
-    { name: 'ליאור ממודיעין', action: 'מכר לקסוס IS350', time: 'לפני 20 דקות', flag: '🟢' },
-    { name: 'סאמר משפרעם', action: 'מכר ריינג\'  רובר VIP', time: 'לפני 25 דקות', flag: '👑' },
-    { name: 'אסף מאשדוד', action: 'מכר פורשה קאיין', time: 'לפני 30 דקות', flag: '👑' },
-  ];
-
-  useEffect(() => {
-    const show = setTimeout(() => setVisible(true), 4000);
-    return () => clearTimeout(show);
-  }, []);
-
-  useEffect(() => {
-    if (!visible) return;
-    const hide = setTimeout(() => setVisible(false), 5000);
-    return () => clearTimeout(hide);
-  }, [visible, currentIdx]);
-
-  useEffect(() => {
-    const cycle = setInterval(() => {
-      setCurrentIdx(i => (i + 1) % notifications.length);
-      setVisible(true);
-    }, 12000);
-    return () => clearInterval(cycle);
-  }, []);
-
-  const n = notifications[currentIdx];
-  return (
-    <AnimatePresence>
-      {visible && (
-        <motion.div
-          initial={{ opacity: 0, x: -80, scale: 0.92 }}
-          animate={{ opacity: 1, x: 0, scale: 1 }}
-          exit={{ opacity: 0, x: -80, scale: 0.92 }}
-          transition={{ type: 'spring', stiffness: 320, damping: 28 }}
-          className="fixed bottom-28 left-4 z-[200] max-w-[280px]"
-          style={{
-            background: 'rgba(8,10,18,0.97)',
-            border: '1px solid rgba(34,197,94,0.35)',
-            borderRadius: '16px',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.7), 0 0 0 1px rgba(34,197,94,0.08)',
-            backdropFilter: 'blur(20px)',
-          }}
-        >
-          <div className="p-3 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-xl"
-              style={{ background: 'rgba(34,197,94,0.15)', border: '1px solid rgba(34,197,94,0.25)' }}>
-              {n.flag}
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-1.5 mb-0.5">
-                <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse shrink-0" />
-                <span className="text-[11px] font-black text-white truncate">{n.name}</span>
-              </div>
-              <p className="text-[10px] text-white/55 truncate">{n.action}</p>
-              <p className="text-[9px] text-green-400/70 mt-0.5">{n.time}</p>
-            </div>
-            <button onClick={() => setVisible(false)} className="shrink-0 text-white/20 hover:text-white/50 transition-colors p-1">
-              <X size={12} />
-            </button>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-});
-
-// ============================================================
-// URGENT TOP BANNER
-// ============================================================
-const UrgentTopBanner = memo(({ lang }: { lang: Language }) => {
-  const [visible, setVisible] = useState(true);
-  const [timeLeft, setTimeLeft] = useState({ h: 23, m: 47, s: 33 });
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        let { h, m, s } = prev;
-        s--; if (s < 0) { s = 59; m--; }
-        if (m < 0) { m = 59; h--; }
-        if (h < 0) return { h: 23, m: 59, s: 59 };
-        return { h, m, s };
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  if (!visible) return null;
-  const pad = (n: number) => String(n).padStart(2, '0');
-
-  return (
-    <div className="fixed top-0 inset-x-0 z-[60] h-9 flex items-center justify-center gap-2.5 overflow-hidden"
-      style={{ background: 'linear-gradient(90deg, #7c0d1e 0%, #c8102e 35%, #e91a40 50%, #c8102e 65%, #7c0d1e 100%)' }}>
-      <div className="absolute inset-0" style={{ backgroundImage: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%)', backgroundSize: '300% 100%', animation: 'shimmer 4s infinite linear' }} />
-      <Flame size={13} className="text-amber-300 shrink-0 relative z-10" style={{ animation: 'badgePulse 1.5s ease-in-out infinite' }} />
-      <p className="text-xs font-black text-white tracking-wide relative z-10">
-        {lang === 'he' ? '🔥 מבצע מוגבל — 15% הנחה בקוד' : '🔥 عرض محدود — خصم 15% بكود'}{' '}
-        <span className="bg-white/20 px-2 py-0.5 rounded font-mono">YOUGO15</span>
-        {' '}{lang === 'he' ? '· פג תוקף:' : '· ينتهي:'}{' '}
-        <span className="font-mono font-black text-amber-300">{pad(timeLeft.h)}:{pad(timeLeft.m)}:{pad(timeLeft.s)}</span>
-      </p>
-      <button onClick={() => setVisible(false)} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/60 hover:text-white z-10">
-        <X size={13} />
-      </button>
-    </div>
-  );
-});
-
-// ============================================================
-// FLOATING WHATSAPP BUTTON
-// ============================================================
-const FloatingWhatsApp = memo(({ whatsapp }: { whatsapp: string }) => (
-  <a
-    href={`https://wa.me/${whatsapp}?text=${encodeURIComponent('שלום! אני מעוניין לפרסם רכב דרך YOUGO ISRAEL')}`}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="fixed bottom-6 left-4 z-[150] group"
-    aria-label="WhatsApp"
-  >
-    <div className="absolute inset-0 rounded-full" style={{ background: 'rgba(37,211,102,0.3)', animation: 'ping 2s ease-in-out infinite' }} />
-    <div className="absolute inset-0 rounded-full" style={{ background: 'rgba(37,211,102,0.2)', animation: 'ping 2s ease-in-out infinite', animationDelay: '0.6s' }} />
-    <div className="relative w-14 h-14 rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 active:scale-95 transition-transform"
-      style={{ background: 'linear-gradient(135deg, #25D366, #128C7E)', boxShadow: '0 8px 30px rgba(37,211,102,0.6)' }}>
-      <MessageCircle size={26} className="text-white" />
-    </div>
-    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 whitespace-nowrap px-3 py-1.5 rounded-xl text-[11px] font-black text-white opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
-      style={{ background: 'rgba(8,10,18,0.97)', border: '1px solid rgba(37,211,102,0.3)' }}>
-      💬 שוחח איתנו!
-    </div>
-  </a>
-));
-
-// ============================================================
-// STICKY BOTTOM CTA BAR (MOBILE ONLY)
-// ============================================================
-const StickyBottomCTA = memo(({ onCTA, lang }: { onCTA: () => void; lang: Language }) => {
-  const [show, setShow] = useState(false);
-  useEffect(() => {
-    const fn = () => setShow(window.scrollY > 500);
-    window.addEventListener('scroll', fn, { passive: true });
-    return () => window.removeEventListener('scroll', fn);
-  }, []);
-  return (
-    <AnimatePresence>
-      {show && (
-        <motion.div
-          initial={{ y: 80, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 80, opacity: 0 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="fixed bottom-0 inset-x-0 z-[100] md:hidden"
-          style={{ background: 'rgba(6,6,10,0.97)', borderTop: '1px solid rgba(200,16,46,0.3)', backdropFilter: 'blur(20px)' }}
-        >
-          <div className="flex items-center gap-2.5 px-4 py-3">
-            <button onClick={onCTA}
-              className="flex-1 py-3.5 rounded-xl font-black text-sm text-white flex items-center justify-center gap-2"
-              style={{ background: 'linear-gradient(135deg, #c8102e, #a50d25)', boxShadow: '0 4px 20px rgba(200,16,46,0.5)' }}>
-              <Sparkles size={15} />
-              {lang === 'he' ? 'פרסם את הרכב עכשיו' : 'أعلن عن سيارتك الآن'}
-            </button>
-            <a href="https://wa.me/972546980606" target="_blank" rel="noopener noreferrer"
-              className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-              style={{ background: 'rgba(37,211,102,0.15)', border: '1px solid rgba(37,211,102,0.3)' }}>
-              <MessageCircle size={20} className="text-green-400" />
-            </a>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-});
-
-// ============================================================
-// SCROLLING RECENT SALES TICKER
-// ============================================================
-const RecentSalesTicker = memo(({ lang }: { lang: Language }) => {
-  const sales = [
-    { car: 'BMW 3 Series 2021', price: '₪158,000', city: lang === 'he' ? 'תל אביב' : 'تل أبيب' },
-    { car: 'מזדה CX-5 2022', price: '₪178,000', city: lang === 'he' ? 'חיפה' : 'حيفا' },
-    { car: 'Toyota Corolla 2020', price: '₪92,000', city: lang === 'he' ? 'נצרת' : 'الناصرة' },
-    { car: 'Honda HR-V 2023', price: '₪139,000', city: lang === 'he' ? 'ירושלים' : 'القدس' },
-    { car: 'Mercedes C-Class', price: '₪245,000', city: lang === 'he' ? 'הרצליה' : 'هرتسليا' },
-    { car: 'Nissan Qashqai 2021', price: '₪119,000', city: lang === 'he' ? 'אשדוד' : 'أشدود' },
-    { car: 'Kia Sportage 2022', price: '₪133,000', city: lang === 'he' ? 'באר שבע' : 'بئر السبع' },
-    { car: 'VW Tiguan 2021', price: '₪165,000', city: lang === 'he' ? 'נתניה' : 'نتانيا' },
-    { car: 'Porsche Cayenne', price: '₪580,000', city: lang === 'he' ? 'רמת גן' : 'رمات غان' },
-    { car: 'Lexus IS350', price: '₪320,000', city: lang === 'he' ? 'מודיעין' : 'موديعين' },
-  ];
-  const items = [...sales, ...sales, ...sales];
-  return (
-    <div className="relative overflow-hidden py-2.5"
-      style={{ background: 'linear-gradient(90deg, rgba(200,16,46,0.06), rgba(200,16,46,0.03), rgba(200,16,46,0.06))', borderTop: '1px solid rgba(200,16,46,0.1)', borderBottom: '1px solid rgba(200,16,46,0.1)' }}>
-      <div className="absolute top-0 right-0 bottom-0 w-20 z-10 pointer-events-none" style={{ background: 'linear-gradient(90deg, transparent, #06060a)' }} />
-      <div className="absolute top-0 left-0 bottom-0 w-20 z-10 pointer-events-none" style={{ background: 'linear-gradient(270deg, transparent, #06060a)' }} />
-      <div className="flex items-center" style={{ animation: 'tickerScroll 50s linear infinite' }}>
-        {items.map((s, i) => (
-          <div key={i} className="flex items-center gap-3 px-6 shrink-0">
-            <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse shrink-0" />
-            <span className="text-[11px] font-black text-white/80 whitespace-nowrap">{s.car}</span>
-            <span className="text-[11px] font-black text-green-400 whitespace-nowrap">{s.price}</span>
-            <span className="text-[10px] text-white/30">·</span>
-            <span className="text-[10px] text-white/40 whitespace-nowrap">{s.city}</span>
-            <div className="w-px h-3 bg-white/8 shrink-0 mx-1" />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-});
-
-// ============================================================
-// ANIMATED COUNTER COMPONENT  
-// ============================================================
-const useCountUp = (target: number, duration = 2000, shouldStart = false) => {
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-    if (!shouldStart) return;
-    let current = 0;
-    const step = target / (duration / 16);
-    const timer = setInterval(() => {
-      current += step;
-      if (current >= target) { setCount(target); clearInterval(timer); }
-      else setCount(Math.floor(current));
-    }, 16);
-    return () => clearInterval(timer);
-  }, [target, duration, shouldStart]);
-  return count;
-};
-
-const AnimatedStatCard = memo(({ value, suffix, label, sublabel, color, icon, delay = 0 }: {
-  value: number; suffix: string; label: string; sublabel: string; color: string; icon: React.ReactNode; delay?: number;
-}) => {
-  const refEl = useRef<HTMLDivElement>(null);
-  const [started, setStarted] = useState(false);
-  const count = useCountUp(value, 2000, started);
-  useEffect(() => {
-    const el = refEl.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setStarted(true); }, { threshold: 0.4 });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-  return (
-    <motion.div ref={refEl}
-      initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-      transition={{ duration: 0.5, delay }}
-      className="relative text-center py-7 px-5 rounded-2xl overflow-hidden cursor-default package-card-hover"
-      style={{ background: `linear-gradient(145deg, ${color}15 0%, rgba(6,6,10,0.97) 100%)`, border: `1px solid ${color}28` }}
-    >
-      <div className="absolute top-0 inset-x-0 h-[3px]" style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }} />
-      <div className="w-11 h-11 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ background: `${color}20`, border: `1px solid ${color}30` }}>
-        <span style={{ color }}>{icon}</span>
-      </div>
-      <div className="text-4xl font-black mb-1" style={{ color }}>{count.toLocaleString()}{suffix}</div>
-      <div className="text-white text-xs font-black mb-0.5">{label}</div>
-      <div className="text-white/28 text-[10px]">{sublabel}</div>
-    </motion.div>
-  );
-});
-
-// ============================================================
-// HERO FLOATING BACKGROUND ORBS
-// ============================================================
-const HeroOrbs = memo(() => (
-  <div className="absolute inset-0 overflow-hidden pointer-events-none">
-    <div className="absolute w-[700px] h-[700px] rounded-full"
-      style={{ background: 'radial-gradient(circle, rgba(200,16,46,0.12) 0%, transparent 65%)', top: '-200px', right: '-200px', animation: 'orbFloat1 14s ease-in-out infinite' }} />
-    <div className="absolute w-[450px] h-[450px] rounded-full"
-      style={{ background: 'radial-gradient(circle, rgba(200,16,46,0.07) 0%, transparent 65%)', bottom: '-100px', left: '-120px', animation: 'orbFloat2 18s ease-in-out infinite' }} />
-    <div className="absolute w-[280px] h-[280px] rounded-full"
-      style={{ background: 'radial-gradient(circle, rgba(255,96,128,0.05) 0%, transparent 65%)', top: '45%', left: '38%', animation: 'orbFloat3 22s ease-in-out infinite' }} />
-    <div className="absolute inset-0" style={{
-      backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.055) 1px, transparent 1px)',
-      backgroundSize: '30px 30px',
-      WebkitMaskImage: 'radial-gradient(ellipse 80% 65% at 50% 38%, black 15%, transparent 80%)',
-      maskImage: 'radial-gradient(ellipse 80% 65% at 50% 38%, black 15%, transparent 80%)',
-    }} />
-    <div className="absolute top-[28%] inset-x-0 h-px"
-      style={{ background: 'linear-gradient(90deg, transparent, rgba(200,16,46,0.2), transparent)', animation: 'lineSlide 9s ease-in-out infinite' }} />
-    <div className="absolute top-[62%] inset-x-0 h-px"
-      style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent)', animation: 'lineSlide 13s ease-in-out infinite reverse' }} />
-  </div>
-));
-
-// ============================================================
-// PACKAGE COMPARISON TABLE
-// ============================================================
-const PackageComparisonTable = memo(({ lang }: { lang: Language }) => {
-  const features = [
-    { name: lang === 'he' ? 'תמונות מקצועיות' : 'صور احترافية', basic: '2', pro: '4', premium: '8+', vip: '15+' },
-    { name: lang === 'he' ? 'ימי פרסום' : 'أيام نشر', basic: '7', pro: '14', premium: '30', vip: '60' },
-    { name: lang === 'he' ? 'פוסט אינסטגרם' : 'بوست إنستغرام', basic: '✓', pro: '✓', premium: '✓', vip: '✓' },
-    { name: lang === 'he' ? 'YOUGO CARS' : 'YOUGO CARS', basic: '7 יום', pro: '14 יום', premium: '30 יום', vip: '60 יום' },
-    { name: lang === 'he' ? 'סטורי יומי' : 'ستوري يومي', basic: '✗', pro: '✗', premium: '✓', vip: '✓' },
-    { name: lang === 'he' ? 'וידאו ריילס' : 'فيديو ريلز', basic: '✗', pro: '✗', premium: '✓', vip: '✓' },
-    { name: lang === 'he' ? 'קידום ממומן' : 'ترويج مدفوع', basic: '✗', pro: '✗', premium: '✗', vip: '✓' },
-    { name: lang === 'he' ? 'מנהל אישי 24/7' : 'مدير شخصي 24/7', basic: '✗', pro: '✗', premium: '✗', vip: '✓' },
-  ];
-  const cols = [
-    { key: 'basic' as const, name: 'BASIC', price: '₪219', color: '#94a3b8' },
-    { key: 'pro' as const, name: 'PRO', price: '₪349', color: '#c8102e', popular: true },
-    { key: 'premium' as const, name: 'PREMIUM', price: '₪549', color: '#a855f7' },
-    { key: 'vip' as const, name: 'VIP', price: '₪899', color: '#d4af37' },
-  ];
-  return (
-    <div className="overflow-x-auto rounded-2xl" style={{ border: '1px solid rgba(255,255,255,0.07)' }}>
-      <table className="w-full min-w-[560px]">
-        <thead>
-          <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.02)' }}>
-            <th className="text-right p-4 text-[10px] font-black text-white/25 uppercase tracking-widest w-36">
-              {lang === 'he' ? 'מאפיין' : 'الميزة'}
-            </th>
-            {cols.map(col => (
-              <th key={col.key} className="p-4 text-center relative">
-                {col.popular && (
-                  <div className="absolute -top-0.5 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full text-[8px] font-black text-white"
-                    style={{ background: col.color }}>
-                    ⭐ {lang === 'he' ? 'פופולרי' : 'شائع'}
-                  </div>
-                )}
-                <div className="text-[13px] font-black mt-3" style={{ color: col.color }}>{col.name}</div>
-                <div className="text-base font-black text-white mt-0.5">{col.price}</div>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {features.map((f, i) => (
-            <tr key={i} className="hover:bg-white/[0.015] transition-colors"
-              style={{ borderBottom: '1px solid rgba(255,255,255,0.035)' }}>
-              <td className="p-4 text-right">
-                <span className="text-[12px] text-white/55 font-semibold">{f.name}</span>
-              </td>
-              {cols.map(col => {
-                const val = f[col.key];
-                return (
-                  <td key={col.key} className="p-4 text-center">
-                    {val === '✗' ? (
-                      <X size={14} className="text-white/12 mx-auto" />
-                    ) : val === '✓' ? (
-                      <CheckCircle2 size={15} className="mx-auto" style={{ color: col.color }} />
-                    ) : (
-                      <span className="text-[12px] font-black" style={{ color: col.color }}>{val}</span>
-                    )}
-                  </td>
-                );
-              })}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-});
-
-
 // ============================================================
 // PaymentForm
 // ============================================================
@@ -2788,99 +2420,25 @@ function App() {
         .custom-scrollbar::-webkit-scrollbar { width: 3px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.04); border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--brand-red); border-radius: 10px; }
-        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-        @keyframes tickerScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        @keyframes orbFloat1 { 0%, 100% { transform: translate(0,0) scale(1); } 33% { transform: translate(-30px,20px) scale(1.05); } 66% { transform: translate(20px,-15px) scale(0.96); } }
-        @keyframes orbFloat2 { 0%, 100% { transform: translate(0,0) scale(1); } 40% { transform: translate(25px,-20px) scale(1.08); } 70% { transform: translate(-15px,30px) scale(0.94); } }
-        @keyframes orbFloat3 { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-20px,-15px) scale(1.1); } }
-        @keyframes lineSlide { 0%, 100% { opacity: 0.07; } 50% { opacity: 0.18; } }
-        @keyframes cardGlow { 0%, 100% { box-shadow: 0 0 20px rgba(200,16,46,0.15); } 50% { box-shadow: 0 0 40px rgba(200,16,46,0.35); } }
-        @keyframes badgePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
-        @keyframes floatUp { 0% { transform: translateY(8px); opacity:0; } 100% { transform: translateY(0); opacity:1; } }
-        @keyframes spinSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes gradientShift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
-        
-        .hero-title-gradient {
-          background: linear-gradient(135deg, #ff4060 0%, #c8102e 55%, #a00d20 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-        
-        .package-card-hover {
-          transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .package-card-hover:hover {
-          transform: translateY(-4px) scale(1.01);
-        }
-        
-        .btn-glow {
-          animation: cardGlow 3s ease-in-out infinite;
-        }
-        
-        .badge-pulse {
-          animation: badgePulse 2s ease-in-out infinite;
-        }
-        
-        .text-gradient-red {
-          background: linear-gradient(90deg, #ff4060, #c8102e);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-        
-        .text-gradient-gold {
-          background: linear-gradient(90deg, #f59e0b, #d4af37, #f59e0b);
-          background-size: 200% auto;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          animation: gradientShift 3s linear infinite;
-        }
-        
-        .glass-premium {
-          background: rgba(255,255,255,0.03);
-          backdrop-filter: blur(24px);
-          border: 1px solid rgba(255,255,255,0.08);
-        }
-        
-        .section-glow-red::before {
-          content: '';
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          width: 600px;
-          height: 400px;
-          background: radial-gradient(ellipse, rgba(200,16,46,0.06) 0%, transparent 70%);
-          pointer-events: none;
-        }
-        
-        /* Premium scrollbar */
-        html::-webkit-scrollbar { width: 5px; }
-        html::-webkit-scrollbar-track { background: #06060a; }
-        html::-webkit-scrollbar-thumb { background: #c8102e; border-radius: 10px; }
-        
-        /* Selection color */
-        ::selection { background: rgba(200,16,46,0.35); color: white; }
-
       `}</style>
 
-      <UrgentTopBanner lang={lang} />
       <Navbar lang={lang} setLang={setLang} isAdmin={isAdmin} onLogout={() => { setIsAdmin(false); setView('home'); }} siteSettings={siteSettings} setView={setView} />
 
-      <main className="pt-32 px-3 max-w-7xl mx-auto">
+      <main className="pt-24 px-3 max-w-7xl mx-auto">
         {view === 'home' && (
           <div className="space-y-0">
             {/* ═══════════ HERO ═══════════ */}
             <section className="relative min-h-screen flex items-center justify-center overflow-hidden" style={{ background: '#06060a' }}>
 
-              {/* Enhanced Background layers with HeroOrbs */}
-              <HeroOrbs />
+              {/* Background layers */}
               <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 90% 70% at 55% 15%, rgba(200,16,46,0.25) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 5% 85%, rgba(200,16,46,0.1) 0%, transparent 60%), #06060a' }} />
+                <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 90% 70% at 55% 15%, rgba(200,16,46,0.22) 0%, transparent 60%), radial-gradient(ellipse 60% 50% at 5% 85%, rgba(200,16,46,0.08) 0%, transparent 60%), #06060a' }} />
+                <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.055) 1px, transparent 1px)', backgroundSize: '28px 28px', WebkitMaskImage: 'radial-gradient(ellipse 85% 65% at 50% 38%, black 20%, transparent 80%)', maskImage: 'radial-gradient(ellipse 85% 65% at 50% 38%, black 20%, transparent 80%)' }} />
                 <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 110% 110% at 50% 50%, transparent 38%, #06060a 100%)' }} />
                 <div className="absolute bottom-0 inset-x-0 h-52" style={{ background: 'linear-gradient(to bottom, transparent, #06060a)' }} />
+                {/* Animated red accent lines */}
+                <div className="absolute top-1/3 right-0 w-96 h-px opacity-20" style={{ background: 'linear-gradient(90deg, transparent, #c8102e, transparent)' }} />
+                <div className="absolute top-2/3 left-0 w-64 h-px opacity-10" style={{ background: 'linear-gradient(90deg, #c8102e, transparent)' }} />
               </div>
 
               <div className="relative z-10 w-full max-w-4xl mx-auto px-4 pt-20 sm:pt-28 pb-14 flex flex-col items-center text-center">
@@ -2891,39 +2449,24 @@ function App() {
                   style={{ background: 'rgba(200,16,46,0.1)', border: '1px solid rgba(200,16,46,0.3)', backdropFilter: 'blur(12px)' }}>
                   <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#c8102e' }} />
                   <span className="text-[11px] font-black tracking-[0.15em] uppercase text-white/80">הדרך המהירה ביותר למכור רכב</span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full badge-pulse" style={{ background: 'rgba(200,16,46,0.2)', color: '#ff6080', border: '1px solid rgba(200,16,46,0.3)' }}>🇮🇱 ISRAEL #1</span>
+                  <span className="hidden sm:inline text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'rgba(200,16,46,0.2)', color: '#ff6080' }}>ISRAEL #1</span>
                 </motion.div>
 
-                {/* Main Headline - Enhanced */}
+                {/* Main Headline */}
                 <motion.h1 initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.48, delay: 0.1 }}
                   className="font-black leading-[1.04] tracking-tight mb-5" style={{ fontSize: 'clamp(2.8rem, 10vw, 6rem)' }}>
-                  <span className="text-white">{siteSettings.hero_title_he?.split('?')[0]}?</span>
+                  <span className="text-white">מוכרים רכב?</span>
                   <br />
-                  <span className="hero-title-gradient" style={{ background: 'linear-gradient(135deg, #ff4060 0%, #c8102e 55%, #a00d20 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', filter: 'drop-shadow(0 0 30px rgba(200,16,46,0.4))' }}>
-                    {siteSettings.hero_title_he?.split('?')[1]?.trim() || 'אנחנו מוכרים אותו מהר יותר.'}
+                  <span style={{ background: 'linear-gradient(135deg, #ff4060 0%, #c8102e 55%, #a00d20 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                    אנחנו מוכרים אותו מהר יותר.
                   </span>
                 </motion.h1>
 
                 {/* Subtitle */}
                 <motion.p initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.42, delay: 0.18 }}
-                  className="text-[15px] md:text-base leading-relaxed mb-4 max-w-lg font-semibold" style={{ color: 'rgba(255,255,255,0.45)' }}>
-                  {siteSettings.hero_subtitle_he || 'YOUGO ISRAEL — פלטפורמת השיווק המובילה באינסטגרם למכירת רכבים.'}
+                  className="text-[15px] md:text-base leading-relaxed mb-8 max-w-lg font-semibold" style={{ color: 'rgba(255,255,255,0.45)' }}>
+                  YOUGO ISRAEL — פלטפורמת השיווק המובילה באינסטגרם למכירת רכבים.
                 </motion.p>
-                
-                {/* Quick proof badges */}
-                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.22 }}
-                  className="flex flex-wrap items-center justify-center gap-2 mb-8">
-                  {[
-                    { icon: '⭐', text: '4.9/5 · 1,000+ ביקורות', color: '#f59e0b' },
-                    { icon: '🚗', text: '1,000+ רכבים נמכרו', color: '#4ade80' },
-                    { icon: '⚡', text: 'פרסום תוך 24 שעות', color: '#60a5fa' },
-                  ].map((b, i) => (
-                    <div key={i} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold"
-                      style={{ background: `${b.color}10`, border: `1px solid ${b.color}25`, color: b.color }}>
-                      <span>{b.icon}</span>{b.text}
-                    </div>
-                  ))}
-                </motion.div>
 
                 {/* ── CTA buttons ── */}
                 <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.42, delay: 0.26 }}
@@ -2932,12 +2475,10 @@ function App() {
                   {/* Primary - start order */}
                   <button
                     onClick={() => document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="relative flex items-center justify-center gap-2.5 flex-1 py-4 rounded-2xl font-black text-[15px] text-white overflow-hidden transition-transform hover:scale-[1.03] active:scale-[.97] group"
-                    style={{ background: 'linear-gradient(135deg, #c8102e, #a50d25)', boxShadow: '0 8px 40px rgba(200,16,46,0.55)', animation: 'cardGlow 3s ease-in-out infinite' }}>
-                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                    <Sparkles size={17} className="relative z-10" />
-                    <span className="relative z-10">{lang === 'he' ? '🚗 פרסם את הרכב' : '🚗 أعلن عن سيارتك'}</span>
-                    <ArrowRight size={15} className="relative z-10 group-hover:translate-x-1 transition-transform" />
+                    className="relative flex items-center justify-center gap-2.5 flex-1 py-4 rounded-2xl font-black text-[15px] text-white overflow-hidden transition-transform hover:scale-[1.02] active:scale-[.97]"
+                    style={{ background: 'linear-gradient(135deg, #c8102e, #a50d25)', boxShadow: '0 8px 32px rgba(200,16,46,0.45)' }}>
+                    <Sparkles size={17} />
+                    {lang === 'he' ? 'מוכרים רכב?' : 'تبيع سيارة؟'}
                   </button>
 
                   {/* Buy car - opens listings site */}
@@ -2962,19 +2503,17 @@ function App() {
                   </button>
                 </motion.div>
 
-                {/* Trust badges - Enhanced */}
+                {/* Trust badges */}
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, delay: 0.38 }}
-                  className="flex flex-wrap items-center justify-center gap-3 mb-10">
+                  className="flex flex-wrap items-center justify-center gap-5 mb-10">
                   {[
-                    { icon: <ShieldCheck size={13} />, label: lang === 'he' ? 'תשלום מאובטח' : 'دفع آمن', c: '#22c55e' },
-                    { icon: <Clock size={13} />, label: lang === 'he' ? 'פרסום תוך 24 שעות' : 'نشر خلال 24 ساعة', c: '#60a5fa' },
-                    { icon: <Users size={13} />, label: lang === 'he' ? '50K+ עוקבים' : '50K+ متابع', c: '#c8102e' },
-                    { icon: <BadgeCheck size={13} />, label: lang === 'he' ? 'מוצאים בישראל' : 'خبراء محليون', c: '#f59e0b' },
+                    { icon: <ShieldCheck size={13} />, label: 'תשלום מאובטח', c: '#22c55e' },
+                    { icon: <Clock size={13} />, label: 'פרסום תוך 24 שעות', c: '#60a5fa' },
+                    { icon: <Users size={13} />, label: '50K+ עוקבים', c: '#c8102e' },
                   ].map((b, i) => (
-                    <div key={i} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg"
-                      style={{ background: `${b.c}0d`, border: `1px solid ${b.c}20` }}>
+                    <div key={i} className="flex items-center gap-1.5">
                       <span style={{ color: b.c }}>{b.icon}</span>
-                      <span className="text-[10px] font-bold" style={{ color: 'rgba(255,255,255,0.55)' }}>{b.label}</span>
+                      <span className="text-[11px] font-semibold" style={{ color: 'rgba(255,255,255,0.45)' }}>{b.label}</span>
                     </div>
                   ))}
                 </motion.div>
@@ -3121,27 +2660,15 @@ function App() {
               </div>
             )}
 
-            {/* ══════════ RECENT SALES TICKER ══════════ */}
-            <RecentSalesTicker lang={lang} />
-
             {/* HOW IT WORKS */}
             <section id="how-it-works" className="space-y-14">
               <div className="text-center space-y-4">
-                <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
-                  className="inline-flex items-center gap-2 bg-brand-red/15 border border-brand-red/25 rounded-full px-5 py-2">
-                  <div className="w-1.5 h-1.5 bg-brand-red rounded-full animate-pulse" />
-                  <span className="text-xs font-black tracking-[0.2em] uppercase text-brand-red">
-                    {lang === 'he' ? 'תהליך פשוט ומהיר' : 'عملية بسيطة وسريعة'}
-                  </span>
-                </motion.div>
-                <motion.h2 initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                  className="text-4xl md:text-5xl font-black text-white">
-                  {lang === 'he' ? 'איך זה ' : 'كيف '}<span className="text-brand-red">{lang === 'he' ? 'עובד?' : 'يعمل؟'}</span>
-                </motion.h2>
-                <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-                  className="text-white/45 text-base">
-                  {lang === 'he' ? '3 שלבים פשוטים והרכב שלך באוויר' : '3 خطوات بسيطة وسيارتك في الهواء'}
-                </motion.p>
+                <div className="inline-flex items-center gap-2 bg-brand-red/15 border border-brand-red/25 rounded-full px-5 py-2">
+                  <div className="w-1.5 h-1.5 bg-brand-red rounded-full" />
+                  <span className="text-xs font-black tracking-[0.2em] uppercase text-brand-red">תהליך פשוט ומהיר</span>
+                </div>
+                <h2 className="text-4xl md:text-5xl font-black text-white">איך זה עובד?</h2>
+                <p className="text-white/45 text-base">3 שלבים פשוטים והרכב שלך באוויר</p>
               </div>
 
               <div className="relative max-w-5xl mx-auto">
@@ -3876,11 +3403,24 @@ function App() {
                 </p>
               </div>
 
-              {/* Big Stats Row - ANIMATED COUNTERS */}
+              {/* Big Stats Row */}
               <div className="grid grid-cols-3 gap-3 md:gap-6 max-w-3xl mx-auto">
-                <AnimatedStatCard value={50} suffix="K+" label={lang === 'he' ? 'עוקבים פעילים' : 'متابع نشط'} sublabel={lang === 'he' ? 'באינסטגרם' : 'على إنستغرام'} color="#c8102e" icon={<Users size={20} />} delay={0} />
-                <AnimatedStatCard value={48} suffix="h" label={lang === 'he' ? 'ממוצע זמן מכירה' : 'متوسط وقت البيع'} sublabel={lang === 'he' ? 'מפרסום ועד עסקה' : 'من النشر للصفقة'} color="#f59e0b" icon={<Timer size={20} />} delay={0.15} />
-                <AnimatedStatCard value={98} suffix="%" label={lang === 'he' ? 'שביעות רצון' : 'رضا العملاء'} sublabel={lang === 'he' ? 'לקוחות מרוצים' : 'عملاء راضون'} color="#22c55e" icon={<ThumbsUp size={20} />} delay={0.3} />
+                {[
+                  { value: '50K+', label: 'עוקבים פעילים', sublabel: 'באינסטגרם', color: '#c8102e', icon: <Users size={20} /> },
+                  { value: '48h', label: 'ממוצע זמן מכירה', sublabel: 'מפרסום ועד עסקה', color: '#f59e0b', icon: <Timer size={20} /> },
+                  { value: '98%', label: 'שביעות רצון', sublabel: 'לקוחות מרוצים', color: '#22c55e', icon: <ThumbsUp size={20} /> },
+                ].map((stat, i) => (
+                  <div key={i} className="relative text-center py-6 px-4 rounded-2xl overflow-hidden"
+                    style={{ background: `linear-gradient(145deg, ${stat.color}12 0%, rgba(6,6,10,0.95) 100%)`, border: `1px solid ${stat.color}25` }}>
+                    <div className="absolute top-0 inset-x-0 h-[2px]" style={{ background: `linear-gradient(90deg, transparent, ${stat.color}, transparent)` }} />
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ background: `${stat.color}18`, border: `1px solid ${stat.color}30` }}>
+                      <span style={{ color: stat.color }}>{stat.icon}</span>
+                    </div>
+                    <div className="text-3xl md:text-4xl font-black mb-1" style={{ color: stat.color }}>{stat.value}</div>
+                    <div className="text-white text-xs font-black mb-0.5">{stat.label}</div>
+                    <div className="text-white/30 text-[10px]">{stat.sublabel}</div>
+                  </div>
+                ))}
               </div>
 
               {/* 3 Feature Cards - New Design */}
@@ -3984,68 +3524,6 @@ function App() {
                   ))}
                 </div>
               </div>
-            </section>
-
-            {/* ══════════ SOCIAL PROOF WALL ══════════ */}
-            <section className="relative py-4">
-              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-                className="relative overflow-hidden rounded-3xl p-8 md:p-12"
-                style={{ background: 'linear-gradient(135deg, rgba(200,16,46,0.08) 0%, rgba(6,6,10,0.98) 50%, rgba(6,6,10,1) 100%)', border: '1.5px solid rgba(200,16,46,0.2)' }}>
-                <div className="absolute top-0 inset-x-0 h-[2px]" style={{ background: 'linear-gradient(90deg, transparent, #c8102e, transparent)' }} />
-                <div className="absolute top-0 right-0 w-96 h-96" style={{ background: 'radial-gradient(ellipse at 80% 0%, rgba(200,16,46,0.1) 0%, transparent 65%)', pointerEvents: 'none' }} />
-                
-                <div className="relative z-10">
-                  <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-                    <div className="space-y-4 text-center md:text-right">
-                      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full"
-                        style={{ background: 'rgba(200,16,46,0.12)', border: '1px solid rgba(200,16,46,0.25)' }}>
-                        <div className="w-2 h-2 rounded-full bg-brand-red animate-pulse" />
-                        <span className="text-[10px] font-black tracking-widest uppercase text-brand-red">
-                          {lang === 'he' ? 'מספר 1 בישראל' : 'رقم 1 في إسرائيل'}
-                        </span>
-                      </div>
-                      <h2 className="text-3xl md:text-4xl font-black text-white">
-                        {lang === 'he' ? 'אלפי ישראלים בחרו בנו' : 'آلاف الإسرائيليين اختارونا'}
-                      </h2>
-                      <p className="text-white/45 text-sm max-w-lg">
-                        {lang === 'he' 
-                          ? 'YOUGO ISRAEL היא הבחירה הראשונה של מוכרי רכב מכל רחבי הארץ. מתל אביב ועד באר שבע, מחיפה ועד אילת – אנחנו כאן.'
-                          : 'YOUGO ISRAEL هو الاختيار الأول لبائعي السيارات من جميع أنحاء البلاد.'}
-                      </p>
-                      <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-                        {[
-                          { emoji: '🏆', text: lang === 'he' ? 'מספר 1 בישראל' : '#1 في إسرائيل' },
-                          { emoji: '⚡', text: lang === 'he' ? 'מהיר ביותר' : 'الأسرع' },
-                          { emoji: '🔒', text: lang === 'he' ? 'מאובטח 100%' : 'آمن 100%' },
-                          { emoji: '🇮🇱', text: lang === 'he' ? 'מקומי ומהימן' : 'محلي وموثوق' },
-                        ].map((tag, i) => (
-                          <span key={i} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-black text-white/70"
-                            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}>
-                            <span>{tag.emoji}</span>{tag.text}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-3 shrink-0 w-full md:w-auto">
-                      {[
-                        { val: '1,000+', label: lang === 'he' ? 'עסקאות' : 'صفقات', color: '#c8102e', icon: '🤝' },
-                        { val: '50K+', label: lang === 'he' ? 'עוקבים' : 'متابع', color: '#3b82f6', icon: '📱' },
-                        { val: '48h', label: lang === 'he' ? 'ממוצע' : 'متوسط', color: '#f59e0b', icon: '⚡' },
-                        { val: '98%', label: lang === 'he' ? 'שביעות' : 'رضا', color: '#22c55e', icon: '⭐' },
-                      ].map((s, i) => (
-                        <div key={i} className="relative flex flex-col items-center py-5 px-4 rounded-2xl text-center overflow-hidden"
-                          style={{ background: `${s.color}0d`, border: `1px solid ${s.color}25` }}>
-                          <div className="absolute top-0 inset-x-0 h-[2px]" style={{ background: `linear-gradient(90deg, transparent, ${s.color}80, transparent)` }} />
-                          <span className="text-2xl mb-1">{s.icon}</span>
-                          <div className="text-2xl font-black" style={{ color: s.color }}>{s.val}</div>
-                          <div className="text-[10px] text-white/35 font-bold mt-0.5">{s.label}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
             </section>
 
             {/* ============================================================
@@ -4195,24 +3673,6 @@ function App() {
                   </div>
                 );
               })()}
-            </section>
-
-            {/* ══════════ PACKAGE COMPARISON TABLE ══════════ */}
-            <section className="relative max-w-4xl mx-auto space-y-8 py-6">
-              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center space-y-4">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full"
-                  style={{ background: 'rgba(200,16,46,0.1)', border: '1px solid rgba(200,16,46,0.25)' }}>
-                  <BarChart3 size={13} className="text-brand-red" />
-                  <span className="text-[10px] font-black tracking-[0.2em] uppercase text-brand-red">
-                    {lang === 'he' ? 'השוואת חבילות' : 'مقارنة الباقات'}
-                  </span>
-                </div>
-                <h2 className="text-3xl md:text-4xl font-black text-white">
-                  {lang === 'he' ? 'מה מתאים ' : 'ما يناسب '}<span className="text-brand-red">{lang === 'he' ? 'לך?' : 'لك؟'}</span>
-                </h2>
-                <p className="text-white/40 text-sm">{lang === 'he' ? 'השוואה מלאה בין כל החבילות' : 'مقارنة شاملة بين جميع الباقات'}</p>
-              </motion.div>
-              <PackageComparisonTable lang={lang} />
             </section>
 
             {/* FAQ */}
@@ -4448,21 +3908,13 @@ function App() {
 
                       {/* CTA */}
                       <div className="mt-4 p-4 rounded-xl space-y-3"
-                        style={{ background: 'linear-gradient(135deg, rgba(200,16,46,0.12), rgba(200,16,46,0.04))', border: '1px solid rgba(200,16,46,0.25)' }}>
-                        <p className="text-xs font-black text-white/70">🚗 מוכן למכור את הרכב?</p>
-                        <p className="text-[10px] text-white/35">תוך 24 שעות הרכב שלך מפורסם!</p>
+                        style={{ background: 'linear-gradient(135deg, rgba(200,16,46,0.1), rgba(200,16,46,0.04))', border: '1px solid rgba(200,16,46,0.2)' }}>
+                        <p className="text-xs font-black text-white/60">מוכן למכור את הרכב?</p>
                         <button onClick={() => document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' })}
-                          className="w-full py-2.5 rounded-xl font-black text-xs text-white flex items-center justify-center gap-2 group"
-                          style={{ background: 'linear-gradient(135deg, #c8102e, #a50d25)', boxShadow: '0 4px 16px rgba(200,16,46,0.4)' }}>
-                          <Rocket size={12} className="group-hover:translate-x-0.5 transition-transform" />
-                          <span>בחר חבילה עכשיו →</span>
+                          className="w-full py-2.5 rounded-xl font-black text-xs text-white flex items-center justify-center gap-2"
+                          style={{ background: 'linear-gradient(135deg, #c8102e, #a50d25)' }}>
+                          <Rocket size={12} />בחר חבילה עכשיו
                         </button>
-                        <a href={`https://wa.me/${siteSettings.whatsapp_number || '972546980606'}?text=${encodeURIComponent('שלום, אני מעוניין לפרסם רכב')}`}
-                          target="_blank" rel="noopener noreferrer"
-                          className="w-full py-2 rounded-xl font-black text-[11px] flex items-center justify-center gap-1.5 transition-all hover:bg-green-500/20"
-                          style={{ border: '1px solid rgba(37,211,102,0.3)', color: '#4ade80', background: 'rgba(37,211,102,0.05)' }}>
-                          <MessageCircle size={11} />שאלות? WhatsApp
-                        </a>
                       </div>
                     </div>
                   </div>
@@ -4475,8 +3927,8 @@ function App() {
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-1.5">
-                      <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" style={{ boxShadow: '0 0 8px rgba(74,222,128,0.6)' }} />
-                      <span className="text-[10px] text-white/40 font-bold">🟢 מערכת פעילה 24/7</span>
+                      <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                      <span className="text-[10px] text-white/25 font-bold">מערכת פעילה</span>
                     </div>
                     <div className="text-white/10 text-xs">·</div>
                     <span className="text-[10px] text-white/20 font-bold">Made in Israel 🇮🇱</span>
@@ -4711,14 +4163,6 @@ function App() {
       </main>
 
       {modalContent && <Modal isOpen={!!modalContent} onClose={() => setModalContent(null)} title={modalContent.title}>{modalContent.content}</Modal>}
-
-      {/* ══════════ FLOATING BUTTONS ══════════ */}
-      <FloatingWhatsApp whatsapp={siteSettings.whatsapp_number || '972546980606'} />
-      <LiveNotificationPopup />
-      <StickyBottomCTA 
-        onCTA={() => document.getElementById('packages')?.scrollIntoView({ behavior: 'smooth' })} 
-        lang={lang} 
-      />
 
       {showChangePackage && (
         <ChangePackageModal
