@@ -2436,7 +2436,7 @@ function App() {
 
       <main className="pt-24 px-3 max-w-7xl mx-auto">
         {view === 'home' && (
-          <div className="space-y-0">
+          <div className="space-y-24">
             {/* ═══════════ HERO ═══════════ */}
             <section className="relative min-h-screen flex items-center justify-center overflow-hidden" style={{ background: '#06060a' }}>
 
@@ -2976,42 +2976,17 @@ function App() {
 
               </div>{/* end 3-card grid */}
 
-              {/* WEBSITE — anchor + web-pro card only */}
-              <div id="packages-website" className="scroll-mt-16 space-y-5">
-                {/* web-pro card — full width */}
-                <div className="hidden md:block h-[420px]">
-                  {websitePackages.map(pkg => (
-                    <div key={pkg.id} className="h-full">
-                      <WebsitePackageCard pkg={pkg} lang={lang} onSelect={handleSelectPackage} />
-                    </div>
-                  ))}
-                </div>
-                <div className="md:hidden px-3">
-                  <MobileSwiper cardHeight={420}>
+              <div id="packages-car" className="scroll-mt-16 space-y-5">
+                {/* ── Desktop ── */}
+                <div className="hidden md:flex flex-col gap-6">
+                  {/* Row 0: אתר PRO — full width */}
+                  <div className="h-[420px]">
                     {websitePackages.map(pkg => (
-                      <div key={pkg.id} style={{ height: '420px' }}>
+                      <div key={pkg.id} className="h-full">
                         <WebsitePackageCard pkg={pkg} lang={lang} onSelect={handleSelectPackage} />
                       </div>
                     ))}
-                    <div style={{ height: '1px' }} />
-                  </MobileSwiper>
-                </div>
-              </div>
-
-              {/* ── divider ── */}
-              <div className="flex items-center justify-center gap-3 py-1">
-                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.06))' }} />
-                <div className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full block" style={{ background: 'rgba(255,255,255,0.12)' }} />
-                  <span className="w-2 h-2 rounded-full block" style={{ background: 'rgba(200,16,46,0.45)' }} />
-                  <span className="w-1.5 h-1.5 rounded-full block" style={{ background: 'rgba(255,255,255,0.12)' }} />
-                </div>
-                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.06), transparent)' }} />
-              </div>
-
-              <div id="packages-car" className="scroll-mt-16 space-y-5">
-                {/* ── Desktop: 3 regular + VIP + DUO ── */}
-                <div className="hidden md:flex flex-col gap-6">
+                  </div>
                   {/* Row 1: 3 regular packages */}
                   <div className="grid grid-cols-3 gap-5 lg:gap-6">
                     {packages.map(pkg => (
@@ -3028,9 +3003,14 @@ function App() {
                   </div>
                 </div>
 
-                {/* ── Mobile swiper: 3 regular + VIP + DUO ── */}
+                {/* ── Mobile swiper: web-pro + 3 regular + VIP + DUO ── */}
                 <div className="md:hidden px-3">
                   <MobileSwiper cardHeight={520}>
+                    {websitePackages.map(pkg => (
+                      <div key={pkg.id} style={{ height: '520px' }}>
+                        <WebsitePackageCard pkg={pkg} lang={lang} onSelect={handleSelectPackage} />
+                      </div>
+                    ))}
                     {packages.map(pkg => (
                       <div key={pkg.id} style={{ height: '520px' }}>
                         <PackageCard pkg={pkg} lang={lang} onSelect={handleSelectPackage} />
