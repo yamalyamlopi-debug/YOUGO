@@ -1348,7 +1348,7 @@ const WebsitePackageCard = memo(({ pkg, lang, onSelect }: { pkg: Package; lang: 
 // ============================================================
 // MOBILE SWIPER
 // ============================================================
-const MobileSwiper = ({ children, cardHeight = 500 }: { children: React.ReactNode[]; cardHeight?: number }) => {
+const MobileSwiper = ({ children, cardHeight = 500 }: { children?: React.ReactNode; cardHeight?: number }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const count = React.Children.count(children);
@@ -2753,16 +2753,41 @@ function App() {
                   className="mx-auto h-px w-32" style={{ background: 'linear-gradient(90deg, transparent, #c8102e, transparent)' }} />
               </motion.div>
 
-              {/* WEBSITE PACKAGES — compact header + web-pro card */}
-              <div id="packages-website" className="scroll-mt-16 space-y-5">
-                {/* ── Compact info card — YOUGO CARS ── */}
-                <div className="relative rounded-2xl overflow-hidden p-5 sm:p-6"
+              {/* ══════════════════════════════════════════════════════
+                  SECTION INFO CARDS — 3 مربعات شرح
+                  موبايل: حد بعض أفقي (grid-cols-3 مضغوط)
+                  ديسكتوب: تحت بعض عمودي (grid-cols-1)
+              ══════════════════════════════════════════════════════ */}
+              <div className="grid grid-cols-3 md:grid-cols-1 gap-3 md:gap-4">
+
+                {/* ── مربع 1: YOUGO CARS (أخضر) ── */}
+                <div className="relative rounded-2xl overflow-hidden p-3 md:p-5"
                   style={{ background: 'linear-gradient(135deg, rgba(34,197,94,0.12) 0%, rgba(10,10,15,0.98) 60%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(34,197,94,0.3)' }}>
                   <div className="absolute top-0 inset-x-0 h-[3px]" style={{ background: 'linear-gradient(90deg, transparent, #22c55e, transparent)' }} />
-                  <div className="absolute top-0 left-0 w-64 h-64 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 10% 0%, rgba(34,197,94,0.1) 0%, transparent 65%)' }} />
+                  <div className="absolute top-0 left-0 w-40 h-40 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 10% 0%, rgba(34,197,94,0.1) 0%, transparent 65%)' }} />
 
-                  <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    {/* Icon + labels */}
+                  {/* موبايل: أيقونة + عنوان فقط */}
+                  <div className="relative z-10 flex flex-col items-center text-center gap-2 md:hidden">
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+                      style={{ background: 'linear-gradient(135deg,#16a34a,#22c55e)', boxShadow: '0 4px 14px rgba(34,197,94,0.4)' }}>
+                      <Globe size={16} className="text-white" />
+                    </div>
+                    <div>
+                      <div className="text-[8px] font-black text-green-400 uppercase tracking-[0.12em] leading-tight">
+                        {lang === 'he' ? '🆕 חדש!' : '🆕 جديد!'}
+                      </div>
+                      <div className="text-[11px] font-black text-white leading-tight mt-0.5">
+                        {lang === 'he' ? 'פרסם' : 'أعلن'}{' '}
+                        <span className="text-green-400">{lang === 'he' ? 'באתר' : 'بالموقع'}</span>
+                      </div>
+                      <div className="text-[9px] text-white/40 mt-0.5 leading-tight">
+                        {lang === 'he' ? '₪149 · 60 יום' : '₪149 · 60 يوم'}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ديسكتوب: محتوى كامل */}
+                  <div className="hidden md:flex relative z-10 items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
                       <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
                         style={{ background: 'linear-gradient(135deg,#16a34a,#22c55e)', boxShadow: '0 6px 18px rgba(34,197,94,0.4)' }}>
@@ -2772,26 +2797,100 @@ function App() {
                         <div className="text-[9px] font-black text-green-400 uppercase tracking-[0.18em]">
                           {lang === 'he' ? '🆕 חדש! · פרסום ישיר ב-YOUGO CARS' : '🆕 جديد! · نشر مباشر في YOUGO CARS'}
                         </div>
-                        <h3 className="text-xl sm:text-2xl font-black text-white leading-tight mt-0.5">
+                        <h3 className="text-xl font-black text-white leading-tight mt-0.5">
                           {lang === 'he' ? 'פרסם את הרכב' : 'أعلن عن سيارتك'}{' '}
                           <span className="text-green-400">{lang === 'he' ? 'ישירות באתר' : 'مباشرة في الموقع'}</span>
                         </h3>
                         <p className="text-white/45 text-xs leading-relaxed mt-1 max-w-sm">
                           {lang === 'he'
-                            ? 'מעבר לאינסטגרם — עכשיו פרסם ישירות ב-YOUGO CARS ותגיע לאלפי קונים ביום. התחל ב-3 ימים חינם, ללא כרטיס אשראי.'
+                            ? 'מעבר לאינסטגרם — עכשיו פרסם ישירות ב-YOUGO CARS ותגיע לאלפי קונים ביום. התחל ב-3 ימים חינם.'
                             : 'إضافة للإنستغرام — انشر مباشرة في YOUGO CARS وتواصل مع آلاف المشترين يومياً.'}
                         </p>
                       </div>
                     </div>
-
-                    {/* Stats row */}
-                    <div className="flex flex-row sm:flex-col gap-2 shrink-0">
+                    <div className="flex gap-2 shrink-0">
                       {[
-                        { value: '₪149', label: lang === 'he' ? 'מחיר אתר PRO' : 'سعر PRO', color: '#22c55e', icon: <Globe size={11} /> },
+                        { value: '₪149', label: lang === 'he' ? 'אתר PRO' : 'موقع PRO', color: '#22c55e', icon: <Globe size={11} /> },
                         { value: '60', label: lang === 'he' ? 'ימי פרסום' : 'يوم نشر', color: '#c8102e', icon: <Calendar size={11} /> },
-                        { value: '24/7', label: lang === 'he' ? 'גלוי לקונים' : 'مرئي للمشترين', color: '#60a5fa', icon: <Eye size={11} /> },
+                        { value: '24/7', label: lang === 'he' ? 'גלוי' : 'مرئي', color: '#60a5fa', icon: <Eye size={11} /> },
                       ].map((s, i) => (
-                        <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-xl"
+                        <div key={i} className="flex items-center gap-1.5 px-2.5 py-2 rounded-xl"
+                          style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
+                          <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
+                            <span style={{ color: s.color }}>{s.icon}</span>
+                          </div>
+                          <div>
+                            <div className="text-xs font-black leading-tight" style={{ color: s.color }}>{s.value}</div>
+                            <div className="text-[8px] text-white/30 font-bold">{s.label}</div>
+                          </div>
+                        </div>
+                      ))}
+                      <a href="https://yougo-cars.vercel.app" target="_blank" rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 px-3 py-2 rounded-xl font-black text-xs text-white transition-all hover:scale-105 active:scale-95"
+                        style={{ background: 'linear-gradient(135deg,#16a34a,#22c55e)', boxShadow: '0 3px 12px rgba(34,197,94,0.35)' }}>
+                        <Globe size={11} />
+                        {lang === 'he' ? 'פתח YOUGO CARS' : 'افتح YOUGO CARS'}
+                        <ExternalLink size={10} />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                {/* ── مربع 2: רכב פרטי (أحمر) ── */}
+                <div className="relative rounded-2xl overflow-hidden p-3 md:p-5"
+                  style={{ background: 'linear-gradient(135deg, rgba(200,16,46,0.12) 0%, rgba(10,10,15,0.98) 60%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(200,16,46,0.32)' }}>
+                  <div className="absolute top-0 inset-x-0 h-[3px]" style={{ background: 'linear-gradient(90deg, transparent, #c8102e, transparent)' }} />
+                  <div className="absolute top-0 left-0 w-40 h-40 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 10% 0%, rgba(200,16,46,0.13) 0%, transparent 65%)' }} />
+
+                  {/* موبايل */}
+                  <div className="relative z-10 flex flex-col items-center text-center gap-2 md:hidden">
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+                      style={{ background: 'linear-gradient(135deg, #c8102e, #8b0d1e)', boxShadow: '0 4px 14px rgba(200,16,46,0.4)' }}>
+                      <Car size={16} className="text-white" />
+                    </div>
+                    <div>
+                      <div className="text-[8px] font-black text-brand-red uppercase tracking-[0.12em] leading-tight">
+                        {lang === 'he' ? 'רכב פרטי' : 'سيارة خاصة'}
+                      </div>
+                      <div className="text-[11px] font-black text-white leading-tight mt-0.5">
+                        {lang === 'he' ? 'מוכרים' : 'تبيعون'}{' '}
+                        <span className="text-brand-red">{lang === 'he' ? 'רכב?' : 'سيارة؟'}</span>
+                      </div>
+                      <div className="text-[9px] text-white/40 mt-0.5 leading-tight">
+                        {lang === 'he' ? 'מ-₪219 · 3 חבילות' : 'من ₪219 · 3 باقات'}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ديسكتوب */}
+                  <div className="hidden md:flex relative z-10 items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+                        style={{ background: 'linear-gradient(135deg, #c8102e, #8b0d1e)', boxShadow: '0 6px 18px rgba(200,16,46,0.4)' }}>
+                        <Car size={20} className="text-white" />
+                      </div>
+                      <div>
+                        <div className="text-[9px] font-black text-brand-red uppercase tracking-[0.18em]">
+                          {lang === 'he' ? 'חבילות פרסום · רכב פרטי' : 'باقات إعلانية · سيارة خاصة'}
+                        </div>
+                        <h3 className="text-xl font-black text-white leading-tight mt-0.5">
+                          {lang === 'he' ? 'מוכרים' : 'تبيعون'}{' '}
+                          <span className="text-brand-red">{lang === 'he' ? 'רכב פרטי?' : 'سيارة خاصة؟'}</span>
+                        </h3>
+                        <p className="text-white/45 text-xs leading-relaxed mt-1 max-w-sm">
+                          {lang === 'he'
+                            ? 'שלוש חבילות מדורגות לכל תקציב ומטרה. מחבילת הכניסה הבסיסית ועד הפרמיום המלא.'
+                            : 'ثلاث باقات متدرجة لكل ميزانية وهدف، من الأساسية حتى الأعلى درجة.'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 shrink-0">
+                      {[
+                        { value: '₪199', label: lang === 'he' ? 'מחבילה' : 'من الباقة', color: '#94a3b8', icon: <DollarSign size={11} /> },
+                        { value: '1K+', label: lang === 'he' ? 'מכירות' : 'مبيعات', color: '#c8102e', icon: <Trophy size={11} /> },
+                        { value: '7-30', label: lang === 'he' ? 'ימי פרסום' : 'يوم نشر', color: '#4ade80', icon: <Calendar size={11} /> },
+                      ].map((s, i) => (
+                        <div key={i} className="flex items-center gap-1.5 px-2.5 py-2 rounded-xl"
                           style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
                           <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
                             <span style={{ color: s.color }}>{s.icon}</span>
@@ -2804,31 +2903,81 @@ function App() {
                       ))}
                     </div>
                   </div>
+                </div>
 
-                  {/* Pills + CTA */}
-                  <div className="relative z-10 mt-4 flex flex-wrap items-center gap-2 pt-3"
-                    style={{ borderTop: '1px solid rgba(34,197,94,0.12)' }}>
-                    {[
-                      { icon: <Zap size={10} />, label: lang === 'he' ? 'פרסום מיידי' : 'نشر فوري', c: '#22c55e' },
-                      { icon: <Users size={10} />, label: lang === 'he' ? 'אלפי גולשים/יום' : 'آلاف الزوار/يوم', c: '#60a5fa' },
-                      { icon: <Globe size={10} />, label: lang === 'he' ? 'ראה בכל מכשיר' : 'على كل الأجهزة', c: '#d4af37' },
-                      { icon: <ShieldCheck size={10} />, label: lang === 'he' ? '60 ימי פרסום' : '60 يوم نشر', c: '#c8102e' },
-                    ].map((p, i) => (
-                      <div key={i} className="flex items-center gap-1 px-2 py-1 rounded-full text-[9px] font-bold"
-                        style={{ background: `${p.c}12`, border: `1px solid ${p.c}25`, color: p.c }}>
-                        {p.icon}{p.label}
+                {/* ── مربع 3: VIP (ذهبي) ── */}
+                <div className="relative rounded-2xl overflow-hidden p-3 md:p-5"
+                  style={{ background: 'linear-gradient(135deg, rgba(212,175,55,0.12) 0%, rgba(10,10,15,0.98) 60%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(212,175,55,0.32)' }}>
+                  <div className="absolute top-0 inset-x-0 h-[3px]" style={{ background: 'linear-gradient(90deg, transparent, #d4af37, transparent)' }} />
+                  <div className="absolute top-0 left-0 w-40 h-40 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 10% 0%, rgba(212,175,55,0.1) 0%, transparent 65%)' }} />
+
+                  {/* موبايل */}
+                  <div className="relative z-10 flex flex-col items-center text-center gap-2 md:hidden">
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+                      style={{ background: 'linear-gradient(135deg, #d4af37, #9a7d1a)', boxShadow: '0 4px 14px rgba(212,175,55,0.4)' }}>
+                      <Crown size={16} className="text-white" />
+                    </div>
+                    <div>
+                      <div className="text-[8px] font-black text-amber-400 uppercase tracking-[0.12em] leading-tight">
+                        {lang === 'he' ? 'פרימיום VIP' : 'بريميوم VIP'}
                       </div>
-                    ))}
-                    <a href="https://yougo-cars.vercel.app" target="_blank" rel="noopener noreferrer"
-                      className="mr-auto flex items-center gap-1.5 px-4 py-2 rounded-xl font-black text-xs text-white transition-all hover:scale-105 active:scale-95"
-                      style={{ background: 'linear-gradient(135deg,#16a34a,#22c55e)', boxShadow: '0 3px 12px rgba(34,197,94,0.35)' }}>
-                      <Globe size={11} />
-                      {lang === 'he' ? 'פתח YOUGO CARS' : 'افتح YOUGO CARS'}
-                      <ExternalLink size={10} />
-                    </a>
+                      <div className="text-[11px] font-black text-white leading-tight mt-0.5">
+                        {lang === 'he' ? 'יחס' : 'خدمة'}{' '}
+                        <span className="text-amber-400">VIP?</span>
+                      </div>
+                      <div className="text-[9px] text-white/40 mt-0.5 leading-tight">
+                        {lang === 'he' ? '60 יום · DUO 40%↓' : '60 يوم · DUO 40%↓'}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ديسكتوب */}
+                  <div className="hidden md:flex relative z-10 items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+                        style={{ background: 'linear-gradient(135deg, #d4af37, #9a7d1a)', boxShadow: '0 6px 18px rgba(212,175,55,0.4)' }}>
+                        <Crown size={20} className="text-white" />
+                      </div>
+                      <div>
+                        <div className="text-[9px] font-black text-amber-400 uppercase tracking-[0.18em]">
+                          {lang === 'he' ? 'פרימיום בלעדי · VIP' : 'بريميوم حصري · VIP'}
+                        </div>
+                        <h3 className="text-xl font-black text-white leading-tight mt-0.5">
+                          {lang === 'he' ? 'מחפשים' : 'تبحثون عن'}{' '}
+                          <span className="text-amber-400">{lang === 'he' ? 'יחס VIP?' : 'خدمة VIP؟'}</span>
+                        </h3>
+                        <p className="text-white/45 text-xs leading-relaxed mt-1 max-w-sm">
+                          {lang === 'he'
+                            ? 'לרכבי יוקרה וכאלה שמוכרים שני רכבים בבת אחת – שתי חבילות ייחודיות עם שירות אישי וחסכון משמעותי.'
+                            : 'لسيارات الفخامة ومن يبيع سيارتين — باقتان حصريتان مع خدمة شخصية وتوفير كبير.'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2 shrink-0">
+                      {[
+                        { value: '60 יום', label: lang === 'he' ? 'פרסום VIP' : 'نشر VIP', color: '#d4af37', icon: <Calendar size={11} /> },
+                        { value: '40%', label: lang === 'he' ? 'חיסכון DUO' : 'توفير DUO', color: '#8b5cf6', icon: <Percent size={11} /> },
+                        { value: '24/7', label: lang === 'he' ? 'ליווי' : 'مرافقة', color: '#4ade80', icon: <Headphones size={11} /> },
+                      ].map((s, i) => (
+                        <div key={i} className="flex items-center gap-1.5 px-2.5 py-2 rounded-xl"
+                          style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
+                          <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
+                            <span style={{ color: s.color }}>{s.icon}</span>
+                          </div>
+                          <div>
+                            <div className="text-xs font-black leading-tight" style={{ color: s.color }}>{s.value}</div>
+                            <div className="text-[8px] text-white/30 font-bold">{s.label}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
+              </div>{/* end 3-card grid */}
+
+              {/* WEBSITE — anchor + web-pro card only */}
+              <div id="packages-website" className="scroll-mt-16 space-y-5">
                 {/* web-pro card — full width */}
                 <div className="hidden md:block h-[340px]">
                   {websitePackages.map(pkg => (
@@ -2844,6 +2993,7 @@ function App() {
                         <WebsitePackageCard pkg={pkg} lang={lang} onSelect={handleSelectPackage} />
                       </div>
                     ))}
+                    <div style={{ height: '1px' }} />
                   </MobileSwiper>
                 </div>
               </div>
@@ -2860,73 +3010,6 @@ function App() {
               </div>
 
               <div id="packages-car" className="scroll-mt-16 space-y-5">
-                {/* ── Compact info card — רכב פרטי ── */}
-                <div className="relative rounded-2xl overflow-hidden p-5 sm:p-6"
-                  style={{ background: 'linear-gradient(135deg, rgba(200,16,46,0.12) 0%, rgba(10,10,15,0.98) 60%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(200,16,46,0.32)' }}>
-                  <div className="absolute top-0 inset-x-0 h-[3px]" style={{ background: 'linear-gradient(90deg, transparent, #c8102e, transparent)' }} />
-                  <div className="absolute top-0 left-0 w-64 h-64 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 10% 0%, rgba(200,16,46,0.13) 0%, transparent 65%)' }} />
-
-                  <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
-                        style={{ background: 'linear-gradient(135deg, #c8102e, #8b0d1e)', boxShadow: '0 6px 18px rgba(200,16,46,0.4)' }}>
-                        <Car size={20} className="text-white" />
-                      </div>
-                      <div>
-                        <div className="text-[9px] font-black text-brand-red uppercase tracking-[0.18em]">
-                          {lang === 'he' ? 'חבילות פרסום · רכב פרטי' : 'باقات إعلانية · سيارة خاصة'}
-                        </div>
-                        <h3 className="text-xl sm:text-2xl font-black text-white leading-tight mt-0.5">
-                          {lang === 'he' ? 'מוכרים' : 'تبيعون'}{' '}
-                          <span className="text-brand-red">{lang === 'he' ? 'רכב פרטי?' : 'سيارة خاصة؟'}</span>
-                        </h3>
-                        <p className="text-white/45 text-xs leading-relaxed mt-1 max-w-sm">
-                          {lang === 'he'
-                            ? 'שלוש חבילות מדורגות לכל תקציב ומטרה. מחבילת הכניסה הבסיסית ועד הפרמיום המלא – כל אחת מותאמת לסוג הרכב ולמטרת המכירה שלך.'
-                            : 'ثلاث باقات متدرجة لكل ميزانية وهدف، من الأساسية حتى الأعلى درجة.'}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-row sm:flex-col gap-2 shrink-0">
-                      {[
-                        { value: '₪199', label: lang === 'he' ? 'מחבילה' : 'من الباقة', color: '#94a3b8', icon: <DollarSign size={11} /> },
-                        { value: '1,000+', label: lang === 'he' ? 'מכירות' : 'مبيعات', color: '#c8102e', icon: <Trophy size={11} /> },
-                        { value: '7-30', label: lang === 'he' ? 'ימי פרסום' : 'يوم نشر', color: '#4ade80', icon: <Calendar size={11} /> },
-                      ].map((s, i) => (
-                        <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-xl"
-                          style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
-                          <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
-                            <span style={{ color: s.color }}>{s.icon}</span>
-                          </div>
-                          <div>
-                            <div className="text-xs font-black leading-tight" style={{ color: s.color }}>{s.value}</div>
-                            <div className="text-[8px] text-white/30 font-bold">{s.label}</div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="relative z-10 mt-4 flex flex-wrap items-center gap-2 pt-3"
-                    style={{ borderTop: '1px solid rgba(200,16,46,0.12)' }}>
-                    {[
-                      { icon: <Camera size={10} />, label: lang === 'he' ? 'צילום מקצועי' : 'تصوير احترافي', c: '#c8102e' },
-                      { icon: <Zap size={10} />, label: lang === 'he' ? 'פרסום תוך 24 שעות' : 'نشر خلال 24 ساعة', c: '#4ade80' },
-                      { icon: <Users size={10} />, label: lang === 'he' ? '50K+ עוקבים' : '+50K متابع', c: '#60a5fa' },
-                      { icon: <TrendingUp size={10} />, label: lang === 'he' ? 'חשיפה ממוקדת' : 'وصول مستهدف', c: '#a78bfa' },
-                    ].map((p, i) => (
-                      <div key={i} className="flex items-center gap-1 px-2 py-1 rounded-full text-[9px] font-bold"
-                        style={{ background: `${p.c}12`, border: `1px solid ${p.c}25`, color: p.c }}>
-                        {p.icon}{p.label}
-                      </div>
-                    ))}
-                    <span className="mr-auto text-[10px] text-white/25 font-bold">
-                      {lang === 'he' ? '4 חבילות · מ-₪219' : '4 باقات · من ₪219'}
-                    </span>
-                  </div>
-                </div>
-
                 {/* ── Desktop: 3 regular + VIP + DUO ── */}
                 <div className="hidden md:flex flex-col gap-6">
                   {/* Row 1: 3 regular packages */}
@@ -2958,72 +3041,7 @@ function App() {
                   </MobileSwiper>
                 </div>
               </div>
-              {/* VIP + DUO — section kept for anchor/scroll but cards already shown above */}
-              <div id="packages-vip" className="scroll-mt-16 space-y-5">
-                {/* ── Compact info card — VIP ── */}
-                <div className="relative rounded-2xl overflow-hidden p-5 sm:p-6"
-                  style={{ background: 'linear-gradient(135deg, rgba(212,175,55,0.12) 0%, rgba(10,10,15,0.98) 60%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(212,175,55,0.32)' }}>
-                  <div className="absolute top-0 inset-x-0 h-[3px]" style={{ background: 'linear-gradient(90deg, transparent, #d4af37, transparent)' }} />
-                  <div className="absolute top-0 left-0 w-64 h-64 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 10% 0%, rgba(212,175,55,0.1) 0%, transparent 65%)' }} />
-
-                  <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
-                        style={{ background: 'linear-gradient(135deg, #d4af37, #9a7d1a)', boxShadow: '0 6px 18px rgba(212,175,55,0.4)' }}>
-                        <Crown size={20} className="text-white" />
-                      </div>
-                      <div>
-                        <div className="text-[9px] font-black text-amber-400 uppercase tracking-[0.18em]">
-                          {lang === 'he' ? 'פרימיום בלעדי · VIP' : 'بريميوم حصري · VIP'}
-                        </div>
-                        <h3 className="text-xl sm:text-2xl font-black text-white leading-tight mt-0.5">
-                          {lang === 'he' ? 'מחפשים' : 'تبحثون عن'}{' '}
-                          <span className="text-amber-400">{lang === 'he' ? 'יחס VIP?' : 'خدمة VIP؟'}</span>
-                        </h3>
-                        <p className="text-white/45 text-xs leading-relaxed mt-1 max-w-sm">
-                          {lang === 'he'
-                            ? 'לרכבי יוקרה וכאלה שמוכרים שני רכבים בבת אחת – שתי חבילות ייחודיות עם שירות אישי, עיצוב בלעדי, וחסכון משמעותי.'
-                            : 'لسيارات الفخامة ومن يبيع سيارتين — باقتان حصريتان مع خدمة شخصية وتوفير كبير.'}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-row sm:flex-col gap-2 shrink-0">
-                      {[
-                        { value: '60 יום', label: lang === 'he' ? 'פרסום VIP' : 'نشر VIP', color: '#d4af37', icon: <Calendar size={11} /> },
-                        { value: '40%', label: lang === 'he' ? 'חיסכון DUO' : 'توفير DUO', color: '#8b5cf6', icon: <Percent size={11} /> },
-                        { value: '24/7', label: lang === 'he' ? 'ליווי אישי' : 'مرافقة شخصية', color: '#4ade80', icon: <Headphones size={11} /> },
-                      ].map((s, i) => (
-                        <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-xl"
-                          style={{ background: `${s.color}10`, border: `1px solid ${s.color}22` }}>
-                          <div className="w-5 h-5 rounded-lg flex items-center justify-center shrink-0" style={{ background: `${s.color}20` }}>
-                            <span style={{ color: s.color }}>{s.icon}</span>
-                          </div>
-                          <div>
-                            <div className="text-xs font-black leading-tight" style={{ color: s.color }}>{s.value}</div>
-                            <div className="text-[8px] text-white/30 font-bold">{s.label}</div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="relative z-10 mt-4 flex flex-wrap items-center gap-2 pt-3"
-                    style={{ borderTop: '1px solid rgba(212,175,55,0.12)' }}>
-                    {[
-                      { icon: <Crown size={10} />, label: lang === 'he' ? 'שירות VIP' : 'خدمة VIP', c: '#d4af37' },
-                      { icon: <Gem size={10} />, label: lang === 'he' ? 'עיצוב בלעדי' : 'تصميم حصري', c: '#a78bfa' },
-                      { icon: <Headphones size={10} />, label: lang === 'he' ? 'ליווי 24/7' : 'مرافقة 24/7', c: '#4ade80' },
-                      { icon: <Percent size={10} />, label: lang === 'he' ? 'חיסכון 40% DUO' : 'توفير 40% DUO', c: '#60a5fa' },
-                    ].map((p, i) => (
-                      <div key={i} className="flex items-center gap-1 px-2 py-1 rounded-full text-[9px] font-bold"
-                        style={{ background: `${p.c}12`, border: `1px solid ${p.c}25`, color: p.c }}>
-                        {p.icon}{p.label}
-                      </div>
-                    ))}
-                    <span className="mr-auto text-[10px] text-white/25 font-bold">VIP · DUO DEAL</span>
-                  </div>
-                </div>
+              <div id="packages-vip" className="scroll-mt-16" />
 
               {/* ── divider ── */}
               <div className="flex items-center justify-center gap-3 py-1">
