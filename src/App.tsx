@@ -2289,30 +2289,6 @@ function App() {
   // ── Website-only packages ──
   const websitePackages: Package[] = useMemo(() => [
     {
-      id: 'web-free',
-      name: lang === 'he' ? 'חינם — 3 ימים' : 'مجاني — 3 أيام',
-      price: lang === 'he' ? 'חינם' : 'مجاناً',
-      features: [
-        lang === 'he' ? '🌐 פרסום ב-YOUGO CARS 3 ימים בלבד' : '🌐 نشر في YOUGO CARS 3 أيام فقط',
-        lang === 'he' ? 'מודעה בסיסית — תמונה אחת' : 'إعلان أساسي — صورة واحدة',
-        lang === 'he' ? 'חשיפה ישירה לגולשי האתר' : 'وصول مباشر لزوار الموقع',
-        lang === 'he' ? 'כפתור WhatsApp ישיר' : 'زر واتساب مباشر',
-        lang === 'he' ? 'ללא פרסום אינסטגרם' : 'بدون إنستغرام',
-      ],
-    },
-    {
-      id: 'web-basic',
-      name: lang === 'he' ? 'אתר BASIC' : 'موقع أساسي',
-      price: '₪69',
-      features: [
-        lang === 'he' ? '🌐 פרסום ב-YOUGO CARS 30 ימים' : '🌐 نشر في YOUGO CARS 30 يوماً',
-        lang === 'he' ? 'עד 5 תמונות איכותיות' : 'حتى 5 صور عالية الجودة',
-        lang === 'he' ? 'מיקום בעמוד הראשי' : 'موضع في الصفحة الرئيسية',
-        lang === 'he' ? 'כפתורי WhatsApp + שיחה' : 'أزرار واتساب + مكالمة',
-        lang === 'he' ? 'ללא פרסום אינסטגרם' : 'بدون إنستغرام',
-      ],
-    },
-    {
       id: 'web-pro',
       name: lang === 'he' ? 'אתר PRO' : 'موقع PRO',
       price: '₪149',
@@ -2323,20 +2299,6 @@ function App() {
         lang === 'he' ? 'בנר "מומלץ" בולט בדף הראשי' : 'بانر "مميز" بارز في الصفحة الرئيسية',
         lang === 'he' ? 'עולה ראשון בתוצאות חיפוש' : 'يظهر أولاً في نتائج البحث',
         lang === 'he' ? 'סטטיסטיקות צפיות ו-leads' : 'إحصائيات المشاهدات والعملاء',
-      ],
-    },
-    {
-      id: 'web-vip',
-      name: lang === 'he' ? 'אתר VIP' : 'موقع VIP',
-      price: '₪269',
-      premium: true,
-      features: [
-        lang === 'he' ? '🌐 פרסום ב-YOUGO CARS 90 ימים' : '🌐 نشر في YOUGO CARS 90 يوماً',
-        lang === 'he' ? 'עד 20 תמונות + וידאו' : 'حتى 20 صورة + فيديو',
-        lang === 'he' ? 'עמוד מוצר VIP מיוחד עם לוגו' : 'صفحة منتج VIP خاصة مع شعار',
-        lang === 'he' ? 'מיקום ראשון + תג VIP זהוב' : 'المرتبة الأولى + شارة VIP ذهبية',
-        lang === 'he' ? 'שיתוף ב-WhatsApp Groups ויראלי' : 'مشاركة في مجموعات واتساب',
-        lang === 'he' ? 'גם פרסום בדף אינסטגרם YOUGO' : 'أيضاً نشر في صفحة YOUGO بإنستغرام',
       ],
     },
   ], [lang]);
@@ -2791,7 +2753,7 @@ function App() {
                   className="mx-auto h-px w-32" style={{ background: 'linear-gradient(90deg, transparent, #c8102e, transparent)' }} />
               </motion.div>
 
-              {/* REGULAR PACKAGES */}
+              {/* WEBSITE PACKAGES — header only, web-pro card moves into packages-car */}
               <div id="packages-website" className="scroll-mt-16 space-y-8">
                 {/* Header */}
                 <div className="relative rounded-3xl overflow-hidden p-6 sm:p-8 md:p-10"
@@ -2835,7 +2797,7 @@ function App() {
                           { icon: <Zap size={11} />, label: lang === 'he' ? 'פרסום מיידי' : 'نشر فوري', c: '#22c55e' },
                           { icon: <Users size={11} />, label: lang === 'he' ? 'אלפי גולשים/יום' : 'آلاف الزوار/يوم', c: '#60a5fa' },
                           { icon: <Globe size={11} />, label: lang === 'he' ? 'ראה בכל מכשיר' : 'على كل الأجهزة', c: '#d4af37' },
-                          { icon: <ShieldCheck size={11} />, label: lang === 'he' ? '3 ימים חינם' : '3 أيام مجاناً', c: '#c8102e' },
+                          { icon: <ShieldCheck size={11} />, label: lang === 'he' ? '60 ימי פרסום' : '60 يوم نشر', c: '#c8102e' },
                         ].map((p, i) => (
                           <div key={i} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[10px] font-bold"
                             style={{ background: `${p.c}12`, border: `1px solid ${p.c}25`, color: p.c }}>
@@ -2847,8 +2809,8 @@ function App() {
 
                     <div className="flex flex-row md:flex-col gap-2 w-full md:w-auto">
                       {[
-                        { value: lang === 'he' ? 'חינם' : 'مجاناً', label: lang === 'he' ? 'ניסיון 3 ימים' : 'تجربة 3 أيام', color: '#22c55e', icon: <Zap size={12} /> },
-                        { value: '90', label: lang === 'he' ? 'ימים מקסימום' : 'أيام كحد أقصى', color: '#c8102e', icon: <Calendar size={12} /> },
+                        { value: '₪149', label: lang === 'he' ? 'מחיר אתר PRO' : 'سعر موقع PRO', color: '#22c55e', icon: <Globe size={12} /> },
+                        { value: '60', label: lang === 'he' ? 'ימי פרסום' : 'يوم نشر', color: '#c8102e', icon: <Calendar size={12} /> },
                         { value: '24/7', label: lang === 'he' ? 'גלוי לקונים' : 'مرئي للمشترين', color: '#60a5fa', icon: <Eye size={12} /> },
                       ].map((s, i) => (
                         <div key={i} className="flex items-center gap-2 px-3 py-2.5 rounded-xl"
@@ -2877,63 +2839,6 @@ function App() {
                     <span className="text-[11px] text-white/30">yougo-cars.vercel.app</span>
                   </div>
                 </div>
-
-                {/* Cards desktop */}
-                <div className="hidden md:grid grid-cols-4 gap-5">
-                  {websitePackages.map(pkg => (
-                    <div key={pkg.id} className="h-[520px]">
-                      <WebsitePackageCard pkg={pkg} lang={lang} onSelect={handleSelectPackage} />
-                    </div>
-                  ))}
-                </div>
-
-                {/* Cards mobile */}
-                <div className="md:hidden px-3">
-                  <MobileSwiper cardHeight={520}>
-                    {websitePackages.map(pkg => (
-                      <div key={pkg.id} style={{ height: '520px' }}>
-                        <WebsitePackageCard pkg={pkg} lang={lang} onSelect={handleSelectPackage} />
-                      </div>
-                    ))}
-                  </MobileSwiper>
-                </div>
-
-                {/* Free CTA Banner */}
-                <div className="relative rounded-2xl overflow-hidden p-6 flex flex-col sm:flex-row items-center justify-between gap-5"
-                  style={{ background: 'linear-gradient(135deg, rgba(34,197,94,0.08), rgba(6,6,10,0.98))', border: '1px solid rgba(34,197,94,0.2)' }}>
-                  <div className="absolute top-0 inset-x-0 h-[2px]" style={{ background: 'linear-gradient(90deg,transparent,#22c55e,transparent)' }} />
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 text-3xl"
-                      style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.25)' }}>
-                      🚗
-                    </div>
-                    <div>
-                      <p className="text-base font-black text-white">
-                        {lang === 'he' ? 'פרסם בחינם ל-3 ימים — ללא כרטיס אשראי!' : 'انشر مجاناً لـ3 أيام — بدون بطاقة ائتمان!'}
-                      </p>
-                      <p className="text-[12px] text-white/45 mt-0.5">
-                        {lang === 'he' ? 'ללא מחויבות. רק תוצאות אמיתיות.' : 'لا التزامات. فقط نتائج حقيقية.'}
-                      </p>
-                    </div>
-                  </div>
-                  <a href="https://yougo-cars.vercel.app" target="_blank" rel="noopener noreferrer"
-                    className="shrink-0 flex items-center gap-2 px-7 py-3.5 rounded-xl font-black text-sm text-white transition-all hover:scale-105 active:scale-95"
-                    style={{ background: 'linear-gradient(135deg,#16a34a,#22c55e)', boxShadow: '0 4px 18px rgba(34,197,94,0.35)' }}>
-                    <Zap size={14} />
-                    {lang === 'he' ? 'פרסם חינם עכשיו →' : 'انشر مجاناً الآن →'}
-                  </a>
-                </div>
-              </div>
-
-              {/* Divider */}
-              <div className="flex items-center justify-center gap-3 py-1">
-                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.06))' }} />
-                <div className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full block" style={{ background: 'rgba(255,255,255,0.12)' }} />
-                  <span className="w-2 h-2 rounded-full block" style={{ background: 'rgba(34,197,94,0.45)' }} />
-                  <span className="w-1.5 h-1.5 rounded-full block" style={{ background: 'rgba(255,255,255,0.12)' }} />
-                </div>
-                <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.06), transparent)' }} />
               </div>
 
               {/* ── divider ── */}
@@ -3037,8 +2942,17 @@ function App() {
                   </div>
                 </div>
 
-                {/* ── Desktop: 3 regular + VIP + DUO in unified grid ── */}
+                {/* ── Desktop: אתר PRO first, then 3 regular + VIP + DUO ── */}
                 <div className="hidden md:flex flex-col gap-6">
+                  {/* Row 0: אתר PRO — full width spotlight */}
+                  <div className="grid grid-cols-1 gap-5">
+                    {websitePackages.map(pkg => (
+                      <div key={pkg.id} className="h-[320px]">
+                        <WebsitePackageCard pkg={pkg} lang={lang} onSelect={handleSelectPackage} />
+                      </div>
+                    ))}
+                  </div>
+
                   {/* Row 1: 3 regular packages */}
                   <div className="grid grid-cols-3 gap-5 lg:gap-6">
                     {packages.map(pkg => (
@@ -3055,9 +2969,14 @@ function App() {
                   </div>
                 </div>
 
-                {/* ── Mobile swiper: all 5 cards ── */}
+                {/* ── Mobile swiper: אתר PRO first, then all 5 cards ── */}
                 <div className="md:hidden px-3">
                   <MobileSwiper cardHeight={520}>
+                    {websitePackages.map(pkg => (
+                      <div key={pkg.id} style={{ height: '520px' }}>
+                        <WebsitePackageCard pkg={pkg} lang={lang} onSelect={handleSelectPackage} />
+                      </div>
+                    ))}
                     {packages.map(pkg => (
                       <div key={pkg.id} style={{ height: '520px' }}>
                         <PackageCard pkg={pkg} lang={lang} onSelect={handleSelectPackage} />
