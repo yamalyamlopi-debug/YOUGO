@@ -2979,7 +2979,7 @@ function App() {
               {/* WEBSITE — anchor + web-pro card only */}
               <div id="packages-website" className="scroll-mt-16 space-y-5">
                 {/* web-pro card — full width */}
-                <div className="hidden md:block h-[340px]">
+                <div className="hidden md:block h-[420px]">
                   {websitePackages.map(pkg => (
                     <div key={pkg.id} className="h-full">
                       <WebsitePackageCard pkg={pkg} lang={lang} onSelect={handleSelectPackage} />
@@ -2987,9 +2987,9 @@ function App() {
                   ))}
                 </div>
                 <div className="md:hidden px-3">
-                  <MobileSwiper cardHeight={380}>
+                  <MobileSwiper cardHeight={420}>
                     {websitePackages.map(pkg => (
-                      <div key={pkg.id} style={{ height: '380px' }}>
+                      <div key={pkg.id} style={{ height: '420px' }}>
                         <WebsitePackageCard pkg={pkg} lang={lang} onSelect={handleSelectPackage} />
                       </div>
                     ))}
@@ -3123,13 +3123,12 @@ function App() {
                 </div>
 
                 {/* ── 3 business cards side by side ── */}
-                <div className="hidden md:grid grid-cols-3 gap-6">
-                  <div className="h-[460px]"><BusinessPackageCard pkg={businessPackage} onSelect={handleSelectPackage} /></div>
-                  <div className="h-[460px]"><BusinessPackageCard pkg={businessPackage100} onSelect={handleSelectPackage} /></div>
+                <div className="hidden md:grid grid-cols-3 gap-6 items-start">
+                  <BusinessPackageCard pkg={businessPackage} onSelect={handleSelectPackage} />
+                  <BusinessPackageCard pkg={businessPackage100} onSelect={handleSelectPackage} />
                   {/* Enterprise as 3rd card */}
-                  <div className="h-[460px]">
-                    <div className="relative w-full h-full rounded-2xl overflow-hidden"
-                      style={{ background: 'linear-gradient(135deg, #0a0f1e 0%, #060812 100%)', border: '1.5px solid rgba(99,102,241,0.4)' }}>
+                  <div className="relative rounded-2xl overflow-hidden"
+                    style={{ background: 'linear-gradient(135deg, #0a0f1e 0%, #060812 100%)', border: '1.5px solid rgba(99,102,241,0.4)' }}>
                       <div className="absolute top-0 right-0 w-56 h-56 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 10%, rgba(99,102,241,0.15) 0%, transparent 65%)' }} />
                       <div className="absolute bottom-0 left-0 w-40 h-40 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 20% 90%, rgba(139,92,246,0.1) 0%, transparent 65%)' }} />
                       <div className="absolute top-0 inset-x-0 h-[3px]" style={{ background: 'linear-gradient(90deg, transparent, #6366f1, #8b5cf6, transparent)' }} />
@@ -3195,16 +3194,15 @@ function App() {
                           </button>
                         </div>
                       </div>
-                    </div>
                   </div>
                 </div>
 
                 {/* Mobile swiper — 3 business cards */}
                 <div className="md:hidden px-3">
-                  <MobileSwiper cardHeight={460}>
-                    <div style={{ height: '460px' }}><BusinessPackageCard pkg={businessPackage} onSelect={handleSelectPackage} /></div>
-                    <div style={{ height: '460px' }}><BusinessPackageCard pkg={businessPackage100} onSelect={handleSelectPackage} /></div>
-                    <div style={{ height: '460px' }}>
+                  <MobileSwiper cardHeight={520}>
+                    <div style={{ height: '520px' }}><BusinessPackageCard pkg={businessPackage} onSelect={handleSelectPackage} /></div>
+                    <div style={{ height: '520px' }}><BusinessPackageCard pkg={businessPackage100} onSelect={handleSelectPackage} /></div>
+                    <div style={{ height: '520px' }}>
                       <div className="relative w-full h-full rounded-2xl overflow-hidden"
                         style={{ background: 'linear-gradient(135deg, #0a0f1e 0%, #060812 100%)', border: '1.5px solid rgba(99,102,241,0.4)' }}>
                         <div className="absolute top-0 inset-x-0 h-[3px]" style={{ background: 'linear-gradient(90deg, transparent, #6366f1, #8b5cf6, transparent)' }} />
