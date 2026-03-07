@@ -262,8 +262,9 @@ const Navbar = memo(({ lang, setLang, isAdmin, onLogout, siteSettings, setView }
             ))}
             <div className="w-px h-4 bg-white/10 mx-2" />
             <button onClick={() => setLang(lang === 'he' ? 'ar' : 'he')}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-[12px] font-bold text-white/55 hover:bg-white/7 transition-all">
-              <span>{lang === 'he' ? '🇸🇦' : '🇮🇱'}</span>
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-[12px] font-bold text-white/55 hover:bg-white/7 transition-all"
+              style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
+              <Globe size={12} />
               <span>{lang === 'he' ? 'عربي' : 'עברית'}</span>
             </button>
             {isAdmin && <button onClick={onLogout} className="p-2 text-white/30 hover:text-white transition-colors"><LogOut size={15} /></button>}
@@ -274,7 +275,7 @@ const Navbar = memo(({ lang, setLang, isAdmin, onLogout, siteSettings, setView }
             <button onClick={() => setLang(lang === 'he' ? 'ar' : 'he')}
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-black transition-all"
               style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.11)' }}>
-              <span>{lang === 'he' ? '🇸🇦' : '🇮🇱'}</span>
+              <Globe size={11} className="text-white/70" />
               <span className="text-white/80">{lang === 'he' ? 'عربي' : 'עב'}</span>
             </button>
             <button onClick={() => setMenuOpen(v => !v)}
@@ -440,43 +441,59 @@ const CardBackPanel = memo(({
 const packageDetails: Record<string, { title: string; content: string }> = {
   basic: {
     title: 'חבילת BASIC',
-    content: `✨ מה כוללת החבילה?\n• 2 תמונות מקצועיות עם עריכה איכותית\n• פוסט שיווקי ממוקד עם תיאור מפורט\n• סטורי לאורך 7 ימים רצופים\n• חשיפה לקהל קונים פוטנציאלי פעיל\n\n🌟 למי זה מתאים?\n• מוכרים פרטיים עם תקציב מינימלי\n• רכבים במחיר עד 50,000 ₪\n• מי שרוצה לבדוק את השוק במהירות\n\n⏱️ פרטים טכניים\n• משך פרסום: 7 ימים\n• 3 ימי חשיפה מובטחת\n• מחיר: 199 ₪ (במקום 250 ₪)\n• חיסכון של 51 ₪ – 20% הנחה`
+    content: `מה כוללת החבילה?\n2 תמונות מקצועיות עם עריכה איכותית\nפוסט שיווקי ממוקד עם תיאור מפורט\nסטורי לאורך 7 ימים רצופים\nחשיפה ישירה ל-50K+ עוקבים פעילים\nקידום ממוקד לקהל קונים פוטנציאלי\nכפתור ליצירת קשר ישיר עם המוכר\n\nלמי זה מתאים?\nמוכרים פרטיים עם תקציב מינימלי\nרכבים במחיר עד 80,000 ₪\nמי שרוצה לבדוק את השוק במהירות\n\nפרטים טכניים\nמשך פרסום: 7 ימים\nזמן עלייה לאוויר: עד 24 שעות\nכולל פרסום ב-YOUGO CARS 7 ימים\nמחיר: 219 ₪ (במקום 299 ₪)`
   },
   pro: {
     title: 'חבילת PRO',
-    content: `🔥 מה כוללת החבילה?\n• 4 תמונות מקצועיות עם עריכה מתקדמת\n• פוסט ראשי + פוסט שמור מתוזמן אסטרטגית\n• סטורי 14 ימים לחשיפה מתמדת\n• עדיפות בתור הפרסומים\n• טרגוט מתקדם לקהלים רלוונטיים\n\n💎 למה בוחרים בה?\n• יחס עלות-תועלת הכי גבוה בשוק\n• מעל 1,000 מכירות מוכחות דרך החבילה\n• זמן פרסום אופטימלי לרוב סוגי הרכבים\n\n⏱️ פרטים טכניים\n• משך פרסום: 14 ימים\n• 7 ימי חשיפה מובטחת\n• מחיר: 299 ₪ (במקום 350 ₪)\n• חיסכון של 51 ₪ – 15% הנחה`
+    content: `מה כוללת החבילה?\n4 תמונות מקצועיות עם עריכה מתקדמת\nפוסט ראשי + פוסט שמור מתוזמן אסטרטגית\nסטורי 14 ימים לחשיפה מתמדת\nעדיפות בתור הפרסומים\nטרגוט מתקדם לקהלים רלוונטיים\nפרסום ב-YOUGO CARS עם בנר מומלץ 14 ימים\nכפתורי WhatsApp ושיחה ישירים\n\nלמה בוחרים בה?\nיחס עלות-תועלת הכי גבוה בשוק\nמעל 1,000 מכירות מוכחות דרך החבילה\nזמן פרסום אופטימלי לרוב סוגי הרכבים\n\nפרטים טכניים\nמשך פרסום: 14 ימים\nזמן עלייה לאוויר: עד 24 שעות\nמחיר: 349 ₪ (במקום 479 ₪)`
   },
   premium: {
     title: 'חבילת PREMIUM',
-    content: `👑 מה כוללת החבילה?\n• 8+ תמונות מקצועיות עם עריכה מרהיבה\n• רילס וידאו + סרטון פרסומי מלא\n• פוסט מותאם אישית עם אסטרטגיית תוכן\n• סטורי 30 ימים לחשיפה מקסימלית\n• עדיפות מלאה – תמיד ראשון בתור\n• מעצב + קופירייטר אישי לכל מודעה\n• עיצוב VIP עם מיתוג ייחודי\n\n⏱️ פרטים טכניים\n• משך פרסום: 30 ימים\n• 14 ימי חשיפה מובטחת\n• מחיר: 479 ₪ (במקום 580 ₪)\n• חיסכון של 101 ₪ – 17% הנחה`
+    content: `מה כוללת החבילה?\n8+ תמונות מקצועיות עם עריכה מרהיבה\nרילס וידאו + סרטון פרסומי מלא\nפוסט מותאם אישית עם אסטרטגיית תוכן\nסטורי 30 ימים לחשיפה מקסימלית\nעדיפות מלאה – תמיד ראשון בתור\nמעצב + קופירייטר אישי לכל מודעה\nעיצוב VIP עם מיתוג ייחודי\nפרסום ב-YOUGO CARS ראשון בחיפוש 30 ימים\n\nפרטים טכניים\nמשך פרסום: 30 ימים\n14 ימי חשיפה מובטחת\nזמן עלייה לאוויר: עד 24 שעות\nמחיר: 549 ₪ (במקום 749 ₪)`
   },
   vip: {
     title: 'VIP LUXURY',
-    content: `💎 מה מקבלים?\n• 15+ תמונות סטילש ברמה קולנועית\n• רילס VIP + סטורי עם עיצוב בלעדי\n• 60 ימי פרסום פרמיום מלא\n• ליווי אישי 24/7 – מנהל לקוח VIP\n• טרגוט מתקדם לפי פרמטרים מדויקים\n• עדיפות ראשונה בכל הפרסומים תמיד\n• קידום ממומן בערוצים נוספים\n\n🏎️ למי זה מיועד?\n• רכבי יוקרה: פורשה, מרצדס, BMW, אאודי\n• רכבי אספנות ונדירים בשוק\n\n⏱️ פרטים טכניים\n• משך פרסום: 60 ימים\n• מחיר: 749 ₪ (במקום 882 ₪)\n• חיסכון של 133 ₪ – 15% הנחה`
+    content: `מה מקבלים?\n15+ תמונות סטילש ברמה קולנועית\nרילס VIP + סטורי עם עיצוב בלעדי\n60 ימי פרסום פרמיום מלא\nליווי אישי 24/7 – מנהל לקוח VIP\nייעוץ תמחור + ניהול משא ומתן\nטרגוט מתקדם לפי פרמטרים מדויקים\nעדיפות ראשונה בכל הפרסומים תמיד\nקידום ממומן בערוצים נוספים\nעמוד VIP זהוב ב-YOUGO CARS 60 ימים\nראשון בכל תוצאות החיפוש\n\nלמי זה מיועד?\nרכבי יוקרה: פורשה, מרצדס, BMW, אאודי\nרכבי אספנות ונדירים בשוק\n\nפרטים טכניים\nמשך פרסום: 60 ימים\nמחיר: 899 ₪ (במקום 1,200 ₪)\nחיסכון של 301 ₪ – 25% הנחה`
   },
   duo: {
     title: 'DUO DEAL',
-    content: `🚗🚗 מה כוללת החבילה?\n• פרסום מלא לשני רכבים במחיר מיוחד\n• 4 תמונות מקצועיות לכל רכב בנפרד\n• פוסט שיווקי נפרד ומותאם לכל רכב\n• סטורי 14 ימים לכל אחד מהרכבים\n• חשיפה כפולה לקהל מעוניין ורחב\n\n💰 למה זה משתלם?\n• במקום לשלם 598 ₪ – משלמים רק 349 ₪\n• חיסכון עצום של 249 ₪ – 40% הנחה`
+    content: `מה כוללת החבילה?\nפרסום מלא לשני רכבים במחיר מיוחד\n4 תמונות מקצועיות לכל רכב בנפרד\nפוסט שיווקי נפרד ומותאם לכל רכב\nסטורי 14 ימים לכל אחד מהרכבים\nחשיפה כפולה לקהל מעוניין ורחב\n2 מודעות פעילות ב-YOUGO CARS 14 ימים\nכפתורי WhatsApp ישירים לכל רכב\n\nלמה זה משתלם?\nבמקום לשלם 698 ₪ – משלמים רק 499 ₪\nחיסכון עצום של 199 ₪ – 40% הנחה\n\nפרטים טכניים\nמשך פרסום: 14 ימים לכל רכב\nזמן עלייה לאוויר: עד 24 שעות`
   },
   business: {
-    title: 'חבילת BUSINESS',
-    content: `🏢 מה מקבלים?\n• עד 50 רכבים מפורסמים בחודש\n• צילומים מקצועיים לכל רכב בנפרד\n• דפי נחיתה מותאמים לסוכנות\n• מנהל לקוח ייעודי – איש קשר אחד\n• דוחות ביצועים חודשיים עם המלצות\n\n📈 יתרונות לעסקים\n• תוכנית שיווקית סדורה לאורך השנה\n• חיסכון עצום בעלויות פרסום חודשיות\n\n⏱️ פרטים טכניים\n• מינוי חודשי מתחדש אוטומטית\n• מחיר: 1,499 ₪ לחודש (במקום 2,499 ₪)\n• חיסכון של 1,000 ₪ – 40% הנחה`
+    title: 'חבילת BUSINESS 50',
+    content: `מה מקבלים?\nעד 50 רכבים מפורסמים בחודש\nפרסום מלא בכל פלטפורמות YOUGO\nדף סוכנות קבוע עם לוגו ב-YOUGO CARS\nמנהל לקוח ייעודי – איש קשר אחד\nדוחות ביצועים שבועיים מפורטים\nקידום ממומן כלול בחבילה\nתוכנית שיווקית חודשית סדורה\n\nיתרונות לעסקים\nחיסכון 40% לעומת פרסום פרטני\nניהול מלא ללא עול ביורוקרטי\n\nפרטים טכניים\nמינוי חודשי מתחדש\nמחיר: 2,890 ₪ לחודש\nתמיכה עסקית 24/7`
   },
   business100: {
     title: 'חבילת BUSINESS 100',
-    content: `🚀 מה מקבלים?\n• עד 100 רכבים מפורסמים בחודש\n• צילומים מקצועיים לכל רכב\n• דפי נחיתה מותאמים אישית\n• מנהל לקוח בכיר\n• דוחות שבועיים מפורטים\n• קידום ממומן מוגבר\n\n📊 יתרונות\n• עדיפות עליונה בפרסומים\n• תמיכה 24/7\n• אנליטיקס מתקדם\n\n⏱️ פרטים טכניים\n• מינוי חודשי\n• מחיר: 2,499 ₪ לחודש (במקום 4,999 ₪)\n• חיסכון של 2,500 ₪ – 50% הנחה`
+    content: `מה מקבלים?\nעד 100 רכבים מפורסמים בחודש\nפרסום פרמיום בכל פלטפורמות YOUGO\nדף VIP זהוב + בנר ענק ב-YOUGO CARS\nמנהל לקוח בכיר ייעודי\nדוחות יומיים + analytics מתקדם\nפרסום ממומן פרמיום כלול\nפגישות וידאו שבועיות + WhatsApp ייעודי\n\nיתרונות\nחיסכון 50% לעומת פרסום פרטני\nעדיפות עליונה בכל הפרסומים\nתמיכה ואנליטיקס ברמה ארגונית\n\nפרטים טכניים\nמינוי חודשי מתחדש\nמחיר: 4,990 ₪ לחודש`
   },
   'equipment-heavy': {
     title: 'ציוד כבד',
-    content: `🚜 מה כוללת החבילה?\n• 10 תמונות מקצועיות של הציוד בשטח\n• פוסט עם מפרט טכני מפורט ומדויק\n• סטורי 21 ימים לחשיפה ממושכת\n• חשיפה ייעודית לקהל קבלנים ומגזר הבנייה\n\n🏗️ התמחות\n• באגרים ומיני באגרים\n• מחפרונים וקטרפילרים\n• בולדוזרים ושופלים\n• עגורנים וציוד הרמה כבד`
+    content: `מה כוללת החבילה?\n10 תמונות מקצועיות של הציוד בשטח\nפוסט עם מפרט טכני מפורט ומדויק\nסטורי 21 ימים לחשיפה ממושכת\nחשיפה ייעודית לקהל קבלנים ומגזר הבנייה\nמודעה ב-YOUGO CARS 21 ימים\n\nהתמחות\nבאגרים ומיני באגרים\nמחפרונים וקטרפילרים\nבולדוזרים ושופלים\nעגורנים וציוד הרמה כבד\n\nפרטים טכניים\nמשך פרסום: 21 ימים\nמחיר: 529 ₪`
   },
   'equipment-light': {
     title: 'ציוד קל',
-    content: `🔧 מה כוללת החבילה?\n• 6 תמונות מקצועיות של הציוד\n• פוסט מותאם עם תיאור טכני מלא\n• סטורי 14 ימים לקהל רלוונטי\n• חשיפה לאנשי מקצוע בתחום\n\n🛠️ מתאים לכל סוגי הציוד הקל\n• מלגזות וציוד מחסן\n• פופקטים, ג'קים וציוד הרמה`
+    content: `מה כוללת החבילה?\n6 תמונות מקצועיות של הציוד\nפוסט מותאם עם תיאור טכני מלא\nסטורי 14 ימים לקהל רלוונטי\nחשיפה לאנשי מקצוע בתחום\nמודעה ב-YOUGO CARS 14 ימים\n\nמתאים לכל סוגי הציוד הקל\nמלגזות וציוד מחסן\nפופקטים, ג'קים וציוד הרמה\n\nפרטים טכניים\nמשך פרסום: 14 ימים\nמחיר: 299 ₪`
   },
   'transport': {
     title: 'תחבורה והסעות',
-    content: `🚌 מה כוללת החבילה?\n• 10 תמונות מקצועיות מבפנים ומבחוץ\n• פוסט עם מפרט טכני מלא\n• סטורי 21 ימים לחשיפה מתמשכת\n• חשיפה ייעודית לחברות הסעות ותחבורה\n\n🚐 מה אנחנו מפרסמים?\n• אוטובוסים ומיניבוסים\n• מיניוונים ורכבי הסעה פרטיים\n• וואנים מסחריים\n• משאיות קלות וכבדות`
+    content: `מה כוללת החבילה?\n10 תמונות מקצועיות מבפנים ומבחוץ\nפוסט עם מפרט טכני מלא\nסטורי 21 ימים לחשיפה מתמשכת\nחשיפה ייעודית לחברות הסעות ותחבורה\nמודעת תחבורה ב-YOUGO CARS 21 ימים\n\nמה אנחנו מפרסמים?\nאוטובוסים ומיניבוסים\nמיניוונים ורכבי הסעה פרטיים\nוואנים מסחריים\nמשאיות קלות וכבדות\n\nפרטים טכניים\nמשך פרסום: 21 ימים\nמחיר: 459 ₪`
+  },
+  'web-free': {
+    title: 'חינם 3 ימים',
+    content: `מה כוללת החבילה?\nפרסום ב-YOUGO CARS 3 ימים בלבד\nמודעה בסיסית עם תמונה אחת\nחשיפה ישירה לכל גולשי האתר\nכפתור WhatsApp ישיר\nללא פרסום אינסטגרם\n\nלמי זה מתאים?\nמי שרוצה לבדוק את הפלטפורמה\nמוכרים חדשים שרוצים חשיפה ראשונית\n\nפרטים טכניים\nמשך פרסום: 3 ימים\nהפעלה מיידית ללא תשלום\nללא כרטיס אשראי`
+  },
+  'web-basic': {
+    title: 'אתר BASIC',
+    content: `מה כוללת החבילה?\nפרסום ב-YOUGO CARS 30 ימים\nעד 5 תמונות איכותיות\nמיקום בעמוד הראשי\nכפתורי WhatsApp + שיחה\nללא פרסום אינסטגרם\n\nלמי זה מתאים?\nמוכרים שרוצים נוכחות קבועה באתר\nרכבים בכל טווח מחיר\n\nפרטים טכניים\nמשך פרסום: 30 ימים\nמחיר: 69 ₪`
+  },
+  'web-pro': {
+    title: 'אתר PRO',
+    content: `מה כוללת החבילה?\nפרסום ב-YOUGO CARS 60 ימים\nעד 10 תמונות + תיאור מורחב\nבנר מומלץ בולט בדף הראשי\nעולה ראשון בתוצאות חיפוש\nסטטיסטיקות צפיות ו-leads\n\nלמה בוחרים בה?\nחשיפה מקסימלית לאלפי גולשים יומיים\nמיקום מועדף בכל תוצאות החיפוש\n\nפרטים טכניים\nמשך פרסום: 60 ימים\nמחיר: 149 ₪`
+  },
+  'web-vip': {
+    title: 'אתר VIP',
+    content: `מה כוללת החבילה?\nפרסום ב-YOUGO CARS 90 ימים\nעד 20 תמונות + וידאו\nעמוד מוצר VIP מיוחד עם לוגו\nמיקום ראשון + תג VIP זהוב\nשיתוף ב-WhatsApp Groups ויראלי\nגם פרסום בדף אינסטגרם YOUGO\n\nפרטים טכניים\nמשך פרסום: 90 ימים\nמחיר: 269 ₪`
   }
 };
 
@@ -1162,6 +1179,7 @@ const BusinessPackageCard = memo(({ pkg, onSelect }: { pkg: Package, onSelect: (
 // WEBSITE PACKAGE CARD
 // ============================================================
 const WebsitePackageCard = memo(({ pkg, lang, onSelect }: { pkg: Package; lang: Language; onSelect: (p: Package) => void }) => {
+  const [showBack, setShowBack] = useState(false);
   const isFree  = pkg.id === 'web-free';
   const isBasic = pkg.id === 'web-basic';
   const isPro   = pkg.id === 'web-pro';
@@ -1185,9 +1203,23 @@ const WebsitePackageCard = memo(({ pkg, lang, onSelect }: { pkg: Package; lang: 
     badge: <Crown size={20} />, border: 'rgba(212,175,55,0.45)',
   };
 
+  const handleSelect = useCallback(() => onSelect(pkg), [onSelect, pkg]);
+  const handleShowBack = useCallback(() => setShowBack(true), []);
+  const handleHideBack = useCallback(() => setShowBack(false), []);
+
   return (
-    <div className="relative flex flex-col rounded-2xl overflow-hidden h-full"
-      style={{ background: cfg.gradient, border: `1.5px solid ${cfg.border}`, boxShadow: `0 24px 50px -15px ${cfg.glow}` }}>
+    <div className="relative w-full h-full" style={{ borderRadius: '1.25rem' }}>
+      <AnimatePresence mode="wait" initial={false}>
+        {!showBack ? (
+          <motion.div
+            key="front"
+            initial={{ rotateY: 90, opacity: 0 }}
+            animate={{ rotateY: 0, opacity: 1 }}
+            exit={{ rotateY: -90, opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="absolute inset-0 flex flex-col rounded-2xl overflow-hidden"
+            style={{ background: cfg.gradient, border: `1.5px solid ${cfg.border}`, boxShadow: `0 24px 50px -15px ${cfg.glow}` }}
+          >
 
       <div className="absolute top-0 inset-x-0 h-[3px]"
         style={{ background: `linear-gradient(90deg, transparent, ${cfg.color}, transparent)` }} />
@@ -1275,24 +1307,40 @@ const WebsitePackageCard = memo(({ pkg, lang, onSelect }: { pkg: Package; lang: 
           ))}
         </div>
 
-        <button
-          type="button"
-          onClick={() => onSelect(pkg)}
-          className="w-full py-3.5 rounded-xl font-black text-sm mt-auto active:scale-95 transition-all flex items-center justify-center gap-2"
-          style={isFree ? {
-            background: 'rgba(34,197,94,0.15)', border: '1.5px solid rgba(34,197,94,0.35)', color: '#4ade80'
-          } : isVip ? {
-            background: 'linear-gradient(135deg,#f5d060,#d4af37)', color: '#111'
-          } : {
-            background: `linear-gradient(135deg, ${cfg.color}, ${cfg.color}cc)`, color: 'white'
-          }}>
-          {isFree
-            ? <><Zap size={13} /> {lang === 'he' ? 'פרסם חינם עכשיו' : 'انشر مجاناً الآن'}</>
-            : isVip
-            ? <><Crown size={13} /> {lang === 'he' ? 'הזמן VIP' : 'احجز VIP'}</>
-            : <><Rocket size={13} /> {lang === 'he' ? 'הזמן עכשיו' : 'احجز الآن'}</>}
-        </button>
-      </div>
+        <div className="flex gap-2.5 mt-auto">
+                {!isFree && (
+                  <button
+                    type="button"
+                    onClick={handleShowBack}
+                    className="flex-1 py-3 rounded-xl font-black text-xs active:scale-95 transition-all"
+                    style={{ border: `1.5px solid ${cfg.color}35`, color: cfg.color, background: `${cfg.color}10` }}>
+                    {lang === 'he' ? 'פרטים נוספים' : 'تفاصيل أكثر'}
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={handleSelect}
+                  className={`${isFree ? 'w-full' : 'flex-1'} py-3.5 rounded-xl font-black text-sm active:scale-95 transition-all flex items-center justify-center gap-2`}
+                  style={isFree ? {
+                    background: 'rgba(34,197,94,0.15)', border: '1.5px solid rgba(34,197,94,0.35)', color: '#4ade80'
+                  } : isVip ? {
+                    background: 'linear-gradient(135deg,#f5d060,#d4af37)', color: '#111'
+                  } : {
+                    background: `linear-gradient(135deg, ${cfg.color}, ${cfg.color}cc)`, color: 'white'
+                  }}>
+                  {isFree
+                    ? <><Zap size={13} /> {lang === 'he' ? 'פרסם חינם עכשיו' : 'انشر مجاناً الآن'}</>
+                    : isVip
+                    ? <><Crown size={13} /> {lang === 'he' ? 'הזמן VIP' : 'احجز VIP'}</>
+                    : <><Rocket size={13} /> {lang === 'he' ? 'הזמן עכשיו' : 'احجز الآن'}</>}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        ) : (
+          <CardBackPanel pkg={pkg} details={packageDetails[pkg.id] || { title: pkg.name, content: pkg.features.join('\n') }} color={cfg.color} badge={cfg.badge} onSelect={handleSelect} onBack={handleHideBack} />
+        )}
+      </AnimatePresence>
     </div>
   );
 });
@@ -2989,23 +3037,38 @@ function App() {
                   </div>
                 </div>
 
-                <div className="hidden md:grid grid-cols-3 gap-5 lg:gap-6">
-                  {packages.map(pkg => (
-                    <div key={pkg.id} className="h-[520px]">
-                      <PackageCard pkg={pkg} lang={lang} onSelect={handleSelectPackage} />
-                    </div>
-                  ))}
+                {/* ── Desktop: 3 regular + VIP + DUO in unified grid ── */}
+                <div className="hidden md:flex flex-col gap-6">
+                  {/* Row 1: 3 regular packages */}
+                  <div className="grid grid-cols-3 gap-5 lg:gap-6">
+                    {packages.map(pkg => (
+                      <div key={pkg.id} className="h-[520px]">
+                        <PackageCard pkg={pkg} lang={lang} onSelect={handleSelectPackage} />
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Row 2: VIP + DUO */}
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="h-[460px]"><VIPPackageCard pkg={vipPackage} lang={lang} onSelect={handleSelectPackage} /></div>
+                    <div className="h-[460px]"><DuoDealPackageCard pkg={duoPackage} onSelect={handleSelectPackage} /></div>
+                  </div>
                 </div>
 
+                {/* ── Mobile swiper: all 5 cards ── */}
                 <div className="md:hidden px-3">
                   <MobileSwiper cardHeight={520}>
                     {packages.map(pkg => (
-                      <PackageCard key={pkg.id} pkg={pkg} lang={lang} onSelect={handleSelectPackage} />
+                      <div key={pkg.id} style={{ height: '520px' }}>
+                        <PackageCard pkg={pkg} lang={lang} onSelect={handleSelectPackage} />
+                      </div>
                     ))}
+                    <div style={{ height: '520px' }}><VIPPackageCard pkg={vipPackage} lang={lang} onSelect={handleSelectPackage} /></div>
+                    <div style={{ height: '520px' }}><DuoDealPackageCard pkg={duoPackage} onSelect={handleSelectPackage} /></div>
                   </MobileSwiper>
                 </div>
               </div>
-              {/* VIP + DUO */}
+              {/* VIP + DUO — section kept for anchor/scroll but cards already shown above */}
               <div id="packages-vip" className="scroll-mt-16 space-y-8">
                 {/* === SECTION HEADER: VIP === */}
                 <div className="relative rounded-3xl overflow-hidden"
@@ -3077,7 +3140,7 @@ function App() {
                     
                     {/* CTA */}
                     <div className="mt-6 flex items-center gap-3 flex-wrap pt-5" style={{ borderTop: '1px solid rgba(212,175,55,0.15)' }}>
-                      <button onClick={() => document.getElementById('packages-vip')?.scrollIntoView({ behavior: 'smooth' })}
+                      <button onClick={() => document.getElementById('packages-car')?.scrollIntoView({ behavior: 'smooth' })}
                         className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-black text-sm text-white transition-all hover:scale-105 active:scale-95"
                         style={{ background: 'linear-gradient(135deg,#d4af37,#b8860b)', boxShadow: '0 4px 18px rgba(212,175,55,0.4)' }}>
                         <Crown size={13} />
@@ -3087,18 +3150,6 @@ function App() {
                       <span className="text-[11px] text-white/30">VIP · DUO DEAL</span>
                     </div>
                   </div>
-                </div>
-
-                <div className="hidden md:grid grid-cols-2 gap-6">
-                  <div id="vip-card" className="h-[460px]"><VIPPackageCard pkg={vipPackage} lang={lang} onSelect={handleSelectPackage} /></div>
-                  <div id="duo-card" className="h-[460px]"><DuoDealPackageCard pkg={duoPackage} onSelect={handleSelectPackage} /></div>
-                </div>
-
-                <div className="md:hidden px-3">
-                  <MobileSwiper cardHeight={460}>
-                    <div style={{ height: '460px' }}><VIPPackageCard pkg={vipPackage} lang={lang} onSelect={handleSelectPackage} /></div>
-                    <div style={{ height: '460px' }}><DuoDealPackageCard pkg={duoPackage} onSelect={handleSelectPackage} /></div>
-                  </MobileSwiper>
                 </div>
               </div>
 
@@ -3114,7 +3165,7 @@ function App() {
               </div>
 
               {/* BUSINESS */}
-              <div id="packages-biz" className="scroll-mt-16 max-w-3xl mx-auto space-y-8">
+              <div id="packages-biz" className="scroll-mt-16 space-y-8">
                 {/* === SECTION HEADER: Business === */}
                 <div className="relative rounded-3xl overflow-hidden"
                   style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(10,10,15,0.97) 50%, rgba(6,6,10,1) 100%)', border: '2px solid rgba(59,130,246,0.32)' }}>
